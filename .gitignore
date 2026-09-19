@@ -3,8 +3,9 @@
 .env
 .env.backup
 .env.production
-/database/*.sqlite
-/database/*.sqlite-journal
+/deploy/.env.production
+/deploy/origin.pem
+/deploy/origin.key
 .phpactor.json
 .phpunit.result.cache
 /.codex
