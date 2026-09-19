@@ -86,7 +86,7 @@ if ($Bootstrap) {
   if ($CertPem) { Invoke-Remote "sudo install -m 600 -o root -g root /tmp/origin.pem /etc/nginx/ssl/origin.pem" }
   if ($CertKey) { Invoke-Remote "sudo install -m 600 -o root -g root /tmp/origin.key /etc/nginx/ssl/origin.key" }
   Invoke-Remote ("sudo env APP_PATH='$AppPath' APP_DOMAIN='$Domain' REPO_URL='$RepoUrl' REPO_BRANCH='$Branch' " +
-    "DB_NAME='$DbName' DB_USER='$DbUser' DB_PASS='$DbPass' PHP_VER='$PhpVer' bash /tmp/jastip-bootstrap.sh")
+    "DB_NAME='$DbName' DB_USER='$DbUser' DB_PASS='$DbPass' PHP_VER='$PhpVer' RUN_USER='$SshUser' bash /tmp/jastip-bootstrap.sh")
 }
 
 # 1. assets - public/build gitignored, jadi di-build lokal lalu di-upload
