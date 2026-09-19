@@ -13,12 +13,17 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
             SettingSeeder::class,
+            OrderSeeder::class,
         ]);
 
-        User::factory()->create([
-            'name' => 'Admin Nabila',
-            'email' => 'admin@nitipdiend.com',
-            'password' => bcrypt('admin123'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@nitipdiend.com'],
+            [
+                'name' => 'Admin Nabila',
+                'password' => bcrypt('admin123'),
+                'email_verified_at' => now(),
+                'role' => 'admin',
+            ]
+        );
     }
 }

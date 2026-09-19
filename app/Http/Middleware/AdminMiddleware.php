@@ -14,6 +14,10 @@ class AdminMiddleware
             return redirect()->route('admin.login');
         }
 
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Hanya admin yang boleh mengakses area ini.');
+        }
+
         return $next($request);
     }
 }

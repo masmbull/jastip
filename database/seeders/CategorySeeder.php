@@ -19,14 +19,16 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            Category::create([
-                'name' => $category['name'],
-                'slug' => Str::slug($category['name']),
-                'description' => 'Produk ' . $category['name'] . ' pilihan kami',
-                'icon' => $category['icon'],
-                'sort_order' => 0,
-                'is_active' => true,
-            ]);
+            Category::firstOrCreate(
+                ['slug' => Str::slug($category['name'])],
+                [
+                    'name' => $category['name'],
+                    'description' => 'Produk ' . $category['name'] . ' pilihan kami',
+                    'icon' => $category['icon'],
+                    'sort_order' => 0,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }
