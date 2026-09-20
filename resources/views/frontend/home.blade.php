@@ -1,93 +1,92 @@
 @extends('layouts.app')
 
-@section('title', setting('brand_name', 'NITIP DI END'))
+@section('title', 'Beranda')
 
 @section('content')
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
     {{-- Hero --}}
     <x-hero />
 
-    {{-- Categories Section --}}
-    <section class="py-12 md:py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-[#333333] mb-2 text-center">
-                Jelajahi Kategori
-            </h2>
-            <p class="text-[#999999] text-center mb-8 max-w-xl mx-auto">
-                Nemunya di mana? Titip aja.
-            </p>
+    {{-- Category Section --}}
+    <section class="py-12 md:py-16 animate-fade-up">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-[#333333] mb-3">Jelajahi Kategori</h2>
+            <p class="text-[#999999]">Temukan produk berdasarkan kategori yang kamu inginkan.</p>
+        </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        @if($categories->isNotEmpty())
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 @foreach($categories as $category)
                     <x-category-card :category="$category" />
                 @endforeach
             </div>
-        </div>
+        @else
+            <p class="text-center text-[#999999] py-8">Belum ada kategori tersedia.</p>
+        @endif
     </section>
 
     {{-- Featured Products --}}
-    <section class="py-12 md:py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-[#333333] mb-2">
-                Lagi Banyak Dititipin 🔥
-            </h2>
-            <p class="text-[#999999] mb-8">Produk pilihan yang lagi viral dan banyak dicari.</p>
+    <section class="py-12 md:py-16 bg-white rounded-2xl shadow-sm animate-fade-up">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-[#333333] mb-3">Produk Unggulan</h2>
+            <p class="text-[#999999]">Pilihan produk yang sedang ramai dibeli.</p>
+        </div>
 
+        @if($featuredProducts->isNotEmpty())
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                @forelse($featuredProducts as $product)
+                @foreach($featuredProducts as $product)
                     <x-product-card :product="$product" />
-                @empty
-                    <p class="col-span-full text-center py-12 text-[#999999]">
-                        Belum ada produk unggulan.
-                    </p>
-                @endforelse
+                @endforeach
             </div>
+        @else
+            <p class="text-center text-[#999999] py-8">Belum ada produk.</p>
+        @endif
 
-            @if($featuredProducts->count() > 0)
-                <div class="text-center mt-8">
-                    <a href="{{ route('products.index') }}"
-                       class="inline-flex items-center px-6 py-3 text-rose-600 font-medium hover:text-rose-800 transition-colors">
-                        Lihat Semua Produk
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                        </svg>
-                    </a>
-                </div>
-            @endif
+        <div class="text-center mt-10">
+            <a href="{{ route('products.index') }}"
+               class="inline-block px-8 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                Lihat Semua Produk
+            </a>
         </div>
     </section>
 
     {{-- Popular Products --}}
-    @if($popularProducts->isNotEmpty())
-    <section class="py-12 md:py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-[#333333] mb-2">
-                Produk Favorit Pelanggan
-            </h2>
-            <p class="text-[#999999] mb-8">Barang incaran, tinggal nitip.</p>
+    <section class="py-12 md:py-16 animate-fade-up">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-[#333333] mb-3">Produk Populer</h2>
+            <p class="text-[#999999]">Produk terlaris pilihan customers.</p>
+        </div>
 
+        @if($popularProducts->isNotEmpty())
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($popularProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
             </div>
-        </div>
+        @else
+            <p class="text-center text-[#999999] py-8">Belum ada produk populer.</p>
+        @endif
     </section>
-    @endif
 
-    {{-- CTA Section --}}
-    <section class="py-20 bg-gradient-to-r from-rose-500 to-rose-600 text-white text-center">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                Barang incaran, tinggal nitip.
-            </h2>
-            <p class="text-lg mb-8 opacity-90">
-                Scroll boleh, checkout belakangan 😆
-            </p>
-            <a href="{{ route('cart.index') }}"
-               class="inline-flex items-center px-8 py-4 bg-white text-rose-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-200">
-                Lihat Titipan Kamu
-            </a>
-        </div>
+    {{-- Call to Action --}}
+    <section class="py-16 md:py-20 bg-gradient-to-r from-rose-500 to-pink-600 rounded-3xl shadow-xl text-center text-white mb-12 animate-fade-up">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Butuh Bantuan?</h2>
+        <p class="text-lg md:text-xl text-rose-100 mb-6 max-w-2xl mx-auto">
+            Ada pertanyaan? Hubungi admin kami via WhatsApp untuk bantuan cepat.
+        </p>
+        <a href="{{ setting('whatsapp', 'https://wa.me/6281234567890') }}"
+           target="_blank"
+           class="inline-flex items-center justify-center px-8 py-4 bg-white text-rose-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 18l9-5-9-5-9 5 9 5z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 12v6m0 0l-3-3m3 3l3-3"></path>
+            </svg>
+            Chat via WhatsApp
+        </a>
     </section>
+
+</div>
 @endsection

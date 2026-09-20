@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="p-6 space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-up">
         <div>
             <h1 class="text-2xl font-bold text-[#333333]">Daftar Pesanan</h1>
             <p class="text-sm text-[#999999] mt-1">Kelola semua pesanan jastip</p>
@@ -13,10 +13,14 @@
                class="px-4 py-2 text-sm bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 font-medium">
                 Pending
             </a>
+            <a href="{{ route('admin.orders.index') }}"
+               class="px-4 py-2 text-sm bg-[#F0EDE7] text-[#666666] rounded-lg hover:bg-[#E8E0D8] font-medium">
+                Semua Pesanan
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-[#E8E0D8] overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-[#E8E0D8] overflow-hidden animate-fade-up" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
@@ -35,7 +39,7 @@
                     @forelse($orders as $order)
                         <tr class="hover:bg-[#fafafa]">
                             <td class="px-4 py-3">
-                                <span class="font-mono text-sm text-rose-600">{{ $order->no }}</span>
+                                <span class="font-mono text-sm text-rose-600">#{{ $order->no }}</span>
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 <p class="font-medium text-[#333333]">{{ $order->customer_name }}</p>

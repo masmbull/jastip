@@ -4,7 +4,7 @@
 @endphp
 
 <div class="fixed bottom-6 right-6 z-50">
-    <a href="{{ whatsapp_url($whatsapp, 'Halo Kak, saya tertarik untuk nitip di ' . $brandName) }}"
+        <a href="{{ whatsapp_url(preg_replace('/[^0-9]/', '', $whatsapp), 'Halo Kak, saya tertarik untuk nitip di ' . $brandName) }}"
        target="_blank" rel="noopener noreferrer"
        class="flex items-center justify-center w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group">
         <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">

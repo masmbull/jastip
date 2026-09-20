@@ -1,30 +1,30 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-/deploy/.env.production
-/deploy/origin.pem
-/deploy/origin.key
-.phpactor.json
-.phpunit.result.cache
-/.codex
-/.cursor/
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+﻿# Laravel / PHP
+/vendor
 /node_modules
-/public/build
-/public/fonts-manifest.dev.json
+/.env
+/.env.local
+/storage/*.key
+/.fim
+
+# Laravel build artifacts
+
 /public/hot
 /public/storage
-/storage/*.key
-/storage/pail
-/vendor
-_ide_helper.php
-Homestead.json
-Homestead.yaml
+
+# IDE / OS
+/.idea
+/.vscode
+/.nova
+/.zed
+*.swp
+.DS_Store
 Thumbs.db
+
+# Tooling
+/.phpunit.cache
+/.phpunit.result.cache
+phpunit.xml
+auth.json
+composer.lock
+package-lock.json
+yarn.lock

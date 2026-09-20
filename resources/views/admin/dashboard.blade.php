@@ -5,13 +5,14 @@
 @section('content')
 <div class="p-6 space-y-6">
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    {{-- Welcome + CTA --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-up">
         <div>
-            <h1 class="text-2xl font-bold text-[#333333]">Selamat Datang, Admin 👋</h1>
+            <h1 class="text-2xl font-bold text-[#333333]">Selamat Datang, Admin</h1>
             <p class="text-sm text-[#999999] mt-1">{{ setting('brand_owner', 'Nabila Adriyana') }} — {{ setting('brand_name', 'NITIP DI END') }}</p>
         </div>
         <a href="{{ route('admin.products.create') }}"
-           class="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg shadow-sm">
+           class="inline-flex items-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-300">
             <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -20,7 +21,7 @@
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up" style="animation-delay: 120ms">
 
         <div class="bg-white rounded-xl shadow-sm p-5 border border-[#E8E0D8]">
             <div class="flex items-center justify-between mb-3">
@@ -31,7 +32,9 @@
                 </div>
                 <a href="{{ route('admin.products.index') }}" class="text-xs text-rose-600 font-medium">Detail</a>
             </div>
-            <p class="text-3xl font-bold text-[#333333]">{{ $stats['products_count'] ?? '-' }}</p>
+            <p class="text-3xl font-bold text-[#333333]">
+                <span x-data="JDnum({{ $stats['products_count'] ?? 0 }})" x-init="start()" x-text="n">{{ $stats['products_count'] ?? 0 }}</span>
+            </p>
             <p class="text-sm text-[#999999]">Total Produk</p>
         </div>
 
@@ -44,7 +47,9 @@
                 </div>
                 <a href="{{ route('admin.categories.index') }}" class="text-xs text-purple-600 font-medium">Detail</a>
             </div>
-            <p class="text-3xl font-bold text-[#333333]">{{ $stats['categories_count'] ?? '-' }}</p>
+            <p class="text-3xl font-bold text-[#333333]">
+                <span x-data="JDnum({{ $stats['categories_count'] ?? 0 }})" x-init="start()" x-text="n">{{ $stats['categories_count'] ?? 0 }}</span>
+            </p>
             <p class="text-sm text-[#999999]">Total Kategori</p>
         </div>
 
@@ -57,7 +62,9 @@
                 </div>
                 <a href="{{ route('admin.orders.index') }}" class="text-xs text-green-600 font-medium">Detail</a>
             </div>
-            <p class="text-3xl font-bold text-[#333333]">{{ $stats['orders_count'] ?? '-' }}</p>
+            <p class="text-3xl font-bold text-[#333333]">
+                <span x-data="JDnum({{ $stats['orders_count'] ?? 0 }})" x-init="start()" x-text="n">{{ $stats['orders_count'] ?? 0 }}</span>
+            </p>
             <p class="text-sm text-[#999999]">Total Pesanan</p>
         </div>
 
@@ -70,15 +77,16 @@
                 </div>
                 <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="text-xs text-amber-600 font-medium">Detail</a>
             </div>
-            <p class="text-3xl font-bold text-[#333333]">{{ $stats['orders_pending'] ?? '-' }}</p>
-            <p class="text-sm text-[#999999]">Menunggu Konfirmasi</p>
+            <p class="text-3xl font-bold text-[#333333]">
+                <span x-data="JDnum({{ $stats['orders_pending'] ?? 0 }})" x-init="start()" x-text="n">{{ $stats['orders_pending'] ?? 0 }}</span>
+            </p>
+            <p class="text-sm text-[#999999]"> Menunggu Konfirmasi</p>
         </div>
 
     </div>
 
-
     {{-- Recent Orders --}}
-    <div class="bg-white rounded-xl shadow-sm border border-[#E8E0D8] overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-[#E8E0D8] overflow-hidden animate-fade-up" style="animation-delay: 240ms">
         <div class="px-6 py-4 border-b border-[#E8E0D8] flex items-center justify-between">
             <h2 class="text-lg font-semibold text-[#333333]">Pesanan Terbaru</h2>
             <a href="{{ route('admin.orders.index') }}" class="text-sm text-rose-600 font-medium">

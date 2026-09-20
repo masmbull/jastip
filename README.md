@@ -1,58 +1,116 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JASTIP — NITIP DI END
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Minimal Jastip (indonesian "titip beli") storefront: a curated-product catalog with a
+cookie-based cart, checkout → order flow, and a minimal admin panel for products,
+categories, orders, and settings.
 
-## About Laravel
+- **Frontend:** Laravel Blade + Tailwind CSS + Alpine.js (no React/Vue).
+- **Data:** single `admin`/`customer` role column on `User` (no second auth table).
+- **State:** session cart (guests allowed), no payments (status workflow in admin).
+- **Stack:** Laravel 11 · PHP 8.2+ · MySQL/SQLite · Vite + TailwindCSS v4.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP **8.2+** (`php -v`)
+- Composer ≥ 2
+- Node.js ≥ 20 / npm
+- MySQL 8+ (or SQLite for local dev)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Install (local)
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repo> nitipdiend
+cd nitipdiend
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+# edit .env: DB_*, APP_URL, WA_* (WhatsApp number), MAIL_*
+php artisan migrate:fresh --seed
+php artisan serve
+# -> http://127.0.0.1:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Seeded default admin: `admin@nitipdiend.com` / `admin123`, product `fashion-item`.
 
-## Contributing
+## Commands (reference, from `composer.json` `scripts`)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Command | Purpose |
+|---|---|
+| `composer install` | install PHP deps |
+| `npm install` | install frontend deps |
+| `npm run dev` | `vite` (HMR) |
+| `npm run build` | `vite build` + `config/route/view` cache |
+| `php artisan test` | `vendor/bin/phpunit` (in-memory SQLite) |
 
-## Code of Conduct
+## Production deploy
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone
+composer install --optimize-autoloader --no-dev
+npm ci && npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan migrate --force
+php artisan storage:link
+php artisan up
+```
 
-## Security Vulnerabilities
+## Tests
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan test
+# 2 tests, 32 assertions
+```
+
+`tests/Feature/CheckoutFlowTest.php` exercises the full RBAC chain:
+unauthenticated `/admin/*` → redirect `admin.login` → login as seed admin →
+`admin.orders.index` → `PUT admin.orders.status` updates order status.
+
+## RBAC
+
+- Guard: `web` (session) on the `users` provider (`App\Models\User`).
+- One table, `role` column ∈ { `customer`, `admin` }.
+- Middleware alias `admin` → `App\Http\Middleware\AdminMiddleware`:
+  - `auth()->check()` is false → redirect to `admin.login`.
+  - `auth()->user()->isAdmin()` is false → `abort(403)`.
+- Admin login enforced in `LoginController::login` (`AdminLoginRequest`).
+- Frontend (catalog/cart/checkout/confirmation) is public;
+  `admin.*` (except `login`/`login.post`) is guarded by `middleware('admin')`.
+
+## Routes
+
+| Area | Routes |
+|---|---|
+| Home | `GET /` (`home`) |
+| Products | `GET /produk` (`products.index`), `GET /produk/{product:slug}` (`products.show`) |
+| Categories | `GET /kategori`, `GET /kategori/{category:slug}` |
+| Cart | `GET /titipan`, `POST .../tambah`, `POST .../update`, `DELETE .../hapus`, `DELETE /titipan/clear` |
+| Checkout | `GET /checkout`, `POST /checkout`, `GET /checkout/confirmation` |
+| Static | `GET /tentang`, `GET /cara-nitip`, `GET /kontak` |
+| Admin auth | `GET /admin/login` (`admin.login`), `POST /admin/login` (`admin.login.post`), `POST /admin/logout` (`admin.logout`) |
+| Admin (guarded) | `admin.dashboard`, `admin.products.*`, `admin.categories.*`, `admin.orders.{index,show,status,destroy}`, `admin.settings.{index,update}` |
+
+## Security
+
+- Escaping: all data via `{{ }}`; the only unescaped path is
+  `Product::$description_html`, which is `strip_tags`-whitelisted to
+  `p br strong em ul ol li hr` — dropping `<a>`, `<img>`, `<script>` so no
+  `onerror`/`javascript:` vectors remain.
+- External links: every `target="_blank"` carries `rel="noopener noreferrer"`.
+- WhatsApp: numbers reduced to digits via `preg_replace('/[^0-9]/', '', $whatsapp)`.
+- Nav links guarded with `Route::has(...)`; CSRF + `@method` on all mutations.
+
+## White-label / handoff
+
+1. `git clone` — `vendor/`, `node_modules/`, `.env` are git-ignored.
+2. `composer install && npm install && npm run build`.
+3. Copy `.env.example → .env`, set `APP_KEY`, `APP_URL`, DB, WhatsApp number, mail.
+4. `php artisan migrate:fresh --seed` (default admin + product) or import a client `.sql`.
+5. Brand rename: change `setting('brand_name', 'NITIP DI END')` and seeded brand/hero rows.
+6. Deliver: the repo + the client's `.env` + (optionally) a `.sql` dump.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Custom / closed-source by default — update this section for the client.

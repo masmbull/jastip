@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', setting('brand_name', 'NITIP DI END'))</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-[#F5F5F5] text-[#333333] font-sans antialiased min-h-screen">
 
@@ -24,7 +23,7 @@
                     <span class="text-white font-bold text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
                 </div>
                 <div>
-                    <span class="font-bold text-lg text-[#333333] block">{{ setting('brand_name', 'NITIP DI END') }}</span>
+                    <span class="font-bold text-lg text-[#333333]">{{ setting('brand_name', 'NITIP DI END') }}</span>
                     <span class="text-xs text-rose-500 block">Admin Panel</span>
                 </div>
             </div>
@@ -50,23 +49,15 @@
             <a href="{{ route('admin.products.index') }}"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#666666] hover:bg-rose-50 hover:text-rose-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4v4H5v10h12v4l8-4v-4H5v-10h12z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4v4H5v10h12v4l8-4v-4H5V7h12z"></path>
                 </svg>
                 <span>Produk</span>
             </a>
 
-            <a href="{{ route('admin.categories.index') }}"
+                        <a href="{{ route('admin.orders.index') }}"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#666666] hover:bg-rose-50 hover:text-rose-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12v5a2 2 0 01-2 2h-5a2 2 0 01-2-2V3a2 2 0 012-2"></path>
-                </svg>
-                <span>Kategori</span>
-            </a>
-
-            <a href="{{ route('admin.orders.index') }}"
-               class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#666666] hover:bg-rose-50 hover:text-rose-600">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0 2 2 0 01-.001-2.828l7-7a2 2 0 012.828 0Z"></path>
                 </svg>
                 <span>Pesanan</span>
             </a>
@@ -126,13 +117,14 @@
         </header>
 
         {{-- Page Content --}}
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
             @yield('content')
         </main>
     </div>
 </div>
 
 <x-toast />
+<x-confirm-modal />
 
 @stack('scripts')
 </body>

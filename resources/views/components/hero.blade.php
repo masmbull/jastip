@@ -1,76 +1,80 @@
-@props([
-    'brandName' => null,
-    'brandOwner' => null,
-    'brandTagline' => null,
-])
+@props(['backgroundImage' => null])
 
 @php
-    $brandName = $brandName ?? setting('brand_name', 'NITIP DI END');
-    $brandOwner = $brandOwner ?? setting('brand_owner', 'Nabila Adriyana');
-    $brandTagline = $brandTagline ?? setting('brand_tagline', 'EH, NITIP DONG!');
+    $backgroundImage = $backgroundImage ?? (setting('homepage_hero') ? asset('storage/' . setting('homepage_hero')) : null);
+    $primaryColor = setting('primary_color', '#ec4899');
 @endphp
 
-<section class="relative overflow-hidden py-20 md:py-32 bg-gradient-to-br from-[#FAF7F2] to-[#F0EDE7]">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<section class="relative bg-gradient-to-br from-rose-100 via-rose-50 to-white overflow-hidden">
+    <!-- Decorative blobs -->
+    <div class="absolute -top-24 -right-24 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40"></div>
+    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
 
-        <div class="text-center max-w-4xl mx-auto">
-            {{-- Headline --}}
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-[#2D2D2D] leading-tight mb-6">
-                <span class="block">Mau Nitip?</span>
-                <span class="text-rose-600">Nitip di End Aja!</span>
+    @if($backgroundImage)
+        <div class="absolute inset-0">
+            <img src="{{ $backgroundImage }}" alt="Hero" class="w-full h-full object-cover opacity-10" loading="lazy" decoding="async">
+        </div>
+    @endif
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 lg:py-32">
+        <div class="text-center max-w-4xl mx-auto animate-fade-up">
+            <span class="inline-block bg-rose-100 text-rose-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
+                🛍️ {{ setting('hero_badge', 'Titipan Spesial Untukmu') }}
+            </span>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#333333] mb-6 leading-tight">
+                {{ setting('brand_name', 'NITIP DI END') }}
             </h1>
 
-            {{-- Subheadline --}}
-            <p class="text-lg md:text-xl text-[#666666] mb-8 max-w-2xl mx-auto">
-                Jastip lokal pilihan <span class="font-semibold text-rose-500">{{ $brandOwner }}</span> —
-                dari barang viral sampai kebutuhan favorit kamu.
+            <p class="text-xl md:text-2xl text-rose-600 font-semibold mb-6">
+                {{ setting('brand_tagline', 'EH, NITIP DONG!') }}
             </p>
 
-            {{-- CTA Buttons --}}
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <a href="{{ route('products.index') }}"
-                   class="inline-flex items-center justify-center px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M19 11H5m14 0a2 2 0 012 2v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4a2 2 0 012-2m7-4V3a2 2 0 114 0v4m-4 0V3a2 2 0 114 0v4"></path>
-                    </svg>
-                    Lihat Barang
-                </a>
-                <a href="{{ route('cart.index') }}"
-                   class="inline-flex items-center justify-center px-8 py-4 bg-[#2D2D2D] hover:bg-[#404040] text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2D2D2D]/30">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M16 11V7a4 4 0 00-8 0v4m-2 4h8M8 15l-2 4h8l-2-4"></path>
-                    </svg>
-                    Nitip Sekarang
-                </a>
-            </div>
+            <p class="text-lg text-[#666666] mb-8 max-w-2xl mx-auto">
+                {{ setting('hero_description', 'Temukan berbagai produk impian dengan harga terbaik. Gratis ongkir untuk pemesanan di atas Rp 150.000.') }}
+            </p>
 
-            {{-- Product Visual --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                <div class="bg-white rounded-xl shadow-md p-4 text-center transform hover:-translate-y-1 transition-transform">
-                    <div class="w-20 h-20 mx-auto bg-rose-100 rounded-full mb-2 flex items-center justify-center">
-                        <span class="text-2xl">🧴</span>
-                    </div>
-                    <p class="text-sm font-medium text-[#666666]">Barang Viral</p>
-                </div>
-                <div class="bg-white rounded-xl shadow-md p-4 text-center transform hover:-translate-y-1 transition-transform">
-                    <div class="w-20 h-20 mx-auto bg-rose-100 rounded-full mb-2 flex items-center justify-center">
-                        <span class="text-2xl">🛍️</span>
-                    </div>
-                    <p class="text-sm font-medium text-[#666666]">Produk Lokal</p>
-                </div>
-                <div class="bg-white rounded-xl shadow-md p-4 text-center transform hover:-translate-y-1 transition-transform">
-                    <div class="w-20 h-20 mx-auto bg-rose-100 rounded-full mb-2 flex items-center justify-center">
-                        <span class="text-2xl">⚡</span>
-                    </div>
-                    <p class="text-sm font-medium text-[#666666]">Cepat Sampai</p>
-                </div>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+                <a href="{{ route('products.index') }}"
+                   class="inline-flex items-center justify-center px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 3h2l.89 1.77M7 13h10l2-4H5.11M7 13L5.11 5.11M7 13l1.85 1.85a2 2 0 002.73.27M13 13h3m-3 0l1.85 1.85a2 2 0 01-.27 2.73z"></path>
+                    </svg>
+                    Mulai Belanja
+                </a>
+                <a href="{{ route('products.index', ['sort' => 'popular']) }}"
+                   class="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-gray-50 text-rose-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    Produk Favorit
+                </a>
             </div>
         </div>
-
-        {{-- Decorative Elements --}}
-        <div class="absolute top-0 right-0 -translate-y-1/4 w-64 h-64 bg-rose-100 rounded-full opacity-30 -z-10"></div>
-        <div class="absolute bottom-0 left-0 translate-y-1/4 w-48 h-48 bg-rose-100 rounded-full opacity-20 -z-10"></div>
     </div>
 </section>
+
+<!-- Feature Highlights -->
+<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center animate-fade-up">
+        <div class="p-6">
+            <div class="w-12 h-12 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-4">
+                🚚
+            </div>
+            <h3 class="font-semibold text-[#333333] mb-2">Gratis Ongkir</h3>
+            <p class="text-sm text-[#999999]">Untuk pemesanan di atas Rp 150.000</p>
+        </div>
+        <div class="p-6">
+            <div class="w-12 h-12 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-4">
+                🔒
+            </div>
+            <h3 class="font-semibold text-[#333333] mb-2">Bayar di Tempat</h3>
+            <p class="text-sm text-[#999999]">Cash on delivery saat barang sampai</p>
+        </div>
+        <div class="p-6">
+            <div class="w-12 h-12 mx-auto bg-rose-100 rounded-full flex items-center justify-center mb-4">
+                💯
+            </div>
+            <h3 class="font-semibold text-[#333333] mb-2">Garansi Autentik</h3>
+            <p class="text-sm text-[#999999]">Produk 100% asli terjamin</p>
+        </div>
+    </div>
+</div>

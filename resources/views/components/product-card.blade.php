@@ -4,14 +4,14 @@
     $product = $product ?? $attributes->get('product');
 @endphp
 
-<article class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group">
+<article class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group animate-fade-up">
     {{-- Image --}}
     <div class="relative aspect-[4/3] overflow-hidden">
         @if($product)
             <img src="{{ $product->image_url }}"
                  alt="{{ $product->name }}"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                 loading="lazy">
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                 loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw">
             @if($product->is_featured)
                 <span class="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Unggulan
@@ -23,7 +23,7 @@
                 </span>
             @endif
         @else
-            <div class="w-full h-full bg-gradient-to-br from-rose-100 to-rose-50 flex items-center justify-center">
+            <div class="w-full h-full bg-gradient-to-br from-rose-100 to-rose-50 flex items-center justify-center animate-shimmer">
                 <span class="text-4xl">📦</span>
             </div>
         @endif
@@ -49,7 +49,7 @@
             {{-- Action --}}
             @if($product->isInStock())
                 <a href="{{ route('products.show', $product->slug) }}"
-                   class="block w-full text-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full text-sm transition-colors">
+                   class="block w-full text-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300">
                     Lihat Detail
                 </a>
             @else

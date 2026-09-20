@@ -7,18 +7,26 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {{-- Product Image --}}
-        <div class="relative">
-            <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                 class="w-full rounded-xl shadow-lg object-cover aspect-square">
+        <div class="relative animate-fade-up">
+            <img src="{{ $product->image_url }}"
+                 alt="{{ $product->name }}"
+                 class="w-full rounded-xl shadow-lg object-cover aspect-square"
+                 loading="lazy" decoding="async"
+                 sizes="(max-width: 1024px) 100vw, 50vw">
             @if($product->is_featured)
                 <span class="absolute top-4 left-4 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                     Produk Unggulan
                 </span>
             @endif
+            @if(!$product->isInStock())
+                <span class="absolute top-4 right-4 bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    Stok Habis
+                </span>
+            @endif
         </div>
 
         {{-- Product Details --}}
-        <div class="space-y-6">
+        <div class="space-y-6 animate-fade-up" style="animation-delay: 120ms">
             <div>
                 <p class="text-sm text-rose-600 font-medium mb-2">{{ $product->category->name ?? 'Lainnya' }}</p>
                 <h1 class="text-3xl font-bold text-[#333333]">{{ $product->name }}</h1>
@@ -33,14 +41,32 @@
                 </span>
             </div>
 
+            {{-- Price tiers (optional) --}}
+            @if(isset($product->price_tiers) && $product->price_tiers)
+                <div class="bg-[#F8F5F0] rounded-lg p-4">
+                    <p class="text-sm font-medium text-[#333333] mb-2">Harga Grosir (opsional):</p>
+                    @foreach($product->price_tiers as $tier)
+                        <div class="flex justify-between text-sm">
+                            <span>{{ $tier['min'] }}+ {{ $tier['unit'] ?? 'pcs' }}</span>
+                            <span class="font-medium">{{ format_price($tier['price']) }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             <div>
                 <h3 class="text-lg font-semibold text-[#333333] mb-2">Deskripsi</h3>
-                <p class="text-[#666666] leading-relaxed">{{ $product->description }}</p>
+                <div class="text-[#666666] leading-relaxed space-y-3">
+                                        {!! strip_tags($product->description_html ?? $product->description, '<p><br><strong><b><em><i><ul><ol><li><h2><h3><h4><h5><h6><blockquote><code><span><hr>') !!}
+                </div>
             </div>
 
             @if($product->isInStock())
             <div class="pt-4 border-t border-[#E8E0D8]">
-                <form id="addToCartForm" method="POST" action="{{ route('cart.add', ['product' => $product->id]) }}">
+                <form id="addToCartForm"
+                      method="POST"
+                      action="{{ route('cart.add', ['product' => $product->id]) }}"
+                      data-async>
                     @csrf
                     <div class="flex items-center space-x-4 mb-4">
                         <label class="text-sm font-medium text-[#333333]">Jumlah:</label>
@@ -60,16 +86,18 @@
                                 </svg>
                             </button>
                         </div>
+                        <span class="text-xs text-[#999999]">{{ $product->stock }} tersedia</span>
                     </div>
 
-                    <button type="submit" id="addToCartBtn"
+                    <button type="submit"
+                            id="addToCartBtn"
                             class="w-full px-6 py-4 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-rose-300">
                         Tambah ke Titipan
                     </button>
                 </form>
 
-                <a href="{{ \App\Services\WhatsappService::contactUrl('Saya ingin nitip ' . $product->name) }}"
-                   target="_blank"
+                                <a href="{{ \App\Services\WhatsappService::contactUrl('Saya ingin nitip ' . $product->name) }}"
+                   target="_blank" rel="noopener noreferrer"
                    class="mt-3 flex items-center justify-center w-full px-6 py-3 border-2 border-green-500 text-green-600 font-medium rounded-full hover:bg-green-50 transition-colors">
                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20.52 3.48A11.94 11.94 0 0012 0a11.96 11.96 0 00-8.44 20.73l-2.53 7.55 7.67-2.08A11.88 11.88 0 0012 24c6.62 0 12-5.38 12-12 0-3.21-1.25-6.21-3.48-8.42z" />
@@ -79,7 +107,8 @@
             </div>
             @else
             <div class="pt-4">
-                <button disabled class="w-full px-6 py-4 bg-gray-300 text-gray-500 font-medium rounded-full cursor-not-allowed">
+                <button disabled
+                        class="w-full px-6 py-4 bg-gray-300 text-gray-500 font-medium rounded-full cursor-not-allowed">
                     Stok Habis
                 </button>
             </div>
@@ -88,8 +117,8 @@
     </div>
 
     {{-- Related Products --}}
-    @if($relatedProducts->isNotEmpty())
-    <section class="mt-16">
+    @if(isset($relatedProducts) && $relatedProducts->isNotEmpty())
+    <section class="mt-16 animate-fade-up">
         <h2 class="text-2xl font-bold text-[#333333] mb-6">Produk Serupa</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($relatedProducts as $related)
@@ -101,13 +130,17 @@
 </div>
 
 <script>
-function decrementQty() {
-    const input = document.getElementById('quantity');
-    if (parseInt(input.value) > 1) { input.value = parseInt(input.value) - 1; }
-}
-function incrementQty(max) {
-    const input = document.getElementById('quantity');
-    if (parseInt(input.value) < max) { input.value = parseInt(input.value) + 1; }
-}
+    function decrementQty() {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) > parseInt(input.min || 1)) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+    function incrementQty(max) {
+        const input = document.getElementById('quantity');
+        if (parseInt(input.value) < max) {
+            input.value = parseInt(input.value) + 1;
+        }
+    }
 </script>
 @endsection

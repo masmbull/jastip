@@ -12,7 +12,7 @@
             {{-- Logo & Brand --}}
             <div class="flex-shrink-0 flex items-center space-x-3">
                 @if($brandLogo)
-                    <img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="h-10 w-10 object-contain">
+                    <img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="h-10 w-10 object-contain" loading="lazy" decoding="async">
                 @else
                     <div class="h-10 w-10 rounded-full bg-rose-200 flex items-center justify-center">
                         <span class="text-rose-700 font-bold text-lg">N</span>
@@ -26,12 +26,29 @@
 
             {{-- Desktop Navigation --}}
             <div class="hidden md:flex md:space-x-8">
-                <a href="{{ route('home') }}" class="text-[#333333] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Beranda</a>
-                <a href="{{ route('products.index') }}" class="text-[#666666] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Produk</a>
-                <a href="{{ route('categories.index') }}" class="text-[#666666] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Kategori</a>
-                <a href="{{ route('about') }}" class="text-[#666666] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Tentang</a>
-                <a href="{{ route('how-to') }}" class="text-[#666666] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Cara Nitip</a>
-                <a href="{{ route('contact') }}" class="text-[#666666] hover:text-rose-600 px-3 py-2 text-sm font-medium transition-colors">Kontak</a>
+                @php
+                    $links = [
+                        ['label' => 'Beranda', 'route' => 'home'],
+                        ['label' => 'Produk', 'route' => 'products.index'],
+                        ['label' => 'Kategori', 'route' => 'categories.index'],
+                        ['label' => 'Tentang', 'route' => 'about'],
+                        ['label' => 'Cara Nitip', 'route' => 'how-to'],
+                        ['label' => 'Kontak', 'route' => 'contact'],
+                    ];
+                @endphp
+                                @foreach($links as $link)
+                    @if(\Route::has($link['route']))
+                        <a href="{{ route($link['route']) }}"
+                           class="px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs($link['route']) ? 'text-rose-600 border-b-2 border-rose-500' : 'text-[#666666] hover:text-rose-600' }}">
+                            {{ $link['label'] }}
+                        </a>
+                    @else
+                        <span class="px-3 py-2 text-sm font-medium text-[#999999] cursor-default"
+                              title="Route {{ $link['route'] }} belum tersedia">
+                            {{ $link['label'] }}
+                        </span>
+                    @endif
+                @endforeach
             </div>
 
             {{-- Desktop Right Side --}}
@@ -44,18 +61,18 @@
                     </svg>
                 </button>
 
-                {{-- Cart --}}
-                <div class="relative">
-                    <button @click="cartOpen = true" class="relative p-2 text-[#666666] hover:text-rose-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M16 11V7a4 4 0 00-8 0v4M8 11h8m-2 4h-4M8 15l-2 4h8l-2-4"></path>
-                        </svg>
-                        @if($cartCount > 0)
-                            <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
-                        @endif
-                    </button>
-                </div>
+                                {{-- Cart --}}
+                <a href="{{ route('cart.index') }}"
+                   class="relative p-2 text-[#666666] hover:text-rose-600 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300 rounded">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M16 11V7a4 4 0 00-8 0v4M8 11h8m-2 4h-4M8 15l-2 4h8l-2-4"></path>
+                    </svg>
+                    <span id="cart-count"
+                          class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}">
+                        {{ $cartCount }}
+                    </span>
+                </a>
 
                 {{-- Mobile Menu Button --}}
                 <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-[#666666] hover:text-rose-600 transition-colors">
@@ -73,12 +90,18 @@
     {{-- Mobile Menu --}}
     <div x-show="mobileMenuOpen" x-transition x-cloak class="md:hidden bg-white border-t border-[#E8E0D8] shadow-lg">
         <div class="px-2 pt-2 pb-3 space-y-1">
-            <a href="{{ route('home') }}" class="block px-3 py-2 text-sm font-medium text-[#333333] hover:text-rose-600 hover:bg-rose-50 rounded">Beranda</a>
-            <a href="{{ route('products.index') }}" class="block px-3 py-2 text-sm font-medium text-[#666666] hover:text-rose-600 hover:bg-rose-50 rounded">Produk</a>
-            <a href="{{ route('categories.index') }}" class="block px-3 py-2 text-sm font-medium text-[#666666] hover:text-rose-600 hover:bg-rose-50 rounded">Kategori</a>
-            <a href="{{ route('about') }}" class="block px-3 py-2 text-sm font-medium text-[#666666] hover:text-rose-600 hover:bg-rose-50 rounded">Tentang</a>
-            <a href="{{ route('how-to') }}" class="block px-3 py-2 text-sm font-medium text-[#666666] hover:text-rose-600 hover:bg-rose-50 rounded">Cara Nitip</a>
-            <a href="{{ route('contact') }}" class="block px-3 py-2 text-sm font-medium text-[#666666] hover:text-rose-600 hover:bg-rose-50 rounded">Kontak</a>
+                        @foreach($links as $link)
+                @if(\Route::has($link['route']))
+                    <a href="{{ route($link['route']) }}"
+                       class="block px-3 py-2 text-sm font-medium {{ request()->routeIs($link['route']) ? 'text-rose-600 bg-rose-50' : 'text-[#666666] hover:bg-rose-50 hover:text-rose-600' }} rounded">
+                        {{ $link['label'] }}
+                    </a>
+                @else
+                    <span class="block px-3 py-2 text-sm font-medium text-[#999999] cursor-default">
+                        {{ $link['label'] }}
+                    </span>
+                @endif
+            @endforeach
         </div>
     </div>
 </nav>
