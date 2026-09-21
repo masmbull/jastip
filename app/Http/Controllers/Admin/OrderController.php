@@ -36,7 +36,13 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load('items');
-        return view('admin.orders.show', compact('order'));
+                return view('admin.orders.show', compact('order'));
+    }
+
+    public function quickView(Order $order)
+    {
+        $order->load('items');
+        return view('admin.orders._detail', compact('order'));
     }
 
     public function updateStatus(OrderUpdateRequest $request, Order $order)

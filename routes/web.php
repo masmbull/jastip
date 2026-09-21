@@ -75,7 +75,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Orders
         Route::get('/pesanans', [AdminOrderController::class, 'index'])->name('orders.index');
-        Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+                Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 

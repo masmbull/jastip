@@ -10,6 +10,22 @@
 </head>
 <body class="bg-[#F5F5F5] text-[#333333] font-sans antialiased min-h-screen">
 
+{{-- Loading splash: fades out on full load via Alpine (uses existing x-cloak + animate-spin). --}}
+<div id="jd-splash"
+     x-data="{ ready: false }"
+     x-init="window.addEventListener('load', () => { ready = true })"
+     x-show="!ready"
+     x-transition:leave="transition ease-out duration-500"
+     x-transition:leave-end="opacity-0"
+          x-cloak
+     style="z-index: 9999"
+     class="fixed inset-0 flex items-center justify-center bg-white">
+    <div class="flex flex-col items-center gap-3">
+        <div class="w-12 h-12 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+        <span class="text-sm text-[#999999]">Memuat panel…</span>
+    </div>
+</div>
+
 <div class="flex h-screen">
 
     {{-- Sidebar --}}
@@ -125,6 +141,49 @@
 
 <x-toast />
 <x-confirm-modal />
+
+{{-- Quick-view modal: dispatches on `quickview` event, fetches a Blade partial via fetch() --}}
+<div x-data="jdQuickview()"
+     @quickview.window="open($event.detail)"
+     @keydown.escape.window="show = false"
+     x-cloak>
+    <template x-if="show">
+        <div class="fixed inset-0 z-[400] flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="show = false"></div>
+            <div class="relative bg-[#FAFAF8] rounded-xl shadow-xl w-full max-w-3xl mx-4 my-8 overflow-hidden flex flex-col max-h-[85vh] animate-scale-in"
+                 @click.stop>
+                <div class="p-4 border-b border-[#E8E0D8] flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-[#333333]" x-text="title"></h3>
+                    <button type="button"
+                            @click="show = false"
+                            class="text-[#999999] hover:text-[#333333] p-1 rounded-lg hover:bg-[#F5F5F5]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M18 6L6 18"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="overflow-y-auto flex-1 p-6" x-html="html"></div>
+            </div>
+        </div>
+    </template>
+</div>
+
+{{-- Back to top (scroll-triggered) --}}
+<div x-data="{show:false,
+             init(){addEventListener('scroll',()=>this.show=scrollY>420); addEventListener('scrollend',()=>this.show=scrollY>420)}}"
+     x-show="show"
+     x-transition
+     x-cloak
+     class="fixed bottom-6 right-6 z-[500]">
+    <button type="button"
+            @click="window.scrollTo({top:0, behavior:'smooth'})"
+            aria-label="Kembali ke atas"
+            class="w-11 h-11 rounded-full bg-rose-500 hover:bg-rose-600 text-white shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7 7 7v4"></path>
+        </svg>
+    </button>
+</div>
 
 @stack('scripts')
 </body>

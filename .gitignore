@@ -3,6 +3,9 @@
 /node_modules
 /.env
 /.env.local
+
+# Deploy env (contains secrets — fill per-environment, never commit)
+/deploy/.env*
 /storage/*.key
 /.fim
 
@@ -28,3 +31,5 @@ auth.json
 composer.lock
 package-lock.json
 yarn.lock
+
+serve.log

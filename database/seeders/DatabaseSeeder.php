@@ -20,9 +20,19 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@nitipdiend.com'],
             [
                 'name' => 'Admin Nabila',
-                'password' => bcrypt('admin123'),
+                                'password' => 'admin123',
                 'email_verified_at' => now(),
                 'role' => 'admin',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'budi@nitipdiend.com'],
+            [
+                'name' => 'Budi Santoso',
+                'password' => 'customer123',
+                'email_verified_at' => now(),
+                'role' => 'customer',
             ]
         );
     }

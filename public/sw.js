@@ -1,6 +1,6 @@
-/* Nitip Di End — PWA service worker (Vanilla, no deps) */
+﻿/* Nitip Di End — PWA service worker (Vanilla, no deps) */
 (function () {
-    var CACHE = 'jastip-pwa-v1';
+    var CACHE = 'jastip-pwa-v2';
     var OFFLINE = '/offline.html';
     var PRECACHE = [
         '/',
@@ -32,9 +32,10 @@
         if (req.method !== 'GET' || res.status !== 200) return;
         var url = new URL(req.url);
         if (url.origin !== location.origin) return;
-        // cache CSS/JS/images (including Vite hashed build assets)
-        if (url.pathname.startsWith('/build/') || res.headers.get('content-type') &&
-            res.headers.get('content-type').match(/^(text\/css|application\/javascript|image\/)/)) {
+        // Cache CSS/JS/images (incl. Vite hashed build assets) so the PWA shell never serves stale/missing styles.
+        if (url.pathname.startsWith('/build/') ||
+            (res.headers.get('content-type') &&
+             res.headers.get('content-type').match(/^(text\/css|application\/javascript|image\/)/))) {
             caches.open(CACHE).then(function (c) { c.put(req, res.clone()); });
         }
     }
@@ -45,15 +46,23 @@
 
         var url = new URL(req.url);
 
-        // Navigation -> network first, offline fallback
+        // Navigation requests (documents) -> network first, cache the real HTML,
+        // and only fall back to offline.html once the actual page is unreachable/offline.
         if (req.destination === 'document') {
             e.respondWith(
-                fetch(req).catch(function () { return caches.match(OFFLINE); })
+                fetch(req).then(function (res) {
+                    caches.open(CACHE).then(function (c) { c.put(req, res.clone()); });
+                    return res;
+                }).catch(function () {
+                    return caches.match(req).then(function (cached) {
+                        return cached || caches.match(OFFLINE);
+                    });
+                })
             );
             return;
         }
 
-        // Everything else -> cache first, then network (and cache response)
+        // Everything else -> cache first, then network (and cache the response).
         e.respondWith(
             caches.match(req).then(function (cached) {
                 if (cached) return cached;

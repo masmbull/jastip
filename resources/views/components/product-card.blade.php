@@ -12,7 +12,7 @@
                  alt="{{ $product->name }}"
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                  loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw">
-            @if($product->is_featured)
+                        @if($product->is_featured)
                 <span class="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Unggulan
                 </span>
@@ -21,6 +21,25 @@
                 <span class="absolute top-3 right-3 bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Habis
                 </span>
+            @endif
+
+            @if($product->isInStock())
+                {{-- Quick-add "tombol keranjang" — appears on hover, async POST to cart --}}
+                <form method="POST"
+                      action="{{ route('cart.add', ['product' => $product->id]) }}"
+                      data-async
+                      class="absolute bottom-3 right-3 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-200">
+                    @csrf
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit"
+                            class="w-11 h-11 rounded-full bg-rose-500 hover:bg-rose-600 text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-rose-300 flex items-center justify-center"
+                            title="Tambah ke keranjang">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M16 11V7a4 4 0 00-8 0v4M8 11h8m-2 4h-4M8 15l-2 4h8l-2-4"></path>
+                        </svg>
+                    </button>
+                </form>
             @endif
         @else
             <div class="w-full h-full bg-gradient-to-br from-rose-100 to-rose-50 flex items-center justify-center animate-shimmer">

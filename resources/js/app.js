@@ -185,7 +185,24 @@
     };
 };
 
-/* ---- PWA: service worker + installability ---- */
+    /* ---- quick-view modal (orders) ---- */
+    window.jdQuickview = function () {
+        return {
+            show: false, title: 'Detail', html: '',
+            open(d) {
+                this.title = d.title || 'Detail';
+                this.html = '<p class="p-3 text-sm text-[#999999]">Memuat…</p>';
+                this.show = true;
+                const t = this;
+                fetch(d.url, { headers: { 'X-Requested-With': 'true' }, credentials: 'same-origin' })
+                    .then(r => r.ok ? r.text() : Promise.reject(r.status))
+                    .then(h => { t.html = h; })
+                    .catch(() => { t.html = '<p class="p-3 text-sm text-red-600">Gagal memuat detail.</p>'; });
+            },
+        };
+    };
+
+    /* ---- PWA: service worker + installability ---- */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
             navigator.serviceWorker.register('/sw.js').catch(function () {});

@@ -55,10 +55,21 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3">
-                                <a href="{{ route('admin.orders.show', $order->id) }}"
-                                   class="text-rose-600 hover:text-rose-800 text-sm font-medium">
-                                    Lihat
-                                </a>
+                                                                <div class="flex items-center space-x-1">
+                                    <button type="button"
+                                            data-qv-url="{{ route('admin.orders.quickview', $order) }}"
+                                            data-qv-title="#{{ $order->no }}"
+                                            @click="$dispatch('quickview', {url:$el.dataset.qvUrl, title:$el.dataset.qvTitle})"
+                                            class="text-rose-600 hover:text-rose-800 p-1 rounded-lg hover:bg-[#F5F5F0]" title="Quick view">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s7.5-7.5 10.25-7.5A10 10 0 0 118 8m-1.5 6h.01M9 21a9 9 0 0 1-6.75-3 9 9 0 0 10-6.75"></path>
+                                        </svg>
+                                    </button>
+                                    <a href="{{ route('admin.orders.show', $order->id) }}"
+                                       class="text-rose-600 hover:text-rose-800 text-sm font-medium">
+                                        Lihat
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty

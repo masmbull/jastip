@@ -44,7 +44,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
-    <body class="bg-[#FAF7F2] text-[#333333] font-sans antialiased"
+        <body class="bg-[#FAF7F2] text-[#333333] font-sans antialiased min-h-screen flex flex-col"
           x-data="{ mobileMenuOpen: false, searchOpen: false }"
           x-cloak>
 
@@ -57,7 +57,7 @@
         <x-navbar />
 
         {{-- MAIN CONTENT --}}
-        <main id="main-content" class="pb-20 md:pb-0 min-h-[calc(100vh-200px)] animate-fade-up">
+                <main id="main-content" class="flex-1 pb-20 md:pb-0 animate-fade-up">
             @yield('content')
         </main>
 
