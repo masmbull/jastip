@@ -1,61 +1,83 @@
-@extends('layouts.auth')
+﻿@extends('layouts.auth')
 
 @section('title', 'Masuk | ' . setting('brand_name'))
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FAF7F2] to-[#F0EDE7] flex items-center justify-center p-8">
+<div class="min-h-screen bg-gradient-to-br from-[#f5f0e8] to-[#ede7de] flex items-center justify-center p-4">
     <div class="w-full max-w-md">
-        <div class="bg-white rounded-2xl shadow-xl p-8 border border-[#E8E0D8]">
+        <div class="bg-[#1a1a1a] rounded-2xl shadow-xl p-8 border border-[#2e323b]">
+            {{-- Logo --}}
             <div class="flex items-center justify-center mb-6">
-                <div class="flex items-center space-x-2">
-                    <div class="h-10 w-10 bg-rose-500 rounded-full flex items-center justify-center">
-                        <span class="text-lg text-white font-bold">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
+                <div class="flex items-center space-x-3">
+                    <div class="h-10 w-10 bg-[#F5A623] rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
                     </div>
-                    <span class="font-bold text-lg text-[#333333]">{{ setting('brand_name', 'NITIP DI END') }}</span>
+                    <span class="font-bold text-lg text-[#f5f0e8]">{{ setting('brand_name', 'NITIP DI END') }}</span>
                 </div>
             </div>
 
-            <h1 class="text-2xl font-bold text-[#333333] text-center mb-2">Halo Admin 👋</h1>
-            <p class="text-sm text-[#999999] text-center mb-6">Masuk ke dashboard {{ setting('brand_name', 'NITIP DI END') }}</p>
+            <h1 class="text-2xl font-semibold text-center text-[#f5f0e8] mb-1">Halo Admin 👋</h1>
+            <p class="text-sm text-[#b0b4bd] text-center mb-6">Masuk ke dashboard {{ setting('brand_name', 'NITIP DI END') }}</p>
 
             <form method="POST" action="{{ route('admin.login') }}">
                 @csrf
-                <div class="space-y-4">
+                <div class="space-y-5">
+                    {{-- Email --}}
                     <div>
-                        <label class="block text-sm font-medium text-[#333333] mb-2">
-                            <svg class="w-4 h-4 inline mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @error('email')
+                            <p class="text-xs text-[#fca5a5] mb-1">{{ $message }}</p>
+                        @enderror
+                        <label class="flex items-center gap-2 text-xs font-medium text-[#b0b4bd] mb-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
                             Email
                         </label>
-                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="admin@nitipdiend.com"
-                               class="w-full px-4 py-3 border border-[#E8E0D8] rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300 @error('email') border-red-500 @enderror">
-                        @error('email')<p class="text-sm text-red-500 mt-1">{{ $message }}</p>@enderror
+                        <input type="email" name="email" value="{{ old('email') }}" required autofocus
+                               placeholder="admin@nitipdiend.com"
+                               class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#f5f0e8] placeholder-[#9ca3af]/60 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
                     </div>
 
+                    {{-- Password --}}
                     <div>
-                        <label class="block text-sm font-medium text-[#333333] mb-2">
-                            <svg class="w-4 h-4 inline mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @error('password')
+                            <p class="text-xs text-[#fca5a5] mb-1">{{ $message }}</p>
+                        @enderror
+                        <label class="flex items-center gap-2 text-xs font-medium text-[#b0b4bd] mb-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                             </svg>
                             Password
                         </label>
                         <div class="relative">
-                            <input type="password" id="password" name="password" required placeholder="Masukkan password"
-                                   class="w-full px-4 py-3 border border-[#E8E0D8] rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-300 @error('password') border-red-500 @enderror pr-10">
-                            <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#999999] hover:text-[#333333]">
+                            <input type="password" id="password" name="password" required
+                                   placeholder="Masukkan password"
+                                   class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#f5f0e8] placeholder-[#9ca3af]/60 pr-10 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
+                            <button type="button" onclick="togglePassword()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]/60 hover:text-[#F5A623]">
                                 <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
                             </button>
                         </div>
-                        @error('password')<p class="text-sm text-red-500 mt-1">{{ $message }}</p>@enderror
                     </div>
                 </div>
-                <button type="submit" class="w-full mt-6 px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+
+                <button type="submit"
+                        class="w-full mt-6 px-6 py-2.5 bg-[#F5A623] hover:bg-[#e6951b] text-[#1a1a1a] font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
                     Masuk
                 </button>
             </form>
+        </div>
+
+        {{-- Footer badge --}}
+        <div class="mt-6 flex justify-center">
+            <span class="inline-flex items-center px-4 py-2 rounded-xl bg-[#F5A623]/15 text-[#F5A623] text-xs font-medium">
+                {{ setting('brand_name', 'NITIP DI END') }} · v{{ config('app.version', '1.0') }}
+            </span>
+        </div>
+    </div>
+</div>
 
 <script>
 function togglePassword() {
