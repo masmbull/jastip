@@ -62,9 +62,14 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil ditambahkan!');
     }
 
-    public function show(Product $product)
+        public function show(Product $product)
     {
         return view('admin.products.show', compact('product'));
+    }
+
+    public function quickView(Product $product)
+    {
+        return response()->view('admin.products._detail', compact('product'))->header('Turbo-Frame', 'quickview');
     }
 
     public function edit(Product $product)
