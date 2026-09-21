@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // =============================================================================
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+// Aliased admin login path: /login/admin -> /admin/login (was 404).
+Route::redirect('/login/admin', '/admin/login', 301);
+
 
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 Route::get('/produk/{product:slug}', [ProductController::class, 'show'])->name('products.show');
