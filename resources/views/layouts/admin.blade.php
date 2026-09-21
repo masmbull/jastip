@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', setting('brand_name', 'NITIP DI END'))</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        /* Apply saved / system dark preference BEFORE styles load (no FOUC). */
+        (function () {
+            if (localStorage.theme === 'dark' ||
+                (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
@@ -120,8 +129,24 @@
                     <span>{{ setting('whatsapp', '08123456789') }}</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-3">
                 <span class="text-sm text-[#999999]">Halo, Admin</span>
+
+                {{-- Dark-mode toggle (persists to localStorage, no DB write) --}}
+                <button type="button"
+                        x-data=""
+                        @click="document.documentElement.classList.toggle('dark'); localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'"
+                        class="p-1.5 rounded-lg text-[#666666] hover:text-rose-600 hover:bg-[#F5F5F0]" title="Dark mode">
+                    <svg x-show="!document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 12.75a9 9 0 1 1-9.25-9.25 7 7 0 0 0 9.25 9.25z"></path>
+                    </svg>
+                    <svg x-show="document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v2m0 14v2m8.66-10.66-1.42 1.42M4.76 4.76l1.42 1.42M19 12h2M3 12h2m14.66 4.66-1.42 1.42M4.76 19.24l1.42-1.42"></path>
+                    </svg>
+                </button>
+
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit"

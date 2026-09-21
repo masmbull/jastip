@@ -28,4 +28,37 @@
 }
 
 /* focus ring consistency */
-\*:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
+\   *:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
+
+/* ===== Admin dark mode =====
+   Set class "dark" on <html> via the toggle in layouts/admin.blade.php.
+   Override palette (arbitrary hexes + bg-white) under html.dark so all surfaces
+   darken without per-page edits / dark: utilities.
+   ponytail: fine-tune badge & per-surface colors later. */
+html.dark {
+    --dt-bg:        #0f1012;
+    --dt-surface:   #18191e;
+    --dt-surface-2: #212329;
+    --dt-border:    #2e323b;
+    --dt-text:      #e5e7eb;
+    --dt-muted:     #9ca3af;
+    --dt-rose:      #fbbf24;
+}
+html.dark body { background-color: var(--dt-bg); color: var(--dt-text); }
+
+html.dark [class*="bg-[#F5F5F0]"],
+html.dark [class*="bg-[#FAFAF8]"],
+html.dark [class*="bg-[#F8F5F0]"],
+html.dark [class*="bg-[#fafafa]"]   { background-color: var(--dt-surface); }
+html.dark [class*="bg-white"]       { background-color: var(--dt-surface-2); }
+html.dark [class*="bg-rose-50"]     { background-color: var(--dt-rose); }
+
+html.dark [class*="border-[#E8E0D8]"],
+html.dark [class*="divide-[#F0EDE7]"],
+html.dark [class*="border-[#F0EDE7]"] { border-color: var(--dt-border); }
+
+html.dark [class*="text-[#333333]"] { color: var(--dt-text); }
+html.dark [class*="text-[#666666]"] { color: var(--dt-muted); }
+html.dark [class*="text-[#999999]"] { color: var(--dt-muted); }
+
+html.dark a { color: #fb7185; }
