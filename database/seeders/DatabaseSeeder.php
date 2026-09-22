@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            ViralProductSeeder::class,
             SettingSeeder::class,
             OrderSeeder::class,
         ]);
@@ -20,7 +21,8 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@nitipdiend.com'],
             [
                 'name' => 'Admin Nabila',
-                                'password' => 'admin123',
+                'username' => 'admin',
+                'password' => 'admin123',
                 'email_verified_at' => now(),
                 'role' => 'admin',
             ]

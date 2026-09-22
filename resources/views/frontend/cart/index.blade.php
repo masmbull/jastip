@@ -5,17 +5,17 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-    <h1 class="text-3xl md:text-4xl font-bold text-[#333333] mb-8 animate-fade-up">Titipan Kamu</h1>
+    <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] mb-8 animate-fade-up">Titipan Kamu</h1>
 
     @if($cartItems->isEmpty())
         <div class="text-center py-16 animate-fade-up" style="animation-delay: 120ms">
             <div class="w-32 h-32 mx-auto bg-[#F0EDE7] rounded-full mb-6 flex items-center justify-center">
                 <span class="text-5xl">🛍️</span>
             </div>
-            <h2 class="text-xl font-semibold text-[#333333] mb-2">Titipan kamu masih kosong.</h2>
-            <p class="text-[#999999] mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
+            <h2 class="text-xl font-semibold text-[#1E293B] mb-2">Titipan kamu masih kosong.</h2>
+            <p class="text-[#94A3B8] mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
             <a href="{{ route('products.index') }}"
-               class="inline-flex items-center px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300">
+               class="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                 Lihat Semua Produk
             </a>
         </div>
@@ -23,21 +23,21 @@
         <div class="space-y-6">
 
             {{-- Cart Table (Desktop) --}}
-            <div class="hidden sm:block bg-white rounded-xl shadow-sm border border-[#E8E0D8] overflow-hidden animate-fade-up">
+            <div class="hidden sm:block bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up">
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="bg-[#F8F5F0]">
+                        <thead class="bg-[#F1F5F9]">
                             <tr>
-                                <th class="text-left px-4 py-3 text-xs font-medium text-[#666666] uppercase">Produk</th>
-                                <th class="text-center px-4 py-3 text-xs font-medium text-[#666666] uppercase">Harga</th>
-                                <th class="text-center px-4 py-3 text-xs font-medium text-[#666666] uppercase">Jumlah</th>
-                                <th class="text-right px-4 py-3 text-xs font-medium text-[#666666] uppercase">Subtotal</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-[#666666] uppercase">Aksi</th>
+                                <th class="text-left px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Produk</th>
+                                <th class="text-center px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Harga</th>
+                                <th class="text-center px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Jumlah</th>
+                                <th class="text-right px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Subtotal</th>
+                                <th class="px-4 py-3 text-center text-xs font-medium text-[#64748B] uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#F0EDE7]">
                             @foreach($cartItems as $item)
-                                <tr class="hover:bg-[#fafafa]">
+                                <tr class="hover:bg-[#F8FAFC]">
                                     <td class="px-4 py-4">
                                         <div class="flex items-center space-x-3">
                                             <img src="{{ $item['image'] ?? 'https://placehold.co/60x60/ffe8f0/999999?text=' . urlencode($item['name']) }}"
@@ -45,8 +45,8 @@
                                                  class="w-14 h-14 rounded-lg object-cover"
                                                  loading="lazy" decoding="async">
                                             <div>
-                                                <p class="font-medium text-[#333333]">{{ $item['name'] }}</p>
-                                                <p class="text-sm text-[#999999]">{{ $item['unit'] ?? 'pcs' }}</p>
+                                                <p class="font-medium text-[#1E293B]">{{ $item['name'] }}</p>
+                                                <p class="text-sm text-[#94A3B8]">{{ $item['unit'] ?? 'pcs' }}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -56,14 +56,14 @@
                                               class="inline-flex items-center justify-center gap-1">
                                             @csrf
                                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                                   class="w-10 h-8 text-center text-sm border border-[#E8E0D8] rounded focus:outline-none focus:ring-1 focus:ring-rose-300">
+                                                   class="w-10 h-8 text-center text-sm border border-[#E2E8F0] rounded focus:outline-none focus:ring-1 focus:ring-orange-300">
                                             <button type="submit"
-                                                    class="text-xs px-2 py-1 bg-rose-500 text-white rounded hover:bg-rose-600">
+                                                    class="text-xs px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
                                                 OK
                                             </button>
                                         </form>
                                     </td>
-                                    <td class="text-right px-4 py-4 font-medium text-[#333333]">{{ format_price($item['subtotal']) }}</td>
+                                    <td class="text-right px-4 py-4 font-medium text-[#1E293B]">{{ format_price($item['subtotal']) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <form method="POST"
                                               action="{{ route('cart.remove', ['product' => $item['product_id']]) }}"
@@ -90,22 +90,22 @@
             {{-- Mobile list --}}
             <div class="sm:hidden space-y-4">
                 @foreach($cartItems as $item)
-                    <div class="bg-white rounded-xl shadow-sm border border-[#E8E0D8] p-4 flex gap-3 items-start">
+                    <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-4 flex gap-3 items-start">
                         <img src="{{ $item['image'] ?? 'https://placehold.co/60x60/ffe8f0/999999?text=' . urlencode($item['name']) }}"
                              alt="{{ $item['name'] }}"
                              class="w-16 h-16 rounded-lg object-cover"
                              loading="lazy" decoding="async">
                         <div class="flex-1">
-                            <p class="font-medium text-[#333333]">{{ $item['name'] }}</p>
-                            <p class="text-xs text-[#999999]">{{ $item['unit'] ?? 'pcs' }} · {{ format_price($item['price']) }}</p>
+                            <p class="font-medium text-[#1E293B]">{{ $item['name'] }}</p>
+                            <p class="text-xs text-[#94A3B8]">{{ $item['unit'] ?? 'pcs' }} · {{ format_price($item['price']) }}</p>
                             <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
                                   class="flex items-center gap-1 mt-2">
                                 @csrf
                                 <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                       class="w-10 h-8 text-center text-sm border border-[#E8E0D8] rounded">
-                                <button type="submit" class="text-xs px-2 py-1 bg-rose-500 text-white rounded">OK</button>
+                                       class="w-10 h-8 text-center text-sm border border-[#E2E8F0] rounded">
+                                <button type="submit" class="text-xs px-2 py-1 bg-orange-500 text-white rounded">OK</button>
                             </form>
-                            <p class="text-xs text-[#999999] mt-1">Subtotal: {{ format_price($item['subtotal']) }}</p>
+                            <p class="text-xs text-[#94A3B8] mt-1">Subtotal: {{ format_price($item['subtotal']) }}</p>
                         </div>
                         <form method="POST"
                               action="{{ route('cart.remove', ['product' => $item['product_id']]) }}"
@@ -125,20 +125,20 @@
             </div>
 
             {{-- Cart Summary --}}
-            <div class="mt-8 bg-white rounded-xl shadow-sm border border-[#E8E0D8] p-6 animate-fade-up">
+            <div class="mt-8 bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6 animate-fade-up">
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-[#666666]">Subtotal ({{ $cartItems->sum('quantity') }} item)</span>
-                        <span class="font-bold text-[#333333]">{{ format_price($subtotal) }}</span>
+                        <span class="text-[#64748B]">Subtotal ({{ $cartItems->sum('quantity') }} item)</span>
+                        <span class="font-bold text-[#1E293B]">{{ format_price($subtotal) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-[#666666]">Ongkir</span>
-                        <span class="text-[#999999]">{{ format_price(setting('shipping_cost', 0)) }}</span>
+                        <span class="text-[#64748B]">Ongkir</span>
+                        <span class="text-[#94A3B8]">{{ format_price(setting('shipping_cost', 0)) }}</span>
                     </div>
-                    <div class="border-t border-[#E8E0D8] pt-3 mt-3">
+                    <div class="border-t border-[#E2E8F0] pt-3 mt-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-lg font-semibold text-[#333333]">Total</span>
-                            <span class="text-2xl font-bold text-rose-600">{{ format_price($subtotal + setting('shipping_cost', 0)) }}</span>
+                            <span class="text-lg font-semibold text-[#1E293B]">Total</span>
+                            <span class="text-2xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0)) }}</span>
                         </div>
                     </div>
                 </div>
@@ -147,11 +147,11 @@
             {{-- Actions --}}
             <div class="mt-8 flex flex-col sm:flex-row gap-4 animate-fade-up">
                 <a href="{{ route('products.index') }}"
-                   class="flex-1 text-center px-6 py-3 border border-[#E8E0D8] text-[#666666] font-medium rounded-full hover:bg-[#F5F5F5] transition-colors">
+                   class="flex-1 text-center px-6 py-3 border border-[#E2E8F0] text-[#64748B] font-medium rounded-full hover:bg-[#F1F5F9] transition-colors">
                     Lanjutkan Belanja
                 </a>
                 <a href="{{ route('checkout.index') }}"
-                   class="flex-1 text-center px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300">
+                   class="flex-1 text-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Lanjut Nitip
                 </a>
             </div>

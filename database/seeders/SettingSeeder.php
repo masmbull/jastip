@@ -35,10 +35,33 @@ class SettingSeeder extends Seeder
             ['key' => 'meta_keywords', 'value' => 'jastip, nitip, jastip lokal, parfum, tumbler, lifestyle, fashion, beauty', 'type' => 'string', 'group' => 'seo', 'is_public' => true],
             ['key' => 'shipping_cost', 'value' => '0', 'type' => 'integer', 'group' => 'business', 'is_public' => true],
             ['key' => 'minimum_order', 'value' => '50000', 'type' => 'integer', 'group' => 'business', 'is_public' => true],
+
+            // QRIS payment
+            ['key' => 'qris_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'qris', 'is_public' => true],
+            ['key' => 'qris_merchant_name', 'value' => 'NITIP DI END', 'type' => 'string', 'group' => 'qris', 'is_public' => true],
         ];
 
         foreach ($settings as $setting) {
             Setting::firstOrCreate(['key' => $setting['key']], $setting);
         }
+
+        $this->seedQrisPlaceholder();
+    }
+
+    private function seedQrisPlaceholder(): void
+    {
+        $rel = 'settings/qris-placeholder.png';
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
+
+        if (! $disk->exists($rel)) {
+            $disk->makeDirectory('settings');
+            $path = $disk->path($rel);
+            \App\Services\QrisPlaceholderGenerator::generate($path);
+        }
+
+        Setting::firstOrCreate(
+            ['key' => 'qris_image'],
+            ['value' => $rel, 'type' => 'string', 'group' => 'qris', 'is_public' => true]
+        );
     }
 }

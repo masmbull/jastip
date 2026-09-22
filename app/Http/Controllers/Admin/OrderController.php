@@ -36,18 +36,32 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load('items');
-                return view('admin.orders.show', compact('order'));
+
+        return view('admin.orders.show', [
+            'order' => $order,
+            'qris_image'    => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
+            'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
+        ]);
     }
 
     public function quickView(Order $order)
     {
         $order->load('items');
-        return view('admin.orders._detail', compact('order'));
+
+        return view('admin.orders._detail', [
+            'order' => $order,
+            'qris_image'    => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
+            'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
+        ]);
     }
 
     public function updateStatus(OrderUpdateRequest $request, Order $order)
     {
         $order->update($request->validated());
+
+        if ($request->boolean('mark_paid') && ! $order->is_paid) {
+            $order->update(['paid_at' => now()]);
+        }
 
         return redirect()->route('admin.orders.show', $order)
             ->with('success', 'Status pesanan berhasil diperbarui!');

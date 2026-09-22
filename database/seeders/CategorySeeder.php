@@ -16,6 +16,8 @@ class CategorySeeder extends Seeder
             ['name' => 'Fashion', 'icon' => 'shirt'],
             ['name' => 'Beauty', 'icon' => 'sparkles'],
             ['name' => 'Lifestyle', 'icon' => 'home'],
+            ['name' => 'Makanan', 'icon' => 'cake'],
+            ['name' => 'Accessories', 'icon' => 'watch'],
         ];
 
         foreach ($categories as $category) {

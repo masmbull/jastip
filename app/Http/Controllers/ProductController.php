@@ -57,4 +57,34 @@ class ProductController extends Controller
 
         return view('frontend.products.show', compact('product', 'relatedProducts'));
     }
+
+    /**
+     * Halaman "Produk Viral" — daftar produk tren Indonesia 2024–2025.
+     * Bisa difilter per kategori dan diurutkan sesuai peringkat viral.
+     */
+    public function viral(Request $request)
+    {
+        $query = Product::viral()->with('category');
+
+        if ($request->filled('category')) {
+            $query->byCategory($request->input('category'));
+        }
+
+        $products = $query->paginate(12)->withQueryString();
+
+        $categories = Category::active()
+            ->withCount(['products as viral_count' => function ($q) {
+                $q->where('is_viral', true)->where('is_active', true);
+            }])
+            ->has('products')
+            ->orderBy('sort_order')
+            ->get()
+            ->filter(fn ($category) => $category->viral_count > 0)
+            ->values();
+
+        $totalViral = Product::viral()->count();
+        $totalSold = (int) Product::viral()->sum('sold_count');
+
+        return view('frontend.products.viral', compact('products', 'categories', 'totalViral', 'totalSold'));
+    }
 }

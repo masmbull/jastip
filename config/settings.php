@@ -50,5 +50,13 @@ return [
                 'minimum_order' => ['type' => 'number', 'label' => 'Minimum Order (Rp)'],
             ],
         ],
+        'qris' => [
+            'label' => 'Pembayaran QRIS',
+            'settings' => [
+                'qris_enabled' => ['type' => 'boolean', 'label' => 'Aktifkan Pembayaran QRIS'],
+                'qris_merchant_name' => ['type' => 'text', 'label' => 'Nama Merchant QRIS'],
+                'qris_image' => ['type' => 'image', 'label' => 'Gambar QRIS Statis (PNG/JPG, upload dari e-wallet kamu)'],
+            ],
+        ],
     ],
 ];

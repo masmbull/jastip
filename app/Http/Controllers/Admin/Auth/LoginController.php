@@ -29,7 +29,7 @@ class LoginController extends Controller
             $request->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => ['Akun ini bukan akun admin.'],
+                'username' => ['Akun ini bukan akun admin.'],
             ]);
         }
 

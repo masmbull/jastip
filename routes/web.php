@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShippingController;
 use Illuminate\Support\Facades\Route;
 
 // =============================================================================
@@ -24,9 +25,16 @@ Route::redirect('/login/admin', '/admin/login', 301);
 
 
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
+// Harus di atas /produk/{product:slug} supaya tidak dianggap slug produk.
+Route::get('/produk-viral', [ProductController::class, 'viral'])->name('products.viral');
 Route::get('/produk/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/kategori', [CategoryController::class, 'index'])->name('categories.index');
 Route::get('/kategori/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
+
+// Cek Ongkir & Tracking Resi
+Route::get('/ongkir', [ShippingController::class, 'index'])->name('shipping.index');
+// Endpoint JSON read-only (tanpa CSRF) untuk hitung ongkir via JS/AJAX.
+Route::get('/ongkir/check', [ShippingController::class, 'check'])->name('shipping.check');
 
 // Cart / Titipan Routes
 Route::get('/titipan', [CartController::class, 'index'])->name('cart.index');
@@ -44,6 +52,8 @@ Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation']
 Route::get('/tentang', [PageController::class, 'about'])->name('about');
 Route::get('/cara-nitip', [PageController::class, 'howTo'])->name('how-to');
 Route::get('/kontak', [PageController::class, 'contact'])->name('contact');
+Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('terms');
+Route::get('/kebijakan-privasi', [PageController::class, 'privacy'])->name('privacy');
 
 // =============================================================================
 // Admin Routes

@@ -22,15 +22,15 @@
                  @click="cancel()"></div>
             <div class="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 animate-scale-in"
                  @click.stop>
-                <h3 class="text-lg font-semibold text-[#333333]" x-text="title"></h3>
-                <p class="mt-2 text-sm text-[#666666]" x-text="message"></p>
+                <h3 class="text-lg font-semibold text-[#1E293B]" x-text="title"></h3>
+                <p class="mt-2 text-sm text-[#64748B]" x-text="message"></p>
                 <div class="mt-6 flex justify-end gap-3 pt-2">
                     <button type="button"
                             @click="cancel()"
-                            class="px-4 py-2 text-sm text-[#666666] hover:bg-[#F5F5F5] rounded-lg border border-[#E8E0D8]">{{ $cancelLabel }}</button>
+                            class="px-4 py-2 text-sm text-[#64748B] hover:bg-[#F1F5F9] rounded-lg border border-[#E2E8F0]">{{ $cancelLabel }}</button>
                     <button type="button"
                             @click="ok()"
-                            class="px-4 py-2 text-sm text-white bg-rose-500 hover:bg-rose-600 rounded-lg shadow-sm">{{ $okLabel }}</button>
+                            class="px-4 py-2 text-sm text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm">{{ $okLabel }}</button>
                 </div>
             </div>
         </div>

@@ -33,3 +33,5 @@ package-lock.json
 yarn.lock
 
 serve.log
+server.log
+server_err.log

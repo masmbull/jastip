@@ -1,9 +1,9 @@
-﻿@extends('layouts.auth')
+@extends('layouts.auth')
 
 @section('title', 'Masuk | ' . setting('brand_name'))
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#f5f0e8] to-[#ede7de] flex items-center justify-center p-4">
+<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <div class="bg-[#1a1a1a] rounded-2xl shadow-xl p-8 border border-[#2e323b]">
             {{-- Logo --}}
@@ -12,30 +12,30 @@
                     <div class="h-10 w-10 bg-[#F5A623] rounded-full flex items-center justify-center">
                         <span class="text-white font-bold text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
                     </div>
-                    <span class="font-bold text-lg text-[#f5f0e8]">{{ setting('brand_name', 'NITIP DI END') }}</span>
+                    <span class="font-bold text-lg text-[#FDF6EC]">{{ setting('brand_name', 'NITIP DI END') }}</span>
                 </div>
             </div>
 
-            <h1 class="text-2xl font-semibold text-center text-[#f5f0e8] mb-1">Halo Admin 👋</h1>
+            <h1 class="text-2xl font-semibold text-center text-[#FDF6EC] mb-1">Halo Admin 👋</h1>
             <p class="text-sm text-[#b0b4bd] text-center mb-6">Masuk ke dashboard {{ setting('brand_name', 'NITIP DI END') }}</p>
 
             <form method="POST" action="{{ route('admin.login') }}">
                 @csrf
                 <div class="space-y-5">
-                    {{-- Email --}}
+                    {{-- Username --}}
                     <div>
-                        @error('email')
+                        @error('username')
                             <p class="text-xs text-[#fca5a5] mb-1">{{ $message }}</p>
                         @enderror
                         <label class="flex items-center gap-2 text-xs font-medium text-[#b0b4bd] mb-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
-                            Email
+                            Username
                         </label>
-                        <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                               placeholder="admin@nitipdiend.com"
-                               class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#f5f0e8] placeholder-[#9ca3af]/60 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
+                        <input type="text" name="username" value="{{ old('username') }}" required autofocus
+                               placeholder="admin atau 081234567890"
+                               class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
                     </div>
 
                     {{-- Password --}}
@@ -52,7 +52,7 @@
                         <div class="relative">
                             <input type="password" id="password" name="password" required
                                    placeholder="Masukkan password"
-                                   class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#f5f0e8] placeholder-[#9ca3af]/60 pr-10 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
+                                   class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 pr-10 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
                             <button type="button" onclick="togglePassword()"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]/60 hover:text-[#F5A623]">
                                 <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

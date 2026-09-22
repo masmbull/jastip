@@ -70,7 +70,8 @@ class CheckoutController extends Controller
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'total' => $total,
-                'status' => Order::STATUS_PENDING,
+                'status' => Order::STATUS_AWAITING_PAYMENT,
+                'payment_method' => 'qris',
             ]);
 
             foreach ($cartItems as $item) {
@@ -113,9 +114,14 @@ class CheckoutController extends Controller
 
         // Store order data in session for confirmation page
         session()->flash('order_data', [
-            'order_number' => $order->order_number,
-            'total' => $total,
-            'whatsapp_url' => $whatsappUrl,
+            'order_number'  => $order->order_number,
+            'order_id'      => $order->id,
+            'subtotal'      => $subtotal,
+            'shipping_cost' => $shippingCost,
+            'total'         => $total,
+            'whatsapp_url'  => $whatsappUrl,
+            'qris_image'    => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
+            'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
         ]);
 
         return redirect()->route('checkout.confirmation');

@@ -13,7 +13,7 @@
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                  loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw">
                         @if($product->is_featured)
-                <span class="absolute top-3 left-3 bg-rose-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                <span class="absolute top-3 left-3 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Unggulan
                 </span>
             @endif
@@ -32,7 +32,7 @@
                     @csrf
                     <input type="hidden" name="quantity" value="1">
                     <button type="submit"
-                            class="w-11 h-11 rounded-full bg-rose-500 hover:bg-rose-600 text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-rose-300 flex items-center justify-center"
+                            class="w-11 h-11 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-300 flex items-center justify-center"
                             title="Tambah ke keranjang">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -42,7 +42,7 @@
                 </form>
             @endif
         @else
-            <div class="w-full h-full bg-gradient-to-br from-rose-100 to-rose-50 flex items-center justify-center animate-shimmer">
+            <div class="w-full h-full bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center animate-shimmer">
                 <span class="text-4xl">📦</span>
             </div>
         @endif
@@ -51,9 +51,34 @@
     {{-- Content --}}
     <div class="p-4">
         @if($product)
-            <p class="text-xs text-[#999999] uppercase font-medium mb-1">{{ $product->category->name ?? 'Lainnya' }}</p>
-            <h3 class="font-bold text-lg text-[#333333] mb-2 line-clamp-1">{{ $product->name }}</h3>
-            <p class="text-rose-600 font-bold text-lg mb-3">{{ $product->formatted_price }}</p>
+            <div class="flex items-center justify-between gap-2 mb-1">
+                <p class="text-xs text-[#94A3B8] uppercase font-medium">{{ $product->category->name ?? 'Lainnya' }}</p>
+                @if($product->sold_text)
+                    <span class="text-xs text-[#64748B]">{{ $product->sold_text }}</span>
+                @endif
+            </div>
+            <h3 class="font-bold text-lg text-[#1E293B] mb-1 line-clamp-1">{{ $product->name }}</h3>
+
+            @if($product->brand)
+                <p class="text-xs text-[#64748B] mb-1">oleh {{ $product->brand }}</p>
+            @endif
+
+            @if($product->rating_text)
+                <p class="text-xs text-[#64748B] mb-2 flex items-center gap-1">
+                    <span class="text-amber-500">★</span>
+                    <span class="font-semibold text-[#1E293B]">{{ $product->rating_text }}</span>
+                    <span class="text-[#94A3B8]">rating</span>
+                </p>
+            @else
+                <div class="mb-2"></div>
+            @endif
+
+            <p class="text-orange-600 font-bold text-lg mb-1">
+                {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}
+            </p>
+            @if($product->price_max)
+                <p class="text-xs text-[#94A3B8] mb-2">harga pasaran</p>
+            @endif
 
             {{-- Availability --}}
             <div class="mb-3">
@@ -68,7 +93,7 @@
             {{-- Action --}}
             @if($product->isInStock())
                 <a href="{{ route('products.show', $product->slug) }}"
-                   class="block w-full text-center px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300">
+                   class="block w-full text-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Lihat Detail
                 </a>
             @else
@@ -78,7 +103,7 @@
                 </button>
             @endif
         @else
-            <p class="text-sm text-[#999999]">Data produk tidak tersedia.</p>
+            <p class="text-sm text-[#94A3B8]">Data produk tidak tersedia.</p>
         @endif
     </div>
 </article>

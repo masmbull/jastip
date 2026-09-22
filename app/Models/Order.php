@@ -14,10 +14,12 @@ class Order extends Model
         'customer_address',
         'customer_notes',
         'shipping_method',
+        'payment_method',
         'subtotal',
         'shipping_cost',
         'total',
         'status',
+        'paid_at',
         'admin_notes',
     ];
 
@@ -27,9 +29,11 @@ class Order extends Model
             'subtotal' => 'integer',
             'shipping_cost' => 'integer',
             'total' => 'integer',
+            'paid_at' => 'datetime',
         ];
     }
 
+    public const STATUS_AWAITING_PAYMENT = 'awaiting_payment';
     public const STATUS_PENDING = 'pending';
     public const STATUS_CONFIRMED = 'confirmed';
     public const STATUS_PROCESSING = 'processing';
@@ -41,6 +45,7 @@ class Order extends Model
     public static function statuses(): array
     {
         return [
+            self::STATUS_AWAITING_PAYMENT => 'Menunggu Pembayaran',
             self::STATUS_PENDING => 'Pending',
             self::STATUS_CONFIRMED => 'Dikonfirmasi',
             self::STATUS_PROCESSING => 'Diproses',
@@ -69,15 +74,21 @@ class Order extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->status) {
-            self::STATUS_PENDING => 'bg-yellow-100 text-yellow-800',
+            self::STATUS_AWAITING_PAYMENT => 'bg-amber-50 text-amber-700',
+            self::STATUS_PENDING => 'bg-amber-100 text-amber-800',
             self::STATUS_CONFIRMED => 'bg-blue-100 text-blue-800',
             self::STATUS_PROCESSING => 'bg-purple-100 text-purple-800',
-            self::STATUS_READY => 'bg-indigo-100 text-indigo-800',
-            self::STATUS_SHIPPED => 'bg-orange-100 text-orange-800',
-            self::STATUS_COMPLETED => 'bg-green-100 text-green-800',
+            self::STATUS_READY => 'bg-slate-100 text-slate-600',
+            self::STATUS_SHIPPED => 'bg-sky-100 text-sky-800',
+            self::STATUS_COMPLETED => 'bg-emerald-100 text-emerald-800',
             self::STATUS_CANCELLED => 'bg-red-100 text-red-800',
             default => 'bg-gray-100 text-gray-800',
         };
+    }
+
+    public function getIsPaidAttribute(): bool
+    {
+        return ! is_null($this->paid_at);
     }
 
     public function getFormattedTotalAttribute(): string

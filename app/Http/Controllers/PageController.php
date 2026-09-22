@@ -20,4 +20,14 @@ class PageController extends Controller
     {
         return view('frontend.pages.contact');
     }
+
+    public function terms()
+    {
+        return view('frontend.pages.syarat-ketentuan');
+    }
+
+    public function privacy()
+    {
+        return view('frontend.pages.kebijakan-privasi');
+    }
 }

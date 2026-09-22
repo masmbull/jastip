@@ -16,7 +16,7 @@ class AdminLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string', 'min:3'],
             'password' => ['required', 'string'],
         ];
     }
@@ -24,8 +24,8 @@ class AdminLoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'username.required' => 'Username wajib diisi.',
+            'username.min' => 'Username Minimal 3 karakter.',
             'password.required' => 'Password wajib diisi.',
         ];
     }
@@ -35,11 +35,14 @@ class AdminLoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
-        $credentials = $this->only('email', 'password');
+        $credentials = [
+            'username' => $this->input('username'),
+            'password' => $this->input('password'),
+        ];
 
-        if (!Auth::attempt($credentials, $this->boolean('remember'))) {
+        if (!Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
-                'email' => ['Kredensial tidak cocok dengan catatan kami.'],
+                'username' => ['Kredensial tidak cocok dengan catatan kami.'],
             ]);
         }
     }
@@ -49,6 +52,9 @@ class AdminLoginRequest extends FormRequest
      */
     public function credentials(): array
     {
-        return $this->only('email', 'password');
+        return [
+            'username' => $this->input('username'),
+            'password' => $this->input('password'),
+        ];
     }
 }

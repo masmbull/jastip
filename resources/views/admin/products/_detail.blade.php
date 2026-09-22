@@ -5,23 +5,23 @@
     </div>
     <div class="space-y-2 text-sm">
         <div>
-            <p class="font-bold text-[#333333] text-lg">{{ $product->name }}</p>
-            <p class="text-xs text-[#999999] font-mono">{{ $product->slug }}</p>
+            <p class="font-bold text-[#1E293B] text-lg">{{ $product->name }}</p>
+            <p class="text-xs text-[#94A3B8] font-mono">{{ $product->slug }}</p>
         </div>
-        <p class="font-bold text-rose-600 text-lg">{{ $product->formatted_price }}</p>
-        <p class="text-[#999999]">{{ $product->availability_badge['text'] }}</p>
+        <p class="font-bold text-orange-600 text-lg">{{ $product->formatted_price }}</p>
+        <p class="text-[#94A3B8]">{{ $product->availability_badge['text'] }}</p>
         @if($product->is_featured)
-            <p class="text-xs font-bold text-rose-600">★ Unggulan</p>
+            <p class="text-xs font-bold text-orange-600">★ Unggulan</p>
         @endif
         @if(!$product->is_active)
-            <p class="text-xs text-[#999999]">(Non-aktif)</p>
+            <p class="text-xs text-[#94A3B8]">(Non-aktif)</p>
         @endif
         @if($product->category)
-            <p class="text-[#666666]">Kategori: <span class="font-medium">{{ $product->category->name }}</span></p>
+            <p class="text-[#64748B]">Kategori: <span class="font-medium">{{ $product->category->name }}</span></p>
         @endif
         @if($product->sku)
-            <p class="text-xs text-[#999999]">SKU: {{ $product->sku }}</p>
+            <p class="text-xs text-[#94A3B8]">SKU: {{ $product->sku }}</p>
         @endif
-        <p class="text-[#666666]">{{ $product->description ?: 'Tidak ada deskripsi.' }}</p>
+        <p class="text-[#64748B]">{{ $product->description ?: 'Tidak ada deskripsi.' }}</p>
     </div>
 </div>
