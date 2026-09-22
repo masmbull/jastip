@@ -131,14 +131,20 @@
                         <span class="text-[#64748B]">Subtotal ({{ $cartItems->sum('quantity') }} item)</span>
                         <span class="font-bold text-[#1E293B]">{{ format_price($subtotal) }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
+                                                            <div class="flex justify-between items-center">
                         <span class="text-[#64748B]">Ongkir</span>
                         <span class="text-[#94A3B8]">{{ format_price(setting('shipping_cost', 0)) }}</span>
                     </div>
+                    @if(($fee ?? 0) > 0)
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#64748B]">Biaya Fee</span>
+                        <span class="text-[#94A3B8]">{{ format_price($fee) }}</span>
+                    </div>
+                    @endif
                     <div class="border-t border-[#E2E8F0] pt-3 mt-3">
                         <div class="flex justify-between items-center">
                             <span class="text-lg font-semibold text-[#1E293B]">Total</span>
-                            <span class="text-2xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0)) }}</span>
+                            <span class="text-2xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0) + ($fee ?? 0)) }}</span>
                         </div>
                     </div>
                 </div>

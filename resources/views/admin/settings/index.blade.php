@@ -13,9 +13,17 @@
     </div>
 
     <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
-        @csrf
+            @csrf
 
-        {{-- Branding --}}
+    <div class="bg-white dark:bg-[#273449] rounded-xl shadow-sm border border-[#E2E8F0] p-4 flex items-center justify-between">
+        <p class="text-sm text-[#94A3B8]">Semua perubahan akan langsung diterapkan ke situs Anda.</p>
+        <button type="submit"
+            class="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg shadow-md">
+            Simpan Pengaturan
+        </button>
+    </div>
+
+    {{-- Branding --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
                 <span class="text-lg">🎨</span> Branding
@@ -198,9 +206,16 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#94A3B8] mb-1">Minimum Order (Rp)</label>
-                    <input type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}"
+                                        <input type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}"
                         min="0" step="1000"
                         class="w-full px-4 py-3 bg-[#F1F5F9] border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-[#94A3B8] mb-1">Set Biaya Fee Global (Rp)</label>
+                    <input type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', setting('setbiaya_fee', 0)) }}"
+                        min="0" step="500"
+                        class="w-full px-4 py-3 bg-[#F1F5F9] border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <p class="text-xs text-[#94A3B8] mt-1">Fee layanan global per produk. Dikenakan ke semua order.</p>
                 </div>
             </div>
         </div>

@@ -54,10 +54,16 @@
                     <span class="font-medium text-[#1E293B]">QRIS</span>
                 </div>
             </div>
-            <div class="flex items-center justify-between text-sm mb-3">
+                                    <div class="flex items-center justify-between text-sm mb-3">
                 <span class="text-[#64748B]">Ongkir</span>
                 <span class="font-medium text-[#1E293B]">{{ format_price($orderData['shipping_cost'] ?? 0) }}</span>
             </div>
+            @if(($orderData['fee'] ?? 0) > 0)
+            <div class="flex items-center justify-between text-sm mb-3">
+                <span class="text-[#64748B]">Biaya Fee</span>
+                <span class="font-medium text-[#1E293B]">{{ format_price($orderData['fee'] ?? 0) }}</span>
+            </div>
+            @endif
             <div class="border-t border-[#E2E8F0] pt-3 flex items-center justify-between">
                 <span class="text-base font-bold text-[#1E293B]">Total Bayar</span>
                 <span class="text-2xl font-bold text-orange-600">{{ format_price($orderData['total'] ?? 0) }}</span>

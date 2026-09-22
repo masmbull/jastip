@@ -50,13 +50,14 @@ class CartService
             });
         } else {
             $cart->push([
-                'product_id' => $productId,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => $quantity,
-                'image' => $product->image,
-                'unit' => $product->unit,
-                'subtotal' => $product->price * $quantity,
+                'product_id'   => $productId,
+                'name'         => $product->name,
+                'price'        => $product->price,
+                'setbiaya_fee' => $product->setbiaya_fee ?? 0,
+                'quantity'     => $quantity,
+                'image'        => $product->image,
+                'unit'         => $product->unit,
+                'subtotal'     => $product->price * $quantity,
             ]);
         }
 
@@ -118,11 +119,27 @@ class CartService
     }
 
     /**
-     * Get the cart subtotal.
+     * Get the cart subtotal (sum of price * quantity).
      */
     public function subtotal(): int
     {
         return (int) $this->getCart()->sum('subtotal');
+    }
+
+    /**
+     * Get the total service fee across all cart items.
+     */
+    public function fee(): int
+    {
+        return (int) $this->getCart()->sum(fn ($item) => ($item['setbiaya_fee'] ?? 0) * $item['quantity']);
+    }
+
+    /**
+     * Get the cart total (subtotal + fee).
+     */
+    public function total(): int
+    {
+        return $this->subtotal() + $this->fee();
     }
 
     /**

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 return [
     'groups' => [
@@ -48,6 +48,7 @@ return [
             'settings' => [
                 'shipping_cost' => ['type' => 'number', 'label' => 'Biaya Ongkir (Rp)'],
                 'minimum_order' => ['type' => 'number', 'label' => 'Minimum Order (Rp)'],
+                'setbiaya_fee' => ['type' => 'number', 'label' => 'Set Biaya Fee Global (Rp)'],
             ],
         ],
         'qris' => [

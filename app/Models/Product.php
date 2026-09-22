@@ -8,13 +8,14 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    protected $fillable = [
+        protected $fillable = [
         'category_id',
         'name',
         'brand',
         'slug',
         'description',
         'price',
+        'setbiaya_fee',
         'price_max',
         'image',
         'stock',
@@ -32,6 +33,7 @@ class Product extends Model
     {
         return [
             'price' => 'integer',
+            'setbiaya_fee' => 'integer',
             'price_max' => 'integer',
             'stock' => 'integer',
             'rating' => 'decimal:1',
@@ -98,9 +100,18 @@ class Product extends Model
         return 'https://placehold.co/600x600/FFF7ED/EA580C?text=' . urlencode($this->name);
     }
 
-    public function getFormattedPriceAttribute(): string
+        public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    /**
+     * Biaya / fee layanan produk ini.
+     * Ditampilkan di admin panel dan dipakai saat checkout.
+     */
+    public function getFormattedSetbiayaFeeAttribute(): string
+    {
+        return 'Rp ' . number_format($this->setbiaya_fee ?? 0, 0, ',', '.');
     }
 
     /**

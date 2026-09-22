@@ -17,6 +17,7 @@ class Order extends Model
         'payment_method',
         'subtotal',
         'shipping_cost',
+        'fee',
         'total',
         'status',
         'paid_at',
@@ -28,6 +29,7 @@ class Order extends Model
         return [
             'subtotal' => 'integer',
             'shipping_cost' => 'integer',
+            'fee' => 'integer',
             'total' => 'integer',
             'paid_at' => 'datetime',
         ];
@@ -99,6 +101,11 @@ class Order extends Model
     public function getFormattedSubtotalAttribute(): string
     {
         return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+    }
+
+    public function getFormattedFeeAttribute(): string
+    {
+        return 'Rp ' . number_format($this->fee ?? 0, 0, ',', '.');
     }
 
     public static function generateOrderNumber(): string

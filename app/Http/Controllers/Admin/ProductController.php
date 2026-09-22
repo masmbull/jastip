@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -51,9 +52,8 @@ class ProductController extends Controller
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-                $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
-
-        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
+        $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured', false);
 
         Product::create($validated);
@@ -62,7 +62,7 @@ class ProductController extends Controller
             ->with('success', 'Produk berhasil ditambahkan!');
     }
 
-        public function show(Product $product)
+    public function show(Product $product)
     {
         return view('admin.products.show', compact('product'));
     }
@@ -83,14 +83,13 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
             }
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        $validated['is_active'] = $request->boolean('is_active', true);
+        $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured', false);
 
         $product->update($validated);
@@ -101,8 +100,8 @@ class ProductController extends Controller
 
     public function destroy(Request $request, Product $product)
     {
-        if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();

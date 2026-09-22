@@ -9,6 +9,9 @@
             <p class="text-xs text-[#94A3B8] font-mono">{{ $product->slug }}</p>
         </div>
         <p class="font-bold text-orange-600 text-lg">{{ $product->formatted_price }}</p>
+        @if($product->setbiaya_fee > 0)
+            <p class="text-xs text-[#94A3B8]">Fee: {{ $product->formatted_setbiaya_fee }}</p>
+        @endif
         <p class="text-[#94A3B8]">{{ $product->availability_badge['text'] }}</p>
         @if($product->is_featured)
             <p class="text-xs font-bold text-orange-600">★ Unggulan</p>

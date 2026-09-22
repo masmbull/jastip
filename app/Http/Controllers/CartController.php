@@ -19,6 +19,7 @@ class CartController extends Controller
         return view('frontend.cart.index', [
             'cartItems' => $cartItems,
             'subtotal' => $this->cart->subtotal(),
+            'fee' => $this->cart->fee(),
             'count' => $this->cart->count(),
         ]);
     }
@@ -55,6 +56,7 @@ class CartController extends Controller
             'message' => 'Berhasil ditambahkan ke titipan!',
             'count' => $this->cart->count(),
             'subtotal' => format_price($this->cart->subtotal()),
+            'fee' => $this->cart->fee(),
         ]);
     }
 
@@ -83,6 +85,7 @@ class CartController extends Controller
             'message' => 'Titipan diperbarui.',
             'count' => $this->cart->count(),
             'subtotal' => format_price($this->cart->subtotal()),
+            'fee' => $this->cart->fee(),
         ]);
     }
 
@@ -95,6 +98,7 @@ class CartController extends Controller
             'message' => 'Produk dihapus dari titipan.',
             'count' => $this->cart->count(),
             'subtotal' => $this->cart->subtotal() > 0 ? format_price($this->cart->subtotal()) : 'Rp 0',
+            'fee' => $this->cart->fee(),
         ]);
     }
 
@@ -107,6 +111,7 @@ class CartController extends Controller
             'message' => 'Titipan berhasil dikosongkan.',
             'count' => 0,
             'subtotal' => 'Rp 0',
+            'fee' => 0,
         ]);
     }
 }

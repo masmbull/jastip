@@ -35,6 +35,10 @@ class WhatsappService
             $message .= "Ongkir: " . format_price($orderData['shipping_cost']) . "\n";
         }
 
+        if (($orderData['fee'] ?? 0) > 0) {
+            $message .= "Biaya Fee: " . format_price($orderData['fee']) . "\n";
+        }
+
         $message .= "Total: " . format_price($orderData['total']) . "\n\n";
 
         $message .= "Nama:\n{$orderData['name']}\n\n";

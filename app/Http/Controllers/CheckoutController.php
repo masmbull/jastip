@@ -25,10 +25,12 @@ class CheckoutController extends Controller
 
         $cartItems = $this->cart->getCart();
         $subtotal = $this->cart->subtotal();
+        $fee = $this->cart->fee();
 
         return view('frontend.checkout.index', [
             'cartItems' => $cartItems,
             'subtotal' => $subtotal,
+            'fee' => $fee,
         ]);
     }
 
@@ -54,10 +56,11 @@ class CheckoutController extends Controller
         $cartItems = $this->cart->getCart();
         $subtotal = $this->cart->subtotal();
         $shippingCost = (int) setting('shipping_cost', 0);
-        $total = $subtotal + $shippingCost;
+        $fee = $this->cart->fee();
+        $total = $subtotal + $shippingCost + $fee;
         $ownerName = setting('brand_owner', 'Nabila Adriyana');
 
-        $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $total) {
+        $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $fee, $total) {
             $orderNumber = Order::generateOrderNumber();
 
             $order = Order::create([
@@ -69,6 +72,7 @@ class CheckoutController extends Controller
                 'shipping_method' => $request->input('shipping_method'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
+                'fee' => $fee,
                 'total' => $total,
                 'status' => Order::STATUS_AWAITING_PAYMENT,
                 'payment_method' => 'qris',
@@ -103,6 +107,7 @@ class CheckoutController extends Controller
             ])->toArray(),
             'subtotal' => $subtotal,
             'shipping_cost' => $shippingCost,
+            'fee' => $fee,
             'total' => $total,
             'owner_name' => $ownerName,
         ];
@@ -118,6 +123,7 @@ class CheckoutController extends Controller
             'order_id'      => $order->id,
             'subtotal'      => $subtotal,
             'shipping_cost' => $shippingCost,
+            'fee'           => $fee,
             'total'         => $total,
             'whatsapp_url'  => $whatsappUrl,
             'qris_image'    => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),

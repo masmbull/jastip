@@ -63,9 +63,15 @@
                             <span class="text-[#64748B]">Ongkir</span>
                             <span class="font-medium">{{ format_price(setting('shipping_cost', 0)) }}</span>
                         </div>
+                                                @if(($fee ?? 0) > 0)
+                        <div class="flex justify-between">
+                            <span class="text-[#64748B]">Biaya Fee</span>
+                            <span class="text-[#64748B]">{{ format_price($fee) }}</span>
+                        </div>
+                        @endif
                         <div class="border-t border-[#E2E8F0] pt-3 flex justify-between text-base font-bold">
                             <span class="text-orange-600">Total Pembayaran</span>
-                            <span class="text-xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0)) }}</span>
+                            <span class="text-xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0) + ($fee ?? 0)) }}</span>
                         </div>
                     </div>
                     <button type="submit"
