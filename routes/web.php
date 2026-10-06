@@ -111,6 +111,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // System Status
         Route::get('/system/status', [\App\Http\Controllers\Admin\SystemStatusController::class, 'index'])->name('system.status');
 
+        // Payment Proofs (QRIS payment verification)
+        Route::get('/bukti-pembayaran', [\App\Http\Controllers\Admin\PaymentProofController::class, 'index'])->name('payment-proofs.index');
+        Route::get('/bukti-pembayaran/{paymentProof}', [\App\Http\Controllers\Admin\PaymentProofController::class, 'show'])->name('payment-proofs.show');
+        Route::post('/bukti-pembayaran/{paymentProof}/verify', [\App\Http\Controllers\Admin\PaymentProofController::class, 'verify'])->name('payment-proofs.verify');
+        Route::post('/bukti-pembayaran/{paymentProof}/reject', [\App\Http\Controllers\Admin\PaymentProofController::class, 'reject'])->name('payment-proofs.reject');
+        Route::get('/bukti-pembayaran/{paymentProof}/download', [\App\Http\Controllers\Admin\PaymentProofController::class, 'download'])->name('payment-proofs.download');
+
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');

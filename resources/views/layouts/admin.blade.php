@@ -86,6 +86,17 @@
                 <span>Pesanan</span>
             </a>
 
+            <a href="{{ route('admin.payment-proofs.index') }}"
+               class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#64748B] hover:bg-orange-50 hover:text-orange-600 relative">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12a3.75 3.75 0 0 1 0-7.5H9.75m.375 0H9a3.75 3.75 0 0 0 0 7.5h.75"></path>
+                </svg>
+                <span>Bukti Pembayaran</span>
+                @if($pendingPaymentProofs ?? 0 > 0)
+                    <span class="absolute right-4 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $pendingPaymentProofs }}</span>
+                @endif
+            </a>
+
             <a href="{{ route('admin.settings.index') }}"
                class="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#64748B] hover:bg-orange-50 hover:text-orange-600">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
