@@ -59,6 +59,9 @@
                     @if($product->price_max)
                         <p class="text-xs text-[#94A3B8] mt-0.5">rentang harga pasaran di Indonesia — hubungi admin untuk harga titipan terkini</p>
                     @endif
+                    @if($product->effectiveFee() > 0)
+                        <p class="text-sm text-[#64748B] mt-1">Biaya fee: <span class="font-semibold text-[#1E293B]">{{ $product->formatted_setbiaya_fee }}</span> / item</p>
+                    @endif
                 </div>
 
                 <p class="mt-3 text-sm text-[#64748B]">
@@ -107,8 +110,8 @@
 
             <div>
                 <h3 class="text-lg font-semibold text-[#1E293B] mb-2">Deskripsi</h3>
-                <div class="text-[#64748B] leading-relaxed space-y-3">
-                                        {!! strip_tags($product->description_html ?? $product->description, '<p><br><strong><b><em><i><ul><ol><li><h2><h3><h4><h5><h6><blockquote><code><span><hr>') !!}
+                <div class="text-[#64748B] leading-relaxed space-y-3 prose prose-sm max-w-none">
+                    {{ strip_tags($product->description_html ?? $product->description) }}
                 </div>
             </div>
 

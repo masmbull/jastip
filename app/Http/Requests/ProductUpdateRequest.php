@@ -21,6 +21,8 @@ class ProductUpdateRequest extends FormRequest
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('products', 'slug')->ignore($product->id)],
             'description' => ['required', 'string'],
             'price' => ['required', 'integer', 'min:0'],
+            'price_max' => ['nullable', 'integer', 'min:0', 'gte:price'],
+            'brand' => ['nullable', 'string', 'max:100'],
             'setbiaya_fee' => ['nullable', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'stock' => ['required', 'integer', 'min:0'],
@@ -28,6 +30,7 @@ class ProductUpdateRequest extends FormRequest
             'sku' => ['nullable', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product->id)],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
+            'is_viral' => ['boolean'],
         ];
     }
 
@@ -41,6 +44,8 @@ class ProductUpdateRequest extends FormRequest
             'description.required' => 'Deskripsi wajib diisi.',
             'price.required' => 'Harga wajib diisi.',
             'price.min' => 'Harga tidak boleh negatif.',
+            'price_max.gte' => 'Harga maksimal harus lebih besar dari atau sama dengan harga minimum.',
+            'brand.max' => 'Brand maksimal 100 karakter.',
             'setbiaya_fee.min' => 'Biaya fee tidak boleh negatif.',
             'image.image' => 'File yang diunggah harus berupa gambar.',
             'image.mimes' => 'Format gambar yang didukung: jpeg, png, jpg, gif, webp.',

@@ -7,11 +7,11 @@ categories, orders, and settings.
 - **Frontend:** Laravel Blade + Tailwind CSS + Alpine.js (no React/Vue).
 - **Data:** single `admin`/`customer` role column on `User` (no second auth table).
 - **State:** session cart (guests allowed), no payments (status workflow in admin).
-- **Stack:** Laravel 11 · PHP 8.2+ · MySQL/SQLite · Vite + TailwindCSS v4.
+- **Stack:** Laravel 13 · PHP 8.3+ · MySQL/SQLite · Vite + TailwindCSS v4.
 
 ## Requirements
 
-- PHP **8.2+** (`php -v`)
+- PHP **8.3+** (`php -v`)
 - Composer ≥ 2
 - Node.js ≥ 20 / npm
 - MySQL 8+ (or SQLite for local dev)
@@ -66,7 +66,8 @@ php artisan test
 
 `tests/Feature/CheckoutFlowTest.php` exercises the full RBAC chain:
 unauthenticated `/admin/*` → redirect `admin.login` → login as seed admin →
-`admin.orders.index` → `PUT admin.orders.status` updates order status.
+`admin.orders.index` → `PUT admin.orders.status` updates order status
+(checkout creates `awaiting_payment`, then admin moves it to `processing`).
 
 ## RBAC
 

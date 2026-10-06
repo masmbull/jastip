@@ -7,6 +7,7 @@ use App\Http\Requests\OrderUpdateRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -35,6 +36,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
+        Gate::authorize('view', $order);
         $order->load('items');
 
         return view('admin.orders.show', [
@@ -46,6 +48,7 @@ class OrderController extends Controller
 
     public function quickView(Order $order)
     {
+        Gate::authorize('view', $order);
         $order->load('items');
 
         return view('admin.orders._detail', [
@@ -57,6 +60,7 @@ class OrderController extends Controller
 
     public function updateStatus(OrderUpdateRequest $request, Order $order)
     {
+        Gate::authorize('update', $order);
         $order->update($request->validated());
 
         if ($request->boolean('mark_paid') && ! $order->is_paid) {
@@ -69,6 +73,7 @@ class OrderController extends Controller
 
     public function destroy(Request $request, Order $order)
     {
+        Gate::authorize('delete', $order);
         $order->delete();
 
         return redirect()->route('admin.orders.index')

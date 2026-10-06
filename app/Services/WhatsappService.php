@@ -9,7 +9,8 @@ class WhatsappService
      */
     public static function orderUrl(array $orderData): string
     {
-        $phone = $orderData['whatsapp'] ?? setting('whatsapp', '6285123456789');
+        // Chat harus ke nomor toko, bukan nomor pembeli.
+        $phone = setting('whatsapp', '6285123456789');
         $message = self::buildOrderMessage($orderData);
 
         return whatsapp_url($phone, $message);

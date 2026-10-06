@@ -35,6 +35,7 @@ class SettingSeeder extends Seeder
             ['key' => 'meta_keywords', 'value' => 'jastip, nitip, jastip lokal, parfum, tumbler, lifestyle, fashion, beauty', 'type' => 'string', 'group' => 'seo', 'is_public' => true],
             ['key' => 'shipping_cost', 'value' => '0', 'type' => 'integer', 'group' => 'business', 'is_public' => true],
             ['key' => 'minimum_order', 'value' => '50000', 'type' => 'integer', 'group' => 'business', 'is_public' => true],
+            ['key' => 'setbiaya_fee', 'value' => '0', 'type' => 'integer', 'group' => 'business', 'is_public' => true],
 
             // QRIS payment
             ['key' => 'qris_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'qris', 'is_public' => true],

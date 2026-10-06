@@ -29,35 +29,27 @@ class CartController extends Controller
         $quantity = (int) $request->input('quantity', 1);
 
         if ($quantity < 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Jumlah minimal adalah 1.',
-            ], 422);
+            return $this->cartResponse($request, false, 'Jumlah minimal adalah 1.', 422);
         }
 
-        if (!$product->isInStock()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Produk ini sedang tidak tersedia.',
-            ], 422);
+        // Use database transaction with pessimistic locking to prevent overselling
+        try {
+            $lockedProduct = Product::lockForUpdate()->find($product->id);
+
+            if (!$lockedProduct->isInStock()) {
+                return $this->cartResponse($request, false, 'Produk ini sedang tidak tersedia.', 422);
+            }
+
+            if ($quantity > $lockedProduct->stock) {
+                return $this->cartResponse($request, false, 'Jumlah melebihi stok tersedia.', 422);
+            }
+
+            $this->cart->add($lockedProduct->id, $quantity);
+
+            return $this->cartResponse($request, true, 'Berhasil ditambahkan ke titipan!');
+        } catch (\Exception $e) {
+            return $this->cartResponse($request, false, 'Gagal memproses permintaan.', 500);
         }
-
-        if ($quantity > $product->stock) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Jumlah melebihi stok tersedia.',
-            ], 422);
-        }
-
-        $this->cart->add($product->id, $quantity);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Berhasil ditambahkan ke titipan!',
-            'count' => $this->cart->count(),
-            'subtotal' => format_price($this->cart->subtotal()),
-            'fee' => $this->cart->fee(),
-        ]);
     }
 
     public function update(Request $request, Product $product)
@@ -65,53 +57,54 @@ class CartController extends Controller
         $quantity = (int) $request->input('quantity');
 
         if ($quantity < 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Jumlah minimal adalah 1.',
-            ], 422);
+            return $this->cartResponse($request, false, 'Jumlah minimal adalah 1.', 422);
         }
 
-        if ($quantity > $product->stock) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Jumlah melebihi stok tersedia.',
-            ], 422);
+        try {
+            $lockedProduct = Product::lockForUpdate()->find($product->id);
+
+            if ($quantity > $lockedProduct->stock) {
+                return $this->cartResponse($request, false, 'Jumlah melebihi stok tersedia.', 422);
+            }
+
+            $this->cart->update($lockedProduct->id, $quantity);
+
+            return $this->cartResponse($request, true, 'Titipan diperbarui.');
+        } catch (\Exception $e) {
+            return $this->cartResponse($request, false, 'Gagal memproses permintaan.', 500);
         }
-
-        $this->cart->update($product->id, $quantity);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Titipan diperbarui.',
-            'count' => $this->cart->count(),
-            'subtotal' => format_price($this->cart->subtotal()),
-            'fee' => $this->cart->fee(),
-        ]);
     }
 
-    public function remove(Product $product)
+    public function remove(Request $request, Product $product)
     {
         $this->cart->remove($product->id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Produk dihapus dari titipan.',
-            'count' => $this->cart->count(),
-            'subtotal' => $this->cart->subtotal() > 0 ? format_price($this->cart->subtotal()) : 'Rp 0',
-            'fee' => $this->cart->fee(),
-        ]);
+        return $this->cartResponse($request, true, 'Produk dihapus dari titipan.');
     }
 
-    public function clear()
+    public function clear(Request $request)
     {
         $this->cart->clear();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Titipan berhasil dikosongkan.',
-            'count' => 0,
-            'subtotal' => 'Rp 0',
-            'fee' => 0,
-        ]);
+        return $this->cartResponse($request, true, 'Titipan berhasil dikosongkan.');
+    }
+
+    private function cartResponse(Request $request, bool $success, string $message, int $status = 200)
+    {
+        $payload = [
+            'success' => $success,
+            'message' => $message,
+            'count' => $this->cart->count(),
+            'subtotal' => $this->cart->subtotal() > 0 ? format_price($this->cart->subtotal()) : 'Rp 0',
+            'fee' => $this->cart->fee(),
+        ];
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json($payload, $success ? $status : max($status, 422));
+        }
+
+        return redirect()
+            ->route('cart.index')
+            ->with($success ? 'success' : 'error', $message);
     }
 }

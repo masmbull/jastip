@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class OrderUpdateRequest extends FormRequest
 {
@@ -14,7 +16,7 @@ class OrderUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['required', 'in:pending,confirmed,processing,ready,shipped,completed,cancelled'],
+            'status' => ['required', Rule::in(array_keys(Order::statuses()))],
             'admin_notes' => ['nullable', 'string'],
         ];
     }

@@ -36,14 +36,17 @@ class CartService
 
         $existingItem = $cart->firstWhere('product_id', $productId);
 
+        $unitFee = $product->effectiveFee();
+
         if ($existingItem) {
             $newQuantity = $existingItem['quantity'] + $quantity;
             if ($newQuantity > $product->stock) {
                 throw new \Exception('Jumlah melebihi stok tersedia');
             }
-            $cart->transform(function ($item) use ($productId, $newQuantity) {
+            $cart->transform(function ($item) use ($productId, $newQuantity, $unitFee) {
                 if ($item['product_id'] === $productId) {
                     $item['quantity'] = $newQuantity;
+                    $item['setbiaya_fee'] = $unitFee;
                     $item['subtotal'] = $item['price'] * $newQuantity;
                 }
                 return $item;
@@ -53,9 +56,9 @@ class CartService
                 'product_id'   => $productId,
                 'name'         => $product->name,
                 'price'        => $product->price,
-                'setbiaya_fee' => $product->setbiaya_fee ?? 0,
+                'setbiaya_fee' => $unitFee,
                 'quantity'     => $quantity,
-                'image'        => $product->image,
+                'image'        => $product->image_url,
                 'unit'         => $product->unit,
                 'subtotal'     => $product->price * $quantity,
             ]);
@@ -81,9 +84,10 @@ class CartService
 
         $cart = $this->getCart();
 
-        $cart->transform(function ($item) use ($productId, $quantity) {
+        $cart->transform(function ($item) use ($productId, $quantity, $product) {
             if ($item['product_id'] === $productId) {
                 $item['quantity'] = $quantity;
+                $item['setbiaya_fee'] = $product->effectiveFee();
                 $item['subtotal'] = $item['price'] * $quantity;
             }
             return $item;

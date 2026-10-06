@@ -55,7 +55,7 @@
                     <label class="block text-sm font-medium text-[#1E293B] mb-1">Set Biaya Fee (Rp)</label>
                     <input type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', 0) }}" min="0"
                            class="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('setbiaya_fee') border-red-500 @enderror">
-                    <p class="text-xs text-[#94A3B8] mt-1">Fee tambahan per produk (0 = tidak dikenakan)</p>
+                    <p class="text-xs text-[#94A3B8] mt-1">0 = pakai fee global dari Pengaturan. Isi angka untuk override per produk.</p>
                     @error('setbiaya_fee') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -97,6 +97,14 @@
                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
                        class="w-4 h-4 text-orange-600 border-[#E2E8F0] rounded">
                 <span class="text-sm text-[#1E293B]">Tampilkan di halaman depan</span>
+            </label>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="is_viral" value="1" {{ old('is_viral') ? 'checked' : '' }}
+                       class="w-4 h-4 text-orange-600 border-[#E2E8F0] rounded">
+                <span class="text-sm text-[#1E293B]">Tandai sebagai produk viral</span>
             </label>
         </div>
 

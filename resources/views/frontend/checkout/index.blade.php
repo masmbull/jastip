@@ -6,8 +6,8 @@
 
     <form method="POST" action="{{ route('checkout.store') }}" id="checkoutForm">
         @csrf
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-2 space-y-6">
                 <div class="bg-white rounded-xl shadow-sm p-6 space-y-4">
                     <h2 class="text-xl font-bold text-[#1E293B] mb-4">Data Diri</h2>
                     <div>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-1">
+            <div class="md:col-span-1">
 
                 <div class="bg-white rounded-xl shadow-sm p-6">
                     <h3 class="text-lg font-bold text-[#1E293B] mb-4">Konfirmasi Pesanan</h3>

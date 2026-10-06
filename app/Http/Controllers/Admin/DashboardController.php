@@ -16,9 +16,12 @@ class DashboardController extends Controller
             'active_products'  => Product::where('is_active', true)->count(),
             'categories_count' => Category::count(),
             'orders_count'     => Order::count(),
-            'orders_pending'   => Order::where('status', Order::STATUS_PENDING)->count(),
-            'revenue'          => Order::where('status', '!=', Order::STATUS_CANCELLED)
-                ->where('status', '!=', Order::STATUS_PENDING)
+            'orders_pending'   => Order::whereIn('status', [
+                Order::STATUS_PENDING,
+                Order::STATUS_AWAITING_PAYMENT,
+            ])->count(),
+            'revenue'          => Order::whereNotNull('paid_at')
+                ->where('status', '!=', Order::STATUS_CANCELLED)
                 ->sum('total'),
         ];
 

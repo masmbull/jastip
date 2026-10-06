@@ -20,6 +20,8 @@ class CheckoutFlowTest extends TestCase
     public function test_order_flow_from_cart_to_admin_status_update(): void
     {
         $product = Product::firstWhere('slug', 'fashion-item') ?? Product::firstOrFail();
+        $product->update(['setbiaya_fee' => 5000]);
+        $feeTotal = $product->effectiveFee() * 2;
 
         // Public catalog
         $this->get(route('home'))->assertOk();
@@ -45,20 +47,26 @@ class CheckoutFlowTest extends TestCase
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();
-        $this->assertSame(Order::STATUS_PENDING, $order->status);
+        $this->assertSame(Order::STATUS_AWAITING_PAYMENT, $order->status);
         $this->assertSame($product->price * 2, $order->subtotal);
+        $this->assertSame($feeTotal, $order->fee);
+        $this->assertSame($order->subtotal + $order->shipping_cost + $order->fee, $order->total);
 
         $item = $order->items()->firstOrFail();
         $this->assertSame($product->name, $item->product_name);
         $this->assertSame($product->unit, $item->unit);
 
-        $this->get(route('checkout.confirmation'))->assertOk()->assertSee($order->order_number, false);
+        $this->get(route('checkout.confirmation'))
+            ->assertOk()
+            ->assertSee($order->order_number, false)
+            ->assertSee('wa.me/6285123456789', false)
+            ->assertDontSee('wa.me/628123456789', false);
 
         // Admin area is guarded
         $this->get(route('admin.orders.index'))->assertRedirect(route('admin.login'));
 
         $this->post(route('admin.login.post'), [
-            'email' => 'admin@nitipdiend.com',
+            'username' => 'admin',
             'password' => 'admin123',
         ])->assertRedirect(route('admin.dashboard'));
 
@@ -70,7 +78,8 @@ class CheckoutFlowTest extends TestCase
             ->assertSee($order->customer_address, false)
             ->assertSee($item->product_name, false)
             ->assertSee($item->unit, false)
-            ->assertSee('Pending', false);
+            ->assertSee('Menunggu Pembayaran', false)
+            ->assertSee('Biaya Fee', false);
 
         $this->put(route('admin.orders.status', $order), ['status' => 'processing'])->assertRedirect();
 

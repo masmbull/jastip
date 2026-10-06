@@ -9,11 +9,11 @@
             <a href="{{ route('admin.products.index') }}" class="text-sm text-orange-600 hover:underline ml-2">Kembali</a>
         </div>
         <div class="flex items-center gap-2">
-            <a href="{{ route('admin.products.edit', $product->id) }}"
+            <a href="{{ route('admin.products.edit', $product) }}"
                class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg shadow-sm">
                 Edit
             </a>
-            <form method="POST" action="{{ route('admin.products.destroy', $product->id) }}"
+            <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
                   onsubmit="return confirm('Hapus produk ini?')" class="inline">
                 @csrf @method('DELETE')
                 <button type="submit"
@@ -84,10 +84,12 @@
         <div class="prose porange-sm max-w-none text-[#64748B]">
             {!! Str::markdown($product->description) !!}
         </div>
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
         <h2 class="text-sm font-semibold text-[#64748B] uppercase tracking-wide mb-4">Aksi Cepat</h2>
         <div class="flex flex-wrap gap-3">
-            <a href="{{ route('admin.products.edit', $product->id) }}"
+            <a href="{{ route('admin.products.edit', $product) }}"
                class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg shadow-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H11a2 2 0 002-2V6a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 Edit Produk

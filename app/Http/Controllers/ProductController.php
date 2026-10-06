@@ -10,6 +10,10 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        // Validate pagination limit (max 100 items per page to prevent DOS)
+        $limit = min((int) $request->input('limit', 12), 100);
+        $limit = max($limit, 1); // Minimum 1 item per page
+
         $query = Product::active()->with('category');
 
         // Filter by category
@@ -29,7 +33,7 @@ class ProductController extends Controller
 
         $products = $query->orderBy('name')
             ->orderBy('created_at', 'desc')
-            ->paginate(12)
+            ->paginate($limit)
             ->withQueryString();
 
         $categories = Category::active()
@@ -52,6 +56,7 @@ class ProductController extends Controller
         $relatedProducts = Product::active()
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
+            ->with('category')
             ->take(4)
             ->get();
 
@@ -76,11 +81,11 @@ class ProductController extends Controller
             ->withCount(['products as viral_count' => function ($q) {
                 $q->where('is_viral', true)->where('is_active', true);
             }])
-            ->has('products')
+            ->whereHas('products', function ($q) {
+                $q->where('is_viral', true)->where('is_active', true);
+            })
             ->orderBy('sort_order')
-            ->get()
-            ->filter(fn ($category) => $category->viral_count > 0)
-            ->values();
+            ->get();
 
         $totalViral = Product::viral()->count();
         $totalSold = (int) Product::viral()->sum('sold_count');

@@ -49,12 +49,12 @@
             <div class="flex items-center justify-between text-sm mb-2">
                 <span class="text-[#64748B]">Subtotal Produk</span>
                 <span class="font-medium text-[#1E293B]">{{ format_price($orderData['subtotal'] ?? 0) }}</span>
-                <div class="flex items-center justify-between text-sm mb-2">
-                    <span class="text-[#64748B]">Metode Pembayaran</span>
-                    <span class="font-medium text-[#1E293B]">QRIS</span>
-                </div>
             </div>
-                                    <div class="flex items-center justify-between text-sm mb-3">
+            <div class="flex items-center justify-between text-sm mb-2">
+                <span class="text-[#64748B]">Metode Pembayaran</span>
+                <span class="font-medium text-[#1E293B]">QRIS</span>
+            </div>
+            <div class="flex items-center justify-between text-sm mb-3">
                 <span class="text-[#64748B]">Ongkir</span>
                 <span class="font-medium text-[#1E293B]">{{ format_price($orderData['shipping_cost'] ?? 0) }}</span>
             </div>

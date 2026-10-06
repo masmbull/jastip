@@ -40,6 +40,18 @@ class SettingController extends Controller
             return;
         }
 
-        Setting::set($key, $request->file($key)->store('settings', 'public'), 'string', $group, true);
+        try {
+            $path = $request->file($key)->store('settings', 'public');
+            Setting::set($key, $path, 'string', $group, true);
+        } catch (\Exception $e) {
+            \Log::error('Failed to upload setting image: ' . $key, [
+                'error' => $e->getMessage(),
+                'key' => $key,
+            ]);
+
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                $key => ['Gagal mengunggah file gambar. Silakan coba lagi.'],
+            ]);
+        }
     }
 }

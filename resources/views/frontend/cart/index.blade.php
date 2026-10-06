@@ -53,6 +53,7 @@
                                     <td class="text-center px-4 py-4">{{ format_price($item['price']) }}</td>
                                     <td class="text-center px-4 py-4">
                                         <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
+                                              data-async
                                               class="inline-flex items-center justify-center gap-1">
                                             @csrf
                                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
@@ -99,6 +100,7 @@
                             <p class="font-medium text-[#1E293B]">{{ $item['name'] }}</p>
                             <p class="text-xs text-[#94A3B8]">{{ $item['unit'] ?? 'pcs' }} · {{ format_price($item['price']) }}</p>
                             <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
+                                  data-async
                                   class="flex items-center gap-1 mt-2">
                                 @csrf
                                 <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"

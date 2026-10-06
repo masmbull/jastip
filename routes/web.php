@@ -62,7 +62,9 @@ Route::get('/kebijakan-privasi', [PageController::class, 'privacy'])->name('priv
 Route::prefix('admin')->name('admin.')->group(function () {
     // Auth
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+    Route::post('/login', [LoginController::class, 'login'])
+        ->middleware('throttle:5,1')
+        ->name('login.post');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // Protected admin routes
@@ -73,7 +75,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/produk', [AdminProductController::class, 'index'])->name('products.index');
         Route::get('/produk/create', [AdminProductController::class, 'create'])->name('products.create');
         Route::post('/produk', [AdminProductController::class, 'store'])->name('products.store');
-                Route::get('/produk/{product}', [AdminProductController::class, 'show'])->name('products.show');
+        Route::get('/produk/{product}', [AdminProductController::class, 'show'])->name('products.show');
         Route::get('/produk/{product}/quickview', [AdminProductController::class, 'quickView'])->name('products.quickview');
         Route::get('/produk/{product}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
         Route::put('/produk/{product}', [AdminProductController::class, 'update'])->name('products.update');
@@ -89,7 +91,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Orders
         Route::get('/pesanans', [AdminOrderController::class, 'index'])->name('orders.index');
-                Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');

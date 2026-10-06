@@ -111,7 +111,20 @@ class Product extends Model
      */
     public function getFormattedSetbiayaFeeAttribute(): string
     {
-        return 'Rp ' . number_format($this->setbiaya_fee ?? 0, 0, ',', '.');
+        return 'Rp ' . number_format($this->effectiveFee(), 0, ',', '.');
+    }
+
+    /**
+     * Fee per unit: nilai produk jika > 0, selain itu fallback ke setting global.
+     */
+    public function effectiveFee(): int
+    {
+        $own = (int) ($this->setbiaya_fee ?? 0);
+        if ($own > 0) {
+            return $own;
+        }
+
+        return max(0, (int) setting('setbiaya_fee', 0));
     }
 
     /**

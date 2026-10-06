@@ -55,6 +55,8 @@ class ProductController extends Controller
         $validated['slug'] = $validated['slug'] ?? Str::slug($validated['name']);
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured', false);
+        $validated['is_viral'] = $request->boolean('is_viral', false);
+        $validated['setbiaya_fee'] = (int) ($validated['setbiaya_fee'] ?? 0);
 
         Product::create($validated);
 
@@ -91,6 +93,8 @@ class ProductController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured', false);
+        $validated['is_viral'] = $request->boolean('is_viral', false);
+        $validated['setbiaya_fee'] = (int) ($validated['setbiaya_fee'] ?? 0);
 
         $product->update($validated);
 

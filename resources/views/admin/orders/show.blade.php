@@ -61,6 +61,9 @@
             <div class="space-y-2 text-sm">
                 <div><span class="text-[#94A3B8]">Subtotal:</span> <span class="font-medium">{{ format_price($order->subtotal) }}</span></div>
                 <div><span class="text-[#94A3B8]">Ongkir:</span> <span class="font-medium">{{ format_price($order->shipping_cost) }}</span></div>
+                @if(($order->fee ?? 0) > 0)
+                    <div><span class="text-[#94A3B8]">Biaya Fee:</span> <span class="font-medium">{{ format_price($order->fee) }}</span></div>
+                @endif
                 <div class="border-t border-[#E2E8F0] pt-2 mt-2 flex justify-between font-bold">
                     <span>Total</span><span class="text-orange-600">{{ format_price($order->total) }}</span>
                 </div>

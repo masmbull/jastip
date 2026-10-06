@@ -26,6 +26,12 @@ class CheckoutController extends Controller
         $cartItems = $this->cart->getCart();
         $subtotal = $this->cart->subtotal();
         $fee = $this->cart->fee();
+        $minOrder = (int) setting('minimum_order', 0);
+
+        if ($minOrder > 0 && $subtotal < $minOrder) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Minimal titip ' . format_price($minOrder) . '. Subtotal kamu masih ' . format_price($subtotal) . '.');
+        }
 
         return view('frontend.checkout.index', [
             'cartItems' => $cartItems,
@@ -55,6 +61,13 @@ class CheckoutController extends Controller
 
         $cartItems = $this->cart->getCart();
         $subtotal = $this->cart->subtotal();
+        $minOrder = (int) setting('minimum_order', 0);
+
+        if ($minOrder > 0 && $subtotal < $minOrder) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Minimal titip ' . format_price($minOrder) . '. Subtotal kamu masih ' . format_price($subtotal) . '.');
+        }
+
         $shippingCost = (int) setting('shipping_cost', 0);
         $fee = $this->cart->fee();
         $total = $subtotal + $shippingCost + $fee;

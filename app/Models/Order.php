@@ -110,6 +110,9 @@ class Order extends Model
 
     public static function generateOrderNumber(): string
     {
-        return 'ND' . now()->format('Ymd') . '-' . str_pad((string) Order::count() + 1, 4, '0', STR_PAD_LEFT);
+        // Generate order number with date + random hex suffix for uniqueness
+        $date = now()->format('Ymd');
+        $random = strtoupper(bin2hex(random_bytes(4)));
+        return 'ND' . $date . '-' . $random;
     }
 }
