@@ -64,6 +64,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function paymentProof()
+    {
+        return $this->hasOne(PaymentProof::class);
+    }
+
     public function getNoAttribute(): string
     {
         return $this->order_number;

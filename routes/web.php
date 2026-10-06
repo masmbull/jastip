@@ -48,6 +48,12 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
 
+// Payment Routes
+Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
+Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
+Route::get('/payment/{order}/download-qris', [\App\Http\Controllers\PaymentController::class, 'downloadQris'])->name('payment.download-qris');
+Route::get('/payment/{order}/status', [\App\Http\Controllers\PaymentController::class, 'status'])->name('payment.status');
+
 // Static Pages
 Route::get('/tentang', [PageController::class, 'about'])->name('about');
 Route::get('/cara-nitip', [PageController::class, 'howTo'])->name('how-to');

@@ -134,20 +134,7 @@ class CheckoutController extends Controller
         // Clear the cart
         $this->cart->clear();
 
-        // Store order data in session for confirmation page
-        session()->flash('order_data', [
-            'order_number'  => $order->order_number,
-            'order_id'      => $order->id,
-            'subtotal'      => $subtotal,
-            'shipping_cost' => $shippingCost,
-            'fee'           => $fee,
-            'total'         => $total,
-            'whatsapp_url'  => $whatsappUrl,
-            'qris_image'    => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
-            'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
-        ]);
-
-        return redirect()->route('checkout.confirmation');
+        return redirect()->route('payment.waiting', ['order' => $order->id]);
     }
 
     public function confirmation()
