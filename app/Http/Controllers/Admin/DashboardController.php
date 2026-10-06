@@ -25,11 +25,25 @@ class DashboardController extends Controller
                 ->sum('total'),
         ];
 
+        // Payment proof statistics
+        $paymentStats = [
+            'pending' => \App\Models\PaymentProof::where('status', 'pending')->count(),
+            'verified' => \App\Models\PaymentProof::where('status', 'verified')->count(),
+            'rejected' => \App\Models\PaymentProof::where('status', 'rejected')->count(),
+        ];
+
         $recentOrders = Order::with('items')
             ->latest()
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentOrders'));
+        // Recent payment proofs waiting for verification
+        $pendingProofs = \App\Models\PaymentProof::where('status', 'pending')
+            ->with('order')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentOrders', 'paymentStats', 'pendingProofs'));
     }
 }

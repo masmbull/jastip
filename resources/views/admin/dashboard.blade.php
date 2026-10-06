@@ -86,7 +86,102 @@
 
     </div>
 
-    {{-- Recent Orders --}}
+    {{-- Payment Proofs Stats & Widget --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-fade-up" style="animation-delay: 180ms">
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-[#E2E8F0]">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <svg class="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <a href="{{ route('admin.payment-proofs.index', ['status' => 'pending']) }}" class="text-xs text-amber-600 font-medium">Detail</a>
+            </div>
+            <p class="text-3xl font-bold text-[#1E293B]">{{ $paymentStats['pending'] ?? 0 }}</p>
+            <p class="text-sm text-[#94A3B8]">Menunggu Verifikasi</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-[#E2E8F0]">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                    <svg class="h-5 w-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <a href="{{ route('admin.payment-proofs.index', ['status' => 'verified']) }}" class="text-xs text-emerald-600 font-medium">Detail</a>
+            </div>
+            <p class="text-3xl font-bold text-[#1E293B]">{{ $paymentStats['verified'] ?? 0 }}</p>
+            <p class="text-sm text-[#94A3B8]">Terverifikasi</p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-[#E2E8F0]">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <a href="{{ route('admin.payment-proofs.index', ['status' => 'rejected']) }}" class="text-xs text-red-600 font-medium">Detail</a>
+            </div>
+            <p class="text-3xl font-bold text-[#1E293B]">{{ $paymentStats['rejected'] ?? 0 }}</p>
+            <p class="text-sm text-[#94A3B8]">Ditolak</p>
+        </div>
+    </div>
+
+    {{-- Pending Payment Proofs --}}
+    @if($pendingProofs->count() > 0)
+    <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up" style="animation-delay: 210ms">
+        <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-amber-50">
+            <div class="flex items-center gap-3">
+                <svg class="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h2 class="text-lg font-semibold text-amber-900">Bukti Pembayaran Menunggu Verifikasi</h2>
+            </div>
+            <a href="{{ route('admin.payment-proofs.index', ['status' => 'pending']) }}" class="text-sm text-amber-600 font-medium">
+                Lihat Semua
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-[#F1F5F9] text-left text-xs text-[#64748B] uppercase">
+                        <th class="px-4 py-3">No. Pesanan</th>
+                        <th class="px-4 py-3">Pelanggan</th>
+                        <th class="px-4 py-3">File</th>
+                        <th class="px-4 py-3">Unggah</th>
+                        <th class="px-4 py-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#E2E8F0]">
+                    @forelse($pendingProofs as $proof)
+                        <tr class="hover:bg-[#f8fafc]">
+                            <td class="px-4 py-3 font-mono text-sm text-orange-600">
+                                <a href="{{ route('admin.orders.show', $proof->order) }}" class="hover:underline">
+                                    #{{ $proof->order->order_number }}
+                                </a>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-[#1E293B]">{{ $proof->order->customer_name }}</td>
+                            <td class="px-4 py-3 text-sm text-[#64748B]">{{ $proof->file_name }}</td>
+                            <td class="px-4 py-3 text-sm text-[#94A3B8]">{{ $proof->created_at->diffForHumans() }}</td>
+                            <td class="px-4 py-3">
+                                <a href="{{ route('admin.payment-proofs.show', $proof) }}" class="text-xs text-blue-600 font-medium hover:underline">
+                                    Verifikasi
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-[#94A3B8]">Semua bukti pembayaran sudah diverifikasi.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
+    {{-- Recent Orders --}
     <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up" style="animation-delay: 240ms">
         <div class="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
             <h2 class="text-lg font-semibold text-[#1E293B]">Pesanan Terbaru</h2>
