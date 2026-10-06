@@ -131,17 +131,34 @@ class PaymentProofController extends Controller
      */
     private function notifyCustomer(Order $order, string $status, string $reason = null): void
     {
-        $message = '';
-
-        if ($status === 'verified') {
-            $message = "Halo {$order->customer_name}, pembayaran untuk pesanan {$order->order_number} telah berhasil diverifikasi! ✓ Pesanan kamu sudah dikonfirmasi dan akan segera diproses.";
-        } elseif ($status === 'rejected') {
-            $message = "Halo {$order->customer_name}, bukti pembayaran untuk pesanan {$order->order_number} ditolak.\n\nAlasan: {$reason}\n\nSilakan unggah bukti pembayaran yang benar melalui halaman pembayaran.";
+        if (!$order->customer_whatsapp) {
+            return;
         }
 
-        if ($message && $order->customer_whatsapp) {
-            // TODO: Implement WhatsApp notification via WhatsappService
-            // WhatsappService::sendMessage($order->customer_whatsapp, $message);
+        try {
+            if ($status === 'verified') {
+                // Create WhatsApp link for verified status
+                $whatsappUrl = \App\Services\WhatsappService::sendPaymentNotification(
+                    $order->customer_whatsapp,
+                    $order->order_number,
+                    'verified'
+                );
+            } elseif ($status === 'rejected') {
+                // Create WhatsApp link for rejected status with reason
+                $whatsappUrl = \App\Services\WhatsappService::sendPaymentNotification(
+                    $order->customer_whatsapp,
+                    $order->order_number,
+                    'rejected',
+                    $reason
+                );
+            }
+
+            // Log the notification URL for audit trail
+            if (isset($whatsappUrl)) {
+                \Log::info("Payment notification sent to {$order->customer_whatsapp} for order {$order->order_number}");
+            }
+        } catch (\Exception $e) {
+            \Log::error("Failed to send payment notification: " . $e->getMessage());
         }
     }
 }

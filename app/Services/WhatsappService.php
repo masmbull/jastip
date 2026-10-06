@@ -60,12 +60,47 @@ class WhatsappService
     }
 
     /**
-     * Generate a simple WhatsApp contact URL.
+     * Send payment status notification to customer
      */
-    public static function contactUrl(string $message = ''): string
+    public static function sendPaymentNotification(string $phone, string $orderNumber, string $status, string $reason = null): string
     {
-        $phone = setting('whatsapp', '6285123456789');
+        $message = '';
+
+        if ($status === 'verified') {
+            $message = "Halo 👋\n\n";
+            $message .= "Pembayaran untuk pesanan {$orderNumber} telah berhasil diverifikasi! ✓\n\n";
+            $message .= "Pesanan kamu sudah dikonfirmasi dan akan segera diproses.\n\n";
+            $message .= "Cek status pesananmu di sini:\n";
+            $message .= "🔗 " . route('order.show', $orderNumber) . "\n\n";
+            $message .= "Terima kasih 🙏";
+        } elseif ($status === 'rejected') {
+            $message = "Halo 👋\n\n";
+            $message .= "Sayangnya bukti pembayaran untuk pesanan {$orderNumber} tidak dapat diterima.\n\n";
+            $message .= "Alasan: {$reason}\n\n";
+            $message .= "Silakan unggah bukti pembayaran yang benar melalui:\n";
+            $message .= "🔗 " . route('payment.waiting', $orderNumber) . "\n\n";
+            $message .= "Jika ada pertanyaan, hubungi kami ya. Terima kasih 🙏";
+        }
 
         return whatsapp_url($phone, $message);
     }
-}
+
+    /**
+     * Send order shipped notification
+     */
+    public static function sendShippedNotification(string $phone, string $orderNumber, string $trackingNumber = null): string
+    {
+        $message = "Halo 👋\n\n";
+        $message .= "Pesanan {$orderNumber} sudah dikirim! 📦\n\n";
+
+        if ($trackingNumber) {
+            $message .= "Nomor resi: {$trackingNumber}\n";
+            $message .= "Cek tracking: https://tracking.logistik.co.id\n\n";
+        }
+
+        $message .= "Cek status pesananmu di sini:\n";
+        $message .= "🔗 " . route('order.show', $orderNumber) . "\n\n";
+        $message .= "Terima kasih 🙏";
+
+        return whatsapp_url($phone, $message);
+    }
