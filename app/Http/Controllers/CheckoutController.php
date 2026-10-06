@@ -127,9 +127,15 @@ class CheckoutController extends Controller
             'fee' => $fee,
             'total' => $total,
             'owner_name' => $ownerName,
+            'order_number' => $order->order_number,
+            'qris_image' => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
+            'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
         ];
 
         $whatsappUrl = WhatsappService::orderUrl($orderData);
+
+        // Store order data in session for confirmation page
+        session(['order_data' => $orderData]);
 
         // Clear the cart
         $this->cart->clear();
@@ -145,6 +151,12 @@ class CheckoutController extends Controller
             return redirect()->route('home');
         }
 
-        return view('frontend.checkout.confirmation', ['orderData' => $orderData]);
+        // Fetch order for status info
+        $order = Order::where('order_number', $orderData['order_number'] ?? null)->first();
+
+        return view('frontend.checkout.confirmation', [
+            'orderData' => $orderData,
+            'order' => $order,
+        ]);
     }
 }

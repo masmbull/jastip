@@ -48,6 +48,10 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
 Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
 
+// Order Status (customer can track order)
+Route::get('/order/{orderNumber}', [\App\Http\Controllers\OrderStatusController::class, 'show'])->name('order.show');
+Route::get('/order/{orderNumber}/status', [\App\Http\Controllers\OrderStatusController::class, 'api'])->name('order.status');
+
 // Payment Routes
 Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
 Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
