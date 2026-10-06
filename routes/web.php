@@ -96,6 +96,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
+        // Shipping / Ongkir
+        Route::get('/ongkir', [\App\Http\Controllers\Admin\ShippingController::class, 'index'])->name('shipping.index');
+        Route::post('/ongkir/{courier}/toggle', [\App\Http\Controllers\Admin\ShippingController::class, 'toggle'])->name('shipping.toggle');
+        Route::post('/ongkir/{courier}/pricing', [\App\Http\Controllers\Admin\ShippingController::class, 'updatePricing'])->name('shipping.update-pricing');
+        Route::post('/ongkir/refresh', [\App\Http\Controllers\Admin\ShippingController::class, 'refreshPrices'])->name('shipping.refresh');
+
+        // System Status
+        Route::get('/system/status', [\App\Http\Controllers\Admin\SystemStatusController::class, 'index'])->name('system.status');
+
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');

@@ -91,6 +91,10 @@ class CheckoutController extends Controller
                 'payment_method' => 'qris',
             ]);
 
+            // Generate payment hash for integrity checking
+            $order->payment_hash = $order->generatePaymentHash();
+            $order->save();
+
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,

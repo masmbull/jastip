@@ -21,6 +21,7 @@ class Order extends Model
         'total',
         'status',
         'paid_at',
+        'payment_hash',
         'admin_notes',
     ];
 
@@ -114,5 +115,45 @@ class Order extends Model
         $date = now()->format('Ymd');
         $random = strtoupper(bin2hex(random_bytes(4)));
         return 'ND' . $date . '-' . $random;
+    }
+
+    /**
+     * Generate payment hash to detect tampering
+     */
+    public function generatePaymentHash(): string
+    {
+        $data = [
+            'order_number' => $this->order_number,
+            'subtotal' => $this->subtotal,
+            'shipping_cost' => $this->shipping_cost,
+            'fee' => $this->fee,
+            'total' => $this->total,
+            'customer_name' => $this->customer_name,
+            'customer_whatsapp' => $this->customer_whatsapp,
+        ];
+
+        return hash('sha256', json_encode($data));
+    }
+
+    /**
+     * Validate payment integrity
+     */
+    public function isPaymentValid(): bool
+    {
+        if (!$this->payment_hash) {
+            return false;
+        }
+
+        return $this->payment_hash === $this->generatePaymentHash();
+    }
+
+    /**
+     * Mark as paid with hash validation
+     */
+    public function markAsPaid(): void
+    {
+        $this->paid_at = now();
+        $this->payment_hash = $this->generatePaymentHash();
+        $this->save();
     }
 }
