@@ -136,7 +136,7 @@
                         <!-- Verify Form -->
                         <form action="{{ route('admin.payment-proofs.verify', $paymentProof) }}"
                               method="POST"
-                              onsubmit="return confirm('Apakah kamu yakin ingin memverifikasi bukti pembayaran ini?');">
+                              data-confirm="Verifikasi bukti pembayaran ini dan konfirmasi pesanan?">
                             @csrf
                             <textarea name="notes"
                                       placeholder="Catatan verifikasi (opsional)"
@@ -154,7 +154,7 @@
                         <!-- Reject Form -->
                         <form action="{{ route('admin.payment-proofs.reject', $paymentProof) }}"
                               method="POST"
-                              onsubmit="return confirm('Apakah kamu yakin ingin menolak bukti pembayaran ini?');">
+                              data-confirm="Tolak bukti pembayaran ini? Pelanggan akan diminta mengunggah ulang.">
                             @csrf
                             <textarea name="notes"
                                       placeholder="Alasan penolakan (wajib diisi)"
