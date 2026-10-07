@@ -104,3 +104,4 @@ class WhatsappService
 
         return whatsapp_url($phone, $message);
     }
+}
