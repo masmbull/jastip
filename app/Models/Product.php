@@ -60,11 +60,6 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
-    public function discounts()
-    {
-        return $this->hasMany(Discount::class);
-    }
-
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -212,36 +207,5 @@ class Product extends Model
         return $this->reviews()
             ->where('status', 'approved')
             ->count();
-    }
-
-    /**
-     * Get active discount for this product
-     */
-    public function getActiveDiscount()
-    {
-        return $this->discounts()
-            ->where('is_active', true)
-            ->where('valid_from', '<=', now())
-            ->where('valid_to', '>=', now())
-            ->orderBy('priority', 'desc')
-            ->first();
-    }
-
-    /**
-     * Get final price after discount
-     */
-    public function getFinalPrice(): float
-    {
-        $discount = $this->getActiveDiscount();
-        
-        if (!$discount) {
-            return $this->price;
-        }
-
-        if ($discount->type === 'percentage') {
-            return $this->price - ($this->price * $discount->value / 100);
-        }
-
-        return max(0, $this->price - $discount->value);
     }
 }
