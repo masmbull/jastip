@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ViralProductSeeder::class,
             SettingSeeder::class,
             OrderSeeder::class,
+            ServiceSeeder::class,
         ]);
 
         // Password di-hash dengan Hash::make() sebelum disimpan

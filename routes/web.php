@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -185,5 +186,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+        // Services Monitoring
+        Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+        Route::post('/services/{service}/check', [ServiceController::class, 'check'])->name('services.check');
+        Route::get('/services/check-all', [ServiceController::class, 'checkAll'])->name('services.checkAll');
     });
 });
