@@ -28,7 +28,8 @@ class UserController extends Controller
     {
         if ($user->isAdmin()) abort(403);
 
-        $user->update(['role' => $request->input('role')]);
+        $validated = $request->validate(['role' => 'required|in:customer,admin']);
+        $user->update(['role' => $validated['role']]);
         return redirect()->back()->with('success', 'Role berhasil diperbarui');
     }
 

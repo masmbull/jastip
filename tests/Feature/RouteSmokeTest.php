@@ -198,4 +198,19 @@ class RouteSmokeTest extends TestCase
             $this->assertLessThan(500, $status, "GET {$path} returned HTTP {$status}");
         }
     }
+
+    public function test_admin_can_update_customer_role_and_invalid_role_is_rejected(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($this->admin);
+
+        $this->put(route('admin.users.update-role', $customer), ['role' => 'admin'])
+            ->assertRedirect();
+        $this->assertSame('admin', $customer->fresh()->role);
+
+        $other = User::factory()->create(['role' => 'customer']);
+        $this->put(route('admin.users.update-role', $other), ['role' => 'superuser'])
+            ->assertSessionHasErrors('role');
+        $this->assertSame('customer', $other->fresh()->role);
+    }
 }
