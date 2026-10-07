@@ -57,6 +57,33 @@ Route::get('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewContr
 Route::post('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('reviews.store');
 Route::post('/ulasan/{review}/helpful', [\App\Http\Controllers\ProductReviewController::class, 'toggleHelpful'])->name('reviews.helpful');
 
+// User Profile Routes (Protected)
+Route::middleware('auth')->group(function () {
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('profile.settings');
+    Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/profile/loyalty', [\App\Http\Controllers\ProfileController::class, 'loyalty'])->name('profile.loyalty');
+
+    // Orders
+    Route::get('/profile/orders', [\App\Http\Controllers\ProfileController::class, 'orders'])->name('profile.orders');
+    Route::get('/profile/orders/{order}', [\App\Http\Controllers\ProfileController::class, 'orderDetail'])->name('profile.order-detail');
+
+    // Reviews
+    Route::get('/profile/reviews', [\App\Http\Controllers\ProfileController::class, 'reviews'])->name('profile.reviews');
+
+    // Addresses
+    Route::get('/profile/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('profile.addresses');
+    Route::get('/profile/addresses/create', [\App\Http\Controllers\AddressController::class, 'create'])->name('addresses.create');
+    Route::post('/profile/addresses', [\App\Http\Controllers\AddressController::class, 'store'])->name('addresses.store');
+    Route::get('/profile/addresses/{address}/edit', [\App\Http\Controllers\AddressController::class, 'edit'])->name('addresses.edit');
+    Route::put('/profile/addresses/{address}', [\App\Http\Controllers\AddressController::class, 'update'])->name('addresses.update');
+    Route::delete('/profile/addresses/{address}', [\App\Http\Controllers\AddressController::class, 'destroy'])->name('addresses.destroy');
+    Route::post('/profile/addresses/{address}/default', [\App\Http\Controllers\AddressController::class, 'setDefault'])->name('addresses.default');
+});
+
 // Payment Routes
 Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
 Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
