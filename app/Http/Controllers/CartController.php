@@ -32,19 +32,16 @@ class CartController extends Controller
             return $this->cartResponse($request, false, 'Jumlah minimal adalah 1.', 422);
         }
 
-        // Use database transaction with pessimistic locking to prevent overselling
         try {
-            $lockedProduct = Product::lockForUpdate()->find($product->id);
-
-            if (!$lockedProduct->isInStock()) {
+            if (!$product->isInStock()) {
                 return $this->cartResponse($request, false, 'Produk ini sedang tidak tersedia.', 422);
             }
 
-            if ($quantity > $lockedProduct->stock) {
+            if ($quantity > $product->stock) {
                 return $this->cartResponse($request, false, 'Jumlah melebihi stok tersedia.', 422);
             }
 
-            $this->cart->add($lockedProduct->id, $quantity);
+            $this->cart->add($product->id, $quantity);
 
             return $this->cartResponse($request, true, 'Berhasil ditambahkan ke titipan!');
         } catch (\Exception $e) {
@@ -61,13 +58,11 @@ class CartController extends Controller
         }
 
         try {
-            $lockedProduct = Product::lockForUpdate()->find($product->id);
-
-            if ($quantity > $lockedProduct->stock) {
+            if ($quantity > $product->stock) {
                 return $this->cartResponse($request, false, 'Jumlah melebihi stok tersedia.', 422);
             }
 
-            $this->cart->update($lockedProduct->id, $quantity);
+            $this->cart->update($product->id, $quantity);
 
             return $this->cartResponse($request, true, 'Titipan diperbarui.');
         } catch (\Exception $e) {
