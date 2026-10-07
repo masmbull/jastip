@@ -17,27 +17,23 @@ class SecurityHeaders
     {
         $response = $next($request);
 
-        // Prevent clickjacking attacks
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
+        // headers->set() works on every Symfony response type
+        // (Illuminate\Response, BinaryFileResponse, StreamedResponse).
+        $headers = [
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-XSS-Protection' => '1; mode=block',
+            'Content-Security-Policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'",
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+            'Permissions-Policy' => 'geolocation=(), microphone=(), camera=()',
+        ];
 
-        // Prevent MIME type sniffing
-        $response->header('X-Content-Type-Options', 'nosniff');
-
-        // Enable XSS protection in older browsers
-        $response->header('X-XSS-Protection', '1; mode=block');
-
-        // Content Security Policy - strict policy to prevent XSS and injection attacks
-        $response->header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'");
-
-        // Referrer Policy - don't leak referrer information
-        $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
-
-        // Feature Policy / Permissions Policy
-        $response->header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-
-        // Enforce HTTPS in production
         if (app()->environment('production')) {
-            $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+            $headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload';
+        }
+
+        foreach ($headers as $key => $value) {
+            $response->headers->set($key, $value);
         }
 
         return $response;

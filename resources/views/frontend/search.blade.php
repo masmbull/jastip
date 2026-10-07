@@ -140,8 +140,8 @@
                                     <p class="text-lg font-bold text-[#fb923c] mb-3">{{ $product->formatted_price }}</p>
 
                                     {{-- Stock Badge --}}
-                                    <span class="inline-block text-xs px-2 py-1 rounded {{ $product->is_in_stock() ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }}">
-                                        {{ $product->is_in_stock() ? 'Tersedia' : 'Habis' }}
+                                    <span class="inline-block text-xs px-2 py-1 rounded {{ $product->isInStock() ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }}">
+                                        {{ $product->isInStock() ? 'Tersedia' : 'Habis' }}
                                     </span>
                                 </div>
                             </a>

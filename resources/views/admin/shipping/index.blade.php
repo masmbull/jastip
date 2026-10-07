@@ -159,7 +159,7 @@
         document.getElementById('courierName').textContent = name;
         document.getElementById('perKg').value = perKg;
         document.getElementById('minCharge').value = minCharge;
-        document.getElementById('editForm').action = '{{ route("admin.shipping.update-pricing", "") }}/' + code;
+        document.getElementById('editForm').action = '{{ route("admin.shipping.update-pricing", ["courier" => "__CODE__"]) }}'.replace('__CODE__', code);
         document.getElementById('editModal').classList.remove('hidden');
     }
 

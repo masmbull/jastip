@@ -78,6 +78,7 @@ class CheckoutController extends Controller
 
             $order = Order::create([
                 'order_number' => $orderNumber,
+                'user_id' => $request->user()?->id,
                 'customer_name' => $request->input('name'),
                 'customer_whatsapp' => $request->input('whatsapp'),
                 'customer_address' => $request->input('address'),
@@ -133,6 +134,7 @@ class CheckoutController extends Controller
         ];
 
         $whatsappUrl = WhatsappService::orderUrl($orderData);
+        $orderData['whatsapp_url'] = $whatsappUrl;
 
         // Store order data in session for confirmation page
         session(['order_data' => $orderData]);
@@ -140,7 +142,7 @@ class CheckoutController extends Controller
         // Clear the cart
         $this->cart->clear();
 
-        return redirect()->route('payment.waiting', ['order' => $order->id]);
+        return redirect()->route('checkout.confirmation');
     }
 
     public function confirmation()

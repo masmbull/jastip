@@ -16,7 +16,7 @@ class ReportController extends Controller
         $to = $request->input('to', now()->format('Y-m-d'));
 
         $orders = Order::whereBetween('created_at', [$from, $to])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count, SUM(total_amount) as total')
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count, SUM(total) as total')
             ->groupBy('date')
             ->get();
 

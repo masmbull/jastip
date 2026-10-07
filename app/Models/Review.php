@@ -27,7 +27,7 @@ class Review extends Model
     
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class)->withTrashed();
+        return $this->belongsTo(Order::class);
     }
     
     /**
