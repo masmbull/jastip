@@ -228,6 +228,8 @@ document.getElementById('reviewForm')?.addEventListener('submit', async function
 // Helpful button
 document.querySelectorAll('.helpful-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
+        if (this.dataset.voted) return; // guard: prevent double-fire
+        this.dataset.voted = '1';
         const reviewId = this.dataset.reviewId;
 
         try {

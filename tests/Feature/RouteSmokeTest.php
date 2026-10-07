@@ -247,6 +247,34 @@ class RouteSmokeTest extends TestCase
 
         $this->post(route('reviews.helpful', $this->review))->assertStatus(401);
 
+        // Helpful vote guards: author cannot self-vote; pending reviews are not votable.
+        $voter = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($voter)
+            ->post(route('reviews.helpful', $this->review))
+            ->assertOk()
+            ->assertJsonPath('helpful_count', 1);
+        $this->assertSame(1, $this->review->fresh()->helpful_count);
+
+        // Self-vote rejected (review belongs to admin), count unchanged.
+        $this->actingAs($this->admin)
+            ->post(route('reviews.helpful', $this->review))
+            ->assertStatus(422);
+        $this->assertSame(1, $this->review->fresh()->helpful_count);
+
+        // Pending review => 404, count untouched.
+        $pendingAuthor = User::factory()->create(['role' => 'customer']);
+        $pending = Review::create([
+            'user_id' => $pendingAuthor->id,
+            'product_id' => $this->product->id,
+            'rating' => 4,
+            'title' => 'Pending',
+            'content' => 'Belum disetujui.',
+            'status' => 'pending',
+        ]);
+        $this->actingAs($voter)
+            ->post(route('reviews.helpful', $pending))
+            ->assertStatus(404);
+
         // Admin moderation detail.
         $this->actingAs($this->admin)
             ->get(route('admin.reviews.show', $this->review))

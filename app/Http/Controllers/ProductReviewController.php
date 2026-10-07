@@ -88,7 +88,16 @@ class ProductReviewController extends Controller
             return response()->json(['message' => 'Login diperlukan'], 401);
         }
 
-        // Increment helpful count (simple implementation, can be enhanced with vote tracking)
+        // Votes only count on published reviews.
+        if ($review->status !== 'approved') {
+            return response()->json(['message' => 'Ulasan belum dipublikasikan'], 404);
+        }
+
+        if ($review->user_id === Auth::id()) {
+            return response()->json(['message' => 'Tidak bisa menilai ulasan sendiri'], 422);
+        }
+
+        // Atomic increment: prevents lost updates from rapid double-clicks.
         $review->increment('helpful_count');
 
         return response()->json([
