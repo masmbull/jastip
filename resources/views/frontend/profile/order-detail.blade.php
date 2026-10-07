@@ -14,11 +14,11 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                 <div class="p-4 bg-gray-50 dark:bg-[#404854] rounded-lg">
                     <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Status</p>
-                    <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] capitalize">{{ $order->status }}</p>
+                    <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] capitalize">{{ $order->status_label }}</p>
                 </div>
                 <div class="p-4 bg-gray-50 dark:bg-[#404854] rounded-lg">
                     <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Total</p>
-                    <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9]">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                    <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9]">{{ format_price($order->total) }}</p>
                 </div>
                 <div class="p-4 bg-gray-50 dark:bg-[#404854] rounded-lg">
                     <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Tanggal</p>
@@ -37,13 +37,12 @@
                     @foreach($order->items as $item)
                     <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
                         <div class="flex items-center gap-4">
-                            <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-16 h-16 object-cover rounded">
                             <div>
-                                <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">{{ $item->product->name }}</p>
-                                <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">x{{ $item->quantity }}</p>
+                                <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">{{ $item->product_name }}</p>
+                                <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">x{{ $item->quantity }} · {{ $item->unit ?? 'pcs' }}</p>
                             </div>
                         </div>
-                        <p class="font-bold text-gray-900 dark:text-[#f1f5f9]">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
+                        <p class="font-bold text-gray-900 dark:text-[#f1f5f9]">{{ format_price($item->subtotal) }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -54,13 +53,13 @@
                 <div>
                     <h2 class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] mb-4">Alamat Pengiriman</h2>
                     <p class="text-gray-700 dark:text-[#cbd5e1] whitespace-pre-wrap">
-                        {{ $order->shipping_address }}
+                        {{ $order->customer_address }}
                     </p>
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] mb-4">Informasi Pembayaran</h2>
-                    <p class="text-gray-700 dark:text-[#cbd5e1]"><strong>Metode:</strong> {{ $order->payment_method ?? 'QRIS' }}</p>
-                    <p class="text-gray-700 dark:text-[#cbd5e1] mt-2"><strong>Total Bayar:</strong> Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                    <p class="text-gray-700 dark:text-[#cbd5e1]"><strong>Metode:</strong> {{ strtoupper($order->payment_method ?? 'QRIS') }}</p>
+                    <p class="text-gray-700 dark:text-[#cbd5e1] mt-2"><strong>Total Bayar:</strong> {{ format_price($order->total) }}</p>
                 </div>
             </div>
         </div>

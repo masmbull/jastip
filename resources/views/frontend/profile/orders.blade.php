@@ -17,15 +17,12 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Total</p>
-                        <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9]">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9]">{{ format_price($order->total) }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Status</p>
-                        <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium
-                            {{ $order->status === 'completed' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 
-                               ($order->status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200' :
-                               'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200') }}">
-                            {{ $order->status }}
+                        <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium {{ $order->status_badge_class }}">
+                            {{ $order->status_label }}
                         </span>
                     </div>
                     <div class="text-right">
@@ -37,8 +34,8 @@
                 <div class="space-y-2 mb-4">
                     @foreach($order->items as $item)
                     <div class="flex items-center justify-between">
-                        <p class="text-gray-700 dark:text-[#cbd5e1]">{{ $item->product->name }} x{{ $item->quantity }}</p>
-                        <p class="text-gray-700 dark:text-[#cbd5e1]">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
+                        <p class="text-gray-700 dark:text-[#cbd5e1]">{{ $item->product_name }} x{{ $item->quantity }}</p>
+                        <p class="text-gray-700 dark:text-[#cbd5e1]">{{ format_price($item->subtotal) }}</p>
                     </div>
                     @endforeach
                 </div>
@@ -47,7 +44,7 @@
                     <a href="{{ route('profile.order-detail', $order) }}" class="flex-1 px-4 py-2 text-center text-[#fb923c] hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition">
                         Lihat Detail
                     </a>
-                    @if($order->status === 'pending')
+                    @if($order->status === \App\Models\Order::STATUS_AWAITING_PAYMENT)
                     <a href="{{ route('payment.waiting', $order) }}" class="flex-1 px-4 py-2 text-center bg-[#fb923c] text-white rounded hover:bg-[#e6951b] transition">
                         Bayar
                     </a>

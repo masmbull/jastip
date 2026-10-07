@@ -102,7 +102,7 @@ class ProfileController extends Controller
             abort(403);
         }
 
-        $order->load('items.product', 'paymentProof');
+        $order->load('items', 'paymentProof');
 
         return view('frontend.profile.order-detail', compact('order'));
     }

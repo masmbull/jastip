@@ -10,10 +10,25 @@ use Illuminate\Support\Facades\Storage;
 class PaymentController extends Controller
 {
     /**
+     * Guard: only the order owner, an admin, or the guest who just
+     * created this order (order_data in session) may touch it.
+     */
+    private function authorizeOrder(Request $request, Order $order): void
+    {
+        $user = $request->user();
+        $owns = $user && ($order->user_id === $user->id || $user->isAdmin());
+        $guestOrder = session('order_data.order_number') === $order->order_number;
+
+        abort_unless($owns || $guestOrder, 403);
+    }
+
+    /**
      * Show QRIS payment waiting page with countdown timer
      */
     public function waiting(Request $request, Order $order)
     {
+        $this->authorizeOrder($request, $order);
+
         // Check if order exists and is awaiting payment
         if ($order->status !== Order::STATUS_AWAITING_PAYMENT) {
             return redirect()->route('home')
@@ -48,6 +63,8 @@ class PaymentController extends Controller
      */
     public function uploadProof(Request $request, Order $order)
     {
+        $this->authorizeOrder($request, $order);
+
         // Validate order
         if ($order->status !== Order::STATUS_AWAITING_PAYMENT) {
             return response()->json([
@@ -104,8 +121,10 @@ class PaymentController extends Controller
     /**
      * Download QRIS as image
      */
-    public function downloadQris(Order $order)
+    public function downloadQris(Request $request, Order $order)
     {
+        $this->authorizeOrder($request, $order);
+
         if ($order->status !== Order::STATUS_AWAITING_PAYMENT) {
             return redirect()->route('home')
                 ->with('error', 'Pesanan tidak valid.');
@@ -126,8 +145,10 @@ class PaymentController extends Controller
     /**
      * Get payment status API (for AJAX polling)
      */
-    public function status(Order $order)
+    public function status(Request $request, Order $order)
     {
+        $this->authorizeOrder($request, $order);
+
         $proof = $order->paymentProof;
         $expiresAt = $order->created_at->addHours(24);
         $remainingSeconds = max(0, $expiresAt->diffInSeconds(now(), false));

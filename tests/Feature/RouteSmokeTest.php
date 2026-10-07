@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\Review;
@@ -55,6 +56,18 @@ class RouteSmokeTest extends TestCase
             'fee' => 5000,
             'total' => 117000,
             'status' => Order::STATUS_AWAITING_PAYMENT,
+        ]);
+
+        // Snapshot line item: exercises order item loops (profile views crashed
+        // on real orders while the item-less smoke order hid the bug).
+        OrderItem::create([
+            'order_id' => $this->order->id,
+            'product_id' => $this->product->id,
+            'product_name' => $this->product->name,
+            'product_price' => $this->product->price,
+            'unit' => $this->product->unit ?? 'pcs',
+            'quantity' => 2,
+            'subtotal' => $this->product->price * 2,
         ]);
 
         $this->coupon = Coupon::create([
@@ -197,6 +210,20 @@ class RouteSmokeTest extends TestCase
             $status = $this->get($path)->getStatusCode();
             $this->assertLessThan(500, $status, "GET {$path} returned HTTP {$status}");
         }
+    }
+
+    public function test_payment_routes_reject_foreign_orders(): void
+    {
+        // Guest, no session order_data => cannot touch someone else's order.
+        $this->get(route('payment.waiting', $this->order))->assertForbidden();
+        $this->get(route('payment.status', $this->order))->assertForbidden();
+
+        // Different logged-in customer => forbidden.
+        $other = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($other)->get(route('payment.waiting', $this->order))->assertForbidden();
+
+        // Owner => allowed.
+        $this->actingAs($this->admin)->get(route('payment.waiting', $this->order))->assertOk();
     }
 
     public function test_admin_can_update_customer_role_and_invalid_role_is_rejected(): void
