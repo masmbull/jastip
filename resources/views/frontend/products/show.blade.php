@@ -52,6 +52,11 @@
                     </div>
                 @endif
 
+                <a href="{{ route('products.reviews', $product) }}"
+                   class="inline-flex items-center gap-1 mt-2 text-sm font-medium text-orange-600 hover:text-orange-700">
+                    Lihat semua ulasan ({{ $product->getReviewCount() }})
+                </a>
+
                 <div class="mt-3">
                     <p class="text-2xl font-bold text-orange-600">
                         {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}

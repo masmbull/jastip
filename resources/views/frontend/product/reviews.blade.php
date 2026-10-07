@@ -170,11 +170,11 @@ document.querySelectorAll('.star-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         selectedRating = parseInt(this.dataset.rating);
         document.getElementById('rating').value = selectedRating;
-        highlightStars(rating);
+        highlightStars(selectedRating);
     });
 });
 
-document.getElementById('ratingStars').addEventListener('mouseleave', function() {
+document.getElementById('ratingStars')?.addEventListener('mouseleave', function() {
     highlightStars(selectedRating);
 });
 
@@ -191,12 +191,12 @@ function highlightStars(rating) {
 }
 
 // Character counter
-document.querySelector('textarea[name="content"]').addEventListener('input', function() {
+document.querySelector('textarea[name="content"]')?.addEventListener('input', function() {
     document.getElementById('charCount').textContent = this.value.length + ' / 1000';
 });
 
 // Form submission
-document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+document.getElementById('reviewForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const formData = new FormData(this);
