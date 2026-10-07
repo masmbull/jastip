@@ -7,46 +7,46 @@
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-[#1E293B]">Bukti Pembayaran</h1>
-                <p class="text-[#64748B] mt-1">Kelola verifikasi bukti pembayaran pelanggan</p>
+                <h1 class="text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Bukti Pembayaran</h1>
+                <p class="text-[#64748B] dark:text-[#cbd5e1] mt-1">Kelola verifikasi bukti pembayaran pelanggan</p>
             </div>
             <div class="text-right">
-                <p class="text-2xl font-bold text-orange-600">{{ $counts['pending'] }}</p>
-                <p class="text-sm text-[#64748B]">Menunggu verifikasi</p>
+                <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $counts['pending'] }}</p>
+                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Menunggu verifikasi</p>
             </div>
         </div>
 
         <!-- Status Filter Tabs -->
-        <div class="flex gap-2 mb-6 border-b border-[#E2E8F0]">
+        <div class="flex gap-2 mb-6 border-b border-[#E2E8F0] dark:border-[#404854]">
             <a href="{{ route('admin.payment-proofs.index', ['status' => 'all']) }}"
-               class="px-4 py-2 font-medium {{ $status === 'all' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-[#64748B] hover:text-[#1E293B]' }}">
+               class="px-4 py-2 font-medium {{ $status === 'all' ? 'border-b-2 border-orange-500 text-orange-600 dark:text-orange-400' : 'text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }} transition-colors">
                 Semua ({{ $counts['all'] }})
             </a>
             <a href="{{ route('admin.payment-proofs.index', ['status' => 'pending']) }}"
-               class="px-4 py-2 font-medium {{ $status === 'pending' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-[#64748B] hover:text-[#1E293B]' }}">
+               class="px-4 py-2 font-medium {{ $status === 'pending' ? 'border-b-2 border-orange-500 text-orange-600 dark:text-orange-400' : 'text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }} transition-colors">
                 Menunggu ({{ $counts['pending'] }})
             </a>
             <a href="{{ route('admin.payment-proofs.index', ['status' => 'verified']) }}"
-               class="px-4 py-2 font-medium {{ $status === 'verified' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-[#64748B] hover:text-[#1E293B]' }}">
+               class="px-4 py-2 font-medium {{ $status === 'verified' ? 'border-b-2 border-orange-500 text-orange-600 dark:text-orange-400' : 'text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }} transition-colors">
                 Terverifikasi ({{ $counts['verified'] }})
             </a>
             <a href="{{ route('admin.payment-proofs.index', ['status' => 'rejected']) }}"
-               class="px-4 py-2 font-medium {{ $status === 'rejected' ? 'border-b-2 border-orange-500 text-orange-600' : 'text-[#64748B] hover:text-[#1E293B]' }}">
+               class="px-4 py-2 font-medium {{ $status === 'rejected' ? 'border-b-2 border-orange-500 text-orange-600 dark:text-orange-400' : 'text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }} transition-colors">
                 Ditolak ({{ $counts['rejected'] }})
             </a>
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="bg-white dark:bg-[#23252b] rounded-lg shadow border border-[#E2E8F0] dark:border-[#404854] overflow-hidden transition-colors">
             <table class="w-full">
-                <thead class="bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                <thead class="bg-[#F8FAFC] dark:bg-[#2e323b] border-b border-[#E2E8F0] dark:border-[#404854]">
                     <tr>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B]">No. Pesanan</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B]">Pelanggan</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B]">File</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B]">Unggah</th>
-                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B]">Status</th>
-                        <th class="px-6 py-3 text-right text-sm font-semibold text-[#1E293B]">Aksi</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">No. Pesanan</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Pelanggan</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">File</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Unggah</th>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Status</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#E2E8F0]">

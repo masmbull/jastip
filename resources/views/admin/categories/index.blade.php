@@ -6,11 +6,11 @@
 <div class="p-6 space-y-6">
     <div class="flex items-center justify-between animate-fade-up">
         <div>
-            <h1 class="text-2xl font-bold text-[#1E293B]">Daftar Kategori</h1>
-            <p class="text-sm text-[#94A3B8] mt-1">Kelola kategori produk</p>
+            <h1 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Daftar Kategori</h1>
+            <p class="text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Kelola kategori produk</p>
         </div>
         <a href="{{ route('admin.categories.create') }}"
-           class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+           class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
             <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -18,34 +18,34 @@
         </a>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up" style="animation-delay: 120ms">
+    <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden animate-fade-up transition-colors" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
-                    <tr class="bg-[#F1F5F9] text-left text-xs text-[#64748B] uppercase">
+                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                         <th class="px-4 py-3">Kategori</th>
                         <th class="px-4 py-3">Produk</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0]">
+                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
                     @forelse($categories as $category)
-                        <tr class="hover:bg-[#f8fafc]">
+                        <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-lg">
+                                    <div class="w-10 h-10 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center text-lg">
                                         {{ $category->icon ?? '📦' }}
                                     </div>
                                     <div>
-                                        <p class="font-medium text-[#1E293B]">{{ $category->name }}</p>
-                                        <p class="text-xs font-mono text-[#94A3B8]">{{ $category->slug }}</p>
+                                        <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $category->name }}</p>
+                                        <p class="text-xs font-mono text-[#94A3B8] dark:text-[#64748B]">{{ $category->slug }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3">{{ $category->products_count }} produk</td>
+                            <td class="px-4 py-3 dark:text-[#f1f5f9]">{{ $category->products_count }} produk</td>
                             <td class="px-4 py-3">
-                                <span class="px-2 py-1 text-xs rounded-full @if($category->is_active) bg-green-100 text-green-700 @else bg-gray-100 text-gray-500 @endif">
+                                <span class="px-2 py-1 text-xs rounded-full @if($category->is_active) bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 @else bg-gray-100 dark:bg-gray-500/20 text-gray-500 dark:text-gray-400 @endif">
                                     {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </td>
