@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
@@ -34,6 +35,9 @@ class RouteSmokeTest extends TestCase
     {
         parent::setUp();
         $this->seed();
+
+        // Block all real outbound HTTP: system-status probes external APIs.
+        Http::fake();
 
         $this->admin = User::where('role', 'admin')->firstOrFail();
         $this->product = Product::firstOrFail();
@@ -128,7 +132,6 @@ class RouteSmokeTest extends TestCase
             '/syarat-ketentuan',
             '/kebijakan-privasi',
             '/admin/login',
-            // '/admin/system/status' omitted: probes external api.whatsapp.com (network).
         ];
 
         foreach ($paths as $path) {
@@ -177,6 +180,7 @@ class RouteSmokeTest extends TestCase
             '/admin/settings',
             '/admin/services',
             '/admin/services/check-all',
+            '/admin/system/status',
             '/profile',
             '/profile/edit',
             '/profile/settings',
