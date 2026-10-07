@@ -173,6 +173,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/user/{user}/role', [\App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/user/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 
+        // Bulk Import
+        Route::get('/import', [\App\Http\Controllers\Admin\ImportController::class, 'importForm'])->name('import.form');
+        Route::post('/import', [\App\Http\Controllers\Admin\ImportController::class, 'import'])->name('import.store');
+
+        // Reports
+        Route::get('/laporan/penjualan', [\App\Http\Controllers\Admin\ReportController::class, 'sales'])->name('reports.sales');
+        Route::get('/laporan/inventori', [\App\Http\Controllers\Admin\ReportController::class, 'inventory'])->name('reports.inventory');
+        Route::get('/laporan/pelanggan', [\App\Http\Controllers\Admin\ReportController::class, 'customers'])->name('reports.customers');
+
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
