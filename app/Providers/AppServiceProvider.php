@@ -4,7 +4,12 @@ namespace App\Providers;
 
 use App\Events\OrderStatusChanged;
 use App\Listeners\SendOrderStatusNotification;
+use App\Models\Product;
+use App\Models\Category;
+use App\Observers\ProductCacheObserver;
+use App\Observers\CategoryCacheObserver;
 use App\Services\CartService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -33,5 +38,9 @@ class AppServiceProvider extends ServiceProvider
             OrderStatusChanged::class,
             SendOrderStatusNotification::class
         );
+
+        // Cache invalidation observers - clear cache when products/categories are modified
+        Product::observe(ProductCacheObserver::class);
+        Category::observe(CategoryCacheObserver::class);
     }
 }

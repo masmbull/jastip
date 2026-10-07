@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -36,13 +37,15 @@ class ProductController extends Controller
             ->paginate($limit)
             ->withQueryString();
 
-        $categories = Category::active()
-            ->withCount('products')
-            ->whereHas('products', function ($q) {
-                $q->where('is_active', true);
-            })
-            ->orderBy('sort_order')
-            ->get();
+        $categories = Cache::remember('products.active_categories', 3600, function () {
+            return Category::active()
+                ->withCount('products')
+                ->whereHas('products', function ($q) {
+                    $q->where('is_active', true);
+                })
+                ->orderBy('sort_order')
+                ->get();
+        });
 
         return view('frontend.products.index', compact('products', 'categories'));
     }
@@ -77,18 +80,25 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
-        $categories = Category::active()
-            ->withCount(['products as viral_count' => function ($q) {
-                $q->where('is_viral', true)->where('is_active', true);
-            }])
-            ->whereHas('products', function ($q) {
-                $q->where('is_viral', true)->where('is_active', true);
-            })
-            ->orderBy('sort_order')
-            ->get();
+        $categories = Cache::remember('products.viral_categories', 3600, function () {
+            return Category::active()
+                ->withCount(['products as viral_count' => function ($q) {
+                    $q->where('is_viral', true)->where('is_active', true);
+                }])
+                ->whereHas('products', function ($q) {
+                    $q->where('is_viral', true)->where('is_active', true);
+                })
+                ->orderBy('sort_order')
+                ->get();
+        });
 
-        $totalViral = Product::viral()->count();
-        $totalSold = (int) Product::viral()->sum('sold_count');
+        $totalViral = Cache::remember('products.viral_count', 3600, function () {
+            return Product::viral()->count();
+        });
+        
+        $totalSold = Cache::remember('products.viral_sold', 3600, function () {
+            return (int) Product::viral()->sum('sold_count');
+        });
 
         return view('frontend.products.viral', compact('products', 'categories', 'totalViral', 'totalSold'));
     }
