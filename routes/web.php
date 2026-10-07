@@ -27,6 +27,9 @@ Route::redirect('/login/admin', '/admin/login', 301);
 Route::get('/produk', [ProductController::class, 'index'])->name('products.index');
 // Harus di atas /produk/{product:slug} supaya tidak dianggap slug produk.
 Route::get('/produk-viral', [ProductController::class, 'viral'])->name('products.viral');
+Route::get('/cari', [SearchController::class, 'index'])->name('search');
+Route::get('/cari/saran', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/cari/harga-range', [SearchController::class, 'priceRange'])->name('search.price-range');
 Route::get('/produk/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/kategori', [CategoryController::class, 'index'])->name('categories.index');
 Route::get('/kategori/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
