@@ -104,4 +104,13 @@ class WhatsappService
 
         return whatsapp_url($phone, $message);
     }
+
+    /**
+     * Generate WhatsApp contact URL for general inquiry
+     */
+    public static function contactUrl(string $message): string
+    {
+        $phone = setting('whatsapp', '6285123456789');
+        return whatsapp_url($phone, $message);
+    }
 }
