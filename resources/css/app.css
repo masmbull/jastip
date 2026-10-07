@@ -43,11 +43,95 @@
 /* focus ring consistency */
 \   *:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
 
-/* ===== Admin dark mode =====
-   Set class "dark" on <html> via the toggle in layouts/admin.blade.php.
-   Override palette (arbitrary hexes + bg-white) under html.dark so all surfaces
-   darken without per-page edits / dark: utilities.
-   ponytail: fine-tune badge & per-surface colors later. */
+/* ===== Dark Mode Theme =====
+   Dark class on <html> element for site-wide theme.
+   Properly scoped colors for both light and dark modes. */
+
+html {
+    color-scheme: light;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
+/* Light mode colors (default) */
+:root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f8fafc;
+    --color-bg-tertiary: #f1f5f9;
+    --color-text-primary: #1e293b;
+    --color-text-secondary: #64748b;
+    --color-text-tertiary: #94a3b8;
+    --color-border: #e2e8f0;
+    --color-border-light: #f1f5f9;
+}
+
+/* Dark mode colors */
+html.dark {
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #23252b;
+    --color-bg-tertiary: #2e323b;
+    --color-text-primary: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    --color-text-tertiary: #94a3b8;
+    --color-border: #404854;
+    --color-border-light: #2e323b;
+}
+
+/* Apply theme colors */
+html.dark {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+}
+
+html.dark body {
+    @apply bg-[#1a1a1a] text-[#f1f5f9];
+}
+
+html.dark .bg-white {
+    @apply bg-[#23252b];
+}
+
+html.dark .bg-\[\#F8FAFC\] {
+    @apply bg-[#2e323b];
+}
+
+html.dark .bg-\[\#F1F5F9\] {
+    @apply bg-[#2e323b];
+}
+
+html.dark .bg-\[#F8FAFC\],
+html.dark .bg-slate-50 {
+    @apply bg-[#2e323b];
+}
+
+html.dark .text-\[#1E293B\] {
+    @apply text-[#f1f5f9];
+}
+
+html.dark .text-\[#64748B\] {
+    @apply text-[#cbd5e1];
+}
+
+html.dark .text-\[#94A3B8\] {
+    @apply text-[#94a3b8];
+}
+
+html.dark .border-\[#E2E8F0\] {
+    @apply border-[#404854];
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+    @apply bg-[#2e323b] text-[#f1f5f9] border-[#404854];
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    @apply text-[#64748b];
+}
 html.dark {
     --dt-bg:        #111827;
     --dt-surface:   #1e293a;

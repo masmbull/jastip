@@ -3,39 +3,39 @@
 @section('title', 'Titipan Kamu')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
-    <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] mb-8 animate-fade-up">Titipan Kamu</h1>
+    <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6 md:mb-8 animate-fade-up">Titipan Kamu</h1>
 
     @if($cartItems->isEmpty())
-        <div class="text-center py-16 animate-fade-up" style="animation-delay: 120ms">
-            <div class="w-32 h-32 mx-auto bg-[#F0EDE7] rounded-full mb-6 flex items-center justify-center">
-                <span class="text-5xl">🛍️</span>
+        <div class="text-center py-12 md:py-16 animate-fade-up" style="animation-delay: 120ms">
+            <div class="w-24 md:w-32 h-24 md:h-32 mx-auto bg-orange-50 dark:bg-orange-500/20 rounded-full mb-4 md:mb-6 flex items-center justify-center transition-colors">
+                <span class="text-4xl md:text-5xl">🛍️</span>
             </div>
-            <h2 class="text-xl font-semibold text-[#1E293B] mb-2">Titipan kamu masih kosong.</h2>
-            <p class="text-[#94A3B8] mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
+            <h2 class="text-lg md:text-xl font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Titipan kamu masih kosong.</h2>
+            <p class="text-sm md:text-base text-[#94A3B8] dark:text-[#cbd5e1] mb-4 md:mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
             <a href="{{ route('products.index') }}"
-               class="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+               class="inline-flex items-center px-4 md:px-6 py-2 md:py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 text-sm md:text-base">
                 Lihat Semua Produk
             </a>
         </div>
     @else
-        <div class="space-y-6">
+        <div class="space-y-4 md:space-y-6">
 
             {{-- Cart Table (Desktop) --}}
-            <div class="hidden sm:block bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up">
+            <div class="hidden sm:block bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden animate-fade-up transition-colors">
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="bg-[#F1F5F9]">
+                        <thead class="bg-[#F1F5F9] dark:bg-[#2e323b]">
                             <tr>
-                                <th class="text-left px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Produk</th>
-                                <th class="text-center px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Harga</th>
-                                <th class="text-center px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Jumlah</th>
-                                <th class="text-right px-4 py-3 text-xs font-medium text-[#64748B] uppercase">Subtotal</th>
-                                <th class="px-4 py-3 text-center text-xs font-medium text-[#64748B] uppercase">Aksi</th>
+                                <th class="text-left px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Produk</th>
+                                <th class="text-center px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Harga</th>
+                                <th class="text-center px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Jumlah</th>
+                                <th class="text-right px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Subtotal</th>
+                                <th class="px-3 md:px-4 py-3 text-center text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-[#F0EDE7]">
+                        <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
                             @foreach($cartItems as $item)
                                 <tr class="hover:bg-[#F8FAFC]">
                                     <td class="px-4 py-4">

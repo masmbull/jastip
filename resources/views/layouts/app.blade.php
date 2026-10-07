@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }" @theme-toggle.window="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')">
 <head>
     <meta charset="utf-8">
-    <meta name="theme-color" content="#F97316">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#F5A623">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NITIP DI END">
@@ -50,10 +50,17 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
+    
+    <script>
+        // Prevent FOUC (Flash of Unstyled Content) for dark mode
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
 </head>
-        <body class="bg-[#FDF6EC] text-[#1E293B] font-sans antialiased min-h-screen flex flex-col"
-          x-data="{ mobileMenuOpen: false, searchOpen: false }"
-          x-cloak>
+<body class="bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] font-sans antialiased min-h-screen flex flex-col transition-colors duration-300"
+      x-data="{ mobileMenuOpen: false, searchOpen: false }"
+      x-cloak>
 
         {{-- Skip to content --}}
         <a href="#main-content" class="sr-only focus:not-sr-only absolute top-4 left-4 z-50 bg-orange-500 text-white px-4 py-2 rounded">
