@@ -226,6 +226,27 @@ class RouteSmokeTest extends TestCase
         $this->actingAs($this->admin)->get(route('payment.waiting', $this->order))->assertOk();
     }
 
+    public function test_review_pages_render(): void
+    {
+        // Public review list + product page (routes.products.reviews was orphan
+        // before; regression guard so the entry link never breaks again).
+        $this->get(route('products.reviews', $this->product))->assertOk();
+        $this->get(route('products.show', $this->product))->assertOk();
+
+        // Guest mutations require auth: 401 JSON, not 500. Run before actingAs
+        // (Laravel keeps actingAs active for the rest of the test).
+        $this->post(route('reviews.store', $this->product), [
+            'rating' => 5, 'title' => 'x', 'content' => 'y',
+        ])->assertStatus(401);
+
+        $this->post(route('reviews.helpful', $this->review))->assertStatus(401);
+
+        // Admin moderation detail.
+        $this->actingAs($this->admin)
+            ->get(route('admin.reviews.show', $this->review))
+            ->assertOk();
+    }
+
     public function test_admin_can_update_customer_role_and_invalid_role_is_rejected(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);

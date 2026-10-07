@@ -96,8 +96,9 @@
                         <p class="font-medium text-red-900 dark:text-red-200">Hapus Akun</p>
                         <p class="text-sm text-red-700 dark:text-red-300">Menghapus akun dan semua data Anda secara permanen</p>
                     </div>
-                    <button class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" onclick="alert('Fitur ini sedang dikembangkan')">
-                        Hapus Akun
+                    <button type="button" disabled title="Fitur belum tersedia"
+                            class="px-4 py-2 bg-red-300 dark:bg-red-900/40 text-white rounded cursor-not-allowed">
+                        Segera Hadir
                     </button>
                 </div>
             </div>

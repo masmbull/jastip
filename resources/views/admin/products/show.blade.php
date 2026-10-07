@@ -14,7 +14,7 @@
                 Edit
             </a>
             <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
-                  onsubmit="return confirm('Hapus produk ini?')" class="inline">
+                  data-confirm="Hapus produk ini?" class="inline">
                 @csrf @method('DELETE')
                 <button type="submit"
                         class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm">

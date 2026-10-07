@@ -61,7 +61,7 @@ php artisan up
 
 ```bash
 php artisan test
-# 2 tests, 32 assertions
+# Feature smoke + checkout-flow suites (in-memory SQLite)
 ```
 
 `tests/Feature/CheckoutFlowTest.php` exercises the full RBAC chain:

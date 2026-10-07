@@ -109,10 +109,10 @@
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="w-10 h-10 bg-[#fb923c] rounded-full flex items-center justify-center text-white font-bold">
-                                {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                {{ strtoupper(substr($review->user?->name ?? 'P', 0, 1)) }}
                             </div>
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-[#f1f5f9]">{{ $review->user->name }}</p>
+                                <p class="font-semibold text-gray-900 dark:text-[#f1f5f9]">{{ $review->user?->name ?? 'Pengguna' }}</p>
                                 <p class="text-sm text-gray-500 dark:text-[#9ca3af]">{{ $review->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
@@ -213,15 +213,15 @@ document.getElementById('reviewForm')?.addEventListener('submit', async function
         const data = await response.json();
 
         if (response.ok) {
-            alert('Terima kasih! Ulasan Anda akan ditinjau admin sebelum ditampilkan.');
+            window.toast('Terima kasih! Ulasan Anda akan ditinjau admin sebelum ditampilkan.', 'success');
             this.reset();
             selectedRating = 0;
             highlightStars(0);
         } else {
-            alert(data.message || 'Terjadi kesalahan');
+            window.toast(data.message || 'Terjadi kesalahan', 'error');
         }
     } catch (error) {
-        alert('Terjadi kesalahan: ' + error.message);
+        window.toast('Terjadi kesalahan: ' + error.message, 'error');
     }
 });
 

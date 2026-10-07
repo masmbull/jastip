@@ -184,7 +184,7 @@
 
     function uploadProof() {
         if (!selectedFile) {
-            alert('Silakan pilih file bukti pembayaran');
+            window.toast('Silakan pilih file bukti pembayaran', 'info');
             return;
         }
 
@@ -209,14 +209,14 @@
                 document.getElementById('proofInput').value = '';
                 document.getElementById('uploadBtn').textContent = 'Upload Bukti Pembayaran';
             } else {
-                alert('Error: ' + data.message);
+                window.toast('Error: ' + data.message, 'error');
                 document.getElementById('uploadBtn').disabled = false;
                 document.getElementById('uploadBtn').textContent = 'Upload Bukti Pembayaran';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Gagal mengunggah file');
+            window.toast('Gagal mengunggah file', 'error');
             document.getElementById('uploadBtn').disabled = false;
             document.getElementById('uploadBtn').textContent = 'Upload Bukti Pembayaran';
         });

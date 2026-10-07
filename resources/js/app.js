@@ -59,6 +59,7 @@
             el.addEventListener('transitionend', () => el.remove());
         }, duration);
     }
+    window.toast = toast; // inline page scripts (reviews, payment) reuse the toast host
 
     /* ---- confirm modal bridge ---- */
     function confirmAction(message, title = 'Konfirmasi', okLabel = 'Ya, lanjutkan') {

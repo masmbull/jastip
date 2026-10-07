@@ -116,7 +116,7 @@
             {{-- Delete Card --}}
             <div class="bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 p-6">
                 <h3 class="text-sm font-bold text-red-900 dark:text-red-200 mb-3">Zona Berbahaya</h3>
-                <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" onsubmit="return confirm('Yakin ingin menghapus ulasan ini?')">
+                <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" data-confirm="Yakin ingin menghapus ulasan ini?">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition">
