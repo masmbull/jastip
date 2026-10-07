@@ -7,11 +7,11 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-up">
         <div>
-            <h1 class="text-2xl font-bold text-[#1E293B]">Daftar Produk</h1>
-            <p class="text-sm text-[#94A3B8] mt-1">Kelola semua produk jastip kamu</p>
+            <h1 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Daftar Produk</h1>
+            <p class="text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Kelola semua produk jastip kamu</p>
         </div>
         <a href="{{ route('admin.products.create') }}"
-           class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+           class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
             <svg class="w-4 h-4 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -19,11 +19,11 @@
         </a>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-up" style="animation-delay: 120ms">
+    <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden animate-fade-up transition-colors" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
-                    <tr class="bg-[#F1F5F9] text-left text-xs text-[#64748B] uppercase">
+                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                         <th class="px-4 py-3">Foto</th>
                         <th class="px-4 py-3">Nama Produk</th>
                         <th class="px-4 py-3">Kategori</th>
@@ -32,24 +32,24 @@
                         <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0]">
+                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
                     @forelse($products as $product)
-                        <tr class="hover:bg-[#f8fafc]">
+                        <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-4 py-3">
                                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                      class="w-14 h-14 rounded-lg object-cover" loading="lazy" decoding="async">
                             </td>
                             <td class="px-4 py-3">
-                                <p class="font-medium text-[#1E293B]">{{ $product->name }}</p>
-                                <p class="text-xs text-[#94A3B8] font-mono">{{ $product->slug }}</p>
+                                <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $product->name }}</p>
+                                <p class="text-xs text-[#94A3B8] dark:text-[#64748B] font-mono">{{ $product->slug }}</p>
                             </td>
-                            <td class="px-4 py-3 text-[#1E293B]">{{ $product->category->name ?? '-' }}</td>
-                            <td class="px-4 py-3 font-medium text-orange-600">{{ $product->formatted_price }}</td>
+                            <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">{{ $product->category->name ?? '-' }}</td>
+                            <td class="px-4 py-3 font-medium text-orange-600 dark:text-orange-400">{{ $product->formatted_price }}</td>
                             <td class="px-4 py-3">
                                 @if($product->stock > 0)
-                                    <span class="text-green-600 font-medium">{{ $product->stock }}</span>
+                                    <span class="text-green-600 dark:text-green-400 font-medium">{{ $product->stock }}</span>
                                 @else
-                                    <span class="text-red-500 font-medium">Habis</span>
+                                    <span class="text-red-500 dark:text-red-400 font-medium">Habis</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
