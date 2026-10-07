@@ -36,7 +36,7 @@ class PaymentController extends Controller
         }
 
         // Get payment expiry time (24 hours from creation)
-        $expiresAt = $order->created_at->addHours(24);
+        $expiresAt = $order->created_at->copy()->addHours(24);
         $isExpired = now()->isAfter($expiresAt);
 
         if ($isExpired) {
@@ -151,7 +151,7 @@ class PaymentController extends Controller
 
         $proof = $order->paymentProof;
         $expiresAt = $order->created_at->addHours(24);
-        $remainingSeconds = max(0, $expiresAt->diffInSeconds(now(), false));
+        $remainingSeconds = max(0, (int) now()->diffInSeconds($expiresAt, false));
 
         return response()->json([
             'order_number' => $order->order_number,

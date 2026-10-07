@@ -222,8 +222,14 @@ class RouteSmokeTest extends TestCase
         $other = User::factory()->create(['role' => 'customer']);
         $this->actingAs($other)->get(route('payment.waiting', $this->order))->assertForbidden();
 
-        // Owner => allowed.
+        // Owner => allowed, and a fresh order must report a positive countdown
+        // (Carbon 3 signed diff regression: is_expired must stay false).
         $this->actingAs($this->admin)->get(route('payment.waiting', $this->order))->assertOk();
+        $this->actingAs($this->admin)
+            ->getJson(route('payment.status', $this->order))
+            ->assertOk()
+            ->assertJsonPath('is_expired', false)
+            ->assertJsonPath('remaining_seconds', fn ($v) => $v > 0);
     }
 
     public function test_review_pages_render(): void

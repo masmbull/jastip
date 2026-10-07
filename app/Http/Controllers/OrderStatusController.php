@@ -27,8 +27,8 @@ class OrderStatusController extends Controller
             ->firstOrFail();
 
         $paymentProof = $order->paymentProof;
-        $expiresAt = $order->created_at->addHours(24);
-        $remainingSeconds = max(0, $expiresAt->diffInSeconds(now(), false));
+        $expiresAt = $order->created_at->copy()->addHours(24);
+        $remainingSeconds = max(0, (int) now()->diffInSeconds($expiresAt, false));
 
         return response()->json([
             'order_number' => $order->order_number,
