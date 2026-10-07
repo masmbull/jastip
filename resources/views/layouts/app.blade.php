@@ -51,6 +51,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
     
+    {{-- SEO Structured Data --}}
+    <x-seo-structured-data />
+    
     <script>
         // Prevent FOUC (Flash of Unstyled Content) for dark mode
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
