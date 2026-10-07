@@ -164,6 +164,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/ulasan/{review}/reject', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('reviews.reject');
         Route::delete('/ulasan/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy'])->name('reviews.destroy');
 
+        // Coupons
+        Route::resource('/kupon', \App\Http\Controllers\Admin\CouponController::class, ['as' => 'admin']);
+
+        // Users Management
+        Route::get('/user', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+        Route::get('/user/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+        Route::put('/user/{user}/role', [\App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('users.update-role');
+        Route::delete('/user/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
