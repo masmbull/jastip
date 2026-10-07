@@ -132,7 +132,7 @@
                                 Lihat Detail
                             </a>
                             @if($product->stock > 0)
-                                <form method="POST" action="{{ route('cart.add', ['product' => $product->id]) }}">
+                                <form method="POST" action="{{ route('cart.add', ['product' => $product->id]) }}" data-async>
                                     @csrf
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit"
