@@ -88,6 +88,41 @@
                     </span>
                 </a>
 
+                {{-- Account --}}
+                @auth
+                    @php($accountUser = auth()->user())
+                    <div class="relative" x-data="{ accountOpen: false }" @click.outside="accountOpen = false">
+                        <button type="button" @click="accountOpen = !accountOpen"
+                                class="flex items-center p-1.5 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded-full"
+                                title="Akun saya" aria-haspopup="true" :aria-expanded="accountOpen">
+                            <span class="h-7 w-7 rounded-full bg-orange-500 text-white text-sm font-bold flex items-center justify-center">
+                                {{ strtoupper(substr($accountUser->name, 0, 1)) }}
+                            </span>
+                        </button>
+                        <div x-show="accountOpen" x-transition x-cloak
+                             class="absolute right-0 mt-2 w-48 py-1 bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg shadow-lg z-50">
+                            @if($accountUser->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Panel Admin</a>
+                            @endif
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Profil Saya</a>
+                            <a href="{{ route('profile.orders') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Pesanan Saya</a>
+                            <a href="{{ route('profile.addresses') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Alamat</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10">Keluar</button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}"
+                       class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                       title="Masuk" aria-label="Masuk">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </a>
+                @endauth
+
                 {{-- Mobile Menu Button --}}
                 <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
