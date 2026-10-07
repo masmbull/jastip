@@ -61,6 +61,15 @@
                             </button>
                         </div>
                     </div>
+
+                    {{-- Remember Me --}}
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="remember" name="remember" value="on"
+                               class="w-4 h-4 rounded border-[#343a44] bg-[#23252b] text-[#F5A623] cursor-pointer">
+                        <label for="remember" class="text-sm text-[#b0b4bd] cursor-pointer hover:text-[#FDF6EC] transition-colors">
+                            Ingat saya
+                        </label>
+                    </div>
                 </div>
 
                 <button type="submit"

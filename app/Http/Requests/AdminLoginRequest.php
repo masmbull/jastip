@@ -40,7 +40,7 @@ class AdminLoginRequest extends FormRequest
             'password' => $this->input('password'),
         ];
 
-        if (!Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials, $this->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'username' => ['Kredensial tidak cocok dengan catatan kami.'],
             ]);

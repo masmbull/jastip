@@ -51,8 +51,16 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
     
-    {{-- SEO Structured Data --}}
-    <x-seo-structured-data />
+    {{-- Service Worker Registration for PWA --}}
+    <script>
+        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed:', error));
+            });
+        }
+    </script>
     
     <script>
         // Prevent FOUC (Flash of Unstyled Content) for dark mode
