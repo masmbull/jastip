@@ -50,6 +50,21 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -177,5 +192,56 @@ class Product extends Model
     public function isInStock(): bool
     {
         return $this->stock > 0;
+    }
+
+    /**
+     * Get average rating for this product
+     */
+    public function getAverageRating(): float
+    {
+        return $this->reviews()
+            ->where('status', 'approved')
+            ->avg('rating') ?? 0;
+    }
+
+    /**
+     * Get review count for this product
+     */
+    public function getReviewCount(): int
+    {
+        return $this->reviews()
+            ->where('status', 'approved')
+            ->count();
+    }
+
+    /**
+     * Get active discount for this product
+     */
+    public function getActiveDiscount()
+    {
+        return $this->discounts()
+            ->where('is_active', true)
+            ->where('valid_from', '<=', now())
+            ->where('valid_to', '>=', now())
+            ->orderBy('priority', 'desc')
+            ->first();
+    }
+
+    /**
+     * Get final price after discount
+     */
+    public function getFinalPrice(): float
+    {
+        $discount = $this->getActiveDiscount();
+        
+        if (!$discount) {
+            return $this->price;
+        }
+
+        if ($discount->type === 'percentage') {
+            return $this->price - ($this->price * $discount->value / 100);
+        }
+
+        return max(0, $this->price - $discount->value);
     }
 }

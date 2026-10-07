@@ -52,6 +52,11 @@ Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation']
 Route::get('/order/{orderNumber}', [\App\Http\Controllers\OrderStatusController::class, 'show'])->name('order.show');
 Route::get('/order/{orderNumber}/status', [\App\Http\Controllers\OrderStatusController::class, 'api'])->name('order.status');
 
+// Product Reviews
+Route::get('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewController::class, 'index'])->name('products.reviews');
+Route::post('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('reviews.store');
+Route::post('/ulasan/{review}/helpful', [\App\Http\Controllers\ProductReviewController::class, 'toggleHelpful'])->name('reviews.helpful');
+
 // Payment Routes
 Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
 Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
@@ -121,6 +126,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/bukti-pembayaran/{paymentProof}/verify', [\App\Http\Controllers\Admin\PaymentProofController::class, 'verify'])->name('payment-proofs.verify');
         Route::post('/bukti-pembayaran/{paymentProof}/reject', [\App\Http\Controllers\Admin\PaymentProofController::class, 'reject'])->name('payment-proofs.reject');
         Route::get('/bukti-pembayaran/{paymentProof}/download', [\App\Http\Controllers\Admin\PaymentProofController::class, 'download'])->name('payment-proofs.download');
+
+        // Reviews Moderation
+        Route::get('/ulasan', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/ulasan/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'show'])->name('reviews.show');
+        Route::post('/ulasan/{review}/approve', [\App\Http\Controllers\Admin\ReviewController::class, 'approve'])->name('reviews.approve');
+        Route::post('/ulasan/{review}/reject', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('reviews.reject');
+        Route::delete('/ulasan/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy'])->name('reviews.destroy');
 
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
