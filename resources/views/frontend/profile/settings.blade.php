@@ -65,7 +65,7 @@
                         <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Email Notification</p>
                         <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima notifikasi pesanan via email</p>
                     </div>
-                    <input type="checkbox" class="w-5 h-5" checked disabled>
+                    <input type="checkbox" class="w-5 h-5" checked disabled title="Notifikasi pesanan selalu aktif">
                 </div>
 
                 <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
@@ -73,7 +73,7 @@
                         <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">WhatsApp Notification</p>
                         <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima notifikasi pesanan via WhatsApp</p>
                     </div>
-                    <input type="checkbox" class="w-5 h-5" checked disabled>
+                    <input type="checkbox" class="w-5 h-5" checked disabled title="Notifikasi pesanan selalu aktif">
                 </div>
 
                 <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
@@ -81,7 +81,7 @@
                         <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Marketing Email</p>
                         <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima promosi dan penawaran terbaru</p>
                     </div>
-                    <input type="checkbox" class="w-5 h-5">
+                    <input type="checkbox" class="w-5 h-5" disabled title="Fitur belum tersedia">
                 </div>
             </div>
         </div>
