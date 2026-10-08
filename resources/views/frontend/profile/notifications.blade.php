@@ -3,7 +3,7 @@
 @section('title', 'Notifikasi | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9]">Notifikasi</h1>

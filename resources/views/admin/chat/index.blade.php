@@ -36,7 +36,7 @@
                         {{ $conversation->latestChatMessage?->created_at?->diffForHumans() }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('admin.chat.show', $conversation) }}" class="inline-flex items-center gap-2 text-[#fb923c] hover:underline">
+                        <a href="{{ route('admin.chat.show', $conversation) }}" class="inline-flex items-center gap-2 text-[#06B6D4] hover:underline">
                             Buka
                             @if($unread > 0)
                                 <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unread }}</span>

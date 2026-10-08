@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-[#f5f0e8] text-[#333333] font-sans antialiased min-h-screen">
+<body class="bg-[#ecfeff] text-[#1E293B] font-sans antialiased min-h-screen">
     @yield('content')
 </body>
 </html>

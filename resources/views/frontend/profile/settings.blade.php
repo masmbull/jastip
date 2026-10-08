@@ -3,7 +3,7 @@
 @section('title', 'Pengaturan Akun | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-8">Pengaturan Akun</h1>
 
@@ -18,7 +18,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Password Saat Ini *</label>
                     <input type="password" name="current_password" required
-                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#fb923c]">
+                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]">
                     @error('current_password')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -28,7 +28,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Password Baru *</label>
                     <input type="password" name="password" required
                            placeholder="Min. 8 karakter"
-                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#fb923c]">
+                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]">
                     <p class="text-xs text-gray-500 dark:text-[#9ca3af] mt-1">Minimal 8 karakter</p>
                     @error('password')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -38,7 +38,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Konfirmasi Password Baru *</label>
                     <input type="password" name="password_confirmation" required
-                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#fb923c]">
+                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]">
                     @error('password_confirmation')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -48,7 +48,7 @@
                     <a href="{{ route('profile.show') }}" class="flex-1 px-4 py-2 border border-gray-300 dark:border-[#404854] text-gray-700 dark:text-[#cbd5e1] rounded-lg hover:bg-gray-100 dark:hover:bg-[#404854] transition text-center">
                         Batal
                     </a>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium">
                         Ubah Password
                     </button>
                 </div>
@@ -96,7 +96,7 @@
                     </div>
 
                     <noscript>
-                        <button type="submit" class="mt-2 px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium text-sm">
+                        <button type="submit" class="mt-2 px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium text-sm">
                             Simpan
                         </button>
                     </noscript>

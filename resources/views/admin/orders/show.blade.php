@@ -157,7 +157,7 @@
                 @csrf @method('PUT')
                 <input type="hidden" name="status" value="{{ $order->status === 'processing' ? 'ready' : 'completed' }}">
                 <button type="submit"
-                        class="px-4 py-2 {{ $order->status === 'processing' ? 'bg-green-500 hover:bg-green-600' : 'bg-purple-500 hover:bg-purple-600' }} text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="px-4 py-2 {{ $order->status === 'processing' ? 'bg-green-500 hover:bg-green-600' : 'bg-[#0891B2] hover:bg-[#0E7490]' }} text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
                     @if($order->status === 'processing') Tandai Siap Kirim @else Selesaikan Pesanan @endif
                 </button>
             </form>

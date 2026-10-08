@@ -89,10 +89,10 @@
                     <label class="block text-sm font-medium text-[#94A3B8] mb-1">Warna Teks Utama</label>
                     <div class="flex items-center gap-3">
                         <input type="color" name="primary_color"
-                            value="{{ old('primary_color', setting('primary_color', '#FAF7F2')) }}"
+                            value="{{ old('primary_color', setting('primary_color', '#0891B2')) }}"
                             class="w-12 h-12 rounded border border-[#E2E8F0] cursor-pointer"
                             onchange="this.nextElementSibling.style.backgroundColor = this.value">
-                        <span class="font-mono text-xs text-[#94A3B8]">{{ old('primary_color', setting('primary_color', '#FAF7F2')) }}</span>
+                        <span class="font-mono text-xs text-[#94A3B8]">{{ old('primary_color', setting('primary_color', '#0891B2')) }}</span>
                     </div>
                 </div>
                 <div>

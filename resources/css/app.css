@@ -8,18 +8,54 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* brand amber (#F5A623): override Tailwind's rose palette so every
-            bg-rose-, text-rose-, and ring-rose- utilities render amber — no blade edit. */
-    --color-rose-50:  #fef3c7;
-    --color-rose-100: #ffedd5;
-    --color-rose-200: #fed7aa;
-    --color-rose-300: #fdba74;
-    --color-rose-400: #fb9e1b;
-    --color-rose-500: #F5A623;
-    --color-rose-600: #e6951b;
-    --color-rose-700: #c97a14;
-    --color-rose-800: #a45b0d;
-    --color-rose-900: #782d10;
+    /* Brand = ocean blue (#0891B2). Override Tailwind's rose/orange/amber
+       palettes so every color utility renders the sea-blue ramp site-wide,
+       no blade-by-blade edit needed. */
+    --color-rose-50:  #ecfeff;
+    --color-rose-100: #cffafe;
+    --color-rose-200: #a5f3fc;
+    --color-rose-300: #67e8f9;
+    --color-rose-400: #22d3ee;
+    --color-rose-500: #0891B2;
+    --color-rose-600: #0E7490;
+    --color-rose-700: #155E75;
+    --color-rose-800: #164E63;
+    --color-rose-900: #083344;
+
+    --color-orange-50:  #ecfeff;
+    --color-orange-100: #cffafe;
+    --color-orange-200: #a5f3fc;
+    --color-orange-300: #67e8f9;
+    --color-orange-400: #22d3ee;
+    --color-orange-500: #0891B2;
+    --color-orange-600: #0E7490;
+    --color-orange-700: #155E75;
+    --color-orange-800: #164E63;
+    --color-orange-900: #083344;
+
+    --color-amber-50:  #ecfeff;
+    --color-amber-100: #cffafe;
+    --color-amber-200: #a5f3fc;
+    --color-amber-300: #67e8f9;
+    --color-amber-400: #22d3ee;
+    --color-amber-500: #0891B2;
+    --color-amber-600: #0E7490;
+    --color-amber-700: #155E75;
+    --color-amber-800: #164E63;
+    --color-amber-900: #083344;
+
+    /* Blue utils (info/accent) — pull into the same sea ramp so indigo-blue
+       never clashes beside brand cyan. */
+    --color-blue-50:  #ecfeff;
+    --color-blue-100: #cffafe;
+    --color-blue-200: #a5f3fc;
+    --color-blue-300: #67e8f9;
+    --color-blue-400: #22d3ee;
+    --color-blue-500: #0891B2;
+    --color-blue-600: #0E7490;
+    --color-blue-700: #155E75;
+    --color-blue-800: #164E63;
+    --color-blue-900: #083344;
 }
 
 /* ===== Custom UI ===== */
@@ -41,7 +77,7 @@
 }
 
 /* focus ring consistency */
-\   *:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
+*:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
 
 /* ===== Dark Mode Theme =====
    Dark class on <html> element for site-wide theme.
@@ -140,21 +176,24 @@ html.dark {
     --dt-border:    #334155;
     --dt-text:      #e5e7eb;
     --dt-muted:     #94a3b8;
-    --dt-rose:      #F5A623;
+    --dt-rose:      #0891B2;
 }
 
 html.dark body { background-color: var(--dt-bg); color: var(--dt-text); }
 
 /* Background surfaces — map every arbitrary-hex bg used in admin views */
 html.dark [class*=bg-[#FDF6Ec],
+html.dark [class*=bg-[#FDF6EC],
 html.dark [class*=bg-[#F5F5F0],
 html.dark [class*=bg-[#FAFAF8],
 html.dark [class*=bg-[#F8F5F0],
+html.dark [class*=bg-[#ecfeff],
 html.dark [class*=bg-[#fafafa],
 html.dark [class*=bg-[#F0F4F8] { background-color: var(--dt-bg); }
 
 html.dark [class*=bg-[#F1F5F9],
 html.dark [class*=bg-[#F8FAFC],
+html.dark [class*=bg-[#e0f2fe],
 html.dark [class*=bg-[#f8fafc] { background-color: var(--dt-surface); }
 
 html.dark [class*=bg-[#EEF2FF] { background-color: var(--dt-surface-3); }
@@ -164,19 +203,21 @@ html.dark [class*=bg-white] { background-color: var(--dt-surface-2); }
 /* Brand amber surfaces (orange-50 / rose-50 / amber-50 → subtle amber tint) */
 html.dark [class*=bg-orange-50],
 html.dark [class*=bg-rose-50],
-html.dark [class*=bg-amber-50] { background-color: rgba(245, 166, 35, 0.12); }
+html.dark [class*=bg-amber-50] { background-color: rgba(8, 145, 178, 0.12); }
 
 /* Borders & dividers */
 html.dark [class*=border-[#E2E8F0],
 html.dark [class*=border-[#E8E0D8],
 html.dark [class*=border-[#CBD5E1],
 html.dark [class*=border-[#F0EDE7],
+html.dark [class*=border-[#155E75],
 html.dark [class*=divide-[#E2E8F0],
 html.dark [class*=divide-[#F0EDE7] { border-color: var(--dt-border); }
 
 /* Text colors — primary */
 html.dark [class*=text-[#1E293B],
-html.dark [class*=text-[#333333] { color: var(--dt-text); }
+html.dark [class*=text-[#333333],
+html.dark [class*=text-[#FDF6EC] { color: var(--dt-text); }
 
 /* Text colors — muted */
 html.dark [class*=text-[#94A3B8],
@@ -190,10 +231,10 @@ html.dark [class*=text-[#CBD5E1] { color: var(--dt-muted); }
 html.dark a { color: var(--dt-rose); }
 
 /* Tailwind badge colors for status chips */
-html.dark .bg-amber-50 { background-color: rgba(245, 166, 35, 0.12); }
-html.dark .bg-amber-100 { background-color: rgba(245, 166, 35, 0.15); }
+html.dark .bg-amber-50 { background-color: rgba(8, 145, 178, 0.12); }
+html.dark .bg-amber-100 { background-color: rgba(8, 145, 178, 0.15); }
 html.dark .text-amber-700,
-html.dark .text-amber-800 { color: #fcd34d; }
+html.dark .text-amber-800 { color: #22d3ee; }
 html.dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.15); }
 html.dark .text-green-600 { color: #4ade80; }
 html.dark .text-green-700 { color: #86efac; }
@@ -216,9 +257,9 @@ html.dark .text-gray-600 { color: var(--dt-muted); }
 
 /* Orange brand = amber in dark */
 html.dark .text-orange-600 { color: var(--dt-rose); }
-html.dark .text-orange-700 { color: #fb9e1b; }
+html.dark .text-orange-700 { color: #06B6D4; }
 html.dark .bg-orange-500 { background-color: var(--dt-rose); }
-html.dark .bg-orange-600 { background-color: #e6951b; }
+html.dark .bg-orange-600 { background-color: #0E7490; }
 
 /* Dark button backgrounds (show.blade.php quick actions) */
 html.dark [class*=bg-[#1E293B] { background-color: var(--dt-surface-2); }

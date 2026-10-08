@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
-        <a href="{{ route('admin.reviews.index') }}" class="text-[#fb923c] hover:underline">← Kembali</a>
+        <a href="{{ route('admin.reviews.index') }}" class="text-[#06B6D4] hover:underline">← Kembali</a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -30,7 +30,7 @@
                 <div class="mb-8 pb-8 border-b border-gray-200 dark:border-[#404854]">
                     <h2 class="text-sm font-medium text-gray-600 dark:text-[#cbd5e1] mb-4">Pembuat Ulasan</h2>
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 bg-[#fb923c] rounded-full flex items-center justify-center text-white font-bold">
+                        <div class="w-12 h-12 bg-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold">
                             {{ strtoupper(substr($review->user->name, 0, 1)) }}
                         </div>
                         <div>

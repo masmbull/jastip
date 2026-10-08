@@ -2,13 +2,14 @@
 
 @php
     $backgroundImage = $backgroundImage ?? (setting('homepage_hero') ? asset('storage/' . setting('homepage_hero')) : null);
-    $primaryColor = setting('primary_color', '#F97316');
+    $primaryColor = setting('primary_color', '#0891B2');
 @endphp
 
-<section class="relative bg-gradient-to-br from-orange-100 via-orange-50 to-white overflow-hidden">
+<section class="relative bg-gradient-to-br from-cyan-100 via-sky-50 to-white overflow-hidden">
     <!-- Decorative blobs -->
-    <div class="absolute -top-24 -right-24 w-72 h-72 bg-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40"></div>
-    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+    <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40"></div>
+    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+    <div class="absolute top-1/3 left-1/3 w-64 h-64 bg-sky-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
 
     @if($backgroundImage)
         <div class="absolute inset-0">

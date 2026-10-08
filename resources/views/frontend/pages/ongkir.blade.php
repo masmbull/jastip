@@ -316,6 +316,7 @@
     <section x-show="tab === 'resi'" x-cloak>
         @php
             $aggregator = config('ekspedisi.tracking_aggregator');
+            $resiPrefixes = config('ekspedisi.resi_prefixes', []);
             $trackingCouriers = collect($couriers)->map(fn ($c) => [
                 'code' => $c['code'],
                 'name' => $c['name'],
@@ -329,14 +330,26 @@
                 awb: '',
                 code: {{ Js::from($trackingCouriers[0]['code'] ?? 'jne') }},
                 couriers: {{ Js::from($trackingCouriers) }},
+                prefixes: {{ Js::from($resiPrefixes) }},
                 agg: {{ Js::from($aggregator['url']) }},
                 aggName: {{ Js::from($aggregator['name']) }},
+                autoDetected: false,
                 get selected() { return this.couriers.find(c => c.code === this.code) || this.couriers[0] },
-                get ready() { return this.awb.trim().length >= 6 },
-                get aggregatorUrl() { return this.agg.replace('%s', encodeURIComponent(this.awb.trim())) },
+                get clean() { return this.awb.trim().replace(/\s+/g, '') },
+                get ready() { return this.clean.length >= 6 },
+                get aggregatorUrl() { return this.agg.replace('%s', encodeURIComponent(this.clean)) },
                 get directUrl() {
                     const t = (this.selected && this.selected.query) ? this.selected.query : this.agg;
-                    return t.replace('%s', encodeURIComponent(this.awb.trim()));
+                    return t.replace('%s', encodeURIComponent(this.clean));
+                },
+                detect() {
+                    const up = this.clean.toUpperCase();
+                    for (const [code, list] of Object.entries(this.prefixes)) {
+                        if (list.some(p => up.startsWith(p)) && this.couriers.some(c => c.code === code)) {
+                            this.code = code; this.autoDetected = true; return;
+                        }
+                    }
+                    this.autoDetected = false;
                 }
              }">
             <h2 class="text-xl font-bold text-[#1E293B]">Lacak Resi Pengiriman</h2>
@@ -354,24 +367,26 @@
                             <option :value="c.code" x-text="c.name"></option>
                         </template>
                     </select>
+                    <p class="mt-1 text-xs text-emerald-600" x-show="autoDetected" x-cloak>✓ Ekspedisi terdeteksi otomatis dari nomor resi.</p>
                 </div>
                 <div>
                     <label for="resi_awb" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] mb-2">Nomor Resi</label>
-                    <input type="text" id="resi_awb" x-model="awb" autocomplete="off"
+                    <input type="text" id="resi_awb" x-model="awb" @input="detect()" autocomplete="off"
                            placeholder="Contoh: JNE1234567890"
                            class="w-full rounded-xl border-[#E2E8F0] text-sm text-[#1E293B] focus:border-orange-500 focus:ring-orange-500">
-                    <p class="mt-1 text-xs text-[#94A3B8]">Minimal 6 karakter. Nomor resi biasanya ada di nota/chat admin.</p>
+                    <p class="mt-1 text-xs" :class="ready ? 'text-emerald-600' : 'text-[#94A3B8]'"
+                       x-text="ready ? 'Nomor resi siap dilacak.' : 'Minimal 6 karakter. Nomor resi biasanya ada di nota/chat admin.'"></p>
                 </div>
             </div>
 
             <div class="mt-6 flex flex-wrap gap-3">
                 <a :href="ready ? directUrl : '#'" target="_blank" rel="noopener noreferrer"
-                   :class="ready ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-[#F1F5F9] text-[#94A3B8] cursor-not-allowed'"
+                   :class="ready ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-[#F1F5F9] text-[#94A3B8] pointer-events-none'"
                    class="px-5 py-2.5 font-semibold rounded-full text-sm transition-colors">
                     Lacak Sekarang
                 </a>
                 <a :href="ready ? aggregatorUrl : '#'" target="_blank" rel="noopener noreferrer"
-                   :class="ready ? 'border-orange-300 text-orange-600 hover:bg-orange-50' : 'border-[#E2E8F0] text-[#94A3B8] cursor-not-allowed'"
+                   :class="ready ? 'border-orange-300 text-orange-600 hover:bg-orange-50' : 'border-[#E2E8F0] text-[#94A3B8] pointer-events-none'"
                    class="px-5 py-2.5 bg-white border font-semibold rounded-full text-sm transition-colors">
                     Cek via <span x-text="aggName"></span>
                 </a>

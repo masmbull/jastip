@@ -29,7 +29,7 @@
                             <td class="px-4 py-3 text-[#64748B] dark:text-[#cbd5e1]">{{ $user->profile->phone ?? '-' }}</td>
                             <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">{{ $user->orders_count }}</td>
                             <td class="px-4 py-3">
-                                <a href="{{ route('admin.users.show', $user) }}" class="text-[#fb923c] hover:underline text-sm">Lihat</a>
+                                <a href="{{ route('admin.users.show', $user) }}" class="text-[#06B6D4] hover:underline text-sm">Lihat</a>
                             </td>
                         </tr>
                     @empty

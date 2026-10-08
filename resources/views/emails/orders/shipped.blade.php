@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>Pesanan Dikirim</title>
 </head>
-<body style="margin:0;padding:0;background:#FDF6EC;font-family:Arial,Helvetica,sans-serif;color:#1E293B;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FDF6EC;padding:24px 0;">
+<body style="margin:0;padding:0;background:#ecfeff;font-family:Arial,Helvetica,sans-serif;color:#1E293B;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ecfeff;padding:24px 0;">
         <tr>
             <td align="center">
                 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">
                     <tr>
-                        <td style="background:#fb923c;padding:20px 24px;color:#ffffff;font-size:20px;font-weight:bold;">
+                        <td style="background:#06B6D4;padding:20px 24px;color:#ffffff;font-size:20px;font-weight:bold;">
                             {{ setting('brand_name', 'NITIP DI END') }}
                         </td>
                     </tr>
@@ -29,7 +29,7 @@
                             <p style="margin:16px 0 0;color:#64748B;font-size:14px;">Total: <strong>{{ $order->formatted_total }}</strong></p>
                             <p style="margin:8px 0 0;color:#64748B;font-size:13px;">Alamat: {{ $order->customer_address }}</p>
 
-                            <p style="margin:24px 0 0;color:#64748B;font-size:13px;">Cek status pesanan: <a href="{{ route('order.show', $order->order_number) }}" style="color:#fb923c;">{{ route('order.show', $order->order_number) }}</a></p>
+                            <p style="margin:24px 0 0;color:#64748B;font-size:13px;">Cek status pesanan: <a href="{{ route('order.show', $order->order_number) }}" style="color:#06B6D4;">{{ route('order.show', $order->order_number) }}</a></p>
                         </td>
                     </tr>
                     <tr>

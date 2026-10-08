@@ -3,13 +3,13 @@
 @section('title', 'Masuk | ' . setting('brand_name'))
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] flex items-center justify-center p-4">
+<div class="min-h-screen bg-gradient-to-br from-[#0E7490] via-[#155E75] to-[#083344] flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <div class="bg-[#1a1a1a] rounded-2xl shadow-xl p-8 border border-[#2e323b]">
             {{-- Logo --}}
             <div class="flex items-center justify-center mb-6">
                 <div class="flex items-center space-x-3">
-                    <div class="h-10 w-10 bg-[#F5A623] rounded-full flex items-center justify-center">
+                    <div class="h-10 w-10 bg-[#0891B2] rounded-full flex items-center justify-center">
                         <span class="text-white font-bold text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
                     </div>
                     <span class="font-bold text-lg text-[#FDF6EC]">{{ setting('brand_name', 'NITIP DI END') }}</span>
@@ -35,7 +35,7 @@
                         </label>
                         <input type="text" name="username" value="{{ old('username') }}" required autofocus
                                placeholder="admin atau 081234567890"
-                               class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
+                               class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 focus:border-[#0891B2]"/>
                     </div>
 
                     {{-- Password --}}
@@ -52,9 +52,9 @@
                         <div class="relative">
                             <input type="password" id="password" name="password" required
                                    placeholder="Masukkan password"
-                                   class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 pr-10 focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 focus:border-[#F5A623]"/>
+                                   class="w-full px-4 py-2.5 bg-[#23252b] border border-[#343a44] rounded-lg text-[#FDF6EC] placeholder-[#9ca3af]/60 pr-10 focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 focus:border-[#0891B2]"/>
                             <button type="button" onclick="togglePassword()"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]/60 hover:text-[#F5A623]">
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#9ca3af]/60 hover:text-[#0891B2]">
                                 <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
@@ -65,7 +65,7 @@
                     {{-- Remember Me --}}
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="remember" name="remember" value="on"
-                               class="w-4 h-4 rounded border-[#343a44] bg-[#23252b] text-[#F5A623] cursor-pointer">
+                               class="w-4 h-4 rounded border-[#343a44] bg-[#23252b] text-[#0891B2] cursor-pointer">
                         <label for="remember" class="text-sm text-[#b0b4bd] cursor-pointer hover:text-[#FDF6EC] transition-colors">
                             Ingat saya
                         </label>
@@ -73,7 +73,7 @@
                 </div>
 
                 <button type="submit"
-                        class="w-full mt-6 px-6 py-2.5 bg-[#F5A623] hover:bg-[#e6951b] text-[#1a1a1a] font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
+                        class="w-full mt-6 px-6 py-2.5 bg-[#0891B2] hover:bg-[#0E7490] text-[#1a1a1a] font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
                     Masuk
                 </button>
             </form>
@@ -81,7 +81,7 @@
 
         {{-- Footer badge --}}
         <div class="mt-6 flex justify-center">
-            <span class="inline-flex items-center px-4 py-2 rounded-xl bg-[#F5A623]/15 text-[#F5A623] text-xs font-medium">
+            <span class="inline-flex items-center px-4 py-2 rounded-xl bg-[#0891B2]/15 text-[#0891B2] text-xs font-medium">
                 {{ setting('brand_name', 'NITIP DI END') }} · v{{ config('app.version', '1.0') }}
             </span>
         </div>

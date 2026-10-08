@@ -110,6 +110,30 @@ class ShippingEstimator
     }
 
     /**
+     * Tebak ekspedisi dari awalan nomor resi (best-effort, hanya pola yang
+     * jelas). Dipakai halaman "Lacak Resi" agar kurir terisi otomatis.
+     */
+    public function detectCourier(string $awb): ?string
+    {
+        $awb = strtoupper(trim($awb));
+
+        if ($awb === '') {
+            return null;
+        }
+
+        foreach (config('ekspedisi.resi_prefixes', []) as $code => $prefixes) {
+            foreach ($prefixes as $prefix) {
+                if (str_starts_with($awb, $prefix)) {
+                    // Hanya kembalikan kalau kode ini benar-benar terdaftar.
+                    return $this->courier($code) ? $code : null;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Link lacak resi: template resmi kalau ada, ditambah aggregator CekResi
      * dan selalu disertai halaman resmi kurir.
      */

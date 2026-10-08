@@ -3,9 +3,9 @@
 @section('title', 'Detail Pesanan #' . $order->order_number . ' | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <a href="{{ route('profile.orders') }}" class="text-[#fb923c] hover:underline mb-6 inline-block">← Kembali ke Pesanan</a>
+        <a href="{{ route('profile.orders') }}" class="text-[#06B6D4] hover:underline mb-6 inline-block">← Kembali ke Pesanan</a>
 
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-8 border border-gray-200 dark:border-[#404854]">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Detail Pesanan #{{ $order->order_number }}</h1>

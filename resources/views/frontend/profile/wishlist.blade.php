@@ -3,7 +3,7 @@
 @section('title', 'Wishlist Saya | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-8">Wishlist Saya</h1>
 
@@ -11,7 +11,7 @@
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-12 text-center border border-gray-200 dark:border-[#404854]">
             <p class="text-gray-500 dark:text-[#9ca3af] text-lg mb-4">Wishlist masih kosong</p>
             <a href="{{ route('products.index') }}"
-               class="inline-block px-6 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition">Jelajahi Produk</a>
+               class="inline-block px-6 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition">Jelajahi Produk</a>
         </div>
         @else
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

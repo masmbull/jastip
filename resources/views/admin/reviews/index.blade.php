@@ -58,19 +58,19 @@
     <div class="mb-6 border-b border-gray-200 dark:border-[#404854]">
         <nav class="flex gap-4" aria-label="Tabs">
             <a href="{{ route('admin.reviews.index') }}" 
-               class="px-4 py-2 font-medium text-sm border-b-2 {{ !isset($status) ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
+               class="px-4 py-2 font-medium text-sm border-b-2 {{ !isset($status) ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
                 Semua ({{ $stats['total'] }})
             </a>
             <a href="{{ route('admin.reviews.index') }}?status=pending"
-               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'pending' ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
+               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'pending' ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
                 Pending ({{ $stats['pending'] }})
             </a>
             <a href="{{ route('admin.reviews.index') }}?status=approved"
-               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'approved' ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
+               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'approved' ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
                 Disetujui ({{ $stats['approved'] }})
             </a>
             <a href="{{ route('admin.reviews.index') }}?status=rejected"
-               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'rejected' ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
+               class="px-4 py-2 font-medium text-sm border-b-2 {{ isset($status) && $status === 'rejected' ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af] hover:text-gray-900 dark:hover:text-[#f1f5f9]' }}">
                 Ditolak ({{ $stats['rejected'] }})
             </a>
         </nav>
@@ -124,7 +124,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('admin.reviews.show', $review) }}" class="text-[#fb923c] hover:underline">
+                        <a href="{{ route('admin.reviews.show', $review) }}" class="text-[#06B6D4] hover:underline">
                             Lihat
                         </a>
                     </td>

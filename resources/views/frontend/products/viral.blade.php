@@ -11,7 +11,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
     {{-- Hero / Header --}}
-    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-100 via-[#FDF6EC] to-orange-50 border border-[#FED7AA] p-6 sm:p-10 mb-10 animate-fade-up">
+    <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-100 via-[#ecfeff] to-orange-50 border border-[#a5f3fc] p-6 sm:p-10 mb-10 animate-fade-up">
         <div class="relative z-10 max-w-3xl">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500 text-white text-xs font-bold uppercase tracking-wide">
                 🔥 Trending 2024–2025

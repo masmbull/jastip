@@ -10,7 +10,7 @@
         <span class="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 text-xs font-semibold uppercase tracking-wider rounded-full mb-4">
             Cara Kerja
         </span>
-        <h1 class="text-3xl md:text-4xl font-bold text-[#2D2D2D] mb-3">
+        <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] mb-3">
             Nitip Itu Mudah
         </h1>
         <p class="text-[#64748B] max-w-lg mx-auto leading-relaxed">
@@ -34,7 +34,7 @@
             <div class="bg-white rounded-xl shadow-sm p-6 text-center md:text-left border border-[#E2E8F0] hover:shadow-md transition-shadow">
                 <div class="text-4xl mb-4">{{ $step['icon'] }}</div>
                 <span class="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Step {{ $loop->iteration }}</span>
-                <h3 class="font-semibold text-[#2D2D2D] text-lg mb-2">{{ $step['title'] }}</h3>
+                <h3 class="font-semibold text-[#1E293B] text-lg mb-2">{{ $step['title'] }}</h3>
                 <p class="text-sm text-[#64748B] leading-relaxed">{{ $step['desc'] }}</p>
             </div>
         @endforeach
@@ -44,7 +44,7 @@
     <section class="mt-14 bg-[#F1F5F9] rounded-2xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-5">
             <span class="text-2xl">💡</span>
-            <h2 class="text-xl font-bold text-[#2D2D2D]">Tips Lebih Cepat</h2>
+            <h2 class="text-xl font-bold text-[#1E293B]">Tips Lebih Cepat</h2>
         </div>
         <ul class="space-y-3 text-[#64748B]">
             <li class="flex items-start gap-3">

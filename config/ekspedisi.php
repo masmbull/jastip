@@ -103,6 +103,19 @@ return [
         'url' => 'https://cekresi.com/?noresi=%s',
     ],
 
+    // Tebak ekspedisi dari awalan nomor resi (best-effort). Dipakai halaman
+    // "Lacak Resi" (PHP ShippingEstimator + JS Alpine) dari satu sumber.
+    'resi_prefixes' => [
+        'jne' => ['JNE', 'CGK'],
+        'jnt' => ['JT'],
+        'sicepat' => ['00'],
+        'ninja' => ['NINJA'],
+        'anteraja' => ['1000'],
+        'idexpress' => ['ID'],
+        'lion' => ['LP'],
+        'paxel' => ['PAXEL'],
+    ],
+
     // -------------------------------------------------------------------------
     // Tarif referensi per kg (berangkat dari Jakarta, paket ~1 kg, zona 1).
     // Ini estimasi pasar 2025, bukan tarif resmi — pakai API di 'free_apis'

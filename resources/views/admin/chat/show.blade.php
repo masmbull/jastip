@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-900 dark:text-[#f1f5f9]">{{ $user->name }}</h1>
             <p class="mt-1 text-sm text-gray-600 dark:text-[#cbd5e1]">{{ $user->email }}</p>
         </div>
-        <a href="{{ route('admin.chat.index') }}" class="text-sm text-[#fb923c] hover:underline">&larr; Semua percakapan</a>
+        <a href="{{ route('admin.chat.index') }}" class="text-sm text-[#06B6D4] hover:underline">&larr; Semua percakapan</a>
     </div>
 
     <div class="bg-white dark:bg-[#23252b] rounded-lg shadow border border-gray-200 dark:border-[#404854] flex flex-col">

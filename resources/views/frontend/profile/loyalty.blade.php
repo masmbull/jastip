@@ -3,7 +3,7 @@
 @section('title', 'Program Loyalitas | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-8">Program Loyalitas</h1>
 
@@ -11,7 +11,7 @@
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-8 border border-gray-200 dark:border-[#404854] mb-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center">
-                    <div class="text-5xl font-bold text-[#fb923c] mb-2">{{ $profile->loyalty_points ?? 0 }}</div>
+                    <div class="text-5xl font-bold text-[#06B6D4] mb-2">{{ $profile->loyalty_points ?? 0 }}</div>
                     <p class="text-gray-600 dark:text-[#cbd5e1]">Total Poin</p>
                 </div>
                 <div class="text-center">
@@ -46,7 +46,7 @@
                     <p class="font-bold text-gray-900 dark:text-[#f1f5f9]">Gold</p>
                     <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">2000 - 4999 Poin</p>
                 </div>
-                <div class="p-4 border-2 border-[#fb923c] dark:border-[#fb923c] rounded-lg text-center">
+                <div class="p-4 border-2 border-[#06B6D4] dark:border-[#06B6D4] rounded-lg text-center">
                     <div class="text-3xl mb-2">💎</div>
                     <p class="font-bold text-gray-900 dark:text-[#f1f5f9]">Platinum</p>
                     <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">5000+ Poin</p>
@@ -59,19 +59,19 @@
             <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Keuntungan Member</h2>
             <ul class="space-y-3">
                 <li class="flex items-start gap-3">
-                    <span class="text-[#fb923c]">✓</span>
+                    <span class="text-[#06B6D4]">✓</span>
                     <p class="text-gray-700 dark:text-[#cbd5e1]">Dapatkan 1 poin untuk setiap Rp 100 yang dibelanjakan</p>
                 </li>
                 <li class="flex items-start gap-3">
-                    <span class="text-[#fb923c]">✓</span>
+                    <span class="text-[#06B6D4]">✓</span>
                     <p class="text-gray-700 dark:text-[#cbd5e1]">Tukarkan poin dengan diskon dan hadiah eksklusif</p>
                 </li>
                 <li class="flex items-start gap-3">
-                    <span class="text-[#fb923c]">✓</span>
+                    <span class="text-[#06B6D4]">✓</span>
                     <p class="text-gray-700 dark:text-[#cbd5e1]">Dapatkan akses early-bird ke penawaran khusus</p>
                 </li>
                 <li class="flex items-start gap-3">
-                    <span class="text-[#fb923c]">✓</span>
+                    <span class="text-[#06B6D4]">✓</span>
                     <p class="text-gray-700 dark:text-[#cbd5e1]">Bonus poin di hari ulang tahun Anda</p>
                 </li>
             </ul>

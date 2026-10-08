@@ -3,15 +3,15 @@
 @section('title', 'Cari Produk | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- Search Bar --}}
         <div class="mb-8">
             <form method="GET" action="{{ route('search') }}" class="flex gap-2">
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..."
-                       class="flex-1 px-4 py-3 bg-white dark:bg-[#23252b] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#fb923c]">
-                <button type="submit" class="px-6 py-3 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium">
+                       class="flex-1 px-4 py-3 bg-white dark:bg-[#23252b] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]">
+                <button type="submit" class="px-6 py-3 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium">
                     Cari
                 </button>
             </form>
@@ -88,7 +88,7 @@
 
                         {{-- Buttons --}}
                         <div class="space-y-2">
-                            <button type="submit" class="w-full px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium">
+                            <button type="submit" class="w-full px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium">
                                 Terapkan Filter
                             </button>
                             <a href="{{ route('search') }}" class="block w-full px-4 py-2 border border-gray-300 dark:border-[#404854] text-gray-700 dark:text-[#cbd5e1] rounded-lg hover:bg-gray-100 dark:hover:bg-[#404854] transition text-center text-sm">
@@ -120,7 +120,7 @@
                                          class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                     
                                     @if($product->is_featured)
-                                    <span class="absolute top-2 left-2 px-2 py-1 bg-[#fb923c] text-white text-xs font-bold rounded">UNGGULAN</span>
+                                    <span class="absolute top-2 left-2 px-2 py-1 bg-[#06B6D4] text-white text-xs font-bold rounded">UNGGULAN</span>
                                     @endif
                                 </div>
 
@@ -137,7 +137,7 @@
                                     @endif
 
                                     {{-- Price --}}
-                                    <p class="text-lg font-bold text-[#fb923c] mb-3">{{ $product->formatted_price }}</p>
+                                    <p class="text-lg font-bold text-[#06B6D4] mb-3">{{ $product->formatted_price }}</p>
 
                                     {{-- Stock Badge --}}
                                     <span class="inline-block text-xs px-2 py-1 rounded {{ $product->isInStock() ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }}">
@@ -161,7 +161,7 @@
                         <div class="text-5xl mb-4">🔍</div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-2">Produk Tidak Ditemukan</h3>
                         <p class="text-gray-600 dark:text-[#cbd5e1] mb-6">Coba ubah filter atau pencarian Anda</p>
-                        <a href="{{ route('search') }}" class="px-6 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition inline-block">
+                        <a href="{{ route('search') }}" class="px-6 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition inline-block">
                             Reset Filter
                         </a>
                     </div>

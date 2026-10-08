@@ -3,7 +3,7 @@
 @section('title', 'Profil Saya | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {{-- Profile Header --}}
@@ -12,9 +12,9 @@
                 <div class="flex items-center gap-6 mb-6 md:mb-0">
                     @if($profile->profile_picture)
                         <img src="{{ asset('storage/' . $profile->profile_picture) }}" alt="{{ $user->name }}"
-                             class="w-24 h-24 rounded-full object-cover border-4 border-[#fb923c]">
+                             class="w-24 h-24 rounded-full object-cover border-4 border-[#06B6D4]">
                     @else
-                        <div class="w-24 h-24 rounded-full bg-[#fb923c] flex items-center justify-center text-white text-3xl font-bold">
+                        <div class="w-24 h-24 rounded-full bg-[#06B6D4] flex items-center justify-center text-white text-3xl font-bold">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                     @endif
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ route('profile.edit') }}" class="px-6 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition">
+                <a href="{{ route('profile.edit') }}" class="px-6 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition">
                     Edit Profil
                 </a>
             </div>
@@ -39,31 +39,31 @@
 
         {{-- Navigation Tabs --}}
         <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-200 dark:border-[#404854]">
-            <a href="{{ route('profile.show') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.show') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.show') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.show') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 📋 Ringkasan
             </a>
-            <a href="{{ route('profile.orders') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.orders') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.orders') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.orders') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 📦 Pesanan ({{ $orders->total() }})
             </a>
-            <a href="{{ route('profile.addresses') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.addresses') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.addresses') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.addresses') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 📍 Alamat
             </a>
-            <a href="{{ route('profile.reviews') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.reviews') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.reviews') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.reviews') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 ⭐ Ulasan
             </a>
-            <a href="{{ route('profile.wishlist') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.wishlist') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.wishlist') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.wishlist') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 💗 Wishlist
             </a>
-            <a href="{{ route('notifications.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('notifications.*') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('notifications.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('notifications.*') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 🔔 Notifikasi
             </a>
-            <a href="{{ route('chat.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('chat.*') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('chat.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('chat.*') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 💬 Bantuan
             </a>
-            <a href="{{ route('profile.loyalty') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.loyalty') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.loyalty') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.loyalty') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 🎁 Loyalitas
             </a>
-            <a href="{{ route('profile.settings') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.settings') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+            <a href="{{ route('profile.settings') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.settings') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 ⚙️ Pengaturan
             </a>
         </div>
@@ -100,7 +100,7 @@
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854] mb-8">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9]">Pesanan Terbaru</h2>
-                <a href="{{ route('profile.orders') }}" class="text-[#fb923c] hover:underline text-sm">Lihat Semua →</a>
+                <a href="{{ route('profile.orders') }}" class="text-[#06B6D4] hover:underline text-sm">Lihat Semua →</a>
             </div>
 
             <div class="overflow-x-auto">
@@ -117,7 +117,7 @@
                         @forelse($orders->take(5) as $order)
                         <tr class="border-b border-gray-200 dark:border-[#404854] hover:bg-gray-50 dark:hover:bg-[#404854]">
                             <td class="py-3 px-4">
-                                <a href="{{ route('profile.order-detail', $order) }}" class="text-[#fb923c] hover:underline">
+                                <a href="{{ route('profile.order-detail', $order) }}" class="text-[#06B6D4] hover:underline">
                                     #{{ $order->order_number }}
                                 </a>
                             </td>

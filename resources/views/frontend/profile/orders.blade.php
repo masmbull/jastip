@@ -3,7 +3,7 @@
 @section('title', 'Pesanan Saya | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-8">Pesanan Saya</h1>
 
@@ -41,11 +41,11 @@
                 </div>
 
                 <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-[#404854]">
-                    <a href="{{ route('profile.order-detail', $order) }}" class="flex-1 px-4 py-2 text-center text-[#fb923c] hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition">
+                    <a href="{{ route('profile.order-detail', $order) }}" class="flex-1 px-4 py-2 text-center text-[#06B6D4] hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded transition">
                         Lihat Detail
                     </a>
                     @if($order->status === \App\Models\Order::STATUS_AWAITING_PAYMENT)
-                    <a href="{{ route('payment.waiting', $order) }}" class="flex-1 px-4 py-2 text-center bg-[#fb923c] text-white rounded hover:bg-[#e6951b] transition">
+                    <a href="{{ route('payment.waiting', $order) }}" class="flex-1 px-4 py-2 text-center bg-[#06B6D4] text-white rounded hover:bg-[#0E7490] transition">
                         Bayar
                     </a>
                     @endif
@@ -54,7 +54,7 @@
             @empty
             <div class="text-center py-12">
                 <p class="text-gray-500 dark:text-[#9ca3af] text-lg mb-4">Belum ada pesanan</p>
-                <a href="{{ route('products.index') }}" class="px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition inline-block">
+                <a href="{{ route('products.index') }}" class="px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition inline-block">
                     Mulai Berbelanja
                 </a>
             </div>

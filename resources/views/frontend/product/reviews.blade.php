@@ -3,7 +3,7 @@
 @section('title', 'Ulasan ' . $product->name . ' | NITIP DI END')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#FDF6EC] to-[#ede7de] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {{-- Product Info Card --}}
@@ -20,7 +20,7 @@
                             <span class="text-gray-500 dark:text-[#cbd5e1] ml-2">dari 5 ({{ $reviewCount }} ulasan)</span>
                         </div>
                         <a href="{{ route('products.show', $product) }}" 
-                           class="px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition">
+                           class="px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition">
                             Kembali ke Produk
                         </a>
                     </div>
@@ -71,7 +71,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Judul Ulasan</label>
                     <input type="text" name="title" required maxlength="100"
-                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#fb923c]"
+                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]"
                            placeholder="Contoh: Produk berkualitas dan terpercaya">
                 </div>
 
@@ -79,13 +79,13 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Ulasan Detail</label>
                     <textarea name="content" required maxlength="1000" rows="5"
-                              class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#fb923c]"
+                              class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]"
                               placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
                     <p class="text-xs text-gray-500 dark:text-[#9ca3af] mt-1" id="charCount">0 / 1000</p>
                 </div>
 
                 {{-- Submit --}}
-                <button type="submit" class="w-full px-4 py-3 bg-[#fb923c] hover:bg-[#e6951b] text-white font-semibold rounded-lg transition">
+                <button type="submit" class="w-full px-4 py-3 bg-[#06B6D4] hover:bg-[#0E7490] text-white font-semibold rounded-lg transition">
                     Kirim Ulasan
                 </button>
             </form>
@@ -108,7 +108,7 @@
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
-                            <div class="w-10 h-10 bg-[#fb923c] rounded-full flex items-center justify-center text-white font-bold">
+                            <div class="w-10 h-10 bg-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold">
                                 {{ strtoupper(substr($review->user?->name ?? 'P', 0, 1)) }}
                             </div>
                             <div>
@@ -133,7 +133,7 @@
 
                 {{-- Helpful Button --}}
                 <div class="flex items-center gap-3 border-t border-gray-200 dark:border-[#404854] pt-4">
-                    <button class="helpful-btn flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[#cbd5e1] hover:text-[#fb923c] transition"
+                    <button class="helpful-btn flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[#cbd5e1] hover:text-[#06B6D4] transition"
                             data-review-id="{{ $review->id }}">
                         👍 <span class="helpful-count">{{ $review->helpful_count }}</span>
                     </button>
