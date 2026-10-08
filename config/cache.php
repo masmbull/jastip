@@ -131,6 +131,14 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    // Homepage/catalog caches store Eloquent collections, so allow-list the
+    // framework collection classes plus the domain models they carry.
+    // Without this, database cache reads return __PHP_Incomplete_Class -> 500.
+    'serializable_classes' => [
+        Illuminate\Database\Eloquent\Collection::class,
+        Illuminate\Support\Collection::class,
+        App\Models\Product::class,
+        App\Models\Category::class,
+    ],
 
 ];
