@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -26,5 +28,20 @@ class HomeCacheTest extends TestCase
         // First hit populates the cache, second hit reads it back.
         $this->get(route('home'))->assertOk();
         $this->get(route('home'))->assertOk();
+    }
+
+    public function test_creating_product_forgets_home_categories_cache(): void
+    {
+        Http::fake();
+        $this->seed();
+
+        // Warm the cache the same way the homepage does, then confirm a new
+        // product busts it (home.categories embeds per-category product counts).
+        $this->get(route('home'))->assertOk();
+        $this->assertNotNull(Cache::get('home.categories'));
+
+        Product::query()->firstOrFail()->update(['name' => 'Updated for cache test']);
+
+        $this->assertNull(Cache::get('home.categories'));
     }
 }

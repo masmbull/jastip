@@ -39,6 +39,8 @@ class ProductCacheObserver
         Cache::forget('home.featured_products');
         Cache::forget('home.popular_products');
         Cache::forget('home.viral_products');
+        // home.categories uses withCount('products')/whereHas -> product-dep.
+        Cache::forget('home.categories');
         Cache::forget('products.active_categories');
         Cache::forget('products.viral_categories');
         Cache::forget('products.viral_count');
