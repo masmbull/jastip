@@ -262,5 +262,70 @@
             deferredPrompt.userChoice.then(function () { deferredPrompt = null; });
         }
     };
+
+    /* ---- Web Push: request permission + register subscription ---- */
+    function urlB64ToUint8Array(base64) {
+        const padding = '='.repeat((4 - (base64.length % 4)) % 4);
+        const raw = atob((base64 + padding).replace(/-/g, '+').replace(/_/g, '/'));
+        return Uint8Array.from([].map.call(raw, (c) => c.charCodeAt(0)));
+    }
+
+    window.JastipPush = {
+        // Returns true when the browser is now subscribed.
+        enable: function () {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                return Promise.resolve(false);
+            }
+            return Notification.requestPermission().then(function (permission) {
+                if (permission !== 'granted') return false;
+
+                return navigator.serviceWorker.ready.then(function (reg) {
+                    return fetch('/push/key', { headers: { 'X-Requested-With': 'true' }, credentials: 'same-origin' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (json) {
+                            if (!json.publicKey) return false;
+                            return reg.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: urlB64ToUint8Array(json.publicKey),
+                            });
+                        })
+                        .then(function (sub) {
+                            if (!sub) return false;
+                            return fetch('/push/subscribe', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrf(),
+                                    'X-Requested-With': 'true',
+                                },
+                                body: JSON.stringify(sub),
+                            }).then(function (r) { return r.ok; });
+                        });
+                });
+            }).catch(function () { return false; });
+        },
+        disable: function () {
+            if (!('serviceWorker' in navigator)) return Promise.resolve();
+            return navigator.serviceWorker.ready.then(function (reg) {
+                return reg.pushManager.getSubscription();
+            }).then(function (sub) {
+                if (!sub) return;
+                var endpoint = sub.endpoint;
+                return sub.unsubscribe().then(function () {
+                    return fetch('/push/unsubscribe', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrf(),
+                            'X-Requested-With': 'true',
+                        },
+                        body: JSON.stringify({ endpoint: endpoint }),
+                    });
+                });
+            }).catch(function () {});
+        },
+    };
 })();
 

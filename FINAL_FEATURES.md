@@ -40,11 +40,17 @@
 - **Mobile App Setup:** Can be scaffolded separately
 - **Next Step:** `laravel new jastip-mobile` with React Native/Flutter
 
-### Task #23: Push Notifications ⚠️
-**Status:** PARTIAL (in-app only)
+### Task #23: Push Notifications ✅
+**Status:** COMPLETE (in-app + Web Push)
 - **In-App:** `Notification` rows created on order status change; viewable at `/profile/notifications`.
-- **Web Push (FCM):** NOT implemented. Service Worker caches for offline PWA only.
-- **Next:** add web-push subscription + queue worker for real push.
+- **Web Push:** Implemented in pure PHP (no composer dependency) per RFC 8030/8291/8292:
+  - `app/Services/WebPushService.php` — aes128gcm content encoding (ECDH P-256 + HKDF-SHA256 + AES-128-GCM) and VAPID ES256 JWT. Verified against the RFC 8291 Appendix A test vector.
+  - `push_subscriptions` table + `PushSubscription` model; endpoints `push.key`, `push.subscribe`, `push.unsubscribe`.
+  - `NotificationObserver` fans a new `Notification` out to every stored subscription (prunes 404/410 endpoints).
+  - `php artisan webpush:vapid [--write]` generates the VAPID key pair; set `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` in `.env`.
+  - Service worker `push` + `notificationclick` handlers; toggle button on `/profile/notifications`.
+- **Notes:** Delivery is synchronous (best-effort, logged). Web Push only works over HTTPS (or localhost); the `VAPID_SUBJECT` should be a `mailto:` or URL.
+
 
 ### Task #24: Advanced Redis Caching ✅
 **Status:** COMPLETE - Configuration Ready

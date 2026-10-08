@@ -73,4 +73,33 @@
             })
         );
     });
+
+    /* ---- Web Push ---- */
+    self.addEventListener('push', function (e) {
+        var data = { title: 'NITIP DI END', body: 'Ada notifikasi baru', url: '/profile/notifications' };
+        if (e.data) {
+            try { data = Object.assign(data, e.data.json()); } catch (err) { /* keep defaults */ }
+        }
+        e.waitUntil(self.registration.showNotification(data.title, {
+            body: data.body,
+            tag: data.tag,
+            icon: '/images/icons/icon-192.png',
+            badge: '/images/icons/icon-192.png',
+            data: { url: data.url },
+        }));
+    });
+
+    self.addEventListener('notificationclick', function (e) {
+        e.notification.close();
+        var url = (e.notification.data && e.notification.data.url) || '/';
+        e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clients) {
+            for (var i = 0; i < clients.length; i++) {
+                if (clients[i].url.indexOf(self.location.origin) === 0 && 'focus' in clients[i]) {
+                    if ('navigate' in clients[i]) clients[i].navigate(url);
+                    return clients[i].focus();
+                }
+            }
+            return self.clients.openWindow(url);
+        }));
+    });
 })();

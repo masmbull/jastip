@@ -7,14 +7,20 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9]">Notifikasi</h1>
-            @if($notifications->total() > 0)
-            <form method="POST" action="{{ route('notifications.read-all') }}">
-                @csrf
-                <button type="submit" class="text-sm px-4 py-2 border border-gray-300 dark:border-[#404854] rounded-lg text-gray-700 dark:text-[#cbd5e1] hover:bg-gray-50 dark:hover:bg-[#2e323b] transition">
-                    Tandai semua terbaca
+            <div class="flex items-center gap-2">
+                <button type="button" id="push-toggle"
+                        class="text-sm px-4 py-2 border border-gray-300 dark:border-[#404854] rounded-lg text-gray-700 dark:text-[#cbd5e1] hover:bg-gray-50 dark:hover:bg-[#2e323b] transition">
+                    Aktifkan notifikasi browser
                 </button>
-            </form>
-            @endif
+                @if($notifications->total() > 0)
+                <form method="POST" action="{{ route('notifications.read-all') }}">
+                    @csrf
+                    <button type="submit" class="text-sm px-4 py-2 border border-gray-300 dark:border-[#404854] rounded-lg text-gray-700 dark:text-[#cbd5e1] hover:bg-gray-50 dark:hover:bg-[#2e323b] transition">
+                        Tandai semua terbaca
+                    </button>
+                </form>
+                @endif
+            </div>
         </div>
 
         <div class="space-y-3">
@@ -48,4 +54,29 @@
         @endif
     </div>
 </div>
+
+<script>
+    (function () {
+        var btn = document.getElementById('push-toggle');
+        if (!btn || !window.JastipPush) return;
+        if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+            btn.style.display = 'none';
+            return;
+        }
+        navigator.serviceWorker.ready.then(function (reg) {
+            return reg.pushManager.getSubscription();
+        }).then(function (sub) {
+            if (sub) btn.textContent = 'Notifikasi browser aktif';
+        }).catch(function () {});
+
+        btn.addEventListener('click', function () {
+            btn.disabled = true;
+            window.JastipPush.enable().then(function (ok) {
+                btn.disabled = false;
+                btn.textContent = ok ? 'Notifikasi browser aktif' : 'Aktifkan notifikasi browser';
+                if (!ok) alert('Tidak dapat mengaktifkan notifikasi. Pastikan izin browser diizinkan.');
+            });
+        });
+    })();
+</script>
 @endsection

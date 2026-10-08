@@ -6,9 +6,11 @@ use App\Events\OrderStatusChanged;
 use App\Listeners\SendOrderStatusNotification;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Notification;
 use App\Models\User;
 use App\Observers\ProductCacheObserver;
 use App\Observers\CategoryCacheObserver;
+use App\Observers\NotificationObserver;
 use App\Observers\UserObserver;
 use App\Services\CartService;
 use Illuminate\Support\Facades\Cache;
@@ -45,5 +47,6 @@ class AppServiceProvider extends ServiceProvider
         Product::observe(ProductCacheObserver::class);
         Category::observe(CategoryCacheObserver::class);
         User::observe(UserObserver::class);
+        Notification::observe(NotificationObserver::class);
     }
 }

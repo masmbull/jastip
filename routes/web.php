@@ -105,6 +105,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
     Route::post('/profile/chat', [\App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
 
+    // Web Push subscriptions (browser notifications)
+    Route::get('/push/key', [\App\Http\Controllers\PushSubscriptionController::class, 'key'])->name('push.key');
+    Route::post('/push/subscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [\App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
+
     // Addresses
     Route::get('/profile/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('profile.addresses');
     Route::get('/profile/addresses/create', [\App\Http\Controllers\AddressController::class, 'create'])->name('addresses.create');
