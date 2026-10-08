@@ -163,6 +163,19 @@
                     </svg>
                     Nitip via WhatsApp
                 </a>
+
+                @auth
+                <button type="button"
+                        data-wishlist-toggle
+                        data-url="{{ route('wishlist.toggle', ['product' => $product->id]) }}"
+                        class="mt-3 flex items-center justify-center w-full px-6 py-3 border-2 border-red-400 text-red-500 font-medium rounded-full hover:bg-red-50 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
+                    </svg>
+                    <span data-wishlist-label>Tambah ke Wishlist</span>
+                </button>
+                @endauth
             </div>
             @else
             <div class="pt-4">

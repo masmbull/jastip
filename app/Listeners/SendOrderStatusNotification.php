@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderStatusChanged;
+use App\Models\Notification;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Log;
 
@@ -15,6 +16,17 @@ class SendOrderStatusNotification
     {
         $order = $event->order;
         $newStatus = $event->newStatus;
+
+        // In-app notification for logged-in customers (independent of WhatsApp).
+        if ($order->user_id && in_array($newStatus, ['confirmed', 'verified', 'shipped'], true)) {
+            Notification::create([
+                'user_id' => $order->user_id,
+                'title' => 'Status pesanan diperbarui',
+                'message' => "Pesanan {$order->order_number} kini berstatus: {$newStatus}.",
+                'type' => $newStatus,
+                'data' => ['order_number' => $order->order_number, 'status' => $newStatus],
+            ]);
+        }
 
         if (!$order->customer_whatsapp) {
             return;

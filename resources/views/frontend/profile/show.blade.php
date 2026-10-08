@@ -51,6 +51,12 @@
             <a href="{{ route('profile.reviews') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.reviews') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 ⭐ Ulasan
             </a>
+            <a href="{{ route('profile.wishlist') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.wishlist') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+                💗 Wishlist
+            </a>
+            <a href="{{ route('notifications.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('notifications.*') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
+                🔔 Notifikasi
+            </a>
             <a href="{{ route('profile.loyalty') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.loyalty') ? 'border-[#fb923c] text-[#fb923c]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
                 🎁 Loyalitas
             </a>

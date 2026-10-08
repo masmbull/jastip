@@ -70,6 +70,11 @@ Route::get('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewContr
 Route::post('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('reviews.store');
 Route::post('/ulasan/{review}/helpful', [\App\Http\Controllers\ProductReviewController::class, 'toggleHelpful'])->name('reviews.helpful');
 
+// Wishlist toggle (auth-gated; binds explicitly on {product:id} since Product route key is slug)
+Route::post('/wishlist/{product:id}/toggle', [\App\Http\Controllers\WishlistController::class, 'toggle'])
+    ->middleware('auth')
+    ->name('wishlist.toggle');
+
 // User Profile Routes (Protected)
 Route::middleware('auth')->group(function () {
     // Profile
@@ -86,6 +91,14 @@ Route::middleware('auth')->group(function () {
 
     // Reviews
     Route::get('/profile/reviews', [\App\Http\Controllers\ProfileController::class, 'reviews'])->name('profile.reviews');
+
+    // Wishlist
+    Route::get('/profile/wishlist', [\App\Http\Controllers\WishlistController::class, 'index'])->name('profile.wishlist');
+
+    // Notifications (in-app)
+    Route::get('/profile/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/profile/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::post('/profile/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.read');
 
     // Addresses
     Route::get('/profile/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('profile.addresses');

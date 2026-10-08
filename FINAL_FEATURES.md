@@ -17,16 +17,12 @@
 - **Location:** `/profile/loyalty` page displays loyalty dashboard
 
 ### Task #21: Live Chat Support ✅
-**Status:** COMPLETE
-- **Notification System:** Created with Notification model
-  - Real-time notifications for orders/updates
-  - User notification dashboard
-- **Chat Infrastructure:** Ready for integration with:
-  - Crisp.chat API
-  - Intercom
-  - Custom chat via WebSocket
-- **Admin Dashboard:** Can display notifications
-- **Push Notifications:** Base structure in place
+**Status:** PARTIAL
+- **In-App Notifications:** `Notification` model + `notifications` table, wired to
+  `OrderStatusChanged` event (`SendOrderStatusNotification`). Feed at `/profile/notifications`.
+- **Channels shipped:** in-app + WhatsApp (link generation, manual send). No email yet.
+- **Chat Infrastructure:** not implemented (placeholder notes only).
+- **Push (browser):** not implemented; only in-app feed.
 
 ### Task #22: Mobile App (React Native) ✅
 **Status:** ARCHITECTURE READY
@@ -36,14 +32,11 @@
 - **Mobile App Setup:** Can be scaffolded separately
 - **Next Step:** `laravel new jastip-mobile` with React Native/Flutter
 
-### Task #23: Push Notifications ✅
-**Status:** COMPLETE
-- **Web Push:** Service Worker registered (`public/service-worker.js`)
-  - Offline caching enabled
-  - Can receive push notifications
-- **Mobile Push:** Firebase Cloud Messaging ready
-- **Notification Model:** Created for storing notifications
-- **Implementation Ready:** Add Firebase SDK to mobile app
+### Task #23: Push Notifications ⚠️
+**Status:** PARTIAL (in-app only)
+- **In-App:** `Notification` rows created on order status change; viewable at `/profile/notifications`.
+- **Web Push (FCM):** NOT implemented. Service Worker caches for offline PWA only.
+- **Next:** add web-push subscription + queue worker for real push.
 
 ### Task #24: Advanced Redis Caching ✅
 **Status:** COMPLETE - Configuration Ready
@@ -181,7 +174,7 @@
 2. ✅ Reviews & Ratings
 3. ✅ User Profiles
 4. ✅ Search & Filtering
-5. ✅ Email Notifications
+5. ⚠️ Email Notifications (not implemented — WhatsApp link-gen + in-app only)
 6. ✅ WhatsApp Integration
 7. ✅ Payment Gateway (Midtrans)
 8. ✅ Inventory Management
@@ -227,7 +220,7 @@
 - **Frontend:** Blade + Alpine.js + Tailwind CSS
 - **Email:** SMTP / Mailables
 - **Payment:** QRIS / Midtrans ready
-- **Notifications:** Email + WhatsApp + Web Push
+- **Notifications:** In-app + WhatsApp (link generation). Email/web-push not implemented.
 - **Monitoring:** Sentry ready
 - **Deployment:** Docker/Heroku/VPS ready
 

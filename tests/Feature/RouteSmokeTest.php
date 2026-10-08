@@ -11,7 +11,11 @@ use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\Wishlist;
+use App\Models\Notification;
+use App\Events\OrderStatusChanged;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -201,6 +205,8 @@ class RouteSmokeTest extends TestCase
             '/profile/orders',
             "/profile/orders/{$orderId}",
             '/profile/reviews',
+            '/profile/wishlist',
+            '/profile/notifications',
             '/profile/addresses',
             '/profile/addresses/create',
             "/profile/addresses/{$this->address->id}/edit",
@@ -294,5 +300,61 @@ class RouteSmokeTest extends TestCase
         $this->put(route('admin.users.update-role', $other), ['role' => 'superuser'])
             ->assertSessionHasErrors('role');
         $this->assertSame('customer', $other->fresh()->role);
+    }
+
+    public function test_wishlist_toggle_adds_and_removes(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
+        // First toggle inserts.
+        $this->post(route('wishlist.toggle', ['product' => $this->product->id]))
+            ->assertOk()
+            ->assertJsonPath('wishlisted', true);
+        $this->assertDatabaseHas('wishlists', [
+            'user_id' => $customer->id,
+            'product_id' => $this->product->id,
+        ]);
+
+        // Second toggle removes (no duplicate row).
+        $this->post(route('wishlist.toggle', ['product' => $this->product->id]))
+            ->assertOk()
+            ->assertJsonPath('wishlisted', false);
+        $this->assertDatabaseMissing('wishlists', [
+            'user_id' => $customer->id,
+            'product_id' => $this->product->id,
+        ]);
+
+        // Guest is rejected by the auth middleware.
+        Auth::logout();
+        $this->post(route('wishlist.toggle', ['product' => $this->product->id]))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_order_status_event_creates_in_app_notification_and_marks_read(): void
+    {
+        OrderStatusChanged::dispatch($this->order->fresh(), 'awaiting_payment', 'confirmed');
+
+        $this->assertDatabaseHas('notifications', [
+            'user_id' => $this->admin->id,
+            'type' => 'confirmed',
+        ]);
+
+        $notification = Notification::where('user_id', $this->admin->id)->firstOrFail();
+
+        $this->actingAs($this->admin)
+            ->post(route('notifications.read', $notification))
+            ->assertRedirect(route('notifications.index'));
+        $this->assertNotNull($notification->fresh()->read_at);
+
+        // Foreign user cannot mark someone else's notification.
+        $other = User::factory()->create(['role' => 'customer']);
+        $unread = Notification::create([
+            'user_id' => $this->admin->id,
+            'title' => 'x', 'message' => 'y', 'type' => 'info',
+        ]);
+        $this->actingAs($other)
+            ->post(route('notifications.read', $unread))
+            ->assertForbidden();
     }
 }

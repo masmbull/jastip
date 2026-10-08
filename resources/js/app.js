@@ -140,6 +140,46 @@
         }
     });
 
+    /* ---- wishlist toggle ---- */
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-wishlist-toggle]');
+        if (!btn) return;
+        e.preventDefault();
+        btn.disabled = true;
+        progress(true);
+        try {
+            const res = await fetch(btn.dataset.url, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrf(),
+                    'Accept': 'application/json',
+                },
+            });
+            if (res.status === 401) {
+                toast('Silakan masuk untuk menyimpan wishlist', 'info');
+                return;
+            }
+            const data = await res.json();
+            btn.classList.toggle('text-red-500', data.wishlisted);
+            const fill = data.wishlisted ? 'currentColor' : 'none';
+            btn.querySelectorAll('svg path').forEach((p) => p.setAttribute('fill', fill));
+            const label = btn.querySelector('[data-wishlist-label]');
+            if (label) label.textContent = data.wishlisted ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist';
+            toast(data.message || 'Berhasil');
+            // Wishlist page: the item row is now gone.
+            if (window.location.pathname.includes('/wishlist') && !data.wishlisted) {
+                setTimeout(() => location.reload(), 700);
+            }
+        } catch (err) {
+            toast('Gagal menghubungi server.', 'error');
+        } finally {
+            btn.disabled = false;
+            progress(false);
+        }
+    });
+
     /* ---- progress on full-page navigation ---- */
     let navigating = false;
     document.addEventListener('click', (e) => {

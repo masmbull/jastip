@@ -41,6 +41,20 @@
                     </button>
                 </form>
             @endif
+
+            @auth
+                {{-- Wishlist heart — async toggle, top-right of image --}}
+                <button type="button"
+                        data-wishlist-toggle
+                        data-url="{{ route('wishlist.toggle', ['product' => $product->id]) }}"
+                        class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-red-500 shadow-md flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                        title="Tambah ke wishlist" aria-label="Toggle wishlist">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
+                    </svg>
+                </button>
+            @endauth
         @else
             <div class="w-full h-full bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center animate-shimmer">
                 <span class="text-4xl">📦</span>
