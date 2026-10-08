@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Services\ShippingEstimator;
+use App\Services\ShippingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class ShippingTest extends TestCase
@@ -102,5 +105,66 @@ class ShippingTest extends TestCase
             ->assertSee('Lacak Resi')
             ->assertSee('prefixes', false) // Alpine payload present
             ->assertSee('CekResi', false);
+    }
+
+    public function test_refresh_without_api_config_reports_not_configured(): void
+    {
+        $result = app(ShippingService::class)->updateLivePrices();
+
+        $this->assertFalse($result['success']);
+        $this->assertSame('API not configured', $result['message']);
+    }
+
+    public function test_live_prices_cache_overrides_estimator_base_rate(): void
+    {
+        Cache::flush();
+
+        // Simulasi hasil sinkronisasi API: JNE jadi 9.999/kg.
+        Cache::put('shipping_prices_cache', ['jne' => 9999], 3600);
+
+        $jne = collect(app(ShippingService::class)->enabledCouriers())
+            ->firstWhere('code', 'jne');
+
+        $this->assertSame(9999, (int) $jne['per_kg']);
+    }
+
+    public function test_admin_pricing_setting_overrides_live_api_price(): void
+    {
+        Cache::flush();
+
+        Cache::put('shipping_prices_cache', ['jne' => 9999], 3600);
+        \App\Models\Setting::set('courier_per_kg_jne', '7000', 'integer', 'shipping', true);
+
+        $jne = collect(app(ShippingService::class)->enabledCouriers())
+            ->firstWhere('code', 'jne');
+
+        // Manual admin selalu menang atas harga API.
+        $this->assertSame(7000, (int) $jne['per_kg']);
+    }
+
+    public function test_fetch_from_api_caches_prices_and_clears_courier_cache(): void
+    {
+        Cache::flush();
+
+        Http::fake([
+            'api.co.id/*' => Http::response([
+                'results' => [
+                    ['code' => 'jne', 'price' => 12345],
+                    ['code' => 'jnt', 'price' => 11000],
+                ],
+            ], 200),
+        ]);
+
+        \App\Models\Setting::set('shipping_api_provider', 'api.co.id', 'string', 'shipping', true);
+        \App\Models\Setting::set('shipping_api_key', 'secret', 'string', 'shipping', true);
+
+        $result = app(ShippingService::class)->updateLivePrices();
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(['jne' => 12345, 'jnt' => 11000], $result['prices']);
+        $this->assertSame(['jne' => 12345, 'jnt' => 11000], Cache::get('shipping_prices_cache'));
+
+        // Kurir cache dilepas supaya tarif baru langsung dipakai.
+        $this->assertNull(Cache::get('shipping_couriers_enabled'));
     }
 }

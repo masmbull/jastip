@@ -33,12 +33,20 @@ class ShippingService
         $couriers = $this->estimator->couriers();
         $enabled = [];
 
+        // Harga dari API (bila pernah disinkronkan) => per_kg per kode kurir.
+        $livePrices = Cache::get(self::CACHE_KEY_PRICES, []);
+
         foreach ($couriers as $courier) {
             $code = $courier['code'];
             $isEnabled = Setting::get('courier_enabled_' . $code, true) === true || 
                          Setting::get('courier_enabled_' . $code) === 'true';
 
             if ($isEnabled) {
+                // Urutan prioritas: API live < pengaturan manual admin.
+                if (isset($livePrices[$code])) {
+                    $courier['per_kg'] = (int) $livePrices[$code];
+                }
+
                 $customPrice = Setting::get('courier_per_kg_' . $code);
                 $customMinCharge = Setting::get('courier_min_charge_' . $code);
 
@@ -184,8 +192,9 @@ class ShippingService
     }
 
     /**
-     * Fetch live prices from external API (if configured)
-     * TODO: Implement integration with actual APIs like api.co.id
+     * Fetch live prices from external API and cache them so estimasi memakai
+     * tarif terbaru. Provider didaftarkan lewat Setting shipping_api_provider.
+     * Harga manual admin (courier_per_kg_*) selalu menang atas hasil API.
      */
     public function updateLivePrices(): array
     {
@@ -204,6 +213,7 @@ class ShippingService
 
             if ($result['success']) {
                 Cache::put(self::CACHE_KEY_PRICES, $result['prices'], self::CACHE_TTL);
+                Cache::forget(self::CACHE_KEY_COURIERS); // biar tarif baru dipakai estimasi
             }
 
             return $result;
