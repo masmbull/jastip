@@ -5,7 +5,7 @@
 @section('content')
 <div class="px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
-        <a href="{{ route('admin.reviews.index') }}" class="text-[#06B6D4] hover:underline">← Kembali</a>
+        <a href="{{ route('admin.reviews.index') }}" class="text-[#06B6D4] hover:underline"><x-icon name="arrow-left" class="inline-block w-5 h-5 align-text-bottom" /> Kembali</a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -50,7 +50,7 @@
                     <div class="flex items-center gap-4 mb-4">
                         <div class="flex text-yellow-400">
                             @for($i = 0; $i < $review->rating; $i++)
-                                ⭐
+                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
                             @endfor
                         </div>
                         <span class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $review->rating }} dari 5</span>
@@ -92,22 +92,22 @@
                         <form method="POST" action="{{ route('admin.reviews.approve', $review) }}" class="w-full">
                             @csrf
                             <button type="submit" class="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition">
-                                ✅ Setujui
+                                <x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> Setujui
                             </button>
                         </form>
                         <form method="POST" action="{{ route('admin.reviews.reject', $review) }}" class="w-full">
                             @csrf
                             <button type="submit" class="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition">
-                                ❌ Tolak
+                                <x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" /> Tolak
                             </button>
                         </form>
                     </div>
                 @else
                     <div class="px-4 py-3 rounded-lg bg-gray-100 dark:bg-[#404854] text-center">
                         @if($review->status === 'approved')
-                            <p class="text-green-700 dark:text-green-200 font-medium">✅ Sudah Disetujui</p>
+                            <p class="text-green-700 dark:text-green-200 font-medium"><x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> Sudah Disetujui</p>
                         @else
-                            <p class="text-red-700 dark:text-red-200 font-medium">❌ Sudah Ditolak</p>
+                            <p class="text-red-700 dark:text-red-200 font-medium"><x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" /> Sudah Ditolak</p>
                         @endif
                     </div>
                 @endif

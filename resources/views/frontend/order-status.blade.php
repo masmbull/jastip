@@ -28,9 +28,9 @@
                         <div class="flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full {{ $order->status !== 'awaiting_payment' ? 'bg-emerald-500' : 'bg-amber-500' }} flex items-center justify-center text-white font-bold">
                                 @if($order->status === 'awaiting_payment')
-                                    ⏳
+                                    <x-icon name="clock" class="w-5 h-5" />
                                 @else
-                                    ✓
+                                    <x-icon name="check" class="w-5 h-5" />
                                 @endif
                             </div>
                             @if(!in_array($order->status, ['cancelled']))
@@ -41,7 +41,7 @@
                             <p class="font-semibold text-[#1E293B]">Menunggu Pembayaran</p>
                             <p class="text-sm text-[#64748B]">{{ $order->created_at->format('d M Y H:i') }}</p>
                             @if($order->status === 'awaiting_payment')
-                                <p class="text-xs text-amber-600 mt-1">⏱️ Waktu pembayaran berakhir {{ $order->created_at->addHours(24)->format('d M Y H:i') }}</p>
+                                <p class="text-xs text-amber-600 mt-1"><x-icon name="clock" class="w-4 h-4" /> Waktu pembayaran berakhir {{ $order->created_at->addHours(24)->format('d M Y H:i') }}</p>
                             @endif
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <div class="flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full {{ in_array($order->status, ['confirmed', 'processing', 'ready', 'shipped', 'completed']) ? 'bg-emerald-500' : 'bg-[#E2E8F0]' }} flex items-center justify-center {{ in_array($order->status, ['confirmed', 'processing', 'ready', 'shipped', 'completed']) ? 'text-white' : 'text-[#94A3B8]' }} font-bold">
                                 @if(in_array($order->status, ['confirmed', 'processing', 'ready', 'shipped', 'completed']))
-                                    ✓
+                                    <x-icon name="check" class="w-5 h-5" />
                                 @else
                                     2
                                 @endif
@@ -77,7 +77,7 @@
                         <div class="flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full {{ in_array($order->status, ['processing', 'ready', 'shipped', 'completed']) ? 'bg-emerald-500' : 'bg-[#E2E8F0]' }} flex items-center justify-center {{ in_array($order->status, ['processing', 'ready', 'shipped', 'completed']) ? 'text-white' : 'text-[#94A3B8]' }} font-bold">
                                 @if(in_array($order->status, ['processing', 'ready', 'shipped', 'completed']))
-                                    ✓
+                                    <x-icon name="check" class="w-5 h-5" />
                                 @else
                                     3
                                 @endif
@@ -99,7 +99,7 @@
                         <div class="flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full {{ in_array($order->status, ['shipped', 'completed']) ? 'bg-emerald-500' : 'bg-[#E2E8F0]' }} flex items-center justify-center {{ in_array($order->status, ['shipped', 'completed']) ? 'text-white' : 'text-[#94A3B8]' }} font-bold">
                                 @if(in_array($order->status, ['shipped', 'completed']))
-                                    ✓
+                                    <x-icon name="check" class="w-5 h-5" />
                                 @else
                                     4
                                 @endif
@@ -109,8 +109,22 @@
                             @endif
                         </div>
                         <div class="flex-1 pt-1">
-                            <p class="font-semibold text-[#1E293B]">Dikirim</p>
-                            <p class="text-sm text-[#94A3B8]">Tracking akan diberikan saat pengiriman</p>
+                            <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Dikirim</p>
+                            @if($order->resi)
+                                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">
+                                    Resi <span class="font-mono font-semibold text-[#0891B2]">{{ $order->resi }}</span>
+                                    @if($order->courier) · {{ $order->courier }} @endif
+                                </p>
+                                @if($order->tracking_url)
+                                    <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener noreferrer"
+                                       class="inline-flex items-center gap-1 text-sm font-medium text-[#0891B2] hover:underline mt-1">
+                                        <x-icon name="truck" class="w-4 h-4" />
+                                        Lacak paket
+                                    </a>
+                                @endif
+                            @else
+                                <p class="text-sm text-[#94A3B8] dark:text-[#64748B]">Nomor resi akan muncul setelah admin mengirim.</p>
+                            @endif
                         </div>
                     </div>
 
@@ -119,7 +133,7 @@
                         <div class="flex flex-col items-center">
                             <div class="w-10 h-10 rounded-full {{ $order->status === 'completed' ? 'bg-emerald-500' : 'bg-[#E2E8F0]' }} flex items-center justify-center {{ $order->status === 'completed' ? 'text-white' : 'text-[#94A3B8]' }} font-bold">
                                 @if($order->status === 'completed')
-                                    ✓
+                                    <x-icon name="check" class="w-5 h-5" />
                                 @else
                                     5
                                 @endif

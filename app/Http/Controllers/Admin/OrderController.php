@@ -75,6 +75,11 @@ class OrderController extends Controller
             $order->update(['paid_at' => now()]);
         }
 
+        // Catat waktu kirim saat transisi ke shipped (untuk tampilan tracking).
+        if ($order->status === Order::STATUS_SHIPPED && $previousStatus !== Order::STATUS_SHIPPED && ! $order->shipped_at) {
+            $order->update(['shipped_at' => now()]);
+        }
+
         // Stok: kunci saat lunas/dikirim, lepas saat dibatalkan.
         if ($order->is_paid || in_array($order->status, [Order::STATUS_SHIPPED, Order::STATUS_COMPLETED], true)) {
             $this->stock->commit($order);

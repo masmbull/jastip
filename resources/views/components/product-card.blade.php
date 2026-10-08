@@ -57,7 +57,7 @@
             @endauth
         @else
             <div class="w-full h-full bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center animate-shimmer">
-                <span class="text-4xl">📦</span>
+                <span class="text-4xl"><x-icon name="cube" class="inline-block w-10 h-10 align-text-bottom" /></span>
             </div>
         @endif
     </div>
@@ -79,7 +79,7 @@
 
             @if($product->rating_text)
                 <p class="text-xs text-[#64748B] mb-2 flex items-center gap-1">
-                    <span class="text-amber-500">★</span>
+                    <span class="text-amber-500"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
                     <span class="font-semibold text-[#1E293B]">{{ $product->rating_text }}</span>
                     <span class="text-[#94A3B8]">rating</span>
                 </p>

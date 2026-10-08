@@ -7,7 +7,7 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="mb-6">
-            <a href="{{ route('profile.addresses') }}" class="text-[#06B6D4] hover:underline">← Kembali ke Alamat</a>
+            <a href="{{ route('profile.addresses') }}" class="text-[#06B6D4] hover:underline"><x-icon name="arrow-left" class="inline-block w-5 h-5 align-text-bottom" /> Kembali ke Alamat</a>
         </div>
 
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-8 border border-gray-200 dark:border-[#404854]">

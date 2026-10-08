@@ -35,7 +35,7 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center text-lg">
-                                        {{ $category->icon ?? '📦' }}
+                                        {{ $category->icon ?? '<x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" />' }}
                                     </div>
                                     <div>
                                         <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $category->name }}</p>

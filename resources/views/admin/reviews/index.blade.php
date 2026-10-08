@@ -19,7 +19,7 @@
                     <p class="text-gray-500 dark:text-[#9ca3af] text-sm font-medium">Total Ulasan</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mt-2">{{ $stats['total'] }}</p>
                 </div>
-                <div class="text-4xl">📝</div>
+                <div class="text-4xl"><x-icon name="clipboard" class="inline-block w-10 h-10 align-text-bottom" /></div>
             </div>
         </div>
 
@@ -29,7 +29,7 @@
                     <p class="text-gray-500 dark:text-[#9ca3af] text-sm font-medium">Pending</p>
                     <p class="text-3xl font-bold text-yellow-500 mt-2">{{ $stats['pending'] }}</p>
                 </div>
-                <div class="text-4xl">⏳</div>
+                <div class="text-4xl"><x-icon name="clock" class="inline-block w-10 h-10 align-text-bottom" /></div>
             </div>
         </div>
 
@@ -39,7 +39,7 @@
                     <p class="text-gray-500 dark:text-[#9ca3af] text-sm font-medium">Disetujui</p>
                     <p class="text-3xl font-bold text-green-500 mt-2">{{ $stats['approved'] }}</p>
                 </div>
-                <div class="text-4xl">✅</div>
+                <div class="text-4xl"><x-icon name="check-circle" class="inline-block w-10 h-10 align-text-bottom" /></div>
             </div>
         </div>
 
@@ -49,7 +49,7 @@
                     <p class="text-gray-500 dark:text-[#9ca3af] text-sm font-medium">Ditolak</p>
                     <p class="text-3xl font-bold text-red-500 mt-2">{{ $stats['rejected'] }}</p>
                 </div>
-                <div class="text-4xl">❌</div>
+                <div class="text-4xl"><x-icon name="x" class="inline-block w-10 h-10 align-text-bottom" /></div>
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex text-yellow-400">
                             @for($i = 0; $i < $review->rating; $i++)
-                                ⭐
+                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
                             @endfor
                         </div>
                     </td>

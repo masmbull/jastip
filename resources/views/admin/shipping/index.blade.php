@@ -21,13 +21,13 @@
 
     @if (session('success'))
         <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700">
-            ✓ {{ session('success') }}
+            <x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
         <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            ✗ {{ session('error') }}
+            <x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" /> {{ session('error') }}
         </div>
     @endif
 
@@ -36,7 +36,7 @@
         <form action="{{ route('admin.shipping.refresh') }}" method="POST">
             @csrf
             <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors">
-                🔄 Sinkronkan Harga dari API
+                <x-icon name="arrow-path" class="inline-block w-5 h-5 align-text-bottom" /> Sinkronkan Harga dari API
             </button>
         </form>
     </div>

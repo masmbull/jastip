@@ -56,11 +56,8 @@
             {{-- Desktop Right Side --}}
             <div class="flex items-center space-x-4">
                 {{-- Search --}}
-                <button @click="searchOpen = true" class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M21 21l-6-6m2-5a8 8 0 11-16 0 8 8 0 0116 0z"></path>
-                    </svg>
+                <button @click="searchOpen = true" class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors" aria-label="Cari">
+                    <x-icon name="search" class="w-5 h-5" />
                 </button>
 
                 {{-- Theme Toggle --}}
@@ -77,11 +74,9 @@
 
                                 {{-- Cart --}}
                 <a href="{{ route('cart.index') }}"
-                   class="relative p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M16 11V7a4 4 0 00-8 0v4M8 11h8m-2 4h-4M8 15l-2 4h8l-2-4"></path>
-                    </svg>
+                   class="relative p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded"
+                   aria-label="Titipan" title="Titipan">
+                    <x-icon name="bag" class="w-6 h-6" />
                     <span id="cart-count"
                           class="absolute -top-1 -right-1 bg-orange-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center {{ $cartCount > 0 ? '' : 'hidden' }}">
                         {{ $cartCount }}
@@ -120,20 +115,14 @@
                     <a href="{{ route('login') }}"
                        class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                        title="Masuk" aria-label="Masuk">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
+                        <x-icon name="user-circle" class="w-6 h-6" />
                     </a>
                 @endauth
 
                 {{-- Mobile Menu Button --}}
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"></path>
-                        <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors" aria-label="Menu">
+                    <x-icon name="menu" class="w-6 h-6" x-show="!mobileMenuOpen" />
+                    <x-icon name="x" class="w-6 h-6" x-show="mobileMenuOpen" x-cloak />
                 </button>
             </div>
         </div>

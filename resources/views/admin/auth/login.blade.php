@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <h1 class="text-2xl font-semibold text-center text-[#FDF6EC] mb-1">Halo Admin 👋</h1>
+            <h1 class="text-2xl font-semibold text-center text-[#FDF6EC] mb-1">Halo Admin <x-icon name="sparkles" class="inline-block w-10 h-10 align-text-bottom" /></h1>
             <p class="text-sm text-[#b0b4bd] text-center mb-6">Masuk ke dashboard {{ setting('brand_name', 'NITIP DI END') }}</p>
 
             <form method="POST" action="{{ route('admin.login') }}">

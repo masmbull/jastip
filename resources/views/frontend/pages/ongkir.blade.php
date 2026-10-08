@@ -12,7 +12,7 @@
     {{-- Header --}}
     <header class="mb-10 animate-fade-up">
         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wide">
-            🚚 15 Ekspedisi Nasional
+            <x-icon name="truck" class="inline-block w-5 h-5 align-text-bottom" /> 15 Ekspedisi Nasional
         </span>
         <h1 class="mt-4 text-3xl md:text-4xl font-bold text-[#1E293B]">Cek Ongkir &amp; Lacak Resi</h1>
         <p class="mt-3 text-[#475569] max-w-3xl leading-relaxed">
@@ -204,7 +204,7 @@
         @if($selectedResult && ($selectedResult['ok'] ?? false))
             <div class="mt-8 bg-white rounded-2xl border border-orange-200 p-6 sm:p-8">
                 <h2 class="font-bold text-[#1E293B] text-lg">
-                    {{ $selectedResult['courier']['name'] }} → {{ $selectedResult['city'] }}
+                    {{ $selectedResult['courier']['name'] }} <x-icon name="arrow-right" class="inline-block w-5 h-5 align-text-bottom" /> {{ $selectedResult['city'] }}
                 </h2>
                 <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                     <div>
@@ -367,7 +367,7 @@
                             <option :value="c.code" x-text="c.name"></option>
                         </template>
                     </select>
-                    <p class="mt-1 text-xs text-emerald-600" x-show="autoDetected" x-cloak>✓ Ekspedisi terdeteksi otomatis dari nomor resi.</p>
+                    <p class="mt-1 text-xs text-emerald-600" x-show="autoDetected" x-cloak><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Ekspedisi terdeteksi otomatis dari nomor resi.</p>
                 </div>
                 <div>
                     <label for="resi_awb" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] mb-2">Nomor Resi</label>
@@ -437,7 +437,7 @@
 
                         <a href="{{ $api['url'] }}" target="_blank" rel="noopener noreferrer"
                            class="inline-block mt-4 text-xs font-semibold text-orange-600 hover:text-orange-700">
-                            Buka dokumentasi →
+                            Buka dokumentasi <x-icon name="arrow-right" class="inline-block w-5 h-5 align-text-bottom" />
                         </a>
                     </article>
                 @endforeach

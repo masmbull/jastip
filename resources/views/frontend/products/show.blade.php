@@ -41,7 +41,7 @@
                     <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
                         @if($product->rating_text)
                             <span class="flex items-center gap-1">
-                                <span class="text-amber-500">★</span>
+                                <span class="text-amber-500"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
                                 <span class="font-semibold text-[#1E293B]">{{ $product->rating_text }}</span>
                                 <span class="text-[#94A3B8]">rating</span>
                             </span>
@@ -83,13 +83,13 @@
                     $minOrder = (int) setting('minimum_order', 0);
                 @endphp
                 <div class="mt-3 bg-[#F1F5F9] rounded-lg p-4 text-sm text-[#64748B] space-y-1.5">
-                    <p>🚚 Ongkir: <span class="font-semibold text-[#1E293B]">{{ $shippingCost > 0 ? 'Rp ' . number_format($shippingCost, 0, ',', '.') : 'Gratis' }}</span> — sesuai kota tujuan, dihitung saat checkout.</p>
-                    <p>🧮 Estimasi cepat: <a href="{{ route('shipping.index', ['weight' => 1]) }}" class="text-orange-600 hover:text-orange-700 font-semibold">cek ongkir ke kotamu</a> (15 ekspedisi).</p>
-                    <p>🎁 Gratis ongkir untuk titipan di atas Rp150.000.</p>
+                    <p><x-icon name="truck" class="inline-block w-5 h-5 align-text-bottom" /> Ongkir: <span class="font-semibold text-[#1E293B]">{{ $shippingCost > 0 ? 'Rp ' . number_format($shippingCost, 0, ',', '.') : 'Gratis' }}</span> — sesuai kota tujuan, dihitung saat checkout.</p>
+                    <p><x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" /> Estimasi cepat: <a href="{{ route('shipping.index', ['weight' => 1]) }}" class="text-orange-600 hover:text-orange-700 font-semibold">cek ongkir ke kotamu</a> (15 ekspedisi).</p>
+                    <p><x-icon name="gift" class="inline-block w-5 h-5 align-text-bottom" /> Gratis ongkir untuk titipan di atas Rp150.000.</p>
                     @if($minOrder > 0)
-                        <p>🛒 Minimal titip: Rp {{ number_format($minOrder, 0, ',', '.') }}</p>
+                        <p><x-icon name="cart" class="inline-block w-5 h-5 align-text-bottom" /> Minimal titip: Rp {{ number_format($minOrder, 0, ',', '.') }}</p>
                     @endif
-                    <p>✅ COD & QRIS tersedia — garansi autentik 100%.</p>
+                    <p><x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> COD & QRIS tersedia — garansi autentik 100%.</p>
                 </div>
 
                 @php

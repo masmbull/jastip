@@ -10,7 +10,7 @@
     @if($cartItems->isEmpty())
         <div class="text-center py-12 md:py-16 animate-fade-up" style="animation-delay: 120ms">
             <div class="w-24 md:w-32 h-24 md:h-32 mx-auto bg-orange-50 dark:bg-orange-500/20 rounded-full mb-4 md:mb-6 flex items-center justify-center transition-colors">
-                <span class="text-4xl md:text-5xl">🛍️</span>
+                <x-icon name="bag" class="w-12 h-12 md:w-16 md:h-16 text-orange-400" />
             </div>
             <h2 class="text-lg md:text-xl font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Titipan kamu masih kosong.</h2>
             <p class="text-sm md:text-base text-[#94A3B8] dark:text-[#cbd5e1] mb-4 md:mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
@@ -158,10 +158,18 @@
                    class="flex-1 text-center px-6 py-3 border border-[#E2E8F0] text-[#64748B] font-medium rounded-full hover:bg-[#F1F5F9] transition-colors">
                     Lanjutkan Belanja
                 </a>
-                <a href="{{ route('checkout.index') }}"
-                   class="flex-1 text-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
-                    Lanjut Nitip
-                </a>
+                @auth
+                    <a href="{{ route('checkout.index') }}"
+                       class="flex-1 text-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        Lanjut Nitip
+                    </a>
+                @else
+                    <a href="{{ route('login') }}"
+                       class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        <x-icon name="lock" class="w-4 h-4" />
+                        Masuk untuk Lanjut Nitip
+                    </a>
+                @endauth
             </div>
         </div>
     @endif

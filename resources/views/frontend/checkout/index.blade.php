@@ -4,7 +4,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
     <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6 md:mb-8">Isi Data Pesanan</h1>
 
-    <form method="POST" action="{{ route('checkout.store') }}" id="checkoutForm">
+    <form method="POST" action="{{ route('checkout.store') }}" id="checkoutForm" x-data="ongkirChecker()">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <!-- Form Column -->
@@ -56,18 +56,57 @@
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 resize-none transition-colors">{{ old('notes') }}</textarea>
                     </div>
 
-                    <!-- Shipping Method -->
-                    <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Metode Pengiriman *</label>
-                        <select name="shipping_method" required
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('shipping_method') border-red-500 @enderror">
-                            <option value="">Pilih metode</option>
-                            <option value="Reguler" {{ old('shipping_method') == 'Reguler' ? 'selected' : '' }}>Reguler</option>
-                            <option value="Cepat" {{ old('shipping_method') == 'Cepat' ? 'selected' : '' }}>Cepat</option>
-                            <option value="Instant" {{ old('shipping_method') == 'Instant' ? 'selected' : '' }}>Instant (COD)</option>
-                            <option value="Ambil di tempat" {{ old('shipping_method') == 'Ambil di tempat' ? 'selected' : '' }}>Ambil di Tempat</option>
-                        </select>
-                        @error('shipping_method') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
+                    <!-- Kota & Ekspedisi + Cek Ongkir -->
+                    <div class="p-4 rounded-lg border border-[#E2E8F0] dark:border-[#404854] bg-[#F8FAFC] dark:bg-[#2e323b]">
+                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2 flex items-center gap-2">
+                            <x-icon name="truck" class="w-4 h-4 text-[#0891B2]" />
+                            Kota Tujuan & Ekspedisi *
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <select name="city" x-model="city" @change="check()" required
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('city') border-red-500 @enderror">
+                                    <option value="">Pilih kota tujuan</option>
+                                    @foreach($cities as $name => $meta)
+                                        <option value="{{ $name }}" @selected(old('city') === $name)>{{ $name }} — {{ $meta['province'] }}</option>
+                                    @endforeach
+                                </select>
+                                @error('city') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <select name="courier" x-model="courier" @change="check()" required
+                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('courier') border-red-500 @enderror">
+                                    <option value="">Pilih ekspedisi</option>
+                                    <template x-for="r in okRows" :key="r.code">
+                                        <option :value="r.code" x-text="r.name + ' · ' + (r.etd || '') + ' · ' + r.price_formatted"></option>
+                                    </template>
+                                </select>
+                                @error('courier') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+                        <input type="hidden" name="weight" :value="weight">
+
+                        <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-2 flex items-center gap-1">
+                            <x-icon name="cube" class="w-4 h-4" />
+                            Estimasi berat: <span x-text="weight + ' kg'"></span>
+                        </p>
+
+                        {{-- Hasil ongkir --}}
+                        <div class="mt-3" x-show="loading" x-cloak>
+                            <span class="text-xs text-[#64748B] dark:text-[#cbd5e1] inline-flex items-center gap-2">
+                                <x-icon name="arrow-path" class="w-4 h-4 animate-spin" /> Menghitung ongkir…
+                            </span>
+                        </div>
+                        <div class="mt-3" x-show="!loading && error" x-cloak>
+                            <span class="text-xs text-red-500" x-text="error"></span>
+                        </div>
+                        <div class="mt-3" x-show="!loading && !error && selected" x-cloak>
+                            <div class="rounded-lg bg-[#0891B2]/10 border border-[#0891B2]/30 px-3 py-2 text-sm text-[#0E7490] dark:text-[#67e8f9]">
+                                Ongkir <strong x-text="selected.name"></strong>: <strong x-text="selectedPrice"></strong>
+                                <span class="text-xs" x-text="selected ? ' · ' + (selected.etd || '') : ''"></span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-[#94A3B8] mt-2">Ongkir dihitung otomatis berdasarkan kota, ekspedisi, dan berat. Admin konfirmasi tarif final saat pengiriman.</p>
                     </div>
                 </div>
             </div>
@@ -91,7 +130,7 @@
                         </div>
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
                             <span>Ongkir</span>
-                            <span class="font-medium">{{ format_price(setting('shipping_cost', 0)) }}</span>
+                            <span class="font-medium" x-text="selectedPrice || 'Pilih ekspedisi'">Pilih ekspedisi</span>
                         </div>
                         @if(($fee ?? 0) > 0)
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
@@ -101,7 +140,7 @@
                         @endif
                         <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-3 flex justify-between text-base font-bold">
                             <span class="text-[#1E293B] dark:text-[#f1f5f9]">Total</span>
-                            <span class="text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0) + ($fee ?? 0)) }}</span>
+                            <span class="text-[#0891B2]" x-text="totalFormatted">{{ format_price($subtotal + ($fee ?? 0)) }}</span>
                         </div>
                     </div>
 
@@ -140,6 +179,41 @@
     </form>
 
     <script>
+    function ongkirChecker() {
+        return {
+            city: '{{ old('city') }}',
+            courier: '{{ old('courier') }}',
+            weight: {{ (float) old('weight', $defaultWeight) }},
+            rows: [],
+            loading: false,
+            error: '',
+            get okRows() { return this.rows.filter(r => r.ok); },
+            get selected() { return this.rows.find(r => r.code === this.courier && r.ok) || null; },
+            get selectedPrice() { return this.selected ? this.selected.price_formatted : ''; },
+            get totalFormatted() {
+                const base = {{ (int) $subtotal + (int) ($fee ?? 0) }};
+                const ship = this.selected ? this.selected.price : 0;
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(base + ship);
+            },
+            init() { if (this.city) this.check(); },
+            async check() {
+                if (!this.city) { this.rows = []; return; }
+                this.loading = true; this.error = '';
+                try {
+                    const url = '{{ route('shipping.check') }}?city=' + encodeURIComponent(this.city) + '&weight=' + this.weight;
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    const data = await res.json();
+                    this.rows = data.rows || [];
+                    if (!this.selected) this.courier = this.okRows.length ? this.okRows[0].code : '';
+                } catch (e) {
+                    this.error = 'Gagal menghitung ongkir. Coba lagi.';
+                } finally {
+                    this.loading = false;
+                }
+            }
+        };
+    }
+
     document.getElementById('checkoutForm').addEventListener('submit', function(e) {
         const btn = e.submitter;
         btn.disabled = true;

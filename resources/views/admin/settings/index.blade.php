@@ -26,7 +26,7 @@
     {{-- Branding --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">🎨</span> Branding
+                <span class="text-lg"><x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /></span> Branding
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -50,7 +50,7 @@
         {{-- Logo & Identities --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">🖼️</span> Logo &amp; Brand Identities
+                <span class="text-lg"><x-icon name="photo" class="inline-block w-5 h-5 align-text-bottom" /></span> Logo &amp; Brand Identities
             </h2>
             <div class="space-y-4">
                 <div>
@@ -82,7 +82,7 @@
             {{-- Colors --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">🎨</span> Warna Brand
+                <span class="text-lg"><x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /></span> Warna Brand
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
@@ -121,7 +121,7 @@
         {{-- Contact --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">📞</span> Kontak
+                <span class="text-lg"><x-icon name="phone" class="inline-block w-5 h-5 align-text-bottom" /></span> Kontak
             </h2>
             <div class="space-y-4">
                 <div>
@@ -159,7 +159,7 @@
         {{-- Site Info --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">🌐</span> Informasi Situs
+                <span class="text-lg"><x-icon name="chat" class="inline-block w-5 h-5 align-text-bottom" /></span> Informasi Situs
             </h2>
             <div class="space-y-4">
                 <div>
@@ -174,7 +174,7 @@
         {{-- SEO --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">🔍</span> SEO
+                <span class="text-lg"><x-icon name="search" class="inline-block w-5 h-5 align-text-bottom" /></span> SEO
             </h2>
             <div class="space-y-4">
                 <div>
@@ -195,7 +195,7 @@
         {{-- Business --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">💼</span> Pengaturan Bisnis
+                <span class="text-lg"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /></span> Pengaturan Bisnis
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -223,7 +223,7 @@
         {{-- QRIS Payment --}}
         <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6">
             <h2 class="text-lg font-semibold text-[#1E293B] mb-4 flex items-center gap-2">
-                <span class="text-lg">💳</span> Pembayaran QRIS
+                <span class="text-lg"><x-icon name="credit-card" class="inline-block w-5 h-5 align-text-bottom" /></span> Pembayaran QRIS
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">

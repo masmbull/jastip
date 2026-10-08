@@ -14,7 +14,7 @@
         @endif
         <p class="text-[#94A3B8]">{{ $product->availability_badge['text'] }}</p>
         @if($product->is_featured)
-            <p class="text-xs font-bold text-orange-600">★ Unggulan</p>
+            <p class="text-xs font-bold text-orange-600"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /> Unggulan</p>
         @endif
         @if(!$product->is_active)
             <p class="text-xs text-[#94A3B8]">(Non-aktif)</p>

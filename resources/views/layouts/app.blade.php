@@ -119,7 +119,7 @@
                 </button>
                 <button type="button" @click="searchOpen = false"
                         class="px-3 py-1 text-sm text-[#94A3B8] hover:text-[#1E293B]">
-                    ✕
+                    <x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" />
                 </button>
             </form>
         </div>

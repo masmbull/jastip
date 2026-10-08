@@ -23,7 +23,7 @@
         @empty
             <div class="col-span-full text-center py-16">
                 <div class="w-24 h-24 mx-auto bg-gray-100 rounded-full mb-4 flex items-center justify-center">
-                    <span class="text-3xl">🔍</span>
+                    <span class="text-3xl"><x-icon name="search" class="inline-block w-10 h-10 align-text-bottom" /></span>
                 </div>
                 <p class="text-[#94A3B8] mb-2">Produk tidak ditemukan di kategori ini.</p>
             </div>

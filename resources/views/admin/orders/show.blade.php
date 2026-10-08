@@ -162,6 +162,21 @@
                 </button>
             </form>
         @endif
+        @if(in_array($order->status, ['pending', 'confirmed', 'processing', 'ready']))
+            <form method="POST" action="{{ route('admin.orders.status', $order->id) }}"
+                  class="flex flex-wrap items-center gap-2 bg-[#F8FAFC] dark:bg-[#2e323b] px-3 py-2 rounded-lg border border-[#E2E8F0] dark:border-[#404854]">
+                @csrf @method('PUT')
+                <input type="hidden" name="status" value="{{ \App\Models\Order::STATUS_SHIPPED }}">
+                <input type="text" name="resi" value="{{ $order->resi }}" placeholder="No. resi"
+                       class="px-3 py-1.5 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] rounded-md w-40">
+                <input type="text" name="courier" value="{{ $order->courier }}" placeholder="Kurir (mis. JNE)"
+                       class="px-3 py-1.5 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] rounded-md w-36">
+                <button type="submit"
+                        class="inline-flex items-center gap-1 px-4 py-1.5 bg-[#0891B2] hover:bg-[#0E7490] text-white text-sm font-medium rounded-md shadow-sm">
+                    <x-icon name="truck" class="w-4 h-4" /> Kirim
+                </button>
+            </form>
+        @endif
         <form method="POST"
               action="{{ route('admin.orders.status', $order->id) }}"
               data-confirm="Batalkan pesanan ini?"

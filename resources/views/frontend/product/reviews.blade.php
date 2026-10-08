@@ -35,7 +35,7 @@
                 @foreach([5, 4, 3, 2, 1] as $star)
                     @php $count = $ratingDistribution[$star]; @endphp
                     <div class="flex items-center gap-3">
-                        <span class="w-12 text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $star }} ⭐</span>
+                        <span class="w-12 text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $star }} <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
                         <div class="flex-1 bg-gray-200 dark:bg-[#404854] rounded-full h-2">
                             <div class="bg-yellow-400 h-2 rounded-full" 
                                  style="width: {{ $reviewCount > 0 ? ($count / $reviewCount) * 100 : 0 }}%"></div>
@@ -60,7 +60,7 @@
                         @for($i = 1; $i <= 5; $i++)
                             <button type="button" class="star-btn text-3xl transition"
                                     data-rating="{{ $i }}">
-                                ☆
+                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
                             </button>
                         @endfor
                     </div>
@@ -119,7 +119,7 @@
                         <div class="flex items-center gap-3 mb-3">
                             <div class="flex text-yellow-400">
                                 @for($i = 0; $i < $review->rating; $i++)
-                                    ⭐
+                                    <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
                                 @endfor
                             </div>
                             <span class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $review->rating }} dari 5</span>
@@ -135,7 +135,7 @@
                 <div class="flex items-center gap-3 border-t border-gray-200 dark:border-[#404854] pt-4">
                     <button class="helpful-btn flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[#cbd5e1] hover:text-[#06B6D4] transition"
                             data-review-id="{{ $review->id }}">
-                        👍 <span class="helpful-count">{{ $review->helpful_count }}</span>
+                        <x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> <span class="helpful-count">{{ $review->helpful_count }}</span>
                     </button>
                     <span class="text-sm text-gray-500 dark:text-[#9ca3af]">Bermanfaat?</span>
                 </div>
@@ -181,10 +181,8 @@ document.getElementById('ratingStars')?.addEventListener('mouseleave', function(
 function highlightStars(rating) {
     document.querySelectorAll('.star-btn').forEach((btn, index) => {
         if (index < rating) {
-            btn.textContent = '⭐';
             btn.classList.add('text-yellow-400');
         } else {
-            btn.textContent = '☆';
             btn.classList.remove('text-yellow-400');
         }
     });

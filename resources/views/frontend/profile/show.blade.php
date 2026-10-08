@@ -23,10 +23,10 @@
                         <p class="text-gray-600 dark:text-[#cbd5e1]">{{ $user->email }}</p>
                         <div class="mt-2 flex items-center gap-3">
                             <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-full text-sm font-medium">
-                                ⭐ {{ ucfirst($profile->membership_tier ?? 'bronze') }}
+                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /> {{ ucfirst($profile->membership_tier ?? 'bronze') }}
                             </span>
                             <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
-                                🎁 {{ $profile->loyalty_points ?? 0 }} Poin
+                                <x-icon name="gift" class="inline-block w-5 h-5 align-text-bottom" /> {{ $profile->loyalty_points ?? 0 }} Poin
                             </span>
                         </div>
                     </div>
@@ -40,31 +40,31 @@
         {{-- Navigation Tabs --}}
         <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-200 dark:border-[#404854]">
             <a href="{{ route('profile.show') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.show') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                📋 Ringkasan
+                <x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Ringkasan
             </a>
             <a href="{{ route('profile.orders') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.orders') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                📦 Pesanan ({{ $orders->total() }})
+                <x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" /> Pesanan ({{ $orders->total() }})
             </a>
             <a href="{{ route('profile.addresses') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.addresses') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                📍 Alamat
+                <x-icon name="map-pin" class="inline-block w-5 h-5 align-text-bottom" /> Alamat
             </a>
             <a href="{{ route('profile.reviews') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.reviews') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                ⭐ Ulasan
+                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /> Ulasan
             </a>
             <a href="{{ route('profile.wishlist') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.wishlist') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                💗 Wishlist
+                <x-icon name="heart" class="inline-block w-5 h-5 align-text-bottom" /> Wishlist
             </a>
             <a href="{{ route('notifications.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('notifications.*') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                🔔 Notifikasi
+                <x-icon name="bell" class="inline-block w-5 h-5 align-text-bottom" /> Notifikasi
             </a>
             <a href="{{ route('chat.index') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('chat.*') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                💬 Bantuan
+                <x-icon name="chat" class="inline-block w-5 h-5 align-text-bottom" /> Bantuan
             </a>
             <a href="{{ route('profile.loyalty') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.loyalty') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                🎁 Loyalitas
+                <x-icon name="gift" class="inline-block w-5 h-5 align-text-bottom" /> Loyalitas
             </a>
             <a href="{{ route('profile.settings') }}" class="px-4 py-2 font-medium border-b-2 {{ request()->routeIs('profile.settings') ? 'border-[#06B6D4] text-[#06B6D4]' : 'border-transparent text-gray-600 dark:text-[#9ca3af]' }}">
-                ⚙️ Pengaturan
+                <x-icon name="lock" class="inline-block w-5 h-5 align-text-bottom" /> Pengaturan
             </a>
         </div>
 
@@ -73,7 +73,7 @@
             {{-- Stats Card --}}
             <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854]">
                 <div class="text-center">
-                    <div class="text-4xl mb-2">📦</div>
+                    <div class="text-4xl mb-2"><x-icon name="cube" class="inline-block w-10 h-10 align-text-bottom" /></div>
                     <p class="text-gray-600 dark:text-[#cbd5e1] text-sm">Total Pesanan</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mt-2">{{ $orders->total() }}</p>
                 </div>
@@ -81,7 +81,7 @@
 
             <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854]">
                 <div class="text-center">
-                    <div class="text-4xl mb-2">⭐</div>
+                    <div class="text-4xl mb-2"><x-icon name="star" class="inline-block w-10 h-10 align-text-bottom" /></div>
                     <p class="text-gray-600 dark:text-[#cbd5e1] text-sm">Total Ulasan</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mt-2">{{ $reviews->total() }}</p>
                 </div>
@@ -89,7 +89,7 @@
 
             <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854]">
                 <div class="text-center">
-                    <div class="text-4xl mb-2">🎁</div>
+                    <div class="text-4xl mb-2"><x-icon name="gift" class="inline-block w-10 h-10 align-text-bottom" /></div>
                     <p class="text-gray-600 dark:text-[#cbd5e1] text-sm">Poin Loyalitas</p>
                     <p class="text-3xl font-bold text-gray-900 dark:text-[#f1f5f9] mt-2">{{ $profile->loyalty_points ?? 0 }}</p>
                 </div>
@@ -100,7 +100,7 @@
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854] mb-8">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9]">Pesanan Terbaru</h2>
-                <a href="{{ route('profile.orders') }}" class="text-[#06B6D4] hover:underline text-sm">Lihat Semua →</a>
+                <a href="{{ route('profile.orders') }}" class="text-[#06B6D4] hover:underline text-sm">Lihat Semua <x-icon name="arrow-right" class="inline-block w-5 h-5 align-text-bottom" /></a>
             </div>
 
             <div class="overflow-x-auto">

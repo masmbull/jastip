@@ -31,11 +31,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 <div class="bg-[#ecfeff] rounded-lg p-5 border border-orange-100">
-                    <h3 class="font-bold text-[#1E293B] mb-2 flex items-center gap-2">🎯 Visi</h3>
+                    <h3 class="font-bold text-[#1E293B] mb-2 flex items-center gap-2"><x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /> Visi</h3>
                     <p class="text-sm text-[#64748B] leading-relaxed">Menjadi layanan jastip lokal paling terpercaya di Indonesia — tempat kamu bisa dapat produk impian dengan harga terbaik, proses mudah, dan garansi autentik 100%.</p>
                 </div>
                 <div class="bg-[#ecfeff] rounded-lg p-5 border border-orange-100">
-                    <h3 class="font-bold text-[#1E293B] mb-2 flex items-center gap-2">🚀 Misi</h3>
+                    <h3 class="font-bold text-[#1E293B] mb-2 flex items-center gap-2"><x-icon name="bolt" class="inline-block w-5 h-5 align-text-bottom" /> Misi</h3>
                     <ul class="text-sm text-[#64748B] leading-relaxed list-disc pl-4 space-y-1">
                         <li>Memudahkan siapa pun menitip barang viral & original.</li>
                         <li>Transparan soal harga, ongkir, dan status pesanan.</li>

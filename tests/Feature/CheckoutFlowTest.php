@@ -6,6 +6,7 @@ use App\Mail\OrderConfirmation;
 use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -22,6 +23,9 @@ class CheckoutFlowTest extends TestCase
 
     public function test_order_flow_from_cart_to_admin_status_update(): void
     {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
         $product = Product::firstWhere('slug', 'fashion-item') ?? Product::firstOrFail();
         $product->update(['setbiaya_fee' => 5000]);
         $feeTotal = $product->effectiveFee() * 2;
@@ -46,7 +50,8 @@ class CheckoutFlowTest extends TestCase
             'whatsapp' => '08123456789',
             'address' => 'Jl. Testing No. 1, Bandung',
             'notes' => 'Titip 2 ya',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();
@@ -65,7 +70,9 @@ class CheckoutFlowTest extends TestCase
             ->assertSee('wa.me/6285123456789', false)
             ->assertDontSee('wa.me/628123456789', false);
 
-        // Admin area is guarded
+        // Admin area is guarded (log out the customer first — a logged-in
+        // non-admin now hits 403, not the login redirect).
+        \Illuminate\Support\Facades\Auth::logout();
         $this->get(route('admin.orders.index'))->assertRedirect(route('admin.login'));
 
         $this->post(route('admin.login.post'), [
@@ -93,6 +100,9 @@ class CheckoutFlowTest extends TestCase
 
     public function test_checkout_applies_valid_coupon_and_rejects_invalid(): void
     {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
         $product = Product::firstOrFail();
         $product->update(['setbiaya_fee' => 0]);
 
@@ -116,7 +126,8 @@ class CheckoutFlowTest extends TestCase
             'name' => 'Kupon Tester',
             'whatsapp' => '08123456789',
             'address' => 'Jl. Kupon No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
             'coupon_code' => 'NOPE',
         ])->assertSessionHas('error');
         $this->assertSame($ordersBefore, Order::count());
@@ -126,7 +137,8 @@ class CheckoutFlowTest extends TestCase
             'name' => 'Kupon Tester',
             'whatsapp' => '08123456789',
             'address' => 'Jl. Kupon No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
             'coupon_code' => 'hemat10',
         ])->assertRedirect(route('checkout.confirmation'));
 
@@ -140,6 +152,9 @@ class CheckoutFlowTest extends TestCase
 
     public function test_checkout_reserves_stock_and_commit_on_paid(): void
     {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
         $product = Product::firstOrFail();
         $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
 
@@ -149,7 +164,8 @@ class CheckoutFlowTest extends TestCase
             'name' => 'Stok Tester',
             'whatsapp' => '08123456789',
             'address' => 'Jl. Stok No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('checkout.confirmation'));
 
         // Reserved naik, stock belum berubah.
@@ -179,6 +195,9 @@ class CheckoutFlowTest extends TestCase
 
     public function test_checkout_rejects_when_stock_insufficient(): void
     {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
         $product = Product::firstOrFail();
         $product->update(['stock' => 5, 'reserved' => 0, 'setbiaya_fee' => 0]);
 
@@ -191,7 +210,8 @@ class CheckoutFlowTest extends TestCase
             'name' => 'Stok Kurang',
             'whatsapp' => '08123456789',
             'address' => 'Jl. Stok No. 2, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('cart.index'));
 
         $this->assertSame($ordersBefore, Order::count());
@@ -201,6 +221,9 @@ class CheckoutFlowTest extends TestCase
     public function test_checkout_sends_confirmation_email_when_email_provided(): void
     {
         Mail::fake();
+
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
 
         $product = Product::firstOrFail();
         $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
@@ -212,7 +235,8 @@ class CheckoutFlowTest extends TestCase
             'whatsapp' => '08123456789',
             'email' => 'tester@example.com',
             'address' => 'Jl. Email No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();
@@ -221,28 +245,38 @@ class CheckoutFlowTest extends TestCase
         Mail::assertSent(OrderConfirmation::class, fn ($mail) => $mail->hasTo('tester@example.com'));
     }
 
-    public function test_checkout_without_email_sends_no_mail(): void
+    public function test_checkout_without_explicit_email_uses_account_email(): void
     {
         Mail::fake();
+
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
 
         $product = Product::firstOrFail();
         $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
 
         $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
 
+        // Field email kosong => pakai email akun yang login.
         $this->post(route('checkout.store'), [
             'name' => 'No Email',
             'whatsapp' => '08123456789',
             'address' => 'Jl. Kosong No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('checkout.confirmation'));
 
-        Mail::assertNothingSent();
+        $order = Order::latest('id')->firstOrFail();
+        $this->assertSame($customer->email, $order->customer_email);
+        Mail::assertSent(OrderConfirmation::class, fn ($mail) => $mail->hasTo($customer->email));
     }
 
     public function test_shipped_status_emails_customer(): void
     {
         Mail::fake();
+
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
 
         $product = Product::firstOrFail();
         $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
@@ -253,7 +287,8 @@ class CheckoutFlowTest extends TestCase
             'whatsapp' => '08123456789',
             'email' => 'shipped@example.com',
             'address' => 'Jl. Kirim No. 1, Bandung',
-            'shipping_method' => 'JNE',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();

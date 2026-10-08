@@ -8,7 +8,7 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
         <div>
-            <h1 class="text-2xl md:text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">📡 Service Monitoring</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9]"><x-icon name="bell" class="inline-block w-10 h-10 align-text-bottom" /> Service Monitoring</h1>
             <p class="text-xs md:text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Monitor status semua services dan sistem</p>
         </div>
         <a href="{{ route('admin.services.checkAll') }}"
@@ -16,7 +16,7 @@
             <svg class="w-4 md:w-5 h-4 md:h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            🔄 Check All
+            <x-icon name="arrow-path" class="inline-block w-5 h-5 align-text-bottom" /> Check All
         </a>
     </div>
 
@@ -31,7 +31,7 @@
         <!-- Database -->
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-5 border border-[#E2E8F0] dark:border-[#404854]">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">🗄️ Database</h3>
+                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Database</h3>
                 <span class="inline-flex h-2.5 w-2.5 rounded-full @if($systemInfo['database']['status'] === 'online') bg-green-500 @else bg-red-500 @endif"></span>
             </div>
             <p class="text-xs md:text-sm text-[#94A3B8] dark:text-[#cbd5e1]">{{ $systemInfo['database']['message'] }}</p>
@@ -40,7 +40,7 @@
         <!-- Cache -->
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-5 border border-[#E2E8F0] dark:border-[#404854]">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">⚡ Cache</h3>
+                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]"><x-icon name="bolt" class="inline-block w-5 h-5 align-text-bottom" /> Cache</h3>
                 <span class="inline-flex h-2.5 w-2.5 rounded-full @if($systemInfo['cache']['status'] === 'online') bg-green-500 @else bg-red-500 @endif"></span>
             </div>
             <p class="text-xs md:text-sm text-[#94A3B8] dark:text-[#cbd5e1]">{{ $systemInfo['cache']['message'] }}</p>
@@ -49,7 +49,7 @@
         <!-- Storage -->
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-5 border border-[#E2E8F0] dark:border-[#404854]">
             <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">📂 Storage</h3>
+                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Storage</h3>
                 <span class="inline-flex h-2.5 w-2.5 rounded-full @if($systemInfo['storage']['status'] === 'online') bg-green-500 @else bg-red-500 @endif"></span>
             </div>
             <p class="text-xs md:text-sm text-[#94A3B8] dark:text-[#cbd5e1]">{{ $systemInfo['storage']['message'] }}</p>
@@ -60,7 +60,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <!-- Disk Usage -->
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-5 border border-[#E2E8F0] dark:border-[#404854]">
-            <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">💾 Disk Usage</h3>
+            <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Disk Usage</h3>
             <div class="space-y-3 text-xs md:text-sm">
                 <div class="flex justify-between text-[#94A3B8] dark:text-[#cbd5e1]">
                     <span>Total:</span>
@@ -79,7 +79,7 @@
 
         <!-- Memory Usage -->
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-5 border border-[#E2E8F0] dark:border-[#404854]">
-            <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">🧠 Memory Usage</h3>
+            <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4"><x-icon name="bolt" class="inline-block w-5 h-5 align-text-bottom" /> Memory Usage</h3>
             <div class="space-y-2 text-xs md:text-sm">
                 <div class="flex justify-between text-[#94A3B8] dark:text-[#cbd5e1]">
                     <span>Current:</span>
@@ -100,7 +100,7 @@
     {{-- Services Table --}}
     <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden">
         <div class="px-6 py-4 border-b border-[#E2E8F0] dark:border-[#404854]">
-            <h2 class="font-bold text-lg text-[#1E293B] dark:text-[#f1f5f9]">📋 Services</h2>
+            <h2 class="font-bold text-lg text-[#1E293B] dark:text-[#f1f5f9]"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Services</h2>
         </div>
 
         <div class="overflow-x-auto">

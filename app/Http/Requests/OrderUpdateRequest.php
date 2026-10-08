@@ -18,6 +18,8 @@ class OrderUpdateRequest extends FormRequest
         return [
             'status' => ['required', Rule::in(array_keys(Order::statuses()))],
             'admin_notes' => ['nullable', 'string'],
+            'resi' => ['nullable', 'string', 'max:100'],
+            'courier' => ['nullable', 'string', 'max:100'],
         ];
     }
 

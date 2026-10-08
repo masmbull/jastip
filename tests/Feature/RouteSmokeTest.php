@@ -221,9 +221,9 @@ class RouteSmokeTest extends TestCase
 
     public function test_payment_routes_reject_foreign_orders(): void
     {
-        // Guest, no session order_data => cannot touch someone else's order.
-        $this->get(route('payment.waiting', $this->order))->assertForbidden();
-        $this->get(route('payment.status', $this->order))->assertForbidden();
+        // Guest now bounces to login (payment is auth-gated).
+        $this->get(route('payment.waiting', $this->order))->assertRedirect(route('login'));
+        $this->get(route('payment.status', $this->order))->assertRedirect(route('login'));
 
         // Different logged-in customer => forbidden.
         $other = User::factory()->create(['role' => 'customer']);
@@ -421,5 +421,22 @@ class RouteSmokeTest extends TestCase
         // Guests are bounced to login.
         Auth::logout();
         $this->get(route('chat.index'))->assertRedirect(route('login'));
+    }
+
+    public function test_admin_sets_resi_and_marks_shipped(): void
+    {
+        $this->actingAs($this->admin);
+
+        $this->put(route('admin.orders.status', $this->order), [
+            'status' => Order::STATUS_SHIPPED,
+            'resi' => 'JNE123456789',
+            'courier' => 'JNE',
+        ])->assertRedirect(route('admin.orders.show', $this->order));
+
+        $order = $this->order->fresh();
+        $this->assertSame(Order::STATUS_SHIPPED, $order->status);
+        $this->assertSame('JNE123456789', $order->resi);
+        $this->assertNotNull($order->shipped_at);
+        $this->assertStringContainsString('JNE123456789', $order->tracking_url);
     }
 }

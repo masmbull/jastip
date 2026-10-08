@@ -15,7 +15,7 @@
              loading="lazy" decoding="async">
     @else
         <div class="w-20 h-20 mx-auto rounded-full bg-orange-100 flex items-center justify-center mb-3">
-            <span class="text-3xl">📦</span>
+            <span class="text-3xl"><x-icon name="cube" class="inline-block w-10 h-10 align-text-bottom" /></span>
         </div>
     @endif
 

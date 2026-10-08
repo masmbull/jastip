@@ -22,12 +22,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 counter">
         @php
             $steps = [
-                ['icon' => '👀', 'title' => 'Lihat Produk', 'desc' => 'Scroll dan cari barang yang kamu mau titip.'],
-                ['icon' => '➕', 'title' => 'Tambah ke Titipan', 'desc' => 'Klik "Tambah ke Titipan" atau "Nitip via WhatsApp".'],
-                ['icon' => '🛒', 'title' => 'Isi Data', 'desc' => 'Masukkan nama, WhatsApp, alamat, dan catatan.'],
-                ['icon' => '✅', 'title' => 'Kirim ke Admin', 'desc' => 'Pesan WhatsApp otomatis dikirim ke admin untuk konfirmasi.'],
-                ['icon' => '🚚', 'title' => 'Barang Sampai', 'desc' => 'Setelah dikonfirmasi, barang dikirim sesuai metode pengiriman Anda.'],
-                ['icon' => '📦', 'title' => 'Pesanan Selesai', 'desc' => 'Pesanan diterima dan ditindaklanjuti oleh admin.'],
+                ['icon' => '<x-icon name="eye" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Lihat Produk', 'desc' => 'Scroll dan cari barang yang kamu mau titip.'],
+                ['icon' => '<x-icon name="plus" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Tambah ke Titipan', 'desc' => 'Klik "Tambah ke Titipan" atau "Nitip via WhatsApp".'],
+                ['icon' => '<x-icon name="cart" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Isi Data', 'desc' => 'Masukkan nama, WhatsApp, alamat, dan catatan.'],
+                ['icon' => '<x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Kirim ke Admin', 'desc' => 'Pesan WhatsApp otomatis dikirim ke admin untuk konfirmasi.'],
+                ['icon' => '<x-icon name="truck" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Barang Sampai', 'desc' => 'Setelah dikonfirmasi, barang dikirim sesuai metode pengiriman Anda.'],
+                ['icon' => '<x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" />', 'title' => 'Pesanan Selesai', 'desc' => 'Pesanan diterima dan ditindaklanjuti oleh admin.'],
             ];
         @endphp
         @foreach($steps as $step)
@@ -43,7 +43,7 @@
     {{-- Tips --}}
     <section class="mt-14 bg-[#F1F5F9] rounded-2xl p-6 md:p-8">
         <div class="flex items-center gap-3 mb-5">
-            <span class="text-2xl">💡</span>
+            <span class="text-2xl"><x-icon name="sparkles" class="inline-block w-10 h-10 align-text-bottom" /></span>
             <h2 class="text-xl font-bold text-[#1E293B]">Tips Lebih Cepat</h2>
         </div>
         <ul class="space-y-3 text-[#64748B]">

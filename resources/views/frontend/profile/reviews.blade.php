@@ -15,7 +15,7 @@
                         <h3 class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9]">{{ $review->product->name }}</h3>
                         <div class="flex text-yellow-400 mt-2">
                             @for($i = 0; $i < $review->rating; $i++)
-                                ⭐
+                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
                             @endfor
                         </div>
                     </div>

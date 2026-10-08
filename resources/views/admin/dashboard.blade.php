@@ -74,10 +74,10 @@
     </div>
 
     <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-        <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">📡 Service Monitoring</h3>
+        <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2"><x-icon name="bell" class="inline-block w-5 h-5 align-text-bottom" /> Service Monitoring</h3>
         <p class="text-sm text-blue-700 dark:text-blue-300 mb-3">Monitor kesehatan sistem dan services</p>
         <a href="{{ route('admin.services.index') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
-            Buka Service Monitor →
+            Buka Service Monitor <x-icon name="arrow-right" class="inline-block w-5 h-5 align-text-bottom" />
         </a>
     </div>
 </div>

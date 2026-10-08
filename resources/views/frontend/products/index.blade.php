@@ -62,7 +62,7 @@
     @else
         <div class="text-center py-16 animate-fade-up">
             <div class="w-20 h-20 mx-auto bg-[#F1F5F9] rounded-full mb-4 flex items-center justify-center">
-                <span class="text-3xl">📦</span>
+                <span class="text-3xl"><x-icon name="cube" class="inline-block w-10 h-10 align-text-bottom" /></span>
             </div>
             <p class="text-[#94A3B8] font-medium">Tidak ada produk ditemukan.</p>
             <p class="text-sm text-[#CBD5E1] mt-1">Coba ubah filter pencarianmu.</p>

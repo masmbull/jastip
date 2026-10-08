@@ -77,7 +77,7 @@
 
                 <!-- Countdown Timer -->
                 <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-3 md:p-4 transition-colors">
-                    <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-2">⏱️ Waktu pembayaran</p>
+                    <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-2"><x-icon name="clock" class="inline-block w-5 h-5 align-text-bottom" /> Waktu pembayaran</p>
                     <div class="flex items-baseline gap-2">
                         <p class="text-2xl font-bold text-amber-600" id="countdown">--:--:--</p>
                         <span class="text-xs text-[#94A3B8]">sisa waktu</span>
@@ -127,15 +127,15 @@
 
     <!-- Info Box -->
     <div class="mt-6 md:mt-8 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-4 md:p-6 transition-colors">
-        <h3 class="font-semibold text-blue-900 dark:text-blue-300 mb-3 text-base md:text-lg">📋 Petunjuk Pembayaran</h3>
+        <h3 class="font-semibold text-blue-900 dark:text-blue-300 mb-3 text-base md:text-lg"><x-icon name="clipboard" class="inline-block w-5 h-5 align-text-bottom" /> Petunjuk Pembayaran</h3>
         <ul class="text-xs md:text-sm text-blue-800 dark:text-blue-200 space-y-2">
-            <li>✓ Buka aplikasi bank atau e-wallet kamu (GCash, Maya, BDO, etc)</li>
-            <li>✓ Pilih fitur "Scan QR" atau "QRIS"</li>
-            <li>✓ Scan kode QRIS di atas</li>
-            <li>✓ Masukkan jumlah: <span class="font-semibold">{{ format_price($order->total) }}</span></li>
-            <li>✓ Selesaikan transaksi & ambil screenshot</li>
-            <li>✓ Upload screenshot bukti pembayaran di bawah</li>
-            <li>✓ Admin akan konfirmasi dalam beberapa menit</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Buka aplikasi bank atau e-wallet kamu (GCash, Maya, BDO, etc)</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Pilih fitur "Scan QR" atau "QRIS"</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Scan kode QRIS di atas</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Masukkan jumlah: <span class="font-semibold">{{ format_price($order->total) }}</span></li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Selesaikan transaksi & ambil screenshot</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Upload screenshot bukti pembayaran di bawah</li>
+            <li><x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Admin akan konfirmasi dalam beberapa menit</li>
         </ul>
     </div>
 </div>

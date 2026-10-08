@@ -14,7 +14,7 @@
     <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-100 via-[#ecfeff] to-orange-50 border border-[#a5f3fc] p-6 sm:p-10 mb-10 animate-fade-up">
         <div class="relative z-10 max-w-3xl">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500 text-white text-xs font-bold uppercase tracking-wide">
-                🔥 Trending 2024–2025
+                <x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /> Trending 2024–2025
             </span>
             <h1 class="mt-4 text-3xl md:text-4xl font-bold text-[#1E293B]">Produk Viral Indonesia</h1>
             <p class="mt-3 text-[#475569] leading-relaxed">
@@ -109,7 +109,7 @@
 
                         <div class="flex items-center gap-1 mt-2">
                             @if($product->rating_text)
-                                <span class="text-amber-500 text-sm">★</span>
+                                <span class="text-amber-500 text-sm"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
                                 <span class="text-xs font-semibold text-[#1E293B]">{{ $product->rating_text }}</span>
                                 <span class="text-xs text-[#94A3B8]">rating</span>
                             @else
@@ -157,7 +157,7 @@
         @endif
     @else
         <div class="text-center py-16">
-            <div class="w-20 h-20 mx-auto bg-[#F1F5F9] rounded-full mb-4 flex items-center justify-center text-3xl">🔥</div>
+            <div class="w-20 h-20 mx-auto bg-[#F1F5F9] rounded-full mb-4 flex items-center justify-center text-3xl"><x-icon name="sparkles" class="inline-block w-10 h-10 align-text-bottom" /></div>
             <p class="text-[#94A3B8] font-medium">Belum ada produk viral di kategori ini.</p>
             <a href="{{ route('products.viral') }}" class="inline-block mt-4 text-sm text-orange-600 hover:text-orange-700 font-medium">
                 Lihat semua produk viral

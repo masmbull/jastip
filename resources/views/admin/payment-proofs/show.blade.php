@@ -29,11 +29,11 @@
                 @endif
             ">
                 @if($paymentProof->status === 'pending')
-                    ⏳ Menunggu Verifikasi
+                    <x-icon name="clock" class="inline-block w-5 h-5 align-text-bottom" /> Menunggu Verifikasi
                 @elseif($paymentProof->status === 'verified')
-                    ✓ Terverifikasi
+                    <x-icon name="check" class="inline-block w-5 h-5 align-text-bottom" /> Terverifikasi
                 @else
-                    ✕ Ditolak
+                    <x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" /> Ditolak
                 @endif
             </span>
         </div>

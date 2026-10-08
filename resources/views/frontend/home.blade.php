@@ -73,7 +73,7 @@
             <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
                 <div>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wide">
-                        🔥 Trending 2024–2025
+                        <x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /> Trending 2024–2025
                     </span>
                     <h2 class="mt-3 text-3xl font-bold text-[#1E293B]">Produk Viral</h2>
                     <p class="mt-2 text-[#94A3B8]">Produk yang sedang ramai diburu di TikTok Shop &amp; Shopee Indonesia.</p>

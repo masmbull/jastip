@@ -131,7 +131,7 @@
                                     {{-- Rating --}}
                                     @if($product->rating)
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-sm text-yellow-400">⭐ {{ $product->rating }}</span>
+                                        <span class="text-sm text-yellow-400"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /> {{ $product->rating }}</span>
                                         <span class="text-xs text-gray-600 dark:text-[#9ca3af]">({{ $product->sold_count }}+ terjual)</span>
                                     </div>
                                     @endif
@@ -158,7 +158,7 @@
                 @else
                     {{-- Empty State --}}
                     <div class="text-center py-12">
-                        <div class="text-5xl mb-4">🔍</div>
+                        <div class="text-5xl mb-4"><x-icon name="search" class="inline-block w-10 h-10 align-text-bottom" /></div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-2">Produk Tidak Ditemukan</h3>
                         <p class="text-gray-600 dark:text-[#cbd5e1] mb-6">Coba ubah filter atau pencarian Anda</p>
                         <a href="{{ route('search') }}" class="px-6 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition inline-block">

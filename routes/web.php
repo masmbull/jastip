@@ -48,22 +48,27 @@ Route::post('/titipan/{product:id}/update', [CartController::class, 'update'])->
 Route::delete('/titipan/{product:id}/hapus', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/titipan/clear', [CartController::class, 'clear'])->name('cart.clear');
 
-// Checkout Routes
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
+// Checkout Routes — wajib punya akun (guest hanya bisa menaruh di keranjang).
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
+});
 
 // Order Status (customer can track order)
 Route::get('/order/{orderNumber}', [\App\Http\Controllers\OrderStatusController::class, 'show'])->name('order.show');
 Route::get('/order/{orderNumber}/status', [\App\Http\Controllers\OrderStatusController::class, 'api'])->name('order.status');
 
-// Customer login: tiada frontend AuthController; arahkan ke login admin
-// sebagai satu-satunya pintu autentikasi (redirect target untuk middleware 'auth').
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])
+// Customer auth (unified): /login terima admin & customer, redirect by role.
+Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'login'])
     ->middleware('throttle:5,1')
     ->name('login.post');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'register'])
+    ->middleware('throttle:5,1')
+    ->name('register.post');
+Route::post('/logout', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'logout'])->name('logout');
 
 // Product Reviews
 Route::get('/produk/{product}/ulasan', [\App\Http\Controllers\ProductReviewController::class, 'index'])->name('products.reviews');
@@ -120,11 +125,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/addresses/{address}/default', [\App\Http\Controllers\AddressController::class, 'setDefault'])->name('addresses.default');
 });
 
-// Payment Routes
-Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
-Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
-Route::get('/payment/{order}/download-qris', [\App\Http\Controllers\PaymentController::class, 'downloadQris'])->name('payment.download-qris');
-Route::get('/payment/{order}/status', [\App\Http\Controllers\PaymentController::class, 'status'])->name('payment.status');
+// Payment Routes — wajib login (owner/admin).
+Route::middleware('auth')->group(function () {
+    Route::get('/payment/{order}/waiting', [\App\Http\Controllers\PaymentController::class, 'waiting'])->name('payment.waiting');
+    Route::post('/payment/{order}/upload-proof', [\App\Http\Controllers\PaymentController::class, 'uploadProof'])->name('payment.upload-proof');
+    Route::get('/payment/{order}/download-qris', [\App\Http\Controllers\PaymentController::class, 'downloadQris'])->name('payment.download-qris');
+    Route::get('/payment/{order}/status', [\App\Http\Controllers\PaymentController::class, 'status'])->name('payment.status');
+});
 
 // Static Pages
 Route::get('/tentang', [PageController::class, 'about'])->name('about');

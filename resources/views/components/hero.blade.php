@@ -20,7 +20,7 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 lg:py-32">
         <div class="text-center max-w-4xl mx-auto animate-fade-up">
             <span class="inline-block bg-orange-100 text-orange-700 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-                🛍️ {{ setting('hero_badge', 'Titipan Spesial Untukmu') }}
+                <x-icon name="bag" class="inline-block w-4 h-4 align-text-bottom" /> {{ setting('hero_badge', 'Titipan Spesial Untukmu') }}
             </span>
 
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1E293B] mb-6 leading-tight">
@@ -58,21 +58,21 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center animate-fade-up">
         <div class="p-6">
             <div class="w-12 h-12 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                🚚
+                <x-icon name="truck" class="inline-block w-5 h-5 align-text-bottom" />
             </div>
             <h3 class="font-semibold text-[#1E293B] mb-2">Gratis Ongkir</h3>
             <p class="text-sm text-[#94A3B8]">Untuk pemesanan di atas Rp 150.000</p>
         </div>
         <div class="p-6">
             <div class="w-12 h-12 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                🔒
+                <x-icon name="lock" class="inline-block w-5 h-5 align-text-bottom" />
             </div>
             <h3 class="font-semibold text-[#1E293B] mb-2">Bayar di Tempat</h3>
             <p class="text-sm text-[#94A3B8]">Cash on delivery saat barang sampai</p>
         </div>
         <div class="p-6">
             <div class="w-12 h-12 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                💯
+                <x-icon name="shield-check" class="inline-block w-5 h-5 align-text-bottom" />
             </div>
             <h3 class="font-semibold text-[#1E293B] mb-2">Garansi Autentik</h3>
             <p class="text-sm text-[#94A3B8]">Produk 100% asli terjamin</p>

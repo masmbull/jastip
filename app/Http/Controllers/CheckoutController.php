@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CartService;
+use App\Services\ShippingEstimator;
 use App\Services\StockService;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,8 @@ class CheckoutController extends Controller
 {
     public function __construct(
         protected CartService $cart,
-        protected StockService $stock
+        protected StockService $stock,
+        protected ShippingEstimator $shipping
     ) {}
 
     public function index()
@@ -42,6 +44,8 @@ class CheckoutController extends Controller
             'cartItems' => $cartItems,
             'subtotal' => $subtotal,
             'fee' => $fee,
+            'cities' => $this->shipping->cities(),
+            'defaultWeight' => $this->estimateWeight($cartItems),
         ]);
     }
 
@@ -73,8 +77,19 @@ class CheckoutController extends Controller
                 ->with('error', 'Minimal titip ' . format_price($minOrder) . '. Subtotal kamu masih ' . format_price($subtotal) . '.');
         }
 
-        $shippingCost = (int) setting('shipping_cost', 0);
         $fee = $this->cart->fee();
+
+        // Ongkir dihitung server-side dari kota + ekspedisi + berat (jangan
+        // percaya angka dari client). shipping_method diisi label kurir.
+        $weight = (float) ($request->input('weight') ?: $this->estimateWeight($cartItems));
+        $estimate = $this->shipping->estimate((string) $request->input('courier'), (string) $request->input('city'), $weight);
+        if (! ($estimate['ok'] ?? false)) {
+            return back()->withInput()
+                ->with('error', 'Ekspedisi ' . $request->input('courier') . ' tidak melayani rute ke ' . $request->input('city') . '. Pilih kurir lain.');
+        }
+        $shippingCost = (int) $estimate['price'];
+        $courierName = $estimate['courier']['name'] ?? $request->input('courier');
+        $shippingMethod = $courierName . ' → ' . $request->input('city') . ' (est. ' . ($estimate['etd'] ?? '-') . ')';
 
         // Resolve optional coupon. Applied here (not in session) so a code typed
         // on the checkout form takes effect on submit.
@@ -98,7 +113,7 @@ class CheckoutController extends Controller
         $ownerName = setting('brand_owner', 'Nabila Adriyana');
 
         try {
-            $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $fee, $total, $coupon, $discount) {
+            $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $fee, $total, $coupon, $discount, $shippingMethod) {
                 $orderNumber = Order::generateOrderNumber();
 
                 $order = Order::create([
@@ -109,7 +124,7 @@ class CheckoutController extends Controller
                     'customer_email' => $request->input('email') ?: $request->user()?->email,
                     'customer_address' => $request->input('address'),
                     'customer_notes' => $request->input('notes'),
-                    'shipping_method' => $request->input('shipping_method'),
+                    'shipping_method' => $shippingMethod,
                     'subtotal' => $subtotal,
                     'shipping_cost' => $shippingCost,
                     'fee' => $fee,
@@ -159,7 +174,8 @@ class CheckoutController extends Controller
             'whatsapp' => $request->input('whatsapp'),
             'address' => $request->input('address'),
             'notes' => $request->input('notes'),
-            'shipping_method' => $request->input('shipping_method'),
+            'shipping_method' => $shippingMethod,
+            'city' => $request->input('city'),
             'items' => $cartItems->map(fn($item) => [
                 'name' => $item['name'],
                 'quantity' => $item['quantity'],
@@ -204,6 +220,18 @@ class CheckoutController extends Controller
             'orderData' => $orderData,
             'order' => $order,
         ]);
+    }
+
+    /**
+     * Estimasi berat kiriman (kg) dari keranjang. Produk tak punya kolom berat,
+     * jadi pakai 0.5 kg/item — cukup untuk estimasi ongkir; admin menyesuaikan
+     * saat mengirim. ponytail: ganti ke Σ(weight×qty) kalau produk punya berat.
+     */
+    private function estimateWeight($cartItems): float
+    {
+        $qty = (int) $cartItems->sum('quantity');
+
+        return max(0.5, $qty * 0.5);
     }
 
     /**

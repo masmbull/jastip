@@ -16,6 +16,10 @@ class Order extends Model
         'customer_address',
         'customer_notes',
         'shipping_method',
+        'city',
+        'resi',
+        'courier',
+        'shipped_at',
         'payment_method',
         'subtotal',
         'shipping_cost',
@@ -40,6 +44,7 @@ class Order extends Model
             'stock_committed' => 'boolean',
             'total' => 'integer',
             'paid_at' => 'datetime',
+            'shipped_at' => 'datetime',
         ];
     }
 
@@ -89,6 +94,20 @@ class Order extends Model
     public function getNoAttribute(): string
     {
         return $this->order_number;
+    }
+
+    /**
+     * URL lacak resi (agregator cekresi) bila resi tersedia.
+     */
+    public function getTrackingUrlAttribute(): ?string
+    {
+        if (! $this->resi) {
+            return null;
+        }
+
+        $tpl = config('ekspedisi.tracking_aggregator.url', 'https://cekresi.com/?noresi=%s');
+
+        return sprintf($tpl, urlencode($this->resi));
     }
 
     public function getStatusLabelAttribute(): string

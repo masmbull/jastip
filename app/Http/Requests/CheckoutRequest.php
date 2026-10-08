@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Services\ShippingEstimator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CheckoutRequest extends FormRequest
 {
@@ -19,7 +21,10 @@ class CheckoutRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'address' => ['required', 'string', 'min:10'],
             'notes' => ['nullable', 'string'],
-            'shipping_method' => ['required', 'string', 'max:255'],
+            'shipping_method' => ['nullable', 'string', 'max:255'],
+            'city' => ['required', 'string', Rule::in(array_keys(app(ShippingEstimator::class)->cities()))],
+            'courier' => ['required', 'string'],
+            'weight' => ['nullable', 'numeric', 'min:0.1', 'max:100'],
         ];
     }
 
@@ -33,6 +38,9 @@ class CheckoutRequest extends FormRequest
             'address.required' => 'Alamat lengkap wajib diisi.',
             'address.min' => 'Alamat terlalu pendek, minimal 10 karakter.',
             'shipping_method.required' => 'Metode pengiriman wajib dipilih.',
+            'city.required' => 'Kota tujuan wajib dipilih untuk hitung ongkir.',
+            'city.in' => 'Kota tujuan tidak dikenal.',
+            'courier.required' => 'Pilih salah satu ekspedisi untuk ongkir.',
         ];
     }
 }
