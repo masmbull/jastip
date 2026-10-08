@@ -17,12 +17,16 @@
 - **Location:** `/profile/loyalty` page displays loyalty dashboard
 
 ### Task #21: Live Chat Support ✅
-**Status:** PARTIAL
+**Status:** COMPLETE (in-app support chat)
 - **In-App Notifications:** `Notification` model + `notifications` table, wired to
   `OrderStatusChanged` event (`SendOrderStatusNotification`). Feed at `/profile/notifications`.
 - **Channels shipped:** in-app + WhatsApp (link generation, manual send) + email
   (order confirmation & shipped, opt-out via `users.notify_email`).
-- **Chat Infrastructure:** not implemented (placeholder notes only).
+- **Support Chat:** shipped in-DB (no external service). One thread per customer:
+  `chat_messages` table + `ChatMessage` model. Customer posts at `/profile/chat`
+  (dropdown + profile tab); admin sees the conversation list + per-thread reply at
+  `/admin/chat` with an unread badge (customer messages unread by admin). Opening either
+  side marks the counter-side messages read.
 - **Push (browser):** not implemented; only in-app feed.
 - **Notification prefs:** `/profile/settings` has real WhatsApp (`users.notify_whatsapp`)
   and Email (`users.notify_email`) opt-outs honored by the listener/mail paths.

@@ -52,6 +52,19 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
+    /**
+     * Highest id chat message for this user (used to list/order threads).
+     */
+    public function latestChatMessage()
+    {
+        return $this->hasOne(ChatMessage::class)->latestOfMany();
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

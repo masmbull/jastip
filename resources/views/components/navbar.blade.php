@@ -108,6 +108,7 @@
                             <a href="{{ route('profile.orders') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Pesanan Saya</a>
                             <a href="{{ route('profile.addresses') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Alamat</a>
                             <a href="{{ route('profile.wishlist') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Wishlist</a>
+                            <a href="{{ route('chat.index') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Bantuan & Chat</a>
                             <a href="{{ route('notifications.index') }}" class="block px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400">Notifikasi</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

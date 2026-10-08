@@ -13,6 +13,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\Notification;
+use App\Models\ChatMessage;
 use App\Events\OrderStatusChanged;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -373,5 +374,52 @@ class RouteSmokeTest extends TestCase
         $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '1', 'notify_email' => '1'])->assertRedirect();
         $this->assertTrue($customer->fresh()->notify_whatsapp);
         $this->assertTrue($customer->fresh()->notify_email);
+    }
+
+    public function test_customer_chat_send_and_admin_reply_roundtrip(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+
+        // Customer sends a message; empty message is rejected.
+        $this->actingAs($customer);
+        $this->get(route('chat.index'))->assertOk();
+        $this->post(route('chat.store'), [])->assertSessionHasErrors('body');
+        $this->post(route('chat.store'), ['body' => 'Kapan barang saya sampai?'])
+            ->assertRedirect(route('chat.index'));
+
+        $this->assertDatabaseHas('chat_messages', [
+            'user_id' => $customer->id,
+            'sender' => ChatMessage::SENDER_CUSTOMER,
+            'body' => 'Kapan barang saya sampai?',
+        ]);
+
+        // Admin sees the thread, unread badge, and replies.
+        $this->actingAs($this->admin);
+        $this->assertNull(ChatMessage::where('sender', ChatMessage::SENDER_CUSTOMER)->firstOrFail()->read_at);
+
+        $this->get(route('admin.chat.index'))->assertOk()->assertSee($customer->name, false);
+        // Opening the thread marks the customer's message read.
+        $this->get(route('admin.chat.show', $customer))->assertOk()->assertSee('Kapan barang saya sampai?', false);
+        $this->assertNotNull(ChatMessage::where('sender', ChatMessage::SENDER_CUSTOMER)->firstOrFail()->read_at);
+
+        // Admin reply.
+        $this->post(route('admin.chat.store', $customer), ['body' => 'Sedang dikirim ya.'])
+            ->assertRedirect(route('admin.chat.show', $customer));
+        $this->assertDatabaseHas('chat_messages', [
+            'user_id' => $customer->id,
+            'sender' => ChatMessage::SENDER_ADMIN,
+            'body' => 'Sedang dikirim ya.',
+        ]);
+
+        // Customer reopening the thread marks the admin reply read.
+        $this->actingAs($customer);
+        $this->get(route('chat.index'))->assertOk();
+        $this->assertNotNull(
+            ChatMessage::where('sender', ChatMessage::SENDER_ADMIN)->firstOrFail()->read_at
+        );
+
+        // Guests are bounced to login.
+        Auth::logout();
+        $this->get(route('chat.index'))->assertRedirect(route('login'));
     }
 }

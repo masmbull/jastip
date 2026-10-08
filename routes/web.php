@@ -101,6 +101,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     Route::post('/profile/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.read');
 
+    // Support chat (single thread per customer)
+    Route::get('/profile/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::post('/profile/chat', [\App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
+
     // Addresses
     Route::get('/profile/addresses', [\App\Http\Controllers\AddressController::class, 'index'])->name('profile.addresses');
     Route::get('/profile/addresses/create', [\App\Http\Controllers\AddressController::class, 'create'])->name('addresses.create');
@@ -187,6 +191,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/ulasan/{review}/approve', [\App\Http\Controllers\Admin\ReviewController::class, 'approve'])->name('reviews.approve');
         Route::post('/ulasan/{review}/reject', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('reviews.reject');
         Route::delete('/ulasan/{review}', [\App\Http\Controllers\Admin\ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+        // Support Chat
+        Route::get('/chat', [\App\Http\Controllers\Admin\ChatController::class, 'index'])->name('chat.index');
+        Route::get('/chat/{user}', [\App\Http\Controllers\Admin\ChatController::class, 'show'])->name('chat.show');
+        Route::post('/chat/{user}', [\App\Http\Controllers\Admin\ChatController::class, 'store'])->name('chat.store');
 
         // Coupons (explicit: Route::resource [... 'as' => 'admin'] gave double admin.admin.* prefix)
         Route::get('/kupon', [\App\Http\Controllers\Admin\CouponController::class, 'index'])->name('coupons.index');
