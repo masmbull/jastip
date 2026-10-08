@@ -27,6 +27,7 @@ class ProductUpdateRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'stock' => ['required', 'integer', 'min:0'],
             'unit' => ['nullable', 'string', 'max:50'],
+            'weight' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'sku' => ['nullable', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($product->id)],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],

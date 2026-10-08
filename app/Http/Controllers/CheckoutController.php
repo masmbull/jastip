@@ -223,15 +223,24 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Estimasi berat kiriman (kg) dari keranjang. Produk tak punya kolom berat,
-     * jadi pakai 0.5 kg/item — cukup untuk estimasi ongkir; admin menyesuaikan
-     * saat mengirim. ponytail: ganti ke Σ(weight×qty) kalau produk punya berat.
+     * Estimasi berat kiriman (kg) dari keranjang: Σ(berat produk × qty).
+     * Produk tanpa kolom berat diisi dianggap 0,5 kg/unit.
      */
     private function estimateWeight($cartItems): float
     {
-        $qty = (int) $cartItems->sum('quantity');
+        $weights = \App\Models\Product::whereIn('id', $cartItems->pluck('product_id'))
+            ->pluck('weight', 'id');
 
-        return max(0.5, $qty * 0.5);
+        $total = $cartItems->sum(function ($item) use ($weights) {
+            $w = (float) ($weights[$item['product_id']] ?? 0);
+            if ($w <= 0) {
+                $w = 0.5;
+            }
+
+            return $w * (int) $item['quantity'];
+        });
+
+        return max(0.5, $total);
     }
 
     /**

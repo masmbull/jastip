@@ -271,6 +271,31 @@ class CheckoutFlowTest extends TestCase
         Mail::assertSent(OrderConfirmation::class, fn ($mail) => $mail->hasTo($customer->email));
     }
 
+    public function test_product_weight_drives_checkout_shipping_estimate(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 20, 'reserved' => 0, 'setbiaya_fee' => 0, 'weight' => 10]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'Berat Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Berat No. 1, Bandung',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        $order = Order::latest('id')->firstOrFail();
+
+        // 10 kg billable must cost more than the 0.5 kg/item default floor (=1 kg billed).
+        $floor = (new \App\Services\ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
+        $this->assertGreaterThan($floor, $order->shipping_cost);
+    }
+
     public function test_shipped_status_emails_customer(): void
     {
         Mail::fake();

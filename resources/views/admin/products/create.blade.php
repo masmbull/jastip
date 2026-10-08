@@ -84,6 +84,15 @@
             </div>
         </div>
 
+        <div>
+            <label class="block text-sm font-medium text-[#1E293B] mb-1">Berat per Unit (kg)</label>
+            <input type="number" step="0.01" name="weight" value="{{ old('weight') }}" min="0" max="100"
+                   class="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('weight') border-red-500 @enderror"
+                   placeholder="Mis. 0.5">
+            <p class="text-xs text-[#94A3B8] mt-1">Kosongkan = 0,5 kg/unit (default estimasi ongkir).</p>
+            @error('weight') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+        </div>
+
         <div class="flex items-center gap-4">
             <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
