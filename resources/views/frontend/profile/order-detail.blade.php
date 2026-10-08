@@ -59,6 +59,9 @@
                 <div>
                     <h2 class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] mb-4">Informasi Pembayaran</h2>
                     <p class="text-gray-700 dark:text-[#cbd5e1]"><strong>Metode:</strong> {{ strtoupper($order->payment_method ?? 'QRIS') }}</p>
+                    @if(($order->discount ?? 0) > 0)
+                        <p class="text-gray-700 dark:text-[#cbd5e1] mt-2"><strong>Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}:</strong> <span class="text-green-600">-{{ format_price($order->discount) }}</span></p>
+                    @endif
                     <p class="text-gray-700 dark:text-[#cbd5e1] mt-2"><strong>Total Bayar:</strong> {{ format_price($order->total) }}</p>
                 </div>
             </div>

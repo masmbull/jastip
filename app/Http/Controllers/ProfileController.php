@@ -150,6 +150,19 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update notification preferences
+     */
+    public function updateNotificationPrefs(Request $request)
+    {
+        Auth::user()->update([
+            'notify_whatsapp' => $request->boolean('notify_whatsapp'),
+        ]);
+
+        return redirect()->route('profile.settings')
+            ->with('success', 'Preferensi notifikasi diperbarui');
+    }
+
+    /**
      * Show loyalty points
      */
     public function loyalty()

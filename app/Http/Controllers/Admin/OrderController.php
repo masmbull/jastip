@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        protected StockService $stock
+    ) {}
     public function index(Request $request)
     {
         $query = Order::withCount('items');
@@ -65,6 +69,13 @@ class OrderController extends Controller
 
         if ($request->boolean('mark_paid') && ! $order->is_paid) {
             $order->update(['paid_at' => now()]);
+        }
+
+        // Stok: kunci saat lunas/dikirim, lepas saat dibatalkan.
+        if ($order->is_paid || in_array($order->status, [Order::STATUS_SHIPPED, Order::STATUS_COMPLETED], true)) {
+            $this->stock->commit($order);
+        } elseif ($order->status === Order::STATUS_CANCELLED && ! $order->is_paid) {
+            $this->stock->release($order);
         }
 
         return redirect()->route('admin.orders.show', $order)

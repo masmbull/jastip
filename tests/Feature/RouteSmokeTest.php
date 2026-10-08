@@ -357,4 +357,19 @@ class RouteSmokeTest extends TestCase
             ->post(route('notifications.read', $unread))
             ->assertForbidden();
     }
+
+    public function test_notification_pref_toggles_and_renders(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer', 'notify_whatsapp' => true]);
+        $this->actingAs($customer);
+
+        $this->get(route('profile.settings'))->assertOk()->assertSee('Notifikasi WhatsApp', false);
+
+        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '0'])
+            ->assertRedirect(route('profile.settings'));
+        $this->assertFalse($customer->fresh()->notify_whatsapp);
+
+        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '1'])->assertRedirect();
+        $this->assertTrue($customer->fresh()->notify_whatsapp);
+    }
 }

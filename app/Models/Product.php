@@ -19,6 +19,7 @@ class Product extends Model
         'price_max',
         'image',
         'stock',
+        'reserved',
         'rating',
         'sold_count',
         'unit',
@@ -36,6 +37,7 @@ class Product extends Model
             'setbiaya_fee' => 'integer',
             'price_max' => 'integer',
             'stock' => 'integer',
+            'reserved' => 'integer',
             'rating' => 'decimal:1',
             'sold_count' => 'integer',
             'is_active' => 'boolean',
@@ -173,20 +175,30 @@ class Product extends Model
 
     public function getAvailabilityBadgeAttribute(): array
     {
-        if ($this->stock <= 0) {
+        $available = $this->availableStock();
+
+        if ($available <= 0) {
             return ['text' => 'Stok Habis', 'class' => 'bg-red-100 text-red-700'];
         }
 
-        if ($this->stock <= 5) {
-            return ['text' => 'Stok Terbatas (' . $this->stock . ')', 'class' => 'bg-amber-100 text-amber-700'];
+        if ($available <= 5) {
+            return ['text' => 'Stok Terbatas (' . $available . ')', 'class' => 'bg-amber-100 text-amber-700'];
         }
 
-        return ['text' => 'Tersedia (' . $this->stock . ')', 'class' => 'bg-green-100 text-green-700'];
+        return ['text' => 'Tersedia (' . $available . ')', 'class' => 'bg-green-100 text-green-700'];
     }
 
     public function isInStock(): bool
     {
-        return $this->stock > 0;
+        return $this->availableStock() > 0;
+    }
+
+    /**
+     * Stok yang benar-benar bisa dipesan = stock - reserved.
+     */
+    public function availableStock(): int
+    {
+        return max(0, $this->stock - ($this->reserved ?? 0));
     }
 
     /**

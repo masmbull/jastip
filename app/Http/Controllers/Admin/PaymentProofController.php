@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Order;
 use App\Models\PaymentProof;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentProofController extends Controller
 {
+    public function __construct(
+        protected StockService $stock
+    ) {}
+
     /**
      * List all payment proofs with filtering
      */
@@ -65,6 +70,9 @@ class PaymentProofController extends Controller
 
         try {
             $paymentProof->verify($validated['notes'] ?? null);
+
+            // Pembayaran lunas -> kunci stok (decrement real).
+            $this->stock->commit($paymentProof->order->fresh());
 
             // Notify customer via WhatsApp
             $this->notifyCustomer($paymentProof->order, 'verified');
@@ -129,7 +137,7 @@ class PaymentProofController extends Controller
     /**
      * Notify customer about payment proof status
      */
-    private function notifyCustomer(Order $order, string $status, string $reason = null): void
+    private function notifyCustomer(Order $order, string $status, ?string $reason = null): void
     {
         if (!$order->customer_whatsapp) {
             return;

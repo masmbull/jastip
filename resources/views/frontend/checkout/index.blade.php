@@ -66,7 +66,14 @@
             <div class="md:col-span-1">
                 <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-6 transition-colors sticky top-4 md:top-6">
                     <h3 class="text-base md:text-lg font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">Konfirmasi Pesanan</h3>
-                    
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Kode Kupon (opsional)</label>
+                        <input type="text" name="coupon_code" value="{{ old('coupon_code') }}"
+                            placeholder="Mis. HEMAT10"
+                            class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg uppercase focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors">
+                    </div>
+
                     <div class="space-y-3 mb-4 text-xs md:text-sm">
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
                             <span>Produk ({{ $cartItems->sum('quantity') }} item)</span>

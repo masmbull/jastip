@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('profile.settings');
     Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::put('/profile/notifications-prefs', [\App\Http\Controllers\ProfileController::class, 'updateNotificationPrefs'])->name('profile.notify-prefs');
     Route::get('/profile/loyalty', [\App\Http\Controllers\ProfileController::class, 'loyalty'])->name('profile.loyalty');
 
     // Orders

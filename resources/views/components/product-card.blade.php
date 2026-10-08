@@ -17,7 +17,7 @@
                     Unggulan
                 </span>
             @endif
-            @if($product->stock <= 0)
+            @if(! $product->isInStock())
                 <span class="absolute top-3 right-3 bg-gray-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     Habis
                 </span>

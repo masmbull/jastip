@@ -28,7 +28,7 @@ class CartService
             throw new \Exception('Produk tidak tersedia');
         }
 
-        if ($quantity > $product->stock) {
+        if ($quantity > $product->availableStock()) {
             throw new \Exception('Jumlah melebihi stok tersedia');
         }
 
@@ -40,7 +40,7 @@ class CartService
 
         if ($existingItem) {
             $newQuantity = $existingItem['quantity'] + $quantity;
-            if ($newQuantity > $product->stock) {
+            if ($newQuantity > $product->availableStock()) {
                 throw new \Exception('Jumlah melebihi stok tersedia');
             }
             $cart->transform(function ($item) use ($productId, $newQuantity, $unitFee) {
@@ -78,7 +78,7 @@ class CartService
 
         $product = Product::findOrFail($productId);
 
-        if ($quantity > $product->stock) {
+        if ($quantity > $product->availableStock()) {
             throw new \Exception('Jumlah melebihi stok tersedia');
         }
 

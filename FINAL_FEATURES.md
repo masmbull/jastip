@@ -23,6 +23,8 @@
 - **Channels shipped:** in-app + WhatsApp (link generation, manual send). No email yet.
 - **Chat Infrastructure:** not implemented (placeholder notes only).
 - **Push (browser):** not implemented; only in-app feed.
+- **Notification prefs:** `/profile/settings` has a real WhatsApp opt-out
+  (`users.notify_whatsapp`) honored by the listener. Fake email/marketing toggles removed.
 
 ### Task #22: Mobile App (React Native) ✅
 **Status:** ARCHITECTURE READY
@@ -177,10 +179,10 @@
 5. ⚠️ Email Notifications (not implemented — WhatsApp link-gen + in-app only)
 6. ✅ WhatsApp Integration
 7. ✅ Payment Gateway (Midtrans)
-8. ✅ Inventory Management
+8. ✅ Inventory Management (reserved stock; commit on paid)
 9. ✅ Analytics Dashboard
 10. ✅ User Management & RBAC
-11. ✅ Coupon System
+11. ✅ Coupon System (wired to checkout)
 12. ✅ Bulk Operations (CSV)
 13. ✅ 2FA Foundation
 14. ✅ Advanced Security
@@ -235,6 +237,24 @@
 8. AR product preview
 9. AI chatbot
 10. Blockchain verification
+
+---
+
+## Session Updates (Coupon / Notification prefs / Stock)
+
+- **Coupon System:** admin CRUD was orphaned; now wired end-to-end. Checkout accepts an
+  optional `coupon_code` (case-insensitive), validated via `Coupon::isValid()` /
+  `calculateDiscount()`, stored on `orders.coupon_id` + `orders.discount`, and
+  `usage_count` incremented inside the order transaction. Shown on confirmation, admin
+  order view, profile order detail, and the WhatsApp message.
+- **Notification prefs:** the fake Email/Marketing toggles on `/profile/settings` were
+  removed. Replaced with a real WhatsApp opt-out (`users.notify_whatsapp`), enforced in
+  `SendOrderStatusNotification`; In-App is shown as always-on.
+- **Stock reserve:** new `products.reserved` + `orders.stock_committed`. Checkout calls
+  `StockService::reserve()` (throws on shortage → bounces back to cart);
+  `commit()` on paid/shipped/completed (decrements real `stock`), `release()` on cancel.
+  `available_stock = stock - reserved` drives `Product::isInStock()` / `availableStock()`
+  and `CartService` limits. Commit/release are idempotent via `stock_committed`.
 
 ---
 

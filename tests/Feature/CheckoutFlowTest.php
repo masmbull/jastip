@@ -87,4 +87,111 @@ class CheckoutFlowTest extends TestCase
 
         $this->get(route('admin.orders.show', $order))->assertOk()->assertSee('Diproses', false);
     }
+
+    public function test_checkout_applies_valid_coupon_and_rejects_invalid(): void
+    {
+        $product = Product::firstOrFail();
+        $product->update(['setbiaya_fee' => 0]);
+
+        $coupon = \App\Models\Coupon::create([
+            'code' => 'HEMAT10',
+            'type' => 'percentage',
+            'value' => 10,
+            'valid_from' => now()->subDay(),
+            'valid_to' => now()->addDay(),
+            'is_active' => true,
+        ]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 2])
+            ->assertOk();
+
+        $subtotal = $product->price * 2;
+        $ordersBefore = Order::count();
+
+        // Invalid code bounces back with an error, no order created.
+        $this->post(route('checkout.store'), [
+            'name' => 'Kupon Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Kupon No. 1, Bandung',
+            'shipping_method' => 'JNE',
+            'coupon_code' => 'NOPE',
+        ])->assertSessionHas('error');
+        $this->assertSame($ordersBefore, Order::count());
+
+        // Valid code discounts 10% and bumps usage_count.
+        $this->post(route('checkout.store'), [
+            'name' => 'Kupon Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Kupon No. 1, Bandung',
+            'shipping_method' => 'JNE',
+            'coupon_code' => 'hemat10',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        $order = Order::latest('id')->firstOrFail();
+        $expectedDiscount = (int) round($subtotal * 0.10);
+        $this->assertSame($coupon->id, $order->coupon_id);
+        $this->assertSame($expectedDiscount, $order->discount);
+        $this->assertSame($subtotal + $order->shipping_cost + $order->fee - $expectedDiscount, $order->total);
+        $this->assertSame(1, $coupon->fresh()->usage_count);
+    }
+
+    public function test_checkout_reserves_stock_and_commit_on_paid(): void
+    {
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 3])->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'Stok Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Stok No. 1, Bandung',
+            'shipping_method' => 'JNE',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        // Reserved naik, stock belum berubah.
+        $this->assertSame(3, $product->fresh()->reserved);
+        $this->assertSame(10, $product->fresh()->stock);
+
+        $order = Order::latest('id')->firstOrFail();
+        $admin = \App\Models\User::query()->where('role', 'admin')->firstOrFail();
+
+        // Admin menandai lunas -> commit: stock & reserved sama-sama turun.
+        $this->actingAs($admin)->put(route('admin.orders.status', $order), [
+            'status' => Order::STATUS_CONFIRMED,
+            'mark_paid' => 1,
+        ])->assertRedirect();
+
+        $product->refresh();
+        $this->assertSame(7, $product->stock);
+        $this->assertSame(0, $product->reserved);
+        $this->assertTrue($order->fresh()->stock_committed);
+
+        // Idempoten: commit kedua tidak menggandakan decrement.
+        $this->actingAs($admin)->put(route('admin.orders.status', $order), [
+            'status' => Order::STATUS_SHIPPED,
+        ])->assertRedirect();
+        $this->assertSame(7, $product->fresh()->stock);
+    }
+
+    public function test_checkout_rejects_when_stock_insufficient(): void
+    {
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 5, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        // Isi cart untuk 5 unit, lalu stok ditahan orang lain.
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 5])->assertOk();
+        $product->update(['reserved' => 5]); // available = 0
+
+        $ordersBefore = Order::count();
+        $this->post(route('checkout.store'), [
+            'name' => 'Stok Kurang',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Stok No. 2, Bandung',
+            'shipping_method' => 'JNE',
+        ])->assertRedirect(route('cart.index'));
+
+        $this->assertSame($ordersBefore, Order::count());
+        $this->assertSame(5, $product->fresh()->reserved);
+    }
 }

@@ -88,14 +88,14 @@ unauthenticated `/admin/*` → redirect `admin.login` → login as seed admin �
 | Products | `GET /produk` (`products.index`), `GET /produk/{product:slug}` (`products.show`) |
 | Categories | `GET /kategori`, `GET /kategori/{category:slug}` |
 | Cart | `GET /titipan`, `POST .../tambah`, `POST .../update`, `DELETE .../hapus`, `DELETE /titipan/clear` |
-| Checkout | `GET /checkout`, `POST /checkout`, `GET /checkout/confirmation` |
+| Checkout | `GET /checkout`, `POST /checkout` (optional `coupon_code`), `GET /checkout/confirmation` |
 | Order status | `GET /order/{orderNumber}`, `GET /order/{orderNumber}/status` (public, keyed by order number) |
 | Shipping | `GET /ongkir`, `GET /ongkir/check` (JSON, read-only) |
 | Reviews | `GET /produk/{product}/ulasan`, `POST /produk/{product}/ulasan` (auth), `POST /ulasan/{review}/helpful` (auth, approved reviews only) |
 | Wishlist | `POST /wishlist/{product:id}/toggle` (auth, JSON) |
 | Static | `GET /tentang`, `GET /cara-nitip`, `GET /kontak` |
 | Auth | `GET /login` (`login`), `POST /login` (`login.post`, throttled 5/min), `POST /logout` |
-| Profile (guarded) | `GET /profile`, `/profile/edit`, `PUT /profile`, `/profile/settings`, `PUT /profile/password`, `/profile/loyalty`, `/profile/orders[.{order}]`, `/profile/reviews`, `/profile/wishlist`, `/profile/notifications` (+ `POST .../read-all`, `POST /profile/notifications/{notification}/read`), `/profile/addresses/*` (index/create/store/edit/update/destroy/default) |
+| Profile (guarded) | `GET /profile`, `/profile/edit`, `PUT /profile`, `/profile/settings`, `PUT /profile/password`, `PUT /profile/notifications-prefs`, `/profile/loyalty`, `/profile/orders[.{order}]`, `/profile/reviews`, `/profile/wishlist`, `/profile/notifications` (+ `POST .../read-all`, `POST /profile/notifications/{notification}/read`), `/profile/addresses/*` (index/create/store/edit/update/destroy/default) |
 | Payment | `GET /payment/{order}/waiting` (`payment.waiting`), `POST /payment/{order}/upload-proof`, `GET /payment/{order}/download-qris`, `GET /payment/{order}/status` (all owner-guarded) |
 | Admin auth | `GET /admin/login` (`admin.login`), `POST /admin/login` (`admin.login.post`), `POST /admin/logout` (`admin.logout`) |
 | Admin (guarded) | `admin.dashboard`, `admin.products.*`, `admin.categories.*`, `admin.orders.{index,show,status,destroy}`, `admin.reviews.*`, `admin.payment-proofs.*`, `admin.users.*`, `admin.settings.{index,update}` |

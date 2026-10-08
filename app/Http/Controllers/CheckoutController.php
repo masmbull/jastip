@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CartService;
+use App\Services\StockService;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
@@ -13,7 +15,8 @@ use Illuminate\Support\Facades\RateLimiter;
 class CheckoutController extends Controller
 {
     public function __construct(
-        protected CartService $cart
+        protected CartService $cart,
+        protected StockService $stock
     ) {}
 
     public function index()
@@ -70,46 +73,79 @@ class CheckoutController extends Controller
 
         $shippingCost = (int) setting('shipping_cost', 0);
         $fee = $this->cart->fee();
-        $total = $subtotal + $shippingCost + $fee;
+
+        // Resolve optional coupon. Applied here (not in session) so a code typed
+        // on the checkout form takes effect on submit.
+        $coupon = null;
+        if ($request->filled('coupon_code')) {
+            $coupon = Coupon::whereRaw('UPPER(code) = ?', [strtoupper(trim($request->input('coupon_code')))])->first();
+
+            if (! $coupon || ! $coupon->isValid($subtotal, $request->user()?->id)) {
+                return back()->withInput()
+                    ->with('error', 'Kode kupon tidak valid atau sudah kedaluwarsa.');
+            }
+        }
+
+        $discount = 0;
+        if ($coupon) {
+            // Reject further over-redemption rather than silently exceeding usage_limit.
+            $discount = (int) round($coupon->calculateDiscount($subtotal));
+        }
+
+        $total = max(0, $subtotal + $shippingCost + $fee - $discount);
         $ownerName = setting('brand_owner', 'Nabila Adriyana');
 
-        $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $fee, $total) {
-            $orderNumber = Order::generateOrderNumber();
+        try {
+            $order = DB::transaction(function () use ($request, $cartItems, $subtotal, $shippingCost, $fee, $total, $coupon, $discount) {
+                $orderNumber = Order::generateOrderNumber();
 
-            $order = Order::create([
-                'order_number' => $orderNumber,
-                'user_id' => $request->user()?->id,
-                'customer_name' => $request->input('name'),
-                'customer_whatsapp' => $request->input('whatsapp'),
-                'customer_address' => $request->input('address'),
-                'customer_notes' => $request->input('notes'),
-                'shipping_method' => $request->input('shipping_method'),
-                'subtotal' => $subtotal,
-                'shipping_cost' => $shippingCost,
-                'fee' => $fee,
-                'total' => $total,
-                'status' => Order::STATUS_AWAITING_PAYMENT,
-                'payment_method' => 'qris',
-            ]);
-
-            // Generate payment hash for integrity checking
-            $order->payment_hash = $order->generatePaymentHash();
-            $order->save();
-
-            foreach ($cartItems as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'product_name' => $item['name'],
-                    'product_price' => $item['price'],
-                    'unit' => $item['unit'] ?? 'pcs',
-                    'quantity' => $item['quantity'],
-                    'subtotal' => $item['subtotal'],
+                $order = Order::create([
+                    'order_number' => $orderNumber,
+                    'user_id' => $request->user()?->id,
+                    'customer_name' => $request->input('name'),
+                    'customer_whatsapp' => $request->input('whatsapp'),
+                    'customer_address' => $request->input('address'),
+                    'customer_notes' => $request->input('notes'),
+                    'shipping_method' => $request->input('shipping_method'),
+                    'subtotal' => $subtotal,
+                    'shipping_cost' => $shippingCost,
+                    'fee' => $fee,
+                    'coupon_id' => $coupon?->id,
+                    'discount' => $discount,
+                    'total' => $total,
+                    'status' => Order::STATUS_AWAITING_PAYMENT,
+                    'payment_method' => 'qris',
                 ]);
-            }
 
-            return $order;
-        });
+                // Generate payment hash for integrity checking
+                $order->payment_hash = $order->generatePaymentHash();
+                $order->save();
+
+                foreach ($cartItems as $item) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $item['product_id'],
+                        'product_name' => $item['name'],
+                        'product_price' => $item['price'],
+                        'unit' => $item['unit'] ?? 'pcs',
+                        'quantity' => $item['quantity'],
+                        'subtotal' => $item['subtotal'],
+                    ]);
+                }
+
+                if ($coupon) {
+                    $coupon->increment('usage_count');
+                }
+
+                // Tahan stok sekarang; dilepas saat batal, dikunci saat lunas.
+                $this->stock->reserve($order);
+
+                return $order;
+            });
+        } catch (\Exception $e) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Maaf, ' . $e->getMessage() . ' Silakan perbarui titipanmu.');
+        }
 
         // Generate WhatsApp URL
         $orderData = [
@@ -126,6 +162,8 @@ class CheckoutController extends Controller
             'subtotal' => $subtotal,
             'shipping_cost' => $shippingCost,
             'fee' => $fee,
+            'discount' => $discount,
+            'coupon_code' => $coupon?->code,
             'total' => $total,
             'owner_name' => $ownerName,
             'order_number' => $order->order_number,

@@ -55,34 +55,38 @@
             </form>
         </div>
 
-        {{-- Account Settings --}}
+        {{-- Notification Preferences --}}
         <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-8 border border-gray-200 dark:border-[#404854]">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Pengaturan Akun</h2>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Notifikasi</h2>
 
             <div class="space-y-4">
                 <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
                     <div>
-                        <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Email Notification</p>
-                        <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima notifikasi pesanan via email</p>
+                        <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Notifikasi In-App</p>
+                        <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima pembaruan status pesanan di halaman notifikasi</p>
                     </div>
-                    <input type="checkbox" class="w-5 h-5" checked disabled title="Notifikasi pesanan selalu aktif">
+                    <input type="checkbox" class="w-5 h-5" checked disabled title="Notifikasi in-app selalu aktif">
                 </div>
 
-                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
-                    <div>
-                        <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">WhatsApp Notification</p>
-                        <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima notifikasi pesanan via WhatsApp</p>
+                <form method="POST" action="{{ route('profile.notify-prefs') }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Notifikasi WhatsApp</p>
+                            <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima pembaruan pesanan via WhatsApp</p>
+                        </div>
+                        <input type="checkbox" name="notify_whatsapp" value="1"
+                               onchange="this.form.submit()"
+                               @checked(old('notify_whatsapp', $user->notify_whatsapp))
+                               class="w-5 h-5 cursor-pointer">
                     </div>
-                    <input type="checkbox" class="w-5 h-5" checked disabled title="Notifikasi pesanan selalu aktif">
-                </div>
-
-                <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg">
-                    <div>
-                        <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Marketing Email</p>
-                        <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima promosi dan penawaran terbaru</p>
-                    </div>
-                    <input type="checkbox" class="w-5 h-5" disabled title="Fitur belum tersedia">
-                </div>
+                    <noscript>
+                        <button type="submit" class="mt-2 px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium text-sm">
+                            Simpan
+                        </button>
+                    </noscript>
+                </form>
             </div>
         </div>
 

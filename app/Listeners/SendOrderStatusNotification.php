@@ -32,6 +32,11 @@ class SendOrderStatusNotification
             return;
         }
 
+        // Respect customer opt-out (only meaningful for logged-in users).
+        if ($order->user_id && $order->user && ! $order->user->notify_whatsapp) {
+            return;
+        }
+
         try {
             $whatsappUrl = match ($newStatus) {
                 'confirmed', 'verified' => WhatsappService::sendPaymentNotification(

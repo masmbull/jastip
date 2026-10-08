@@ -64,6 +64,9 @@
                 @if(($order->fee ?? 0) > 0)
                     <div><span class="text-[#94A3B8]">Biaya Fee:</span> <span class="font-medium">{{ format_price($order->fee) }}</span></div>
                 @endif
+                @if(($order->discount ?? 0) > 0)
+                    <div><span class="text-[#94A3B8]">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}:</span> <span class="font-medium text-green-600">-{{ format_price($order->discount) }}</span></div>
+                @endif
                 <div class="border-t border-[#E2E8F0] pt-2 mt-2 flex justify-between font-bold">
                     <span>Total</span><span class="text-orange-600">{{ format_price($order->total) }}</span>
                 </div>

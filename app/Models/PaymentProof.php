@@ -41,7 +41,7 @@ class PaymentProof extends Model
         return $this->status === 'rejected';
     }
 
-    public function verify(string $notes = null): void
+    public function verify(?string $notes = null): void
     {
         $previousStatus = $this->order->status;
 

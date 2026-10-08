@@ -19,6 +19,9 @@ class Order extends Model
         'subtotal',
         'shipping_cost',
         'fee',
+        'coupon_id',
+        'discount',
+        'stock_committed',
         'total',
         'status',
         'paid_at',
@@ -32,6 +35,8 @@ class Order extends Model
             'subtotal' => 'integer',
             'shipping_cost' => 'integer',
             'fee' => 'integer',
+            'discount' => 'integer',
+            'stock_committed' => 'boolean',
             'total' => 'integer',
             'paid_at' => 'datetime',
         ];
@@ -68,6 +73,16 @@ class Order extends Model
     public function paymentProof()
     {
         return $this->hasOne(PaymentProof::class);
+    }
+
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function getNoAttribute(): string
@@ -113,6 +128,11 @@ class Order extends Model
     public function getFormattedFeeAttribute(): string
     {
         return 'Rp ' . number_format($this->fee ?? 0, 0, ',', '.');
+    }
+
+    public function getFormattedDiscountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->discount ?? 0, 0, ',', '.');
     }
 
     public static function generateOrderNumber(): string

@@ -40,6 +40,12 @@ class WhatsappService
             $message .= "Biaya Fee: " . format_price($orderData['fee']) . "\n";
         }
 
+        if (($orderData['discount'] ?? 0) > 0) {
+            $message .= "Diskon"
+                . (!empty($orderData['coupon_code']) ? " ({$orderData['coupon_code']})" : '')
+                . ": -" . format_price($orderData['discount']) . "\n";
+        }
+
         $message .= "Total: " . format_price($orderData['total']) . "\n\n";
 
         $message .= "Nama:\n{$orderData['name']}\n\n";
@@ -62,7 +68,7 @@ class WhatsappService
     /**
      * Send payment status notification to customer
      */
-    public static function sendPaymentNotification(string $phone, string $orderNumber, string $status, string $reason = null): string
+    public static function sendPaymentNotification(string $phone, string $orderNumber, string $status, ?string $reason = null): string
     {
         $message = '';
 
@@ -88,7 +94,7 @@ class WhatsappService
     /**
      * Send order shipped notification
      */
-    public static function sendShippedNotification(string $phone, string $orderNumber, string $trackingNumber = null): string
+    public static function sendShippedNotification(string $phone, string $orderNumber, ?string $trackingNumber = null): string
     {
         $message = "Halo 👋\n\n";
         $message .= "Pesanan {$orderNumber} sudah dikirim! 📦\n\n";
