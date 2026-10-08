@@ -7,6 +7,7 @@ categories, orders, and settings.
 - **Frontend:** Laravel Blade + Tailwind CSS + Alpine.js (no React/Vue).
 - **Data:** single `admin`/`customer` role column on `User` (no second auth table).
 - **State:** session cart (guests allowed), no payments (status workflow in admin).
+- **Notifications:** WhatsApp link-gen + email (order confirmation/shipped) + in-app feed.
 - **Stack:** Laravel 13 · PHP 8.3+ · MySQL/SQLite · Vite + TailwindCSS v4.
 
 ## Requirements
@@ -88,7 +89,7 @@ unauthenticated `/admin/*` → redirect `admin.login` → login as seed admin �
 | Products | `GET /produk` (`products.index`), `GET /produk/{product:slug}` (`products.show`) |
 | Categories | `GET /kategori`, `GET /kategori/{category:slug}` |
 | Cart | `GET /titipan`, `POST .../tambah`, `POST .../update`, `DELETE .../hapus`, `DELETE /titipan/clear` |
-| Checkout | `GET /checkout`, `POST /checkout` (optional `coupon_code`), `GET /checkout/confirmation` |
+| Checkout | `GET /checkout`, `POST /checkout` (optional `coupon_code`, `email`), `GET /checkout/confirmation` |
 | Order status | `GET /order/{orderNumber}`, `GET /order/{orderNumber}/status` (public, keyed by order number) |
 | Shipping | `GET /ongkir`, `GET /ongkir/check` (JSON, read-only) |
 | Reviews | `GET /produk/{product}/ulasan`, `POST /produk/{product}/ulasan` (auth), `POST /ulasan/{review}/helpful` (auth, approved reviews only) |

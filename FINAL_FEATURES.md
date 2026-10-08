@@ -20,11 +20,13 @@
 **Status:** PARTIAL
 - **In-App Notifications:** `Notification` model + `notifications` table, wired to
   `OrderStatusChanged` event (`SendOrderStatusNotification`). Feed at `/profile/notifications`.
-- **Channels shipped:** in-app + WhatsApp (link generation, manual send). No email yet.
+- **Channels shipped:** in-app + WhatsApp (link generation, manual send) + email
+  (order confirmation & shipped, opt-out via `users.notify_email`).
 - **Chat Infrastructure:** not implemented (placeholder notes only).
 - **Push (browser):** not implemented; only in-app feed.
-- **Notification prefs:** `/profile/settings` has a real WhatsApp opt-out
-  (`users.notify_whatsapp`) honored by the listener. Fake email/marketing toggles removed.
+- **Notification prefs:** `/profile/settings` has real WhatsApp (`users.notify_whatsapp`)
+  and Email (`users.notify_email`) opt-outs honored by the listener/mail paths.
+  Fake marketing toggles removed.
 
 ### Task #22: Mobile App (React Native) ✅
 **Status:** ARCHITECTURE READY
@@ -176,7 +178,7 @@
 2. ✅ Reviews & Ratings
 3. ✅ User Profiles
 4. ✅ Search & Filtering
-5. ⚠️ Email Notifications (not implemented — WhatsApp link-gen + in-app only)
+5. ✅ Email Notifications (order confirmation & shipped via Mailables; opt-out toggle)
 6. ✅ WhatsApp Integration
 7. ✅ Payment Gateway (Midtrans)
 8. ✅ Inventory Management (reserved stock; commit on paid)
@@ -222,7 +224,7 @@
 - **Frontend:** Blade + Alpine.js + Tailwind CSS
 - **Email:** SMTP / Mailables
 - **Payment:** QRIS / Midtrans ready
-- **Notifications:** In-app + WhatsApp (link generation). Email/web-push not implemented.
+- **Notifications:** In-app + WhatsApp (link generation) + email (order confirmation & shipped). Web-push not implemented.
 - **Monitoring:** Sentry ready
 - **Deployment:** Docker/Heroku/VPS ready
 

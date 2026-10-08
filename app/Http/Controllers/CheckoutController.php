@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Mail\OrderConfirmation;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -10,6 +11,7 @@ use App\Services\CartService;
 use App\Services\StockService;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
 class CheckoutController extends Controller
@@ -104,6 +106,7 @@ class CheckoutController extends Controller
                     'user_id' => $request->user()?->id,
                     'customer_name' => $request->input('name'),
                     'customer_whatsapp' => $request->input('whatsapp'),
+                    'customer_email' => $request->input('email') ?: $request->user()?->email,
                     'customer_address' => $request->input('address'),
                     'customer_notes' => $request->input('notes'),
                     'shipping_method' => $request->input('shipping_method'),
@@ -146,6 +149,9 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')
                 ->with('error', 'Maaf, ' . $e->getMessage() . ' Silakan perbarui titipanmu.');
         }
+
+        // Kirim email konfirmasi bila ada alamat tujuan (guest pakai email yang diisi).
+        $this->sendOrderEmail(new OrderConfirmation($order), $order);
 
         // Generate WhatsApp URL
         $orderData = [
@@ -198,5 +204,30 @@ class CheckoutController extends Controller
             'orderData' => $orderData,
             'order' => $order,
         ]);
+    }
+
+    /**
+     * Kirim email transaksional ke pelanggan. Diam-gagal (log saja) supaya
+     * kegagalan SMTP tidak membatalkan order yang sudah tersimpan.
+     * Hormati opt-out untuk user login; guest dikirimi bila mengisi email.
+     */
+    private function sendOrderEmail(\Illuminate\Mail\Mailable $mail, Order $order): void
+    {
+        if (! $order->customer_email) {
+            return;
+        }
+
+        if ($order->user_id && $order->user && ! $order->user->notify_email) {
+            return;
+        }
+
+        try {
+            Mail::to($order->customer_email)->send($mail);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send order email', [
+                'order_number' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

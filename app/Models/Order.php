@@ -12,6 +12,7 @@ class Order extends Model
         'user_id',
         'customer_name',
         'customer_whatsapp',
+        'customer_email',
         'customer_address',
         'customer_notes',
         'shipping_method',

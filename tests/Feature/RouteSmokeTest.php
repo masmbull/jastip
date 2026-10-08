@@ -363,13 +363,15 @@ class RouteSmokeTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer', 'notify_whatsapp' => true]);
         $this->actingAs($customer);
 
-        $this->get(route('profile.settings'))->assertOk()->assertSee('Notifikasi WhatsApp', false);
+        $this->get(route('profile.settings'))->assertOk()->assertSee('Notifikasi WhatsApp', false)->assertSee('Notifikasi Email', false);
 
-        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '0'])
+        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '0', 'notify_email' => '0'])
             ->assertRedirect(route('profile.settings'));
         $this->assertFalse($customer->fresh()->notify_whatsapp);
+        $this->assertFalse($customer->fresh()->notify_email);
 
-        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '1'])->assertRedirect();
+        $this->put(route('profile.notify-prefs'), ['notify_whatsapp' => '1', 'notify_email' => '1'])->assertRedirect();
         $this->assertTrue($customer->fresh()->notify_whatsapp);
+        $this->assertTrue($customer->fresh()->notify_email);
     }
 }

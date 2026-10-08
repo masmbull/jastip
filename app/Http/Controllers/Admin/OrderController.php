@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -65,6 +68,7 @@ class OrderController extends Controller
     public function updateStatus(OrderUpdateRequest $request, Order $order)
     {
         Gate::authorize('update', $order);
+        $previousStatus = $order->status;
         $order->update($request->validated());
 
         if ($request->boolean('mark_paid') && ! $order->is_paid) {
@@ -78,8 +82,36 @@ class OrderController extends Controller
             $this->stock->release($order);
         }
 
+        // Email pengiriman saat transisi ke shipped (opt-out dihormati).
+        if ($order->status === Order::STATUS_SHIPPED && $previousStatus !== Order::STATUS_SHIPPED) {
+            $this->sendShippedEmail($order);
+        }
+
         return redirect()->route('admin.orders.show', $order)
             ->with('success', 'Status pesanan berhasil diperbarui!');
+    }
+
+    /**
+     * Kirim email "pesanan dikirim". Diam-gagal: log saja, jangan batalkan update.
+     */
+    private function sendShippedEmail(Order $order): void
+    {
+        if (! $order->customer_email) {
+            return;
+        }
+
+        if ($order->user_id && $order->user && ! $order->user->notify_email) {
+            return;
+        }
+
+        try {
+            Mail::to($order->customer_email)->send(new OrderShipped($order));
+        } catch (\Exception $e) {
+            Log::error('Failed to send shipped email', [
+                'order_number' => $order->order_number,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function destroy(Request $request, Order $order)

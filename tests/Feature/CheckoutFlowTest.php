@@ -2,9 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Mail\OrderConfirmation;
+use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class CheckoutFlowTest extends TestCase
@@ -193,5 +196,73 @@ class CheckoutFlowTest extends TestCase
 
         $this->assertSame($ordersBefore, Order::count());
         $this->assertSame(5, $product->fresh()->reserved);
+    }
+
+    public function test_checkout_sends_confirmation_email_when_email_provided(): void
+    {
+        Mail::fake();
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'Email Tester',
+            'whatsapp' => '08123456789',
+            'email' => 'tester@example.com',
+            'address' => 'Jl. Email No. 1, Bandung',
+            'shipping_method' => 'JNE',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        $order = Order::latest('id')->firstOrFail();
+        $this->assertSame('tester@example.com', $order->customer_email);
+
+        Mail::assertSent(OrderConfirmation::class, fn ($mail) => $mail->hasTo('tester@example.com'));
+    }
+
+    public function test_checkout_without_email_sends_no_mail(): void
+    {
+        Mail::fake();
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'No Email',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Kosong No. 1, Bandung',
+            'shipping_method' => 'JNE',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        Mail::assertNothingSent();
+    }
+
+    public function test_shipped_status_emails_customer(): void
+    {
+        Mail::fake();
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+        $this->post(route('checkout.store'), [
+            'name' => 'Shipped Tester',
+            'whatsapp' => '08123456789',
+            'email' => 'shipped@example.com',
+            'address' => 'Jl. Kirim No. 1, Bandung',
+            'shipping_method' => 'JNE',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        $order = Order::latest('id')->firstOrFail();
+        $admin = \App\Models\User::query()->where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.orders.status', $order), [
+            'status' => Order::STATUS_SHIPPED,
+        ])->assertRedirect();
+
+        Mail::assertSent(OrderShipped::class, fn ($mail) => $mail->hasTo('shipped@example.com'));
     }
 }

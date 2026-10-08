@@ -29,6 +29,16 @@
                         @error('whatsapp') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- Email (opsional) -->
+                    <div>
+                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Email (Opsional)</label>
+                        <input type="email" name="email" value="{{ old('email', auth()->user()?->email) }}"
+                            placeholder="kamu@email.com"
+                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('email') border-red-500 @enderror">
+                        <p class="text-xs text-[#94A3B8] mt-1">Untuk kirim konfirmasi & status pesanan via email.</p>
+                        @error('email') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
                     <!-- Alamat -->
                     <div>
                         <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Alamat Lengkap *</label>

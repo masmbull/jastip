@@ -156,6 +156,7 @@ class ProfileController extends Controller
     {
         Auth::user()->update([
             'notify_whatsapp' => $request->boolean('notify_whatsapp'),
+            'notify_email' => $request->boolean('notify_email'),
         ]);
 
         return redirect()->route('profile.settings')

@@ -76,11 +76,25 @@
                             <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Notifikasi WhatsApp</p>
                             <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima pembaruan pesanan via WhatsApp</p>
                         </div>
+                        <input type="hidden" name="notify_whatsapp" value="0">
                         <input type="checkbox" name="notify_whatsapp" value="1"
                                onchange="this.form.submit()"
                                @checked(old('notify_whatsapp', $user->notify_whatsapp))
                                class="w-5 h-5 cursor-pointer">
                     </div>
+
+                    <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-[#404854] rounded-lg mt-4">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-[#f1f5f9]">Notifikasi Email</p>
+                            <p class="text-sm text-gray-600 dark:text-[#cbd5e1]">Terima konfirmasi & status pesanan via email</p>
+                        </div>
+                        <input type="hidden" name="notify_email" value="0">
+                        <input type="checkbox" name="notify_email" value="1"
+                               onchange="this.form.submit()"
+                               @checked(old('notify_email', $user->notify_email))
+                               class="w-5 h-5 cursor-pointer">
+                    </div>
+
                     <noscript>
                         <button type="submit" class="mt-2 px-4 py-2 bg-[#fb923c] text-white rounded-lg hover:bg-[#e6951b] transition font-medium text-sm">
                             Simpan
