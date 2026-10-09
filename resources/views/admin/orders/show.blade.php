@@ -8,6 +8,10 @@
             <h1 class="text-2xl font-bold text-[#1E293B]">Pesanan #{{ $order->no }}</h1>
             <a href="{{ route('admin.orders.index') }}" class="text-sm text-orange-600 hover:underline ml-2">Kembali</a>
         </div>
+        <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 px-4 py-2 bg-[#0891B2] hover:bg-[#0E7490] text-white text-sm font-medium rounded-lg shadow-sm">
+            <x-icon name="clipboard" class="w-4 h-4" /> Buat Invoice
+        </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
