@@ -40,9 +40,9 @@
             <div>
                 <label class="block text-sm font-medium text-[#1E293B] mb-1">Ikon Emoji</label>
                 <input type="text" name="icon" value="{{ old('icon') }}"
-                    placeholder="<x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" /> atau emoji lain"
+                    placeholder="Contoh: 🧴"
                     class="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
-                <p class="text-xs text-[#94A3B8] mt-1">Contoh: <x-icon name="sparkles" class="inline-block w-5 h-5 align-text-bottom" /> untuk Parfum, <x-icon name="bag" class="inline-block w-5 h-5 align-text-bottom" /> untuk Tumbler, dll.</p>
+                <p class="text-xs text-[#94A3B8] mt-1">Masukkan emoji, mis. 🧴 Parfum, 🥤 Tumbler, ⌚ Aksesori.</p>
             </div>
 
             <div class="flex items-center gap-4">

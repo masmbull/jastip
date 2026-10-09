@@ -39,6 +39,7 @@
                 <label class="block text-sm font-medium text-[#1E293B] mb-1">Ikon Emoji</label>
                 <input type="text" name="icon" value="{{ old('icon', $category->icon) }}"
                        class="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                <p class="text-xs text-[#94A3B8] mt-1">Masukkan emoji, mis. 🧴, 🥤, ⌚.</p>
             </div>
 
             <div class="flex items-center gap-4">
