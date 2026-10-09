@@ -12,6 +12,12 @@ class CategoryController extends Controller
     {
         $categories = Category::active()
             ->withCount('products')
+            ->with(['products' => function ($q) {
+                $q->select('id', 'category_id', 'image', 'is_active', 'is_featured')
+                    ->where('is_active', true)
+                    ->orderByDesc('is_featured')
+                    ->take(1);
+            }])
             ->whereHas('products', function ($q) {
                 $q->where('is_active', true);
             })
