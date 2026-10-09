@@ -179,6 +179,18 @@ class ShippingTest extends TestCase
         $this->assertNotContains('jne', array_column($rows, 'code'), 'disabled courier must not be offered');
     }
 
+    public function test_disabled_courier_disappears_from_ongkir_dropdown(): void
+    {
+        Cache::flush();
+
+        // Nama tampilan JNE (lihat config/ekspedisi.php) hilang dari <optgroup>.
+        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+
+        $this->get(route('shipping.index', ['city' => 'Bandung']))
+            ->assertOk()
+            ->assertDontSee('value="jne"', false);
+    }
+
     public function test_admin_rate_flows_into_check_rows(): void
     {
         Cache::flush();
