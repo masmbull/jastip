@@ -16,21 +16,29 @@
 </head>
 <body class="bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] font-sans antialiased min-h-screen transition-colors duration-300">
 
-{{-- Loading splash --}}
+{{-- Loading splash: self-removing, no Alpine dependency — so it can't get
+     stuck when the Alpine CDN is slow or the load event already fired. --}}
 <div id="jd-splash"
-     x-data="{ ready: false }"
-     x-init="window.addEventListener('load', () => { ready = true })"
-     x-show="!ready"
-     x-transition:leave="transition ease-out duration-500"
-     x-transition:leave-end="opacity-0"
-     x-cloak
      style="z-index: 9999"
-     class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1a1a1a]">
+     class="fixed inset-0 flex items-center justify-center bg-white dark:bg-[#1a1a1a] transition-opacity duration-500">
     <div class="flex flex-col items-center gap-3">
         <div class="w-12 h-12 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
         <span class="text-sm text-[#94A3B8]">Memuat panel...</span>
     </div>
 </div>
+<script>
+    (function () {
+        function hideSplash() {
+            var s = document.getElementById('jd-splash');
+            if (!s) return;
+            s.style.opacity = '0';
+            setTimeout(function () { s.remove(); }, 500);
+        }
+        if (document.readyState === 'complete') hideSplash();
+        else window.addEventListener('load', hideSplash);
+        setTimeout(hideSplash, 1500); // safety net if 'load' never fires (blocked CDN)
+    })();
+</script>
 
 <div class="flex h-screen">
 
