@@ -180,6 +180,7 @@ class RouteSmokeTest extends TestCase
             '/admin/pesanans',
             "/admin/pesanans/{$orderId}",
             "/admin/pesanans/{$orderId}/quickview",
+            "/admin/pesanans/{$orderId}/invoice",
             '/admin/ongkir',
             '/admin/bukti-pembayaran',
             "/admin/bukti-pembayaran/{$this->proof->id}",
