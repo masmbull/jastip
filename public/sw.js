@@ -1,6 +1,6 @@
 ﻿/* Nitip Di End — PWA service worker (Vanilla, no deps) */
 (function () {
-    var CACHE = 'jastip-pwa-v3';
+    var CACHE = 'jastip-pwa-v4';
     var OFFLINE = '/offline.html';
     var PRECACHE = [
         '/',
@@ -58,6 +58,19 @@
                         return cached || caches.match(OFFLINE);
                     });
                 })
+            );
+            return;
+        }
+
+        // Vite build assets (/build/*) -> network first. They are content-hashed,
+        // so cache-first would pin an old bundle and make UI fixes (theme toggle,
+        // modals) appear broken until a manual cache clear. Hash change busts it.
+        if (url.pathname.startsWith('/build/')) {
+            e.respondWith(
+                fetch(req).then(function (res) {
+                    putCache(req, res);
+                    return res;
+                }).catch(function () { return caches.match(req); })
             );
             return;
         }
