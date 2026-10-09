@@ -67,6 +67,46 @@ class ShippingService
     }
 
     /**
+     * Kota tujuan valid (delegasi ShippingEstimator) — agar konsumen cukup
+     * tahu ShippingService.
+     */
+    public function cities(): array
+    {
+        return $this->estimator->cities();
+    }
+
+    /**
+     * Kurir efektif (enabled + harga manual/API) dikelompokkan per tipe,
+     * untuk dropdown customer. Kurir nonaktif otomatis hilang.
+     */
+    public function enabledCouriersByType(): array
+    {
+        $grouped = [];
+
+        foreach ($this->enabledCouriers() as $courier) {
+            $grouped[$courier['type']][] = $courier;
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * Estimasi satu ekspedisi memakai harga EFEKTIFNYA (manual admin / API live),
+     * bukan tarif config mentah. Kurir nonaktif atau tak dikenal => ok = false.
+     */
+    public function estimate(string $courierCode, string $city, float $weightKg): array
+    {
+        $courier = collect($this->enabledCouriers())->firstWhere('code', $courierCode);
+
+        if (! $courier) {
+            return ['ok' => false, 'message' => 'Ekspedisi tidak dikenal atau sedang nonaktif.'];
+        }
+
+        return $this->estimateWithCourier($courier, $city, $weightKg)
+            ?? ['ok' => false, 'message' => 'Kota tujuan belum terdaftar. Pilih dari daftar yang tersedia.'];
+    }
+
+    /**
      * Get all couriers with their enable/disable status
      */
     public function courierSettings(): array

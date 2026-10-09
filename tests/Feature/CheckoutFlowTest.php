@@ -325,4 +325,60 @@ class CheckoutFlowTest extends TestCase
 
         Mail::assertSent(OrderShipped::class, fn ($mail) => $mail->hasTo('shipped@example.com'));
     }
+public function test_admin_courier_rate_flows_into_checkout_shipping_cost(): void
+    {
+        \Illuminate\Support\Facades\Cache::flush();
+
+        // Tarif manual admin jauh di atas default => shipping_cost order harus naik.
+        \App\Models\Setting::set('courier_per_kg_jne', '80000', 'integer', 'shipping', true);
+        \App\Models\Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
+
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0, 'weight' => 1]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'Rate Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Tarif No. 1, Bandung',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
+        ])->assertRedirect(route('checkout.confirmation'));
+
+        $order = Order::latest('id')->firstOrFail();
+        $defaultFloor = (new \App\Services\ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
+
+        $this->assertGreaterThan($defaultFloor, $order->shipping_cost);
+    }
+
+    public function test_disabled_courier_rejected_at_checkout(): void
+    {
+        \Illuminate\Support\Facades\Cache::flush();
+
+        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer);
+
+        $product = Product::firstOrFail();
+        $product->update(['stock' => 10, 'reserved' => 0, 'setbiaya_fee' => 0]);
+
+        $this->postJson(route('cart.add', ['product' => $product->id]), ['quantity' => 1])->assertOk();
+
+        $before = Order::count();
+
+        $this->post(route('checkout.store'), [
+            'name' => 'Disabled Tester',
+            'whatsapp' => '08123456789',
+            'address' => 'Jl. Mati No. 1, Bandung',
+            'city' => 'Jakarta',
+            'courier' => 'jne',
+        ])->assertSessionHas('error');
+
+        $this->assertSame($before, Order::count(), 'order must not be created for a disabled courier');
+    }
 }

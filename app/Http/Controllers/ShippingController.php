@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Services\ShippingEstimator;
+use App\Services\ShippingService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ShippingController extends Controller
 {
-    public function __construct(private readonly ShippingEstimator $estimator)
-    {
+    public function __construct(
+        private readonly ShippingEstimator $estimator,
+        private readonly ShippingService $shipping
+    ) {
     }
 
     /**
@@ -27,8 +30,8 @@ class ShippingController extends Controller
             $city = 'Jakarta';
         }
 
-        $results = $this->estimator->estimateAll($city, $weight);
-        $selectedResult = $selected ? $this->estimator->estimate($selected, $city, $weight) : null;
+        $results = $this->shipping->estimateAllEnabled($city, $weight);
+        $selectedResult = $selected ? $this->shipping->estimate($selected, $city, $weight) : null;
 
         return view('frontend.pages.ongkir', [
             'origin' => $this->estimator->origin(),
@@ -37,6 +40,7 @@ class ShippingController extends Controller
             'zoneLabels' => $this->estimator->zoneLabels(),
             'couriers' => $this->estimator->couriers(),
             'couriersByType' => $this->estimator->couriersByType(),
+            'enabledByType' => $this->shipping->enabledCouriersByType(),
             'typeLabel' => fn (string $type) => $this->estimator->typeLabel($type),
             'freeApis' => config('ekspedisi.free_apis', []),
             'results' => $results,
@@ -58,14 +62,14 @@ class ShippingController extends Controller
             'courier' => ['nullable', 'string'],
         ]);
 
-        $results = $this->estimator->estimateAll($data['city'], (float) $data['weight']);
+        $results = $this->shipping->estimateAllEnabled($data['city'], (float) $data['weight']);
 
         return response()->json([
             'city' => $data['city'],
             'weight' => (float) $data['weight'],
             'origin' => $this->estimator->origin(),
             'selected' => isset($data['courier'])
-                ? $this->estimator->estimate($data['courier'], $data['city'], (float) $data['weight'])
+                ? $this->shipping->estimate($data['courier'], $data['city'], (float) $data['weight'])
                 : null,
             'rows' => array_map(fn (array $row) => [
                 'ok' => $row['ok'],

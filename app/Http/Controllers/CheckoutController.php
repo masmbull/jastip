@@ -8,7 +8,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CartService;
-use App\Services\ShippingEstimator;
+use App\Services\ShippingService;
 use App\Services\StockService;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +20,7 @@ class CheckoutController extends Controller
     public function __construct(
         protected CartService $cart,
         protected StockService $stock,
-        protected ShippingEstimator $shipping
+        protected ShippingService $shipping
     ) {}
 
     public function index()

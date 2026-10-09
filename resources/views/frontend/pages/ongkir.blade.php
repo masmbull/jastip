@@ -68,7 +68,7 @@
                     <select name="courier" id="courier"
                             class="w-full rounded-xl border-[#E2E8F0] text-sm text-[#1E293B] focus:border-orange-500 focus:ring-orange-500">
                         <option value="">— Bandingkan semua —</option>
-                        @foreach($couriersByType as $type => $group)
+                        @foreach($enabledByType as $type => $group)
                             <optgroup label="{{ $typeLabel($type) }}">
                                 @foreach($group as $c)
                                     <option value="{{ $c['code'] }}" @selected(request('courier') === $c['code'])>{{ $c['name'] }}</option>

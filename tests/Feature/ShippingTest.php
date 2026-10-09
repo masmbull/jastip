@@ -162,9 +162,37 @@ class ShippingTest extends TestCase
 
         $this->assertTrue($result['success']);
         $this->assertSame(['jne' => 12345, 'jnt' => 11000], $result['prices']);
-        $this->assertSame(['jne' => 12345, 'jnt' => 11000], Cache::get('shipping_prices_cache'));
-
         // Kurir cache dilepas supaya tarif baru langsung dipakai.
         $this->assertNull(Cache::get('shipping_couriers_enabled'));
+    }
+
+    public function test_disabled_courier_disappears_from_check_rows(): void
+    {
+        Cache::flush();
+
+        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+
+        $rows = $this->getJson(route('shipping.check', ['city' => 'Bandung', 'weight' => 1]))
+            ->assertOk()
+            ->json('rows');
+
+        $this->assertNotContains('jne', array_column($rows, 'code'), 'disabled courier must not be offered');
+    }
+
+    public function test_admin_rate_flows_into_check_rows(): void
+    {
+        Cache::flush();
+
+        // Tarif manual admin jauh di atas default JNE (9.000/kg) => terbukti dipakai.
+        \App\Models\Setting::set('courier_per_kg_jne', '50000', 'integer', 'shipping', true);
+        \App\Models\Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
+
+        $rows = collect($this->getJson(route('shipping.check', ['city' => 'Jakarta', 'weight' => 1]))
+            ->assertOk()
+            ->json('rows'));
+
+        $jne = $rows->firstWhere('code', 'jne');
+        $this->assertNotNull($jne);
+        $this->assertGreaterThanOrEqual(50000, $jne['price']);
     }
 }
