@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }" @theme-toggle.window="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')">
+<html lang="id" x-data="{ sidebarOpen: false, darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }" @theme-toggle.window="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')" @keydown.escape.window="sidebarOpen = false">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -12,7 +12,6 @@
         }
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
 </head>
 <body class="bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] font-sans antialiased min-h-screen transition-colors duration-300">
 
@@ -44,6 +43,7 @@
 
     {{-- Sidebar --}}
     <aside id="sidebar"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
            class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white dark:bg-[#23252b] border-r border-[#E2E8F0] dark:border-[#404854] shadow-lg dark:shadow-none -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0 lg:shadow-none">
 
         {{-- Logo --}}
@@ -57,8 +57,9 @@
                     <span class="text-xs text-orange-500 block">Admin Panel</span>
                 </div>
             </div>
-            <button onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
-                    class="lg:hidden text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1">
+            <button type="button" @click="sidebarOpen = false"
+                    class="lg:hidden text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1"
+                    aria-label="Tutup menu">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
@@ -79,16 +80,20 @@
 
     {{-- Overlay for mobile --}}
     <div id="overlay"
-         onclick="document.getElementById('sidebar').classList.add('-translate-x-full')"
-         class="fixed inset-0 bg-black/40 z-20 hidden lg:hidden"></div>
+         x-show="sidebarOpen"
+         x-cloak
+         x-transition.opacity
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black/40 z-20 lg:hidden"></div>
 
     {{-- Main Content Area --}}
     <div class="flex-1 flex flex-col overflow-hidden">
         {{-- Top Bar --}}
         <header class="bg-white dark:bg-[#23252b] border-b border-[#E2E8F0] dark:border-[#404854] px-4 sm:px-6 py-3 flex items-center justify-between transition-colors">
             <div class="flex items-center space-x-4">
-                <button onclick="document.getElementById('sidebar').classList.remove('-translate-x-full')"
-                        class="lg:hidden text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 -ml-1 transition-colors">
+                <button type="button" @click="sidebarOpen = !sidebarOpen"
+                        class="lg:hidden text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 -ml-1 transition-colors"
+                        aria-label="Buka menu">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>

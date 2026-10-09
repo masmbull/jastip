@@ -49,7 +49,6 @@
     <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
     
     {{-- Service Worker Registration for PWA --}}
     <script>

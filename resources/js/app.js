@@ -3,6 +3,12 @@
  | confirm bridge (data-confirm), client toasts, cart badge. Vanilla JS.
  |--------------------------------------------------------------------------
  */
+/* Alpine is bundled (not CDN) so the admin sidebar, modals and dark-mode
+   toggles work offline / behind a blocked CDN. Must be defined before Alpine
+   walks the DOM — hence the import at the very top. */
+import Alpine from 'alpinejs';
+window.Alpine = Alpine;
+
 (() => {
     "use strict";
 
@@ -328,4 +334,8 @@
         },
     };
 })();
+
+/* Kick off Alpine after all page scripts (including @push('scripts') blocks
+   like manualInvoice()) have registered. */
+Alpine.start();
 

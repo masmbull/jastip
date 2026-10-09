@@ -9,6 +9,10 @@
             <p class="text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Kelola semua pesanan jastip</p>
         </div>
         <div class="flex gap-3">
+            <a href="{{ route('admin.orders.create') }}"
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium">
+                <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
+            </a>
             <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}"
                class="px-4 py-2 text-sm bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 font-medium">
                 Pending

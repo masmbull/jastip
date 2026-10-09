@@ -2,19 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Events\OrderStatusChanged;
 use App\Models\Address;
 use App\Models\Category;
+use App\Models\ChatMessage;
 use App\Models\Coupon;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
-use App\Models\Wishlist;
-use App\Models\Notification;
-use App\Models\ChatMessage;
-use App\Events\OrderStatusChanged;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -29,12 +28,19 @@ class RouteSmokeTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private Product $product;
+
     private Category $category;
+
     private Order $order;
+
     private Coupon $coupon;
+
     private Review $review;
+
     private Address $address;
+
     private PaymentProof $proof;
 
     protected function setUp(): void
@@ -178,6 +184,8 @@ class RouteSmokeTest extends TestCase
             '/admin/kategori/create',
             "/admin/kategori/{$category}/edit",
             '/admin/pesanans',
+            '/admin/pesanans/create',
+            '/admin/invoice',
             "/admin/pesanans/{$orderId}",
             "/admin/pesanans/{$orderId}/quickview",
             "/admin/pesanans/{$orderId}/invoice",

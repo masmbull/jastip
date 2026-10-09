@@ -11,6 +11,36 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceController extends Controller
 {
     /**
+     * Daftar invoice manual (dibuat admin lewat tombol "Buat Invoice").
+     * Order checkout biasa tidak muncul di sini.
+     */
+    public function index(Request $request)
+    {
+        Gate::authorize('viewAny', Order::class);
+
+        $query = Order::withCount('items')->where('payment_method', 'manual');
+
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('search')) {
+            $term = $request->input('search');
+            $query->where(function ($q) use ($term) {
+                $q->where('order_number', 'like', "%{$term}%")
+                    ->orWhere('customer_name', 'like', "%{$term}%")
+                    ->orWhere('customer_whatsapp', 'like', "%{$term}%");
+            });
+        }
+
+        $invoices = $query->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.invoices.index', compact('invoices'));
+    }
+
+    /**
      * Halaman invoice siap-cetak untuk satu pesanan.
      *
      * Tanpa dependency PDF: pakai cetak bawaan browser (Ctrl+P -> Save as PDF).
@@ -29,12 +59,12 @@ class InvoiceController extends Controller
         $qrisImage = $qrisPath ? Storage::url($qrisPath) : null;
 
         return view('admin.orders.invoice', [
-            'order'         => $order,
-            'autoPrint'     => $request->boolean('print'),
-            'qrisImage'     => $qrisImage,
-            'qrisMerchant'  => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
+            'order' => $order,
+            'autoPrint' => $request->boolean('print'),
+            'qrisImage' => $qrisImage,
+            'qrisMerchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
             'rekeningImage' => $publicUrl(config('invoice.rekening_image')),
-            'paidImage'     => $publicUrl(config('invoice.paid_image')),
+            'paidImage' => $publicUrl(config('invoice.paid_image')),
         ]);
     }
 }
