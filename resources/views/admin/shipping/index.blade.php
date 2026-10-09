@@ -64,7 +64,7 @@
                         <td class="px-6 py-4 text-sm text-[#64748B]">
                             <span class="inline-block px-2 py-1 rounded text-xs font-semibold
                                 {{ $courier['type'] === 'instant' ? 'bg-red-100 text-red-700' : 
-                                   ($courier['type'] === 'kargo' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700') }}">
+                                   ($courier['type'] === 'kargo' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600') }}">
                                 {{ ucfirst($courier['type']) }}
                             </span>
                         </td>
@@ -106,8 +106,9 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-[#94A3B8]">
-                            Tidak ada data ekspedisi
+                        <td colspan="6" class="px-6 py-8 text-center">
+                            <p class="font-medium text-[#1E293B]">Belum ada ekspedisi terdaftar</p>
+                            <p class="text-sm text-[#64748B] mt-1">Tambahkan daftar kurir di <code class="px-1.5 py-0.5 rounded bg-[#F1F5F9] text-xs">config/ekspedisi.php</code>, lalu muat ulang halaman ini.</p>
                         </td>
                     </tr>
                 @endforelse

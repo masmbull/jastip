@@ -17,7 +17,7 @@
         <h1 class="mt-4 text-3xl md:text-4xl font-bold text-[#1E293B]">Cek Ongkir &amp; Lacak Resi</h1>
         <p class="mt-3 text-[#475569] max-w-3xl leading-relaxed">
             Hitung estimasi biaya kirim dari <strong>{{ $origin['label'] }}</strong> ke kota tujuanmu,
-            bandingkan {{ count($couriers) }} ekspedisi, lalu lacak resi langsung dari halaman ini.
+            bandingkan {{ collect($enabledByType)->flatten(1)->count() }} ekspedisi aktif, lalu lacak resi langsung dari halaman ini.
             Estimasi memakai tarif referensi pasar — angka final mengikuti tarif kurir saat order.
         </p>
     </header>
