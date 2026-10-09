@@ -23,7 +23,7 @@ class CategoryController extends Controller
             $query->where('is_active', $request->input('status') === 'active');
         }
 
-        $categories = $query->orderBy('sort_order')->orderBy('name')
+        $categories = $query->withCount('products')->orderBy('sort_order')->orderBy('name')
             ->paginate(15)
             ->withQueryString();
 
