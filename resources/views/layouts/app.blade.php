@@ -49,18 +49,11 @@
     <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    {{-- Service Worker Registration for PWA --}}
-    <script>
-        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => console.log('SW registered'))
-                    .catch(error => console.log('SW registration failed:', error));
-            });
-        }
-    </script>
-    
+    {{-- Service worker is registered once from resources/js/app.js (/sw.js).
+         Do NOT register a second one here: two SWs at scope "/" fight over
+         the cache and a cache-first one serves stale HTML pointing at old
+         build hashes (breaks styles + Alpine site-wide). --}}
+
     <script>
         // Prevent FOUC (Flash of Unstyled Content) for dark mode
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {

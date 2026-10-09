@@ -252,6 +252,16 @@ window.Alpine = Alpine;
     /* ---- PWA: service worker + installability ---- */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
+            // Self-heal: a legacy cache-first SW (/service-worker.js) may still
+            // control scope "/" on existing clients and serve stale HTML
+            // pointing at old build hashes (kills styles + Alpine). Purge it.
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (reg) {
+                    if (reg.active && reg.active.scriptURL.indexOf('/service-worker.js') !== -1) {
+                        reg.unregister();
+                    }
+                });
+            });
             navigator.serviceWorker.register('/sw.js').catch(function () {});
         });
     }

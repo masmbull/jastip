@@ -1,6 +1,6 @@
 ﻿/* Nitip Di End — PWA service worker (Vanilla, no deps) */
 (function () {
-    var CACHE = 'jastip-pwa-v2';
+    var CACHE = 'jastip-pwa-v3';
     var OFFLINE = '/offline.html';
     var PRECACHE = [
         '/',
