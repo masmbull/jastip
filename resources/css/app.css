@@ -1,5 +1,11 @@
 ﻿@import 'tailwindcss';
 
+/* Dark mode is driven by the `.dark` class on <html> (set from localStorage /
+   system preference), NOT by the OS media query. Without this, Tailwind v4
+   compiles every `dark:` utility into `@media (prefers-color-scheme: dark)`,
+   which wins over the class and breaks manual toggling. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../../resources/views/**/*.blade.php';
@@ -137,24 +143,24 @@ html.dark .bg-\[\#F1F5F9\] {
     @apply bg-[#2e323b];
 }
 
-html.dark .bg-\[#F8FAFC\],
+html.dark .bg-\[\#F8FAFC\],
 html.dark .bg-slate-50 {
     @apply bg-[#2e323b];
 }
 
-html.dark .text-\[#1E293B\] {
+html.dark .text-\[\#1E293B\] {
     @apply text-[#f1f5f9];
 }
 
-html.dark .text-\[#64748B\] {
+html.dark .text-\[\#64748B\] {
     @apply text-[#cbd5e1];
 }
 
-html.dark .text-\[#94A3B8\] {
+html.dark .text-\[\#94A3B8\] {
     @apply text-[#94a3b8];
 }
 
-html.dark .border-\[#E2E8F0\] {
+html.dark .border-\[\#E2E8F0\] {
     @apply border-[#404854];
 }
 
