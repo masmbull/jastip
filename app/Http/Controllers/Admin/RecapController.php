@@ -129,7 +129,7 @@ class RecapController extends Controller
             'columns' => ['required', 'array', 'min:1'],
             'columns.*.label' => ['nullable', 'string', 'max:100'],
             'columns.*.key' => ['nullable', 'string', 'max:100'],
-            'columns.*.type' => ['nullable', 'in:text,number'],
+            'columns.*.type' => ['nullable', 'in:text,number,currency'],
             'columns.*.total' => ['nullable'],
             'rows' => ['nullable', 'array'],
         ], [

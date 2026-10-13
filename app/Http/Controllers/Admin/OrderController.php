@@ -105,8 +105,8 @@ class OrderController extends Controller
             return $order;
         });
 
-        return redirect()->route('admin.orders.invoice', ['order' => $order, 'print' => 1])
-            ->with('success', 'Invoice berhasil dibuat.');
+        return redirect()->route('admin.invoices.index')
+            ->with('success', 'Invoice '.$order->order_number.' berhasil dibuat.');
     }
 
     /**

@@ -152,33 +152,56 @@
 <x-toast />
 <x-confirm-modal />
 
-{{-- Invoice modal: cetak lewat iframe agar hanya lembar invoice yang tercetak.
-     Dipicu oleh event `jd-invoice` dari tombol Cetak. --}}
+{{-- Pratinjau invoice: modal berisi iframe + tombol cetak. Hanya lembar
+     invoice yang tercetak (print dari dalam iframe), bukan seluruh panel.
+     Dipicu event `jd-invoice` dari tombol Cetak. --}}
 <div x-data="jdInvoiceModal()" x-cloak
      @jd-invoice.window="open($event.detail)"
      @keydown.escape.window="show && close()">
     <template x-if="show">
-        <div class="fixed inset-0 z-[400] flex items-center justify-center">
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="close()"></div>
-            <div class="relative bg-white dark:bg-[#23252b] rounded-xl shadow-xl w-full max-w-4xl mx-4 my-6 overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
+        <div class="fixed inset-0 z-[400] flex items-stretch sm:items-center justify-center sm:p-6">
+            <div class="absolute inset-0 bg-black/60" @click="close()"></div>
+            <div class="relative w-full h-full sm:h-auto sm:max-w-3xl sm:max-h-[92vh] bg-[#F1F5F9] dark:bg-[#1a1a1a] sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-scale-in"
+                 x-data="{ loaded: false }"
                  @click.stop>
-                <div class="p-4 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between bg-white dark:bg-[#23252b]">
-                    <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]" x-text="title"></h3>
+
+                {{-- Header --}}
+                <div class="shrink-0 px-4 sm:px-5 py-3 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between bg-white dark:bg-[#23252b]">
+                    <div class="min-w-0">
+                        <h3 class="text-base font-semibold text-[#1E293B] dark:text-[#f1f5f9] truncate" x-text="title"></h3>
+                        <p class="text-xs text-[#94A3B8] mt-0.5">Pratinjau invoice. Tekan Cetak untuk simpan PDF.</p>
+                    </div>
+                    <button type="button" @click="close()" aria-label="Tutup"
+                            class="shrink-0 ml-3 text-[#94A3B8] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors">
+                        <x-icon name="x" class="w-5 h-5" />
+                    </button>
+                </div>
+
+                {{-- Body --}}
+                <div class="flex-1 relative bg-[#E9EEF3] dark:bg-[#121212]">
+                    <div x-show="!loaded" class="absolute inset-0 flex items-center justify-center text-[#64748B] dark:text-[#cbd5e1] text-sm">
+                        <x-spinner label="Memuat invoice…" />
+                    </div>
+                    <iframe x-ref="frame" :src="url" x-show="loaded" @load="loaded = true; $refs.frame.focus()"
+                            class="w-full h-full border-0" title="Pratinjau invoice"></iframe>
+                </div>
+
+                {{-- Footer actions --}}
+                <div class="shrink-0 px-4 sm:px-5 py-3 border-t border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between gap-3 bg-white dark:bg-[#23252b]">
+                    <a :href="url" target="_blank" rel="noopener"
+                       class="text-sm text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 font-medium transition-colors">
+                        Buka di tab
+                    </a>
                     <div class="flex items-center gap-2">
+                        <button type="button" @click="close()"
+                                class="px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] rounded-lg font-medium transition-colors">
+                            Tutup
+                        </button>
                         <button type="button" @click="print()"
                                 class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-[#0891B2] hover:bg-[#0E7490] text-white font-medium rounded-lg shadow-sm transition-colors">
-                            <x-icon name="clipboard" class="w-4 h-4" /> Cetak / Simpan PDF
-                        </button>
-                        <button type="button" @click="close()" aria-label="Tutup"
-                                class="text-[#94A3B8] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors">
-                            <x-icon name="x" class="w-5 h-5" />
+                            <x-icon name="printer" class="w-4 h-4" /> Cetak
                         </button>
                     </div>
-                </div>
-                <div class="flex-1 overflow-hidden bg-[#F1F5F9] dark:bg-[#1a1a1a]">
-                    <template x-if="url">
-                        <iframe x-ref="frame" :src="url" class="w-full h-full min-h-[75vh]" title="Invoice"></iframe>
-                    </template>
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ class ManualInvoiceTest extends TestCase
             ->assertSee('Buat Invoice');
     }
 
-    public function test_store_creates_order_with_items_and_redirects_to_invoice(): void
+    public function test_store_creates_order_with_items_and_redirects_to_list(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
 
@@ -45,7 +45,7 @@ class ManualInvoiceTest extends TestCase
 
         $order = Order::where('customer_whatsapp', '081200009999')->firstOrFail();
 
-        $response->assertRedirect(route('admin.orders.invoice', ['order' => $order, 'print' => 1]));
+        $response->assertRedirect(route('admin.invoices.index'));
         $this->assertSame(60_000 + 45_000, $order->subtotal);
         $this->assertSame(10_000, $order->shipping_cost);
         $this->assertSame(2_500, $order->fee);

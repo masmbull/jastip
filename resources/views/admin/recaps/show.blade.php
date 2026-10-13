@@ -30,8 +30,9 @@
                 <thead>
                     <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                         <th class="px-3 py-3 w-10">#</th>
+                        @php($isNum = fn ($c) => in_array($c['type'] ?? 'text', ['number', 'currency'], true))
                         @foreach($recap->columns ?? [] as $col)
-                            <th class="px-3 py-3 {{ ($col['type'] ?? 'text') === 'number' ? 'text-right' : '' }}">{{ $col['label'] }}</th>
+                            <th class="px-3 py-3 {{ $isNum($col) ? 'text-right' : '' }}">{{ $col['label'] }}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -41,8 +42,8 @@
                             <td class="px-3 py-3 text-xs text-[#94A3B8]">{{ $i + 1 }}</td>
                             @foreach($recap->columns ?? [] as $col)
                                 @php($val = $row['cells'][$col['key']] ?? '')
-                                <td class="px-3 py-3 {{ ($col['type'] ?? 'text') === 'number' ? 'text-right tabular-nums' : 'text-[#1E293B] dark:text-[#f1f5f9]' }}">
-                                    {{ ($col['type'] ?? 'text') === 'number' ? format_price((int) $val) : $val }}
+                                <td class="px-3 py-3 {{ $isNum($col) ? 'text-right tabular-nums' : 'text-[#1E293B] dark:text-[#f1f5f9]' }}">
+                                    {{ $isNum($col) ? (($col['type'] ?? '') === 'currency' ? format_price((int) $val) : number_format((float) $val, 0, ',', '.')) : $val }}
                                 </td>
                             @endforeach
                         </tr>
@@ -60,8 +61,8 @@
                             <td class="px-3 py-3"></td>
                             @foreach($recap->columns ?? [] as $col)
                                 <td class="px-3 py-3 text-right text-[#1E293B] dark:text-[#f1f5f9] tabular-nums">
-                                    @if(($col['type'] ?? 'text') === 'number' && ! empty($col['total']))
-                                        {{ format_price((int) ($totals['perColumn'][$col['key']] ?? 0)) }}
+                                    @if($isNum($col) && ! empty($col['total']))
+                                        {{ ($col['type'] ?? '') === 'currency' ? format_price((int) ($totals['perColumn'][$col['key']] ?? 0)) : number_format((float) ($totals['perColumn'][$col['key']] ?? 0), 0, ',', '.') }}
                                     @endif
                                 </td>
                             @endforeach

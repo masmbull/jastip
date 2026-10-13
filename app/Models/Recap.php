@@ -35,7 +35,7 @@ class Recap extends Model
         $perColumn = [];
 
         foreach ($this->columns ?? [] as $col) {
-            if (($col['type'] ?? 'text') !== 'number' || empty($col['total'])) {
+            if (! self::isNumericType($col['type'] ?? 'text') || empty($col['total'])) {
                 continue;
             }
 
@@ -47,6 +47,11 @@ class Recap extends Model
         }
 
         return ['perColumn' => $perColumn, 'grand' => array_sum($perColumn)];
+    }
+
+    public static function isNumericType(string $type): bool
+    {
+        return in_array($type, ['number', 'currency'], true);
     }
 
     /**
@@ -69,7 +74,7 @@ class Recap extends Model
             $out[] = [
                 'key' => $key,
                 'label' => $label,
-                'type' => ($col['type'] ?? 'text') === 'number' ? 'number' : 'text',
+                'type' => in_array($col['type'] ?? 'text', ['text', 'number', 'currency'], true) ? $col['type'] : 'text',
                 'total' => ! empty($col['total']),
             ];
         }
