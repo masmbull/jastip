@@ -6,11 +6,14 @@
     <title>Invoice {{ $order->order_number }} | {{ setting('brand_name', 'NITIP DI END') }}</title>
     @vite(['resources/css/app.css'])
     <style>
+        .sheet { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .num { font-variant-numeric: tabular-nums; }
         @media print {
             .no-print { display: none !important; }
             body { background: #fff; }
-            .sheet { box-shadow: none !important; border: none !important; margin: 0 !important; }
-            @page { margin: 12mm; }
+            .sheet { box-shadow: none !important; border: none !important; margin: 0 !important; max-width: none !important; padding: 0 !important; }
+            tr, .avoid-break { break-inside: avoid; }
+            @page { margin: 14mm; }
         }
     </style>
 </head>
@@ -102,9 +105,9 @@
                 <tr class="border-b border-[#E2E8F0]">
                     <td class="py-2.5 px-3">{{ $item->product_name }}</td>
                     <td class="py-2.5 px-3 text-[#64748B]">{{ $item->unit }}</td>
-                    <td class="py-2.5 px-3 text-center">{{ $item->quantity }}</td>
-                    <td class="py-2.5 px-3 text-right">{{ format_price($item->product_price) }}</td>
-                    <td class="py-2.5 px-3 text-right font-medium">{{ format_price($item->subtotal) }}</td>
+                    <td class="py-2.5 px-3 text-center num">{{ $item->quantity }}</td>
+                    <td class="py-2.5 px-3 text-right num">{{ format_price($item->product_price) }}</td>
+                    <td class="py-2.5 px-3 text-right font-medium num">{{ format_price($item->subtotal) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="5" class="py-4 px-3 text-center text-[#64748B]">Tidak ada item.</td></tr>
@@ -115,16 +118,16 @@
     {{-- Ringkasan --}}
     <div class="flex justify-end mt-6">
         <div class="w-full sm:w-72 text-sm space-y-1.5">
-            <div class="flex justify-between"><span class="text-[#64748B]">Subtotal</span><span>{{ format_price($order->subtotal) }}</span></div>
-            <div class="flex justify-between"><span class="text-[#64748B]">Ongkir</span><span>{{ format_price($order->shipping_cost) }}</span></div>
+            <div class="flex justify-between"><span class="text-[#64748B]">Subtotal</span><span class="num">{{ format_price($order->subtotal) }}</span></div>
+            <div class="flex justify-between"><span class="text-[#64748B]">Ongkir</span><span class="num">{{ format_price($order->shipping_cost) }}</span></div>
             @if(($order->fee ?? 0) > 0)
-                <div class="flex justify-between"><span class="text-[#64748B]">Biaya Fee</span><span>{{ format_price($order->fee) }}</span></div>
+                <div class="flex justify-between"><span class="text-[#64748B]">Biaya Fee</span><span class="num">{{ format_price($order->fee) }}</span></div>
             @endif
             @if(($order->discount ?? 0) > 0)
-                <div class="flex justify-between"><span class="text-[#64748B]">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}</span><span class="text-emerald-600">-{{ format_price($order->discount) }}</span></div>
+                <div class="flex justify-between"><span class="text-[#64748B]">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}</span><span class="text-emerald-600 num">-{{ format_price($order->discount) }}</span></div>
             @endif
             <div class="flex justify-between pt-2 mt-1 border-t border-[#E2E8F0] text-base font-bold">
-                <span>Total Bayar</span><span class="text-[#0891B2]">{{ format_price($order->total) }}</span>
+                <span>Total Bayar</span><span class="text-[#0891B2] num">{{ format_price($order->total) }}</span>
             </div>
         </div>
     </div>

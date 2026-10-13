@@ -161,7 +161,7 @@
     <template x-if="show">
         <div class="fixed inset-0 z-[400] flex items-stretch sm:items-center justify-center sm:p-6">
             <div class="absolute inset-0 bg-black/60" @click="close()"></div>
-            <div class="relative w-full h-full sm:h-auto sm:max-w-3xl sm:max-h-[92vh] bg-[#F1F5F9] dark:bg-[#1a1a1a] sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-scale-in"
+            <div class="relative w-full h-full sm:h-[88vh] sm:max-w-3xl sm:max-h-[92vh] bg-[#F1F5F9] dark:bg-[#1a1a1a] sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-scale-in"
                  x-data="{ loaded: false }"
                  @click.stop>
 

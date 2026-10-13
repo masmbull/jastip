@@ -1,7 +1,8 @@
 @push('scripts')
 <script>
-    {{-- Grid editor rekapan ala spreadsheet: kolom & baris bebas, Enter pindah
-         ke bawah, Tab pindah ke kanan. Kolom angka/rupiah bisa ikut total. --}}
+    {{-- Editor rekapan bergaya pivot/spreadsheet: header kolom, gridlines,
+         baris Total otomatis, dan template siap pakai. Kolom angka (Angka/
+         Rupiah) bisa ditandai ikut Total & Grand Total. --}}
     function recapSheet(initialColumns, initialRows) {
         return {
             name: {{ Js::from(old('name', $recap->name ?? '')) }},
@@ -10,12 +11,47 @@
             colSeq: 0,
             rowSeq: 0,
             saving: false,
-            focusCol: null,
+
+            templates: {
+                pesanan: {
+                    name: 'Rekap Pesanan',
+                    columns: [
+                        { key: 'pelanggan', label: 'Pelanggan', type: 'text', total: false },
+                        { key: 'produk', label: 'Produk', type: 'text', total: false },
+                        { key: 'qty', label: 'Qty', type: 'number', total: true },
+                        { key: 'harga', label: 'Harga', type: 'currency', total: true },
+                    ],
+                },
+                po: {
+                    name: 'Rekap PO',
+                    columns: [
+                        { key: 'supplier', label: 'Supplier', type: 'text', total: false },
+                        { key: 'item', label: 'Item', type: 'text', total: false },
+                        { key: 'qty', label: 'Qty', type: 'number', total: true },
+                        { key: 'modal', label: 'Modal', type: 'currency', total: true },
+                        { key: 'jual', label: 'Jual', type: 'currency', total: true },
+                    ],
+                },
+                kosong: {
+                    name: 'Rekapan Baru',
+                    columns: [{ key: 'keterangan', label: 'Keterangan', type: 'text', total: false }],
+                },
+            },
 
             init() {
+                if (!this.columns.length) this.applyTemplate('pesanan');
                 this.colSeq = this.columns.length;
                 this.rowSeq = this.rows.length;
-                if (!this.columns.length) this.addColumn();
+            },
+
+            applyTemplate(key) {
+                const t = this.templates[key];
+                if (!t) return;
+                this.columns = t.columns.map(c => ({ ...c }));
+                this.rows = [];
+                this.colSeq = this.columns.length;
+                this.rowSeq = 0;
+                this.name = this.name || t.name;
             },
 
             addColumn() {
@@ -43,9 +79,7 @@
             removeRow(idx) { this.rows.splice(idx, 1); },
 
             isNum(col) { return col.type === 'number' || col.type === 'currency'; },
-            colTotal(key) {
-                return this.rows.reduce((s, r) => s + (Number(r.cells[key]) || 0), 0);
-            },
+            colTotal(key) { return this.rows.reduce((s, r) => s + (Number(r.cells[key]) || 0), 0); },
             grandTotal() {
                 return this.columns
                     .filter(c => this.isNum(c) && c.total)
@@ -53,20 +87,19 @@
             },
             fmt(n) { return (Number(n) || 0).toLocaleString('id-ID'); },
             formatRp(n) { return 'Rp ' + this.fmt(n); },
-
-            // Keyboard: Enter -> baris berikutnya, Tab -> kolom berikutnya (native),
-            // ArrowUp/Down pindah baris. Fokus dipindah manual supaya mirip Excel.
-            move(e, rowIdx, colIdx, dir) {
-                const nRows = this.rows.length;
-                if (dir === 'down') { e.preventDefault(); this.focusCell(rowIdx + 1, colIdx); }
-                if (dir === 'up') { e.preventDefault(); this.focusCell(rowIdx - 1, colIdx); }
-                if (dir === 'next') { this.focusCell(rowIdx, colIdx + 1); }
+            display(col, val) {
+                if (!this.isNum(col)) return val;
+                return col.type === 'currency' ? this.formatRp(val) : this.fmt(val);
             },
+
             focusCell(rowIdx, colIdx) {
                 if (rowIdx < 0 || rowIdx >= this.rows.length) return;
                 const el = this.$el.querySelector(`[data-cell="r${rowIdx}-c${colIdx}"]`);
                 if (el) { el.focus(); el.select?.(); }
-                else if (rowIdx >= this.rows.length - 1) { this.addRow(); }
+            },
+            move(e, rowIdx, colIdx, dir) {
+                if (dir === 'down') { e.preventDefault(); this.focusCell(rowIdx + 1, colIdx); }
+                if (dir === 'up') { e.preventDefault(); this.focusCell(rowIdx - 1, colIdx); }
             },
         };
     }
