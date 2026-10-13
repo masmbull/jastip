@@ -22,10 +22,13 @@
         </td>
         <td class="px-4 py-3">
             <div class="flex items-center space-x-2">
-                <a href="{{ route('admin.orders.invoice', $invoice) }}" target="_blank" rel="noopener"
+                <button type="button"
+                   data-inv-url="{{ route('admin.orders.invoice', $invoice) }}?embed=1"
+                   data-inv-title="Invoice #{{ $invoice->no }}"
+                   @click="$dispatch('jd-invoice', {url:$el.dataset.invUrl, title:$el.dataset.invTitle})"
                    class="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 text-sm font-medium transition-colors">
                     <x-icon name="clipboard" class="w-4 h-4" /> Cetak
-                </a>
+                </button>
                 <a href="{{ route('admin.orders.show', $invoice->id) }}"
                    class="text-[#94A3B8] hover:text-orange-600 text-sm font-medium transition-colors">
                     Lihat

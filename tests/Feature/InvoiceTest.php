@@ -100,4 +100,32 @@ class InvoiceTest extends TestCase
             ->get(route('admin.orders.invoice', $order))
             ->assertForbidden();
     }
+
+    public function test_embed_mode_hides_toolbar_for_modal(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $order = Order::create([
+            'order_number' => 'NDTEST-INV004',
+            'customer_name' => 'Embed',
+            'customer_whatsapp' => '081200000003',
+            'customer_address' => 'Z',
+            'subtotal' => 1000,
+            'shipping_cost' => 0,
+            'total' => 1000,
+            'status' => Order::STATUS_AWAITING_PAYMENT,
+        ]);
+
+        // Full page: back link + print button present.
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Kembali ke pesanan');
+
+        // Embed (modal iframe): toolbar stripped, invoice body still rendered.
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order).'?embed=1')
+            ->assertOk()
+            ->assertDontSee('Kembali ke pesanan')
+            ->assertSee('INVOICE');
+    }
 }

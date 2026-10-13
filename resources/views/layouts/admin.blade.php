@@ -152,6 +152,39 @@
 <x-toast />
 <x-confirm-modal />
 
+{{-- Invoice modal: cetak lewat iframe agar hanya lembar invoice yang tercetak.
+     Dipicu oleh event `jd-invoice` dari tombol Cetak. --}}
+<div x-data="jdInvoiceModal()" x-cloak
+     @jd-invoice.window="open($event.detail)"
+     @keydown.escape.window="show && close()">
+    <template x-if="show">
+        <div class="fixed inset-0 z-[400] flex items-center justify-center">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="close()"></div>
+            <div class="relative bg-white dark:bg-[#23252b] rounded-xl shadow-xl w-full max-w-4xl mx-4 my-6 overflow-hidden flex flex-col max-h-[92vh] animate-scale-in"
+                 @click.stop>
+                <div class="p-4 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between bg-white dark:bg-[#23252b]">
+                    <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]" x-text="title"></h3>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="print()"
+                                class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-[#0891B2] hover:bg-[#0E7490] text-white font-medium rounded-lg shadow-sm transition-colors">
+                            <x-icon name="clipboard" class="w-4 h-4" /> Cetak / Simpan PDF
+                        </button>
+                        <button type="button" @click="close()" aria-label="Tutup"
+                                class="text-[#94A3B8] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors">
+                            <x-icon name="x" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-hidden bg-[#F1F5F9] dark:bg-[#1a1a1a]">
+                    <template x-if="url">
+                        <iframe x-ref="frame" :src="url" class="w-full h-full min-h-[75vh]" title="Invoice"></iframe>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
 {{-- iOS (iPhone) tak punya prompt install otomatis: tampilkan petunjuk
      "Add to Home Screen" sekali, hanya di Safari iOS dan bila belum standalone. --}}
 <div x-data="{

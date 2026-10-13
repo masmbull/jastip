@@ -61,6 +61,7 @@ class InvoiceController extends Controller
         return view('admin.orders.invoice', [
             'order' => $order,
             'autoPrint' => $request->boolean('print'),
+            'embed' => $request->boolean('embed'),
             'qrisImage' => $qrisImage,
             'qrisMerchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
             'rekeningImage' => $publicUrl(config('invoice.rekening_image')),

@@ -23,7 +23,9 @@
     $whatsapp = setting('whatsapp');
 @endphp
 
-{{-- Toolbar (tidak tercetak) --}}
+{{-- Toolbar (tidak tercetak). Saat dibuka dalam modal (embed), toolbar
+     disembunyikan karena tombol cetak sudah ada di modal. --}}
+@if(!($embed ?? false))
 <div class="no-print sticky top-0 z-10 bg-white border-b border-[#E2E8F0]">
     <div class="max-w-[820px] mx-auto px-4 py-3 flex items-center justify-between">
         <a href="{{ route('admin.orders.show', $order) }}" class="text-sm text-orange-600 hover:underline">&larr; Kembali ke pesanan</a>
@@ -33,6 +35,7 @@
         </button>
     </div>
 </div>
+@endif
 
 {{-- Lembar invoice --}}
 <div class="sheet max-w-[820px] mx-auto bg-white my-6 p-8 md:p-10 shadow-sm border border-[#E2E8F0]">
