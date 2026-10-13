@@ -68,4 +68,76 @@ class InvoiceController extends Controller
             'paidImage' => $publicUrl(config('invoice.paid_image')),
         ]);
     }
+
+    /**
+     * Dokumen pratinjau cetak untuk SAMPEL invoice (struk thermal).
+     *
+     * Dimuat di dalam <iframe> modal "Pratinjau Cetak Sampel Invoice" pada
+     * halaman daftar invoice. Isi memakai data contoh (fixture): preview dan
+     * PDF identik karena keduanya merender halaman yang sama.
+     *
+     * Ganti isi sampleInvoice() dengan data transaksi nyata bila sudah tersedia;
+     * struktur data sudah dipisah dari view supaya view tidak perlu diubah.
+     */
+    public function sample(Request $request)
+    {
+        Gate::authorize('viewAny', Order::class);
+
+        return view('admin.invoices.sample', [
+            'preset' => strtoupper((string) $request->input('preset', 'COMPACT')),
+            'invoice' => $this->sampleInvoice(),
+        ]);
+    }
+
+    /**
+     * Data contoh (fixture) untuk pratinjau sampel. Perhitungan dilakukan dari
+     * baris item (qty x harga, fee jastip per pc), bukan angka total hardcoded.
+     *
+     * @return array<string, mixed>
+     */
+    private function sampleInvoice(): array
+    {
+        $items = [
+            ['name' => 'Uniqlo Heattech Extra Warm Thermal', 'qty' => 2, 'price' => 299000, 'jastip' => 35000, 'variant' => 'Black [L]'],
+            ['name' => 'Gentle Monster Her 01 Sunglasses', 'qty' => 1, 'price' => 3200000, 'jastip' => 250000, 'variant' => 'Glossy Black [Free Size]'],
+        ];
+
+        $qty = 0;
+        $subtotal = 0;
+        $feeJastip = 0;
+
+        foreach ($items as &$item) {
+            $item['subtotal'] = $item['qty'] * $item['price'];
+            $item['fee_total'] = $item['qty'] * $item['jastip'];
+            $qty += $item['qty'];
+            $subtotal += $item['subtotal'];
+            $feeJastip += $item['fee_total'];
+        }
+        unset($item);
+
+        $packing = 15000;
+
+        return [
+            'brand_line1' => 'JASTIP IMOBY BANDUNG BY',
+            'brand_line2' => 'DANESHA',
+            'logo_text' => 'D',
+            'subtitle' => 'STRUK INVOICE JASTIP ESTIMASI (SAMPEL)',
+            'number' => 'INV-SAMPLE-2026',
+            'date' => '28-09-2026 00:00',
+            'customer' => [
+                'name' => 'Nabila Putri (Sampel Pelanggan)',
+                'wa' => '628123456789',
+                'courier' => 'JNE YES (Express)',
+            ],
+            'items' => $items,
+            'qty' => $qty,
+            'subtotal' => $subtotal,
+            'fee_jastip' => $feeJastip,
+            'packing' => $packing,
+            'total' => $subtotal + $feeJastip + $packing,
+            'payment' => ['title' => 'REK. PEMBAYARAN:', 'lines' => ['BCA 098765432', 'An Damesha']],
+            'thanks' => 'Terima kasih telah berbelanja jastip bersama Jastip Imoby By Damesha!',
+            'footer_note' => '=== SIMPAN STRUK INI SEBAGAI BUKTI PESANAN ===',
+        ];
+    }
 }

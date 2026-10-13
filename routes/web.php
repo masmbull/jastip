@@ -208,6 +208,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Daftar invoice manual (buat via form manual, bukan checkout).
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
 
+        // Dokumen pratinjau cetak sampel invoice (struk thermal, preset COMPACT).
+        Route::get('/invoice/sampel', [InvoiceController::class, 'sample'])->name('invoices.sample');
+
         // Rekapan manual (spreadsheet/pivot sederhana: kolom & baris bebas).
         Route::get('/rekapan', [RecapController::class, 'index'])->name('recaps.index');
         Route::get('/rekapan/create', [RecapController::class, 'create'])->name('recaps.create');

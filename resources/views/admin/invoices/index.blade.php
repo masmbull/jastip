@@ -3,10 +3,13 @@
 
 @section('content')
 @php($activeStatus = request('status', 'all'))
-<div class="space-y-6" x-data="{ open: false }" @close-manual-invoice.window="open = false"
-     @keydown.escape.window="open = false">
+<div class="space-y-6" x-data="{ open: false, sampleOpen: false, sampleLoaded: false, sampleError: false }"
+     @close-manual-invoice.window="open = false"
+     @keydown.escape.window="open = false; sampleOpen = false">
     <x-page-header title="Invoice" subtitle="Invoice manual yang dibuat admin" class="animate-fade-up">
         <x-btn as="a" :href="route('admin.orders.index')" variant="ghost">Semua Pesanan</x-btn>
+        <x-btn type="button" variant="outline" icon="printer"
+               @click="sampleOpen = true; sampleLoaded = false; sampleError = false">Pratinjau Sampel</x-btn>
         <x-btn type="button" icon="plus" @click="open = true">Buat Invoice</x-btn>
     </x-page-header>
 
@@ -65,6 +68,7 @@
     @endif
 
     @include('admin.invoices._modal')
+    @include('admin.invoices._sample-modal')
 </div>
 @endsection
 
