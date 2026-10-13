@@ -19,8 +19,8 @@
                     @if($brandLogo)
                         <img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="h-10 w-10 object-contain">
                     @else
-                        <div class="h-10 w-10 rounded-full bg-orange-300 flex items-center justify-center">
-                            <span class="text-[#1E293B] font-bold text-lg">N</span>
+                        <div class="h-10 w-10 rounded-[10px] bg-[#FFC800] border-2 border-white/40 flex items-center justify-center shrink-0">
+                            <span class="text-[#141414] font-black text-lg">N</span>
                         </div>
                     @endif
                     <div>
@@ -59,7 +59,7 @@
                 <div class="flex space-x-4">
                     <a href="https://instagram.com/{{ $instagram }}" target="_blank" rel="noopener"
                        aria-label="Instagram {{ $instagram }}" title="Instagram"
-                       class="w-11 h-11 bg-[#155E75] rounded-full flex items-center justify-center text-orange-400 hover:bg-orange-500 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                       class="w-11 h-11 border-2 border-white/30 rounded-[10px] flex items-center justify-center text-[#FFC800] hover:bg-[#FFC800] hover:text-[#141414] hover:border-[#FFC800] transition-colors">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2.16c3.2 0 3.58.01 4.84.07 1.17.05 1.8.25 2.23.41.56.22.96.47 1.4.9.45.45.7 1.04.9 1.6.18.53.37 1.21.42 2.62.06 1.26.07 1.64.07 4.84s-.01 3.58-.07 4.84c-.05 1.17-.25 1.8-.41 2.23-.22.56-.47.96-.9 1.4-.45.45-1.04.7-1.6.9-.53.18-1.21.37-2.62.42-1.26.06-1.64.07-4.84.07s-3.58-.01-4.84-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.47-1.4-.9-.45-.45-.7-1.04-.9-1.6-.18-.53-.37-1.21-.42-2.62-.06-1.26-.07-1.64-.07-4.84s.01-3.58.07-4.84c.05-1.17.25-1.8.41-2.23.22-.56.47-.96.9-1.4.45-.45 1.04-.7 1.6-.9.53-.18 1.21-.37 2.62-.42 1.26-.06 1.64-.07 4.84-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.82.33 3.99.65c-.88.33-1.67.75-2.45 1.53S.36 3.11.06 4.99C.01 5.78 0 5.37 0 6.65V12v5.35c0 1.28.01 1.69.07 2.97.06 1.27.26 2.23.58 3.06.33.88.75 1.67 1.53 2.45s1.57 1.2 2.45 1.53c.83.32 1.79.52 3.06.58 1.28.06 1.69.07 2.97.07s1.69-.01 2.97-.07c1.27-.06 2.23-.26 3.06-.58.88-.33 1.67-.75 2.45-1.53s1.2-1.57 1.53-2.45c.32-.83.52-1.79.58-3.06.06-1.28.07-1.69.07-2.97s-.01-1.69-.07-2.97c-.06-1.27-.26-2.23-.58-3.06-.33-.88-.75-1.67-1.53-2.45s-1.57-1.2-2.45-1.53c-.83-.32-1.79-.52-3.06-.58C15.31.01 14.9 0 12 0z" />
                             <path fill-rule="evenodd" d="M12 5.84A4.16 4.16 0 1016.16 10 4.16 4.16 0 0112 5.84zM12 16.16a5.16 5.16 0 115.16-5.16A5.16 5.16 0 0112 16.16z" />
@@ -68,7 +68,7 @@
                     </a>
                     <a href="https://tiktok.com/@{{ $tiktok }}" target="_blank" rel="noopener"
                        aria-label="TikTok {{ $tiktok }}" title="TikTok"
-                       class="w-11 h-11 bg-[#155E75] rounded-full flex items-center justify-center text-orange-400 hover:bg-orange-500 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                       class="w-11 h-11 border-2 border-white/30 rounded-[10px] flex items-center justify-center text-[#FFC800] hover:bg-[#FFC800] hover:text-[#141414] hover:border-[#FFC800] transition-colors">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M19.59 6.51c-1.33-.56-2.75-.84-4.21-.84-3.31 0-6.14 2.36-6.86 5.55 1.93-.38 3.68-.16 5.14.71.28.16.53.36.76.57.43-.13 1.15-.23 1.68-.05.18-.43.35-1.08.44-1.62.13-.65-.18-1.48-.76-2.1-.89-1.04-2.11-1.53-3.3-1.43-.03.38-.14.98.12 1.94.26.96.78 1.98 1.47 2.72.88 1 .77 1.9.74 2.23.02.27-.13.95-.49 1.88-1.51.04-2.8-.62-4.03-1.85-1.22-1.23-1.88-2.99-1.88-4.83 0-3.08 2.23-5.71 5.31-6.34.52-.09 1.09-.14 1.66-.14.68 0 1.32.09 1.91.25.49-.47 1.04-.86 1.68-1.15.64-.3 1.34-.44 2.06-.48-.18.46-.35.94-.49 1.43z" />
                         </svg>

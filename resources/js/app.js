@@ -311,6 +311,7 @@ window.Alpine = Alpine;
     window.addEventListener('beforeinstallprompt', function (e) {
         e.preventDefault();
         deferredPrompt = e;
+        window.__pwaReady = true;
         window.dispatchEvent(new CustomEvent('pwa:ready'));
     });
     window.addEventListener('appinstalled', function () { deferredPrompt = null; });

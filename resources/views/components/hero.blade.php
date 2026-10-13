@@ -4,72 +4,71 @@
     $backgroundImage = $backgroundImage ?? (setting('homepage_hero') ? asset('storage/' . setting('homepage_hero')) : null);
 @endphp
 
-<section class="relative bg-gradient-to-br from-cyan-100 via-sky-50 to-white dark:from-[#1a1a1a] dark:via-[#23252b] dark:to-[#1a1a1a] overflow-hidden">
-    <!-- Decorative blobs -->
-    <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 dark:opacity-20" aria-hidden="true"></div>
-    <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 dark:opacity-20" aria-hidden="true"></div>
+<section class="bg-[#FAF6EF] dark:bg-[#121212] border-b-2 border-[#141414] dark:border-[#FAF6EF] overflow-hidden transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20 lg:py-24">
+        <div class="max-w-3xl">
+            <p class="inline-block text-sm md:text-base font-black text-[#141414] dark:text-[#FAF6EF]">
+                <span class="nb-marker">{{ setting('brand_tagline', 'EH, NITIP DONG!') }}</span>
+            </p>
 
-    @if($backgroundImage)
-        <div class="absolute inset-0" aria-hidden="true">
-            <img src="{{ $backgroundImage }}" alt="" class="w-full h-full object-cover opacity-10" loading="lazy" decoding="async">
-        </div>
-    @endif
-
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-28 lg:py-32">
-        <div class="text-center max-w-4xl mx-auto animate-fade-up">
-            <x-badge tone="brand" class="mb-6 px-4 py-1.5 text-sm font-medium">
-                <x-icon name="bag" class="w-4 h-4" /> {{ setting('hero_badge', 'Titipan Spesial Untukmu') }}
-            </x-badge>
-
-            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1E293B] dark:text-[#f1f5f9] mb-6 leading-tight">
+            <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#141414] dark:text-[#FAF6EF] leading-[1.05]">
                 {{ setting('brand_name', 'NITIP DI END') }}
             </h1>
 
-            <p class="text-lg md:text-2xl text-orange-600 dark:text-orange-400 font-semibold mb-6">
-                {{ setting('brand_tagline', 'EH, NITIP DONG!') }}
-            </p>
-
-            <p class="text-base md:text-lg text-[#64748B] dark:text-[#cbd5e1] mb-8 max-w-2xl mx-auto">
+            <p class="mt-5 text-base md:text-lg font-medium text-[#475569] dark:text-[#D6D3D1] leading-relaxed max-w-2xl">
                 {{ setting('hero_description', 'Temukan berbagai produk impian dengan harga terbaik. Gratis ongkir untuk pemesanan di atas Rp 150.000.') }}
             </p>
 
-            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10">
-                <x-btn as="a" :href="route('products.index')" icon="cart"
-                       class="px-8 py-4 rounded-full shadow-lg text-base font-bold">
+            <div class="flex flex-col sm:flex-row gap-3 mt-8">
+                <x-btn as="a" :href="route('products.index')" variant="accent" icon="cart"
+                       class="px-7 py-3.5 text-base">
                     Mulai Belanja
                 </x-btn>
-                <x-btn as="a" :href="route('products.index', ['sort' => 'popular'])" variant="outline"
-                       class="px-8 py-4 rounded-full shadow-lg text-base font-bold border-2 border-orange-200 dark:border-orange-500/40 text-orange-600 dark:text-orange-400">
+                <x-btn as="a" :href="route('products.index', ['sort' => 'popular'])" variant="ghost"
+                       class="px-7 py-3.5 text-base">
                     Produk Favorit
                 </x-btn>
             </div>
         </div>
     </div>
+
+    @if($backgroundImage)
+        <div class="border-t-2 border-[#141414] dark:border-[#FAF6EF]">
+            <img src="{{ $backgroundImage }}" alt="Suasana titipan {{ setting('brand_name', 'NITIP DI END') }}" class="w-full h-56 md:h-72 object-cover" loading="lazy" decoding="async">
+        </div>
+    @endif
 </section>
 
-<!-- Feature Highlights -->
-<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white dark:bg-[#1a1a1a]">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 text-center animate-fade-up">
-        <div class="p-6 rounded-xl border border-[#E2E8F0] dark:border-[#404854]">
-            <div class="w-12 h-12 mx-auto bg-orange-100 dark:bg-orange-500/15 rounded-full flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                <x-icon name="truck" class="w-6 h-6" />
+<div class="bg-white dark:bg-[#1E1E1E] transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+            <div class="nb-card p-5 bg-[#FFF7D6]! dark:bg-[#262626]! flex gap-4 text-left">
+                <div class="shrink-0 w-12 h-12 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#141414]">
+                    <x-icon name="truck" class="w-6 h-6" />
+                </div>
+                <div>
+                    <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Gratis Ongkir</h2>
+                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Untuk pemesanan di atas Rp 150.000</p>
+                </div>
             </div>
-            <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Gratis Ongkir</h3>
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Untuk pemesanan di atas Rp 150.000</p>
-        </div>
-        <div class="p-6 rounded-xl border border-[#E2E8F0] dark:border-[#404854]">
-            <div class="w-12 h-12 mx-auto bg-orange-100 dark:bg-orange-500/15 rounded-full flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                <x-icon name="lock" class="w-6 h-6" />
+            <div class="nb-card p-5 flex gap-4 text-left">
+                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#0E7490] dark:text-[#22D3EE]">
+                    <x-icon name="lock" class="w-6 h-6" />
+                </div>
+                <div>
+                    <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Bayar di Tempat</h2>
+                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Cash on delivery saat barang sampai</p>
+                </div>
             </div>
-            <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Bayar di Tempat</h3>
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Cash on delivery saat barang sampai</p>
-        </div>
-        <div class="p-6 rounded-xl border border-[#E2E8F0] dark:border-[#404854]">
-            <div class="w-12 h-12 mx-auto bg-orange-100 dark:bg-orange-500/15 rounded-full flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
-                <x-icon name="shield-check" class="w-6 h-6" />
+            <div class="nb-card p-5 flex gap-4 text-left">
+                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#0E7490] dark:text-[#22D3EE]">
+                    <x-icon name="shield-check" class="w-6 h-6" />
+                </div>
+                <div>
+                    <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Garansi Autentik</h2>
+                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Produk asli terjamin</p>
+                </div>
             </div>
-            <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Garansi Autentik</h3>
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Produk 100% asli terjamin</p>
         </div>
     </div>
 </div>

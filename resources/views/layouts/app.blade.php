@@ -61,20 +61,20 @@
         }
     </script>
 </head>
-<body class="bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] font-sans antialiased min-h-screen flex flex-col transition-colors duration-300"
+<body class="bg-[#FAF6EF] dark:bg-[#121212] text-[#141414] dark:text-[#FAF6EF] font-sans antialiased min-h-screen flex flex-col transition-colors duration-150"
       x-data="{ mobileMenuOpen: false, searchOpen: false }"
       x-cloak>
 
         {{-- Skip to content --}}
-        <a href="#main-content" class="sr-only focus:not-sr-only absolute top-4 left-4 z-50 bg-orange-500 text-white px-4 py-2 rounded">
-            Skip to main content
+        <a href="#main-content" class="sr-only focus:not-sr-only absolute top-4 left-4 z-50 nb-btn px-4 py-2 text-sm bg-[#FFC800] text-[#141414]">
+            Lewati ke konten
         </a>
 
         {{-- NAVBAR --}}
         <x-navbar />
 
         {{-- MAIN CONTENT --}}
-                <main id="main-content" class="flex-1 pb-20 md:pb-0 animate-fade-up">
+                <main id="main-content" class="flex-1 pb-20 lg:pb-0">
             @yield('content')
         </main>
 
@@ -88,6 +88,9 @@
         <x-toast />
         <x-confirm-modal />
 
+        {{-- Pasang sebagai aplikasi (PWA) --}}
+        <x-pwa-install />
+
         {{-- Mobile menu overlay --}}
         <div x-show="mobileMenuOpen"
              x-transition.opacity
@@ -98,7 +101,7 @@
         <div x-show="searchOpen"
              x-transition
              x-cloak
-             class="fixed inset-x-0 top-16 z-[200] bg-white/95 dark:bg-[#1a1a1a]/95 backdrop-blur border-b border-[#E2E8F0] dark:border-[#404854] shadow-lg">
+             class="fixed inset-x-0 top-16 z-[200] bg-white dark:bg-[#1E1E1E] border-b-2 border-[#141414] dark:border-[#FAF6EF]">
             <form method="GET" action="{{ route('products.index') }}"
                   @submit="searchOpen = false"
                   role="search"
@@ -106,14 +109,14 @@
                 <label for="nav-search" class="sr-only">Cari produk</label>
                 <input type="search" id="nav-search" name="q" placeholder="Cari produk..."
                        autocomplete="off"
-                       class="flex-1 px-4 py-2.5 border border-[#E2E8F0] dark:border-[#404854] rounded-lg bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] dark:placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                       class="nb-input flex-1 px-4 py-2.5 text-sm">
                 <button type="submit"
-                        class="px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="nb-btn px-5 py-2.5 text-sm bg-[#0E7490] text-white">
                     Cari
                 </button>
                 <button type="button" @click="searchOpen = false"
                         aria-label="Tutup pencarian" title="Tutup"
-                        class="px-3 py-2.5 rounded-lg text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="nb-btn px-3 py-2.5 bg-white dark:bg-[#262626]">
                     <x-icon name="x" class="w-5 h-5" />
                 </button>
             </form>

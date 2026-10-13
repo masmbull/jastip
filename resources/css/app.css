@@ -274,8 +274,9 @@ html.dark [class*="text-[#666666]"],
 html.dark [class*="text-[#444444]"],
 html.dark [class*="text-[#CBD5E1]"] { color: var(--dt-muted); }
 
-/* Links default to brand amber in dark mode */
-html.dark a { color: var(--dt-rose); }
+/* Links default to brand amber in dark mode (except brutalist buttons,
+   which carry their own passing text color). */
+html.dark a:not(.nb-btn) { color: var(--dt-rose); }
 
 /* Tailwind badge colors for status chips */
 html.dark .bg-amber-50 { background-color: rgba(8, 145, 178, 0.12); }

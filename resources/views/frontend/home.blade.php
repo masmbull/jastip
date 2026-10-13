@@ -3,18 +3,19 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    {{-- Hero --}}
     <x-hero />
 
-    {{-- Category Section --}}
-    <section class="py-12 md:py-16 reveal">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">Jelajahi Kategori</h2>
-            <p class="text-[#64748B] dark:text-[#cbd5e1]">Temukan produk berdasarkan kategori yang kamu inginkan.</p>
+    <section class="py-10 md:py-14">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-black tracking-tight"><span class="nb-marker">Jelajahi Kategori</span></h2>
+                <p class="font-medium text-[#475569] dark:text-[#D6D3D1] mt-2">Pilih kategori yang kamu inginkan.</p>
+            </div>
+            <x-btn as="a" :href="route('categories.index')" variant="ghost">Semua Kategori</x-btn>
         </div>
 
         @if($categories->isNotEmpty())
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 @foreach($categories as $category)
                     <x-category-card :category="$category" />
                 @endforeach
@@ -24,15 +25,17 @@
         @endif
     </section>
 
-    {{-- Featured Products --}}
-    <section class="py-12 md:py-16 bg-white dark:bg-[#23252b] rounded-2xl shadow-sm reveal">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">Produk Unggulan</h2>
-            <p class="text-[#64748B] dark:text-[#cbd5e1]">Pilihan produk yang sedang ramai dibeli.</p>
+    <section class="my-4 md:my-6 nb-card p-0! overflow-hidden">
+        <div class="px-5 sm:px-7 pt-6 sm:pt-8 pb-2 flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-black tracking-tight">Produk Unggulan</h2>
+                <p class="font-medium text-[#475569] dark:text-[#D6D3D1] mt-2">Pilihan produk yang sedang ramai dibeli.</p>
+            </div>
+            <x-btn as="a" :href="route('products.index')">Lihat Semua Produk</x-btn>
         </div>
 
         @if($featuredProducts->isNotEmpty())
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 p-5 sm:p-7 pt-5">
                 @foreach($featuredProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -40,23 +43,16 @@
         @else
             <x-empty-state icon="cube" title="Belum ada produk." />
         @endif
-
-        <div class="text-center mt-10">
-            <x-btn as="a" :href="route('products.index')" class="px-8 py-3 rounded-full shadow-md">
-                Lihat Semua Produk
-            </x-btn>
-        </div>
     </section>
 
-    {{-- Popular Products --}}
-    <section class="py-12 md:py-16 reveal">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">Produk Populer</h2>
-            <p class="text-[#64748B] dark:text-[#cbd5e1]">Produk terlaris pilihan customers.</p>
+    <section class="py-10 md:py-14 border-t-2 border-[#141414] dark:border-[#FAF6EF] mt-10">
+        <div class="mb-6">
+            <h2 class="text-2xl md:text-3xl font-black tracking-tight">Produk Populer</h2>
+            <p class="font-medium text-[#475569] dark:text-[#D6D3D1] mt-2">Produk terlaris pilihan pelanggan.</p>
         </div>
 
         @if($popularProducts->isNotEmpty())
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
                 @foreach($popularProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -66,19 +62,17 @@
         @endif
     </section>
 
-    {{-- Produk Viral --}}
     @if(isset($viralProducts) && $viralProducts->isNotEmpty())
-        <section class="py-12 md:py-16 reveal">
-            <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <section class="pb-10 md:pb-14">
+            <div class="bg-[#141414] dark:bg-[#FAF6EF] rounded-[12px] border-2 border-[#141414] dark:border-[#FAF6EF] p-5 sm:p-7 mb-6 flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <x-badge tone="brand" class="uppercase tracking-wide font-bold">Trending 2024-2025</x-badge>
-                    <h2 class="mt-3 text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Produk Viral</h2>
-                    <p class="mt-2 text-[#64748B] dark:text-[#cbd5e1]">Produk yang sedang ramai diburu di TikTok Shop &amp; Shopee Indonesia.</p>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-white dark:text-[#141414]">Produk Viral</h2>
+                    <p class="font-medium text-white/70 dark:text-[#141414]/70 mt-2">Dikurasi admin dari katalog yang lagi ramai.</p>
                 </div>
-                <x-btn as="a" :href="route('products.viral')" class="px-5 py-2.5 rounded-full">Lihat Semua</x-btn>
+                <a href="{{ route('products.viral') }}" class="nb-btn px-5 py-2.5 bg-[#FFC800] text-[#141414] border-[#FFC800]!">Lihat Semua</a>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
                 @foreach($viralProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -86,15 +80,14 @@
         </section>
     @endif
 
-    {{-- Call to Action --}}
-    <section class="py-16 md:py-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded-3xl shadow-xl text-center text-white mb-12 reveal">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Butuh Bantuan?</h2>
-        <p class="text-lg md:text-xl text-orange-100 mb-6 max-w-2xl mx-auto">
-            Ada pertanyaan? Hubungi admin kami via WhatsApp untuk bantuan cepat.
+    <section class="mb-12 bg-[#141414] dark:bg-[#FAF6EF] rounded-[12px] border-2 border-[#141414] dark:border-[#FAF6EF] p-8 md:p-12 text-center" style="box-shadow: 6px 6px 0 #FFC800">
+        <h2 class="text-2xl md:text-4xl font-black tracking-tight text-white dark:text-[#141414]">Butuh Bantuan?</h2>
+        <p class="text-base md:text-lg font-medium text-white/75 dark:text-[#141414]/75 mt-3 max-w-2xl mx-auto">
+            Ada pertanyaan? Hubungi admin via WhatsApp untuk bantuan cepat.
         </p>
         <a href="{{ \App\Services\WhatsappService::contactUrl('Halo Kak, saya mau tanya soal nitipan di ' . setting('brand_name', 'NITIP DI END')) }}"
            target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-orange-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
+           class="nb-btn px-8 py-4 text-base bg-[#FFC800] text-[#141414] border-[#FFC800]! mt-7">
             <x-icon name="chat" class="w-5 h-5" />
             Chat Admin
         </a>

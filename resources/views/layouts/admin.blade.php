@@ -205,31 +205,8 @@
     </template>
 </div>
 
-{{-- iOS (iPhone) tak punya prompt install otomatis: tampilkan petunjuk
-     "Add to Home Screen" sekali, hanya di Safari iOS dan bila belum standalone. --}}
-<div x-data="{
-        show: false,
-        init() {
-            const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const dismissed = localStorage.getItem('a2hs-dismissed') === '1';
-            this.show = isIOS && !standalone && !dismissed;
-        },
-        dismiss() { this.show = false; localStorage.setItem('a2hs-dismissed', '1'); }
-     }"
-     x-show="show" x-cloak x-transition
-     class="fixed inset-x-3 bottom-3 z-[450] sm:left-auto sm:right-6 sm:max-w-sm">
-    <div class="bg-[#141414] dark:bg-[#FAF6EF] text-white dark:text-[#141414] rounded-[12px] p-4 flex items-start gap-3 border-2 border-[#141414] dark:border-[#FAF6EF]">
-        <x-icon name="download" class="w-5 h-5 shrink-0 mt-0.5" />
-        <div class="text-sm">
-            <p class="font-extrabold">Pasang sebagai aplikasi</p>
-            <p class="opacity-80 mt-0.5">Ketuk <span class="font-bold">Bagikan</span> lalu <span class="font-bold">Tambah ke Layar Utama</span> supaya kebuka seperti app.</p>
-        </div>
-        <button type="button" @click="dismiss()" class="shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Tutup">
-            <x-icon name="x" class="w-4 h-4" />
-        </button>
-    </div>
-</div>
+{{-- Pasang sebagai aplikasi (PWA): tombol install Chromium + petunjuk iOS. --}}
+<x-pwa-install />
 
 {{-- Quick-view modal: dispatches on `quickview` event, fetches a Blade partial via fetch() --}}
 <div x-data="jdQuickview()"
