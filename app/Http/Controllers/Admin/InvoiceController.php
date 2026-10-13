@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -70,9 +71,14 @@ class InvoiceController extends Controller
     {
         $ids = (clone $query)->pluck('orders.id');
 
-        $base = (clone $query)->selectRaw(
-            'COUNT(*) as orders, COALESCE(SUM(total), 0) as grand, COALESCE(SUM(down_payment), 0) as dp, COUNT(DISTINCT customer_whatsapp) as customers'
-        )->first();
+        // select() me-reset kolom bawaan (orders.* + subselect withCount),
+        // sehingga query agregat valid di MySQL strict mode (only_full_group_by).
+        $base = (clone $query)->select([
+            DB::raw('COUNT(*) as orders'),
+            DB::raw('COALESCE(SUM(total), 0) as grand'),
+            DB::raw('COALESCE(SUM(down_payment), 0) as dp'),
+            DB::raw('COUNT(DISTINCT customer_whatsapp) as customers'),
+        ])->first();
 
         $qty = \App\Models\OrderItem::whereIn('order_id', $ids)->sum('quantity');
         $paid = \App\Models\OrderPayment::whereIn('order_id', $ids)->sum('amount');
