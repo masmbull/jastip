@@ -5,27 +5,28 @@
 <div x-data="recapSheet({{ Js::from($recap->columns ?? []) }}, {{ Js::from(collect($recap->rows ?? [])->map(fn ($r) => ['key' => $r['key'] ?? '', 'cells' => (array) ($r['cells'] ?? [])])->values()) }})"
      class="space-y-4">
 
-    {{-- Bar judul + grand total --}}
     <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="flex items-center gap-2.5 min-w-0 flex-1">
             <a href="{{ $editing ? route('admin.recaps.show', $recap) : route('admin.recaps.index') }}"
-               class="shrink-0 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 p-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" aria-label="Kembali">
+               class="nb-btn shrink-0 w-11 h-11 !px-0 bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]" aria-label="Kembali">
                 <x-icon name="arrow-left" class="w-5 h-5" />
             </a>
-            <input type="text" x-model="name" maxlength="255" placeholder="Judul rekapan"
-                   aria-label="Judul rekapan"
-                   class="min-w-0 flex-1 text-xl font-bold bg-transparent border-0 text-[#1E293B] dark:text-[#f1f5f9] px-0 py-1 focus:outline-none placeholder-[#94A3B8]">
+            <div class="min-w-0 flex-1">
+                <label for="recap-title" class="block text-[11px] font-black uppercase tracking-[0.12em] text-[#475569] dark:text-[#D6D3D1] mb-1">Judul rekapan</label>
+                <input id="recap-title" type="text" x-model="name" maxlength="255" placeholder="Judul rekapan, mis. Rekap PO 12 Okt"
+                       class="nb-input w-full px-3 py-2 text-lg font-black text-[#141414] dark:text-[#FAF6EF] placeholder:font-bold placeholder:text-[#A8A29E]">
+            </div>
         </div>
-        <div class="shrink-0 flex items-baseline gap-2 rounded-lg bg-orange-50 dark:bg-orange-500/10 px-4 py-2">
-            <span class="text-xs font-medium uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1]">Grand Total</span>
-            <span class="text-lg font-bold text-orange-600 dark:text-orange-400 num" x-text="formatRp(grandTotal())"></span>
+        <div class="shrink-0 flex items-baseline gap-2 rounded-[10px] bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] px-4 py-2.5" style="box-shadow: 3px 3px 0 #141414" aria-live="polite">
+            <span class="text-[11px] font-black uppercase tracking-[0.1em] text-[#141414]">Grand Total</span>
+            <span class="text-lg font-black text-[#141414] num" x-text="formatRp(grandTotal())"></span>
         </div>
     </div>
 
     @if($errors->any())
-        <div class="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 text-sm rounded-lg p-4">
-            <p class="font-medium mb-1">Periksa kembali isian berikut:</p>
-            <ul class="list-disc list-inside space-y-0.5">
+        <div class="bg-[#FEE2E2] border-2 border-[#141414] rounded-[10px] text-[#991B1B] text-sm p-4" role="alert">
+            <p class="font-black mb-1">Periksa kembali isian berikut:</p>
+            <ul class="list-disc list-inside space-y-0.5 font-medium">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -36,44 +37,41 @@
     <form method="POST"
           action="{{ $editing ? route('admin.recaps.update', $recap) : route('admin.recaps.store') }}"
           @submit="saving = true"
-          class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden flex flex-col">
+          class="nb-card !p-0 overflow-hidden flex flex-col">
         @csrf
         @if($editing) @method('PUT') @endif
         <input type="hidden" name="name" :value="name">
 
-        {{-- Toolbar --}}
-        <div class="flex flex-wrap items-center gap-2 px-3 sm:px-4 py-3 border-b border-[#E2E8F0] dark:border-[#404854] bg-[#F8FAFC] dark:bg-[#2e323b]">
-            <button type="button" @click="addRow()"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+        <div class="flex flex-wrap items-center gap-2 px-3 sm:px-4 py-3 border-b-2 border-[#141414] dark:border-[#FAF6EF] bg-white dark:bg-[#1E1E1E]">
+            <button type="button" @click="addRow(); $nextTick(() => { const c = $el.closest('form').querySelector('[data-cell]'); })"
+                    class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white">
                 <x-icon name="plus" class="w-4 h-4" /> Baris
             </button>
             <button type="button" @click="addColumn()"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 text-sm bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg font-medium hover:border-orange-300 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    class="nb-btn px-3 py-2 text-sm bg-white dark:bg-[#262626] text-[#141414] dark:text-[#FAF6EF]">
                 <x-icon name="plus" class="w-4 h-4" /> Kolom
             </button>
 
-            {{-- Template (parent relative supaya dropdown tidak meleset) --}}
             <div class="relative" x-data="{ tplToggle: false }" @keydown.escape="tplToggle = false">
                 <button type="button" @click="tplToggle = !tplToggle" :aria-expanded="tplToggle ? 'true' : 'false'"
-                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg font-medium hover:border-orange-300 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="nb-btn px-3 py-2 text-sm bg-white dark:bg-[#262626] text-[#141414] dark:text-[#FAF6EF]">
                     <x-icon name="table" class="w-4 h-4" /> Template
                     <x-icon name="chevron-down" class="w-3.5 h-3.5" />
                 </button>
                 <div x-show="tplToggle" x-cloak @click.away="tplToggle = false"
-                     class="absolute left-0 top-full mt-1 w-60 z-30 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg shadow-lg overflow-hidden">
+                     class="absolute left-0 top-full mt-2 w-64 z-30 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] overflow-hidden" style="box-shadow: 4px 4px 0 #141414" role="menu">
                     <button type="button" @click="applyTemplate('pesanan'); tplToggle = false"
-                            class="w-full text-left px-4 py-2.5 text-sm hover:bg-orange-50 dark:hover:bg-orange-500/10 text-[#1E293B] dark:text-[#f1f5f9]">Rekap Pesanan</button>
+                            class="w-full text-left px-4 py-3 text-sm font-bold hover:bg-[#FFF7D6] dark:hover:bg-[#262626] text-[#141414] dark:text-[#FAF6EF] border-b border-[#141414]/10 min-h-[44px]">Rekap Pesanan <span class="block text-xs font-medium text-[#475569]">Pelanggan, Produk, Qty, Harga</span></button>
                     <button type="button" @click="applyTemplate('po'); tplToggle = false"
-                            class="w-full text-left px-4 py-2.5 text-sm hover:bg-orange-50 dark:hover:bg-orange-500/10 text-[#1E293B] dark:text-[#f1f5f9]">Rekap PO (Modal / Jual)</button>
+                            class="w-full text-left px-4 py-3 text-sm font-bold hover:bg-[#FFF7D6] dark:hover:bg-[#262626] text-[#141414] dark:text-[#FAF6EF] border-b border-[#141414]/10 min-h-[44px]">Rekap PO <span class="block text-xs font-medium text-[#475569]">Supplier, Item, Qty, Modal, Jual</span></button>
                     <button type="button" @click="applyTemplate('kosong'); tplToggle = false"
-                            class="w-full text-left px-4 py-2.5 text-sm hover:bg-orange-50 dark:hover:bg-orange-500/10 text-[#1E293B] dark:text-[#f1f5f9]">Mulai Kosong</button>
+                            class="w-full text-left px-4 py-3 text-sm font-bold hover:bg-[#FFF7D6] dark:hover:bg-[#262626] text-[#141414] dark:text-[#FAF6EF] min-h-[44px]">Mulai Kosong</button>
                 </div>
             </div>
 
-            <span class="hidden lg:inline text-xs text-[#94A3B8] dark:text-[#64748B] ml-auto">Ubah nama di header kolom. Enter turun, Tab ke kanan.</span>
+            <span class="hidden lg:inline text-xs font-bold text-[#475569] dark:text-[#D6D3D1] ml-auto">Klik header untuk ganti nama kolom. Enter turun, panah pindah sel.</span>
         </div>
 
-        {{-- Grid pivot --}}
         <div class="overflow-auto max-h-[68vh] min-h-[240px]"
              @keydown.tab="
                 const el = document.activeElement;
@@ -87,95 +85,98 @@
             <table class="border-collapse text-sm min-w-full">
                 <thead>
                     <tr>
-                        <th class="sticky top-0 left-0 z-30 w-12 bg-[#EEF2F6] dark:bg-[#23252b] border-b-2 border-r border-[#CBD5E1] dark:border-[#404854] text-xs font-semibold text-[#64748B] dark:text-[#cbd5e1] py-2.5 text-center">#</th>
+                        <th scope="col" class="sticky top-0 left-0 z-30 w-12 bg-[#141414] text-white border-b-2 border-r-2 border-[#141414] text-xs font-black py-2.5 text-center">#</th>
                         <template x-for="(col, ci) in columns" :key="col.key">
-                            <th class="sticky top-0 z-20 align-top bg-[#EEF2F6] dark:bg-[#23252b] border-b-2 border-r border-[#CBD5E1] dark:border-[#404854] p-0 min-w-[190px]">
+                            <th scope="col" class="sticky top-0 z-20 align-top bg-[#FAF6EF] dark:bg-[#262626] border-b-2 border-r border-[#141414]/25 dark:border-[#FAF6EF]/25 p-0 min-w-[200px]">
                                 <input type="hidden" :name="`columns[${ci}][key]`" :value="col.key">
                                 <input type="text" :name="`columns[${ci}][label]`" x-model="col.label"
                                        :data-collabel="col.key" placeholder="Nama kolom"
+                                       :aria-label="'Nama kolom ' + (ci + 1)"
                                        :class="isNum(col) ? 'num-head' : ''"
-                                       class="w-full px-3 pt-2.5 pb-1 text-sm font-semibold bg-transparent focus:outline-none text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8]">
+                                       class="w-full px-3 pt-2.5 pb-1 text-sm font-black bg-transparent text-[#141414] dark:text-[#FAF6EF] placeholder:text-[#A8A29E] min-h-[44px]">
                                 <div class="flex items-center gap-1.5 px-2.5 pb-2">
                                     <select :name="`columns[${ci}][type]`" x-model="col.type"
-                                            class="text-[11px] border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                            :aria-label="'Tipe kolom ' + (col.label || (ci + 1))"
+                                            class="nb-input !min-h-[36px] text-[12px] font-bold !border-[#141414] px-1.5 py-1">
                                         <option value="text">Teks</option>
                                         <option value="number">Angka</option>
                                         <option value="currency">Rupiah</option>
                                     </select>
-                                    <label class="inline-flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#cbd5e1] cursor-pointer" title="Ikut grand total">
+                                    <label class="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#475569] dark:text-[#D6D3D1] cursor-pointer min-h-[36px]" title="Ikut grand total">
                                         <input type="checkbox" value="1" :name="`columns[${ci}][total]`" x-model="col.total"
-                                               class="w-3.5 h-3.5 rounded border-[#CBD5E1] text-orange-500 focus:ring-orange-300">
+                                               class="w-4 h-4 accent-[#0E7490]">
                                         Total
                                     </label>
                                     <button type="button" @click="removeColumn(ci)" x-show="columns.length > 1"
-                                            class="ml-auto text-[#94A3B8] hover:text-red-600 p-0.5 rounded focus:outline-none focus:ring-2 focus:ring-red-300" aria-label="Hapus kolom" title="Hapus kolom">
-                                        <x-icon name="trash" class="w-3.5 h-3.5" />
+                                            class="ml-auto p-2 min-w-[36px] min-h-[36px] flex items-center justify-center text-[#475569] hover:text-[#991B1B]" :aria-label="'Hapus kolom ' + (col.label || (ci + 1))" title="Hapus kolom">
+                                        <x-icon name="trash" class="w-4 h-4" />
                                     </button>
                                 </div>
                             </th>
                         </template>
-                        <th class="sticky top-0 z-20 w-10 bg-[#EEF2F6] dark:bg-[#23252b] border-b-2 border-[#CBD5E1] dark:border-[#404854]"></th>
+                        <th scope="col" class="sticky top-0 z-20 w-14 bg-[#141414] border-b-2 border-[#141414]"><span class="sr-only">Aksi baris</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <template x-for="(row, ri) in rows" :key="row.key">
-                        <tr class="group">
-                            <td class="sticky left-0 z-10 bg-[#F8FAFC] dark:bg-[#23252b] group-hover:bg-[#E9EEF3] dark:group-hover:bg-[#2e323b] border-b border-r border-[#E2E8F0] dark:border-[#404854] text-center text-xs text-[#94A3B8] select-none num" x-text="ri + 1"></td>
+                        <tr class="group bg-white dark:bg-[#1E1E1E] hover:bg-[#FFFDF0] dark:hover:bg-[#262626]">
+                            <td class="sticky left-0 z-10 bg-[#FAF6EF] dark:bg-[#262626] border-b border-r border-[#141414]/20 text-center text-xs font-black text-[#475569] num" x-text="ri + 1"></td>
                             <input type="hidden" :name="`rows[${ri}][key]`" :value="row.key">
                             <template x-for="(col, ci) in columns" :key="col.key">
-                                <td class="border-b border-r border-[#E2E8F0] dark:border-[#404854] p-0">
+                                <td class="border-b border-r border-[#141414]/20 dark:border-[#FAF6EF]/20 p-0">
                                     <input :type="isNum(col) ? 'number' : 'text'"
                                            step="any"
                                            :name="`rows[${ri}][cells][${col.key}]`"
                                            x-model="row.cells[col.key]"
                                            :data-cell="`r${ri}-c${ci}`"
+                                           :aria-label="(col.label || 'Kolom ' + (ci + 1)) + ', baris ' + (ri + 1)"
                                            @keydown.enter.prevent="move($event, ri, ci, 'down')"
                                            @keydown.arrow-down.prevent="move($event, ri, ci, 'down')"
                                            @keydown.arrow-up.prevent="move($event, ri, ci, 'up')"
-                                           :class="isNum(col) ? 'text-right num' : ''"
-                                           class="w-full h-10 px-3 bg-transparent focus:outline-none focus:bg-orange-50/60 dark:focus:bg-orange-500/10 focus:ring-2 focus:ring-inset focus:ring-orange-400 text-[#1E293B] dark:text-[#f1f5f9]">
+                                           :class="isNum(col) ? 'text-right num font-bold' : 'font-medium'"
+                                           class="w-full h-11 px-3 bg-transparent text-[#141414] dark:text-[#FAF6EF] focus:bg-[#FFF7D6] dark:focus:bg-[#333] focus:outline-[3px] focus:outline-[#141414]">
                                 </td>
                             </template>
-                            <td class="border-b border-[#E2E8F0] dark:border-[#404854] text-center">
+                            <td class="border-b border-[#141414]/20 text-center px-1">
                                 <button type="button" @click="removeRow(ri)"
-                                        class="text-[#94A3B8] hover:text-red-600 p-1 rounded opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-red-300" aria-label="Hapus baris" title="Hapus baris">
+                                        class="p-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-[#475569] hover:text-[#991B1B]" :aria-label="'Hapus baris ' + (ri + 1)" title="Hapus baris">
                                     <x-icon name="trash" class="w-4 h-4" />
                                 </button>
                             </td>
                         </tr>
                     </template>
                     <tr x-show="rows.length === 0">
-                        <td class="border-b border-r border-[#E2E8F0] dark:border-[#404854]"></td>
-                        <td :colspan="columns.length + 1" class="border-b border-[#E2E8F0] dark:border-[#404854] px-4 py-10 text-center text-[#64748B] dark:text-[#cbd5e1]">
-                            Belum ada baris. Klik <span class="font-medium">Baris</span> untuk mulai mengisi.
+                        <td class="border-b border-r border-[#141414]/20"></td>
+                        <td :colspan="columns.length + 1" class="border-b border-[#141414]/20 px-4 py-10 text-center">
+                            <p class="font-black text-[#141414] dark:text-[#FAF6EF]">Belum ada baris.</p>
+                            <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Klik <span class="font-black">Baris</span> atau pilih Template di atas untuk mulai mengisi.</p>
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td class="sticky left-0 z-10 bg-[#EEF2F6] dark:bg-[#23252b] border-t-2 border-r border-[#CBD5E1] dark:border-[#404854] text-center text-[11px] font-semibold uppercase text-[#64748B] dark:text-[#cbd5e1] py-2.5">Total</td>
+                        <td class="sticky left-0 z-10 bg-[#141414] text-white border-t-2 border-r-2 border-[#141414] text-center text-[11px] font-black uppercase tracking-wider py-2.5">Total</td>
                         <template x-for="col in columns" :key="col.key">
-                            <td class="border-t-2 border-r border-[#CBD5E1] dark:border-[#404854] px-3 py-2.5 text-right font-semibold num text-[#1E293B] dark:text-[#f1f5f9]"
+                            <td class="border-t-2 border-r border-[#141414] dark:border-[#FAF6EF] px-3 py-2.5 text-right font-black num text-[#141414] dark:text-[#FAF6EF] bg-[#FAF6EF] dark:bg-[#262626]"
                                 x-text="(isNum(col) && col.total) ? display(col, colTotal(col.key)) : ''"></td>
                         </template>
-                        <td class="border-t-2 border-[#CBD5E1] dark:border-[#404854]"></td>
+                        <td class="border-t-2 border-[#141414] dark:border-[#FAF6EF] bg-[#FAF6EF] dark:bg-[#262626]"></td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        {{-- Bar bawah: ringkasan + aksi --}}
-        <div class="flex items-center justify-between gap-3 px-3 sm:px-4 py-3 border-t border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b]">
-            <div class="text-sm text-[#64748B] dark:text-[#cbd5e1] num">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-3 sm:px-4 py-3 border-t-2 border-[#141414] dark:border-[#FAF6EF] bg-white dark:bg-[#1E1E1E]">
+            <div class="text-sm font-bold text-[#475569] dark:text-[#D6D3D1] num" aria-live="polite">
                 <span x-text="rows.length"></span> baris, <span x-text="columns.length"></span> kolom
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ $editing ? route('admin.recaps.show', $recap) : route('admin.recaps.index') }}"
-                   class="px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                   class="nb-btn px-4 py-2 text-sm bg-white dark:bg-[#262626] text-[#475569] dark:text-[#D6D3D1]">
                     Batal
                 </a>
                 <button type="submit" :disabled="saving"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-70 disabled:cursor-not-allowed text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="nb-btn px-5 py-2.5 bg-[#0E7490] text-white">
                     <x-spinner x-show="saving" x-cloak />
                     <span x-text="saving ? 'Menyimpan...' : 'Simpan'">Simpan</span>
                 </button>

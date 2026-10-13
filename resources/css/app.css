@@ -229,50 +229,50 @@ html.dark {
 html.dark body { background-color: var(--dt-bg); color: var(--dt-text); }
 
 /* Background surfaces — map every arbitrary-hex bg used in admin views */
-html.dark [class*=bg-[#FDF6Ec],
-html.dark [class*=bg-[#FDF6EC],
-html.dark [class*=bg-[#F5F5F0],
-html.dark [class*=bg-[#FAFAF8],
-html.dark [class*=bg-[#F8F5F0],
-html.dark [class*=bg-[#ecfeff],
-html.dark [class*=bg-[#fafafa],
-html.dark [class*=bg-[#F0F4F8] { background-color: var(--dt-bg); }
+html.dark [class*="bg-[#FDF6Ec]"],
+html.dark [class*="bg-[#FDF6EC]"],
+html.dark [class*="bg-[#F5F5F0]"],
+html.dark [class*="bg-[#FAFAF8]"],
+html.dark [class*="bg-[#F8F5F0]"],
+html.dark [class*="bg-[#ecfeff]"],
+html.dark [class*="bg-[#fafafa]"],
+html.dark [class*="bg-[#F0F4F8]"] { background-color: var(--dt-bg); }
 
-html.dark [class*=bg-[#F1F5F9],
-html.dark [class*=bg-[#F8FAFC],
-html.dark [class*=bg-[#e0f2fe],
-html.dark [class*=bg-[#f8fafc] { background-color: var(--dt-surface); }
+html.dark [class*="bg-[#F1F5F9]"],
+html.dark [class*="bg-[#F8FAFC]"],
+html.dark [class*="bg-[#e0f2fe]"],
+html.dark [class*="bg-[#f8fafc]"] { background-color: var(--dt-surface); }
 
-html.dark [class*=bg-[#EEF2FF] { background-color: var(--dt-surface-3); }
+html.dark [class*="bg-[#EEF2FF]"] { background-color: var(--dt-surface-3); }
 
-html.dark [class*=bg-white] { background-color: var(--dt-surface-2); }
+html.dark [class*="bg-white"] { background-color: var(--dt-surface-2); }
 
 /* Brand amber surfaces (orange-50 / rose-50 / amber-50 → subtle amber tint) */
-html.dark [class*=bg-orange-50],
-html.dark [class*=bg-rose-50],
-html.dark [class*=bg-amber-50] { background-color: rgba(8, 145, 178, 0.12); }
+html.dark [class*="bg-orange-50"],
+html.dark [class*="bg-rose-50"],
+html.dark [class*="bg-amber-50"] { background-color: rgba(8, 145, 178, 0.12); }
 
 /* Borders & dividers */
-html.dark [class*=border-[#E2E8F0],
-html.dark [class*=border-[#E8E0D8],
-html.dark [class*=border-[#CBD5E1],
-html.dark [class*=border-[#F0EDE7],
-html.dark [class*=border-[#155E75],
-html.dark [class*=divide-[#E2E8F0],
-html.dark [class*=divide-[#F0EDE7] { border-color: var(--dt-border); }
+html.dark [class*="border-[#E2E8F0]"],
+html.dark [class*="border-[#E8E0D8]"],
+html.dark [class*="border-[#CBD5E1]"],
+html.dark [class*="border-[#F0EDE7]"],
+html.dark [class*="border-[#155E75]"],
+html.dark [class*="divide-[#E2E8F0]"],
+html.dark [class*="divide-[#F0EDE7]"] { border-color: var(--dt-border); }
 
 /* Text colors — primary */
-html.dark [class*=text-[#1E293B],
-html.dark [class*=text-[#333333],
-html.dark [class*=text-[#FDF6EC] { color: var(--dt-text); }
+html.dark [class*="text-[#1E293B]"],
+html.dark [class*="text-[#333333]"],
+html.dark [class*="text-[#FDF6EC]"] { color: var(--dt-text); }
 
 /* Text colors — muted */
-html.dark [class*=text-[#94A3B8],
-html.dark [class*=text-[#64748B],
-html.dark [class*=text-[#999999],
-html.dark [class*=text-[#666666],
-html.dark [class*=text-[#444444],
-html.dark [class*=text-[#CBD5E1] { color: var(--dt-muted); }
+html.dark [class*="text-[#94A3B8]"],
+html.dark [class*="text-[#64748B]"],
+html.dark [class*="text-[#999999]"],
+html.dark [class*="text-[#666666]"],
+html.dark [class*="text-[#444444]"],
+html.dark [class*="text-[#CBD5E1]"] { color: var(--dt-muted); }
 
 /* Links default to brand amber in dark mode */
 html.dark a { color: var(--dt-rose); }
@@ -309,8 +309,128 @@ html.dark .bg-orange-500 { background-color: var(--dt-rose); }
 html.dark .bg-orange-600 { background-color: #0E7490; }
 
 /* Dark button backgrounds (show.blade.php quick actions) */
-html.dark [class*=bg-[#1E293B] { background-color: var(--dt-surface-2); }
-html.dark [class*=bg-[#444444] { background-color: var(--dt-surface); }
+html.dark [class*="bg-[#1E293B]"] { background-color: var(--dt-surface-2); }
+html.dark [class*="bg-[#444444]"] { background-color: var(--dt-surface); }
 
 /* Sidebar nav smooth hover/focus transitions */
-#sidebar nav a { transition-property: color, background-color; transition-duration: 150ms; }
+#sidebar nav a { transition-property: color, background-color, transform, box-shadow; transition-duration: 150ms; }
+
+/* ===== Neo-brutalism system =====
+   Reason per decision (R-31):
+   - 2px ink borders + 4px hard shadow: single identity motif, scans as
+     "ops tool yang tegas", separates hierarchy without glow/gradient.
+   - Paper #FAF6EF: warm flat base, less glare for long admin sessions.
+   - Accent #FFC800 dipakai hanya di momen uang (grand total / total bayar).
+   - Radius kecil konsisten (10-12px kartu, 8px tombol): hierarchy tool, bukan pil di semua elemen.
+   - Motion MOTION 1: hanya hover/active translate, tanpa entrance loop. */
+:root {
+    --nb-ink: #141414;
+    --nb-paper: #FAF6EF;
+    --nb-card: #FFFFFF;
+    --nb-accent: #FFC800;
+    --nb-accent-ink: #141414;
+    --nb-shadow: 4px 4px 0 var(--nb-ink);
+    --nb-shadow-sm: 3px 3px 0 var(--nb-ink);
+    --nb-radius: 12px;
+    --nb-radius-sm: 8px;
+}
+html.dark {
+    --nb-ink: #FAF6EF;
+    --nb-paper: #121212;
+    --nb-card: #1E1E1E;
+    --nb-accent: #FFC800;
+    --nb-accent-ink: #141414;
+    --nb-shadow: 4px 4px 0 #000000;
+    --nb-shadow-sm: 3px 3px 0 #000000;
+}
+
+.nb-card {
+    background: var(--nb-card);
+    border: 2px solid var(--nb-ink);
+    border-radius: var(--nb-radius);
+    box-shadow: var(--nb-shadow);
+}
+html.dark .nb-card { border-color: #FAF6EF; }
+
+.nb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border: 2px solid var(--nb-ink);
+    border-radius: var(--nb-radius-sm);
+    font-weight: 700;
+    box-shadow: var(--nb-shadow-sm);
+    transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out;
+    min-height: 44px;
+}
+html.dark .nb-btn { border-color: #FAF6EF; }
+.nb-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--nb-ink); }
+html.dark .nb-btn:hover { box-shadow: 4px 4px 0 #000; }
+.nb-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--nb-ink); }
+.nb-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.nb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 2px solid var(--nb-ink);
+    border-radius: 6px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+html.dark .nb-badge { border-color: #FAF6EF; }
+
+.nb-input {
+    border: 2px solid var(--nb-ink) !important;
+    border-radius: var(--nb-radius-sm) !important;
+    background: var(--nb-card);
+    min-height: 44px;
+}
+html.dark .nb-input { border-color: #FAF6EF !important; background: #262626 !important; }
+.nb-input:focus { outline: 3px solid #0891B2; outline-offset: 2px; }
+html.dark .nb-input:focus { outline-color: #FFC800; }
+
+.nb-table-shell {
+    background: var(--nb-card);
+    border: 2px solid var(--nb-ink);
+    border-radius: var(--nb-radius);
+    box-shadow: var(--nb-shadow);
+    overflow: hidden;
+}
+html.dark .nb-table-shell { border-color: #FAF6EF; }
+.nb-table-head { background: #141414; color: #fff; }
+html.dark .nb-table-head { background: #000; color: #FAF6EF; border-bottom: 2px solid #FAF6EF; }
+.nb-money-strip {
+    background: var(--nb-accent);
+    color: var(--nb-accent-ink);
+    border-top: 2px solid #141414;
+}
+html.dark .nb-money-strip { border-top-color: #FAF6EF; }
+
+.nb-marker { position: relative; display: inline-block; }
+.nb-marker::after {
+    content: "";
+    position: absolute;
+    left: -2px; right: -2px; bottom: 1px;
+    height: 0.45em;
+    background: var(--nb-accent);
+    z-index: -1;
+    border: 1px solid #141414;
+}
+html.dark .nb-marker::after { border-color: #000; }
+
+*:focus-visible { outline: 3px solid #141414 !important; outline-offset: 2px !important; }
+html.dark *:focus-visible { outline-color: #FFC800 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    .nb-btn, .nb-btn:hover, .nb-btn:active { transform: none !important; transition: none !important; }
+}
+
+@media print {
+    .nb-card, .nb-table-shell, .nb-btn { box-shadow: none !important; }
+}

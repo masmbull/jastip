@@ -39,18 +39,24 @@
 <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
     @foreach($adminNav as $item)
         @if(isset($item['group']))
-            <p class="px-4 pt-4 pb-2 text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8] dark:text-[#64748B]">{{ $item['group'] }}</p>
+            <p class="px-3 pt-4 pb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#475569] dark:text-[#D6D3D1]">{{ $item['group'] }}</p>
         @elseif(\Route::has($item['route']))
             @php($active = request()->routeIs($item['match']))
             <a href="{{ route($item['route']) }}"
                @click="sidebarOpen = false"
-               class="flex items-center space-x-3 px-4 py-3 rounded-lg font-medium transition-colors {{ $active ? 'bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400' : 'text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400' }}">
-                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+               @class([
+                   'flex items-center space-x-3 px-3 py-2.5 font-bold border-2 transition-all min-h-[44px]',
+                   'rounded-[10px]',
+                   'bg-[#141414] text-white border-[#141414] dark:bg-[#FFC800] dark:text-[#141414] dark:border-[#FAF6EF]' => $active,
+                   'bg-transparent text-[#334155] dark:text-[#E7E5E4] border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] hover:bg-white dark:hover:bg-[#262626]' => ! $active,
+               ])
+               @if($active) aria-current="page" @endif>
+                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="{{ $item['icon'] }}"></path>
                 </svg>
-                <span class="flex-1">{{ $item['label'] }}</span>
+                <span class="flex-1 text-sm">{{ $item['label'] }}</span>
                 @if(($item['badge'] ?? 0) > 0)
-                    <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $item['badge'] }}</span>
+                    <span class="inline-flex items-center justify-center min-w-6 h-6 px-1.5 text-xs font-black text-[#141414] bg-[#FFC800] border-2 border-[#141414] dark:border-[#141414] rounded-md">{{ $item['badge'] }}</span>
                 @endif
             </a>
         @endif

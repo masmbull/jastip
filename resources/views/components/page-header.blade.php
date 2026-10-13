@@ -1,16 +1,13 @@
 {{--
-  Judul halaman admin yang seragam.
-  <x-page-header title="Produk" subtitle="Kelola produk">
-      <a ...>Aksi</a>
-  </x-page-header>
+  Judul halaman brutalist. Marker kuning di judul sebagai satu aksen yang disengaja.
 --}}
 @props(['title', 'subtitle' => null])
 
-<div {{ $attributes->merge(['class' => 'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4']) }}>
+<div {{ $attributes->merge(['class' => 'flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4']) }}>
     <div class="min-w-0">
-        <h1 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9] truncate">{{ $title }}</h1>
+        <h1 class="text-2xl sm:text-[28px] font-black tracking-tight text-[#141414] dark:text-[#FAF6EF] truncate"><span class="nb-marker">{{ $title }}</span></h1>
         @if($subtitle)
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">{{ $subtitle }}</p>
+            <p class="text-sm text-[#475569] dark:text-[#D6D3D1] mt-2 max-w-[60ch]">{{ $subtitle }}</p>
         @endif
     </div>
     @if(! $slot->isEmpty())

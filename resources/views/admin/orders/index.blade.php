@@ -16,77 +16,77 @@
     $activeStatus = request('status', 'all');
 @endphp
 
-<div class="space-y-6">
-    <x-page-header title="Daftar Pesanan" subtitle="Kelola semua pesanan jastip" class="animate-fade-up">
+<div class="space-y-5">
+    <x-page-header title="Daftar Pesanan" subtitle="Kelola semua pesanan jastip">
         <x-btn as="a" :href="route('admin.invoices.index')" variant="ghost">Invoice Manual</x-btn>
         <x-btn as="a" :href="route('admin.orders.create')" icon="plus">Buat Invoice</x-btn>
     </x-page-header>
 
-    <x-card class="animate-fade-up" style="animation-delay: 60ms">
-        <form method="GET" action="{{ route('admin.orders.index') }}" class="flex flex-col sm:flex-row gap-3">
+    <x-card>
+        <form method="GET" action="{{ route('admin.orders.index') }}" class="flex flex-col sm:flex-row gap-2.5" role="search">
             <div class="relative flex-1">
-                <x-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" />
-                <input type="search" name="search" value="{{ request('search') }}"
+                <x-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#475569] pointer-events-none" />
+                <label class="sr-only" for="order-search">Cari pesanan</label>
+                <input id="order-search" type="search" name="search" value="{{ request('search') }}"
                        placeholder="Cari no. pesanan, nama, atau WhatsApp"
-                       class="w-full pl-9 pr-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                       class="nb-input w-full pl-9 pr-3 py-2 text-sm">
             </div>
-            <select name="status"
-                    class="px-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+            <label class="sr-only" for="order-status">Filter status</label>
+            <select id="order-status" name="status" class="nb-input px-3 py-2 text-sm font-bold">
                 <option value="all">Semua status</option>
                 @foreach(\App\Models\Order::statuses() as $value => $label)
                     <option value="{{ $value }}" @selected($activeStatus === $value)>{{ $label }}</option>
                 @endforeach
             </select>
-            <button type="submit"
-                    class="px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+            <button type="submit" class="nb-btn px-4 py-2 text-sm bg-[#0E7490] text-white">
                 Terapkan
             </button>
             @if(request()->filled('search') || ($activeStatus !== 'all'))
                 <a href="{{ route('admin.orders.index') }}"
-                   class="px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 rounded-lg font-medium text-center transition-colors">
+                   class="nb-btn px-4 py-2 text-sm bg-white dark:bg-[#1E1E1E] text-[#475569]">
                     Reset
                 </a>
             @endif
         </form>
     </x-card>
 
-    <x-card padded="false" class="animate-fade-up" style="animation-delay: 120ms">
+    <div class="nb-table-shell">
         <div class="overflow-x-auto">
             <table class="w-full min-w-[900px]">
                 <thead>
-                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
-                        <th class="px-4 py-3">No. Pesanan</th>
-                        <th class="px-4 py-3">Nama</th>
-                        <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3">Metode Bayar</th>
-                        <th class="px-4 py-3 text-right">Subtotal</th>
-                        <th class="px-4 py-3 text-right">Ongkir</th>
-                        <th class="px-4 py-3 text-right">Total</th>
-                        <th class="px-4 py-3">Pembayaran</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Aksi</th>
+                    <tr class="nb-table-head text-left text-xs uppercase">
+                        <th scope="col" class="px-4 py-3 font-black">No. Pesanan</th>
+                        <th scope="col" class="px-4 py-3 font-black">Nama</th>
+                        <th scope="col" class="px-4 py-3 font-black">Tanggal</th>
+                        <th scope="col" class="px-4 py-3 font-black">Metode Bayar</th>
+                        <th scope="col" class="px-4 py-3 text-right font-black">Subtotal</th>
+                        <th scope="col" class="px-4 py-3 text-right font-black">Ongkir</th>
+                        <th scope="col" class="px-4 py-3 text-right font-black">Total</th>
+                        <th scope="col" class="px-4 py-3 font-black">Pembayaran</th>
+                        <th scope="col" class="px-4 py-3 font-black">Status</th>
+                        <th scope="col" class="px-4 py-3 font-black">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854] stagger">
+                <tbody class="divide-y divide-[#141414]/15 dark:divide-[#FAF6EF]/15">
                     @forelse($orders as $order)
-                        <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
+                        <tr class="bg-white dark:bg-[#1E1E1E] hover:bg-[#FFFDF0] dark:hover:bg-[#262626] transition-colors">
                             <td class="px-4 py-3">
-                                <span class="font-mono text-sm text-orange-600 dark:text-orange-400">#{{ $order->no }}</span>
+                                <span class="font-mono text-sm font-black text-[#0E7490] dark:text-[#22D3EE]">#{{ $order->no }}</span>
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->customer_name }}</p>
-                                <p class="text-xs text-[#94A3B8] dark:text-[#64748B]">{{ $order->customer_whatsapp }}</p>
+                                <p class="font-extrabold">{{ $order->customer_name }}</p>
+                                <p class="text-xs font-medium text-[#475569] num">{{ $order->customer_whatsapp }}</p>
                             </td>
-                            <td class="px-4 py-3 text-sm text-[#64748B] dark:text-[#cbd5e1]">{{ $order->created_at->format('d M Y, H:i') }}</td>
-                            <td class="px-4 py-3 text-xs font-medium uppercase {{ $order->payment_method === 'qris' ? 'text-amber-700 dark:text-amber-400' : 'text-[#64748B] dark:text-[#cbd5e1]' }}">{{ $order->payment_method ?? 'qris' }}</td>
-                            <td class="px-4 py-3 text-sm text-right text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->subtotal) }}</td>
-                            <td class="px-4 py-3 text-sm text-right text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->shipping_cost) }}</td>
-                            <td class="px-4 py-3 text-sm text-right font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->total) }}</td>
+                            <td class="px-4 py-3 text-sm font-medium text-[#475569] num">{{ $order->created_at->format('d M Y, H:i') }}</td>
+                            <td class="px-4 py-3 text-xs font-black uppercase {{ $order->payment_method === 'qris' ? 'text-[#92400E]' : 'text-[#475569]' }}">{{ $order->payment_method ?? 'qris' }}</td>
+                            <td class="px-4 py-3 text-sm text-right font-bold num">{{ format_price($order->subtotal) }}</td>
+                            <td class="px-4 py-3 text-sm text-right font-bold num">{{ format_price($order->shipping_cost) }}</td>
+                            <td class="px-4 py-3 text-sm text-right font-black num">{{ format_price($order->total) }}</td>
                             <td class="px-4 py-3">
                                 @if($order->is_paid)
-                                    <x-badge tone="success">LUNAS</x-badge>
+                                    <x-badge tone="success">Lunas</x-badge>
                                 @else
-                                    <x-badge tone="warning">BELUM BAYAR</x-badge>
+                                    <x-badge tone="warning">Belum bayar</x-badge>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
@@ -98,12 +98,12 @@
                                             data-qv-url="{{ route('admin.orders.quickview', $order) }}"
                                             data-qv-title="#{{ $order->no }}"
                                             @click="$dispatch('quickview', {url:$el.dataset.qvUrl, title:$el.dataset.qvTitle})"
-                                            class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors"
+                                            class="p-2 min-w-[44px] min-h-[44px] inline-flex items-center justify-center text-[#0E7490] border-2 border-transparent hover:border-[#141414] rounded-[8px]"
                                             title="Lihat cepat" aria-label="Lihat cepat {{ $order->no }}">
                                         <x-icon name="eye" class="w-4 h-4" />
                                     </button>
                                     <a href="{{ route('admin.orders.show', $order->id) }}"
-                                       class="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 text-sm font-medium transition-colors">
+                                       class="inline-flex items-center min-h-[44px] font-bold text-[#0E7490] dark:text-[#22D3EE] underline underline-offset-2 text-sm">
                                         Lihat
                                     </a>
                                 </div>
@@ -111,7 +111,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10">
+                            <td colspan="10" class="bg-white dark:bg-[#1E1E1E]">
                                 <x-empty-state icon="cart" title="Belum ada pesanan.">
                                     Order akan muncul di sini setelah pelanggan checkout.
                                 </x-empty-state>
@@ -121,6 +121,6 @@
                 </tbody>
             </table>
         </div>
-    </x-card>
+    </div>
 </div>
 @endsection

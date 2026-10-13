@@ -1,17 +1,17 @@
 {{--
-  Tombol standar. `as` = 'a' untuk link (pakai href).
-  <x-btn variant="brand" icon="plus">Tambah</x-btn>
-  <x-btn as="a" :href="route(...)" variant="ghost">Kembali</x-btn>
+  Tombol brutalist. Border 2px tinta + hard shadow sebagai motif identitas.
+  Kontras: teks putih di #0E7490 (5.36:1, lolos AA), bukan #0891B2 (3.68:1).
 --}}
 @props(['as' => 'button', 'variant' => 'brand', 'icon' => null, 'type' => 'button'])
 
 @php
-    $base = 'inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:opacity-70 disabled:cursor-not-allowed';
+    $base = 'nb-btn px-4 py-2 text-sm';
     $variants = [
-        'brand' => 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm',
-        'ghost' => 'bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] hover:bg-[#CBD5E1] dark:hover:bg-[#404854]',
-        'outline' => 'bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] hover:border-orange-300',
-        'danger' => 'bg-red-500 hover:bg-red-600 text-white shadow-sm',
+        'brand' => 'bg-[#0E7490] hover:bg-[#155E75] text-white',
+        'accent' => 'bg-[#FFC800] hover:bg-[#F5B800] text-[#141414]',
+        'ghost' => 'bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]',
+        'outline' => 'bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]',
+        'danger' => 'bg-[#DC2626] hover:bg-[#B91C1C] text-white',
     ];
     $class = $base . ' ' . ($variants[$variant] ?? $variants['brand']);
 @endphp

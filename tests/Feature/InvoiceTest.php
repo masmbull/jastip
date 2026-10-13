@@ -52,7 +52,7 @@ class InvoiceTest extends TestCase
             ->assertSee('JNE Reguler')
             ->assertSee('Tas Kulit')
             ->assertSee('Rp 117.500')
-            ->assertSee('BELUM BAYAR')
+            ->assertSee('Belum bayar')
             ->assertSee('Bayar via QRIS') // unpaid => payment branch
             ->assertSee('img/invoice/rekening.webp'); // rekening image wired
     }
@@ -76,7 +76,7 @@ class InvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('LUNAS')
+            ->assertSee('Lunas')
             ->assertSee('Pembayaran diterima')
             ->assertSee('img/invoice/payment-diterima.jpeg')
             ->assertDontSee('Bayar via QRIS');

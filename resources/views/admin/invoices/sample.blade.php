@@ -6,30 +6,30 @@
     <title>Pratinjau Sampel Invoice | {{ $invoice['brand_line2'] }}</title>
     @vite(['resources/css/app.css'])
     <style>
-        :root { --ink: #1E293B; --muted: #64748B; --line: #CBD5E1; --brand: #F97316; }
+        :root { --ink: #141414; --muted: #475569; --line: #141414; }
         .receipt { -webkit-print-color-adjust: exact; print-color-adjust: exact;
                    font-family: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
-        .dash { border: 0; border-top: 1px dashed var(--line); margin: 14px 0; }
+        .dash { border: 0; border-top: 2px solid var(--line); margin: 14px 0; }
         .dash-tight { border-top-style: dashed; }
         .avoid-break { break-inside: avoid; }
         .num { font-variant-numeric: tabular-nums; }
         @media print {
             .no-print { display: none !important; }
             html, body { background: #fff !important; margin: 0 !important; }
-            .paper { box-shadow: none !important; border: none !important; margin: 0 auto !important; border-radius: 0 !important; max-width: 80mm !important; padding: 4mm !important; }
+            .paper { box-shadow: none !important; margin: 0 auto !important; border-radius: 0 !important; max-width: 80mm !important; padding: 4mm !important; }
             .avoid-break { break-inside: avoid; }
             @page { size: 80mm auto; margin: 4mm; }
         }
     </style>
 </head>
-<body class="receipt bg-[#EEF2F6] text-[#1E293B] antialiased py-6">
+<body class="receipt bg-[#FAF6EF] text-[#141414] antialiased py-6">
 
     {{-- Kertas struk --}}
-    <div class="paper bg-white mx-auto w-full max-w-[620px] rounded-[20px] border border-dashed border-[#CBD5E1] p-8 shadow-sm">
+    <div class="paper bg-white mx-auto w-full max-w-[620px] rounded-[12px] border-2 border-[#141414] p-8" style="box-shadow: 4px 4px 0 #141414">
 
         {{-- Logo --}}
         <div class="flex justify-center">
-            <div class="w-[88px] h-[88px] rounded-2xl bg-[#F97316] flex items-center justify-center text-white font-bold text-3xl tracking-widest">
+            <div class="w-[88px] h-[88px] rounded-[12px] bg-[#FFC800] border-2 border-[#141414] flex items-center justify-center text-[#141414] font-black text-3xl tracking-widest">
                 {{ $invoice['logo_text'] }}
             </div>
         </div>
