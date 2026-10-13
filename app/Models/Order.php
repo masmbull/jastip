@@ -78,6 +78,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(OrderPayment::class);
+    }
+
     public function paymentProof()
     {
         return $this->hasOne(PaymentProof::class);
@@ -139,7 +144,33 @@ class Order extends Model
 
     public function getRemainingAttribute(): int
     {
-        return max(0, (int) $this->total - (int) $this->down_payment);
+        return max(0, (int) $this->total - $this->totalPaid);
+    }
+
+    public function getTotalPaidAttribute(): int
+    {
+        return (int) $this->down_payment + (int) $this->payments->sum('amount');
+    }
+
+    public function getPaymentStatusAttribute(): string
+    {
+        if ($this->is_paid) {
+            return 'lunas';
+        }
+        if ($this->totalPaid > 0) {
+            return 'dp';
+        }
+
+        return 'belum';
+    }
+
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return [
+            'belum' => 'Belum Bayar',
+            'dp' => 'DP',
+            'lunas' => 'Lunas',
+        ][$this->payment_status];
     }
 
     public function getFormattedTotalAttribute(): string

@@ -11,17 +11,38 @@ use Illuminate\Support\Facades\Storage;
 class InvoiceController extends Controller
 {
     /**
-     * Daftar invoice manual (dibuat admin lewat tombol "Buat Invoice").
+     * Rekapan pesanan (invoice manual dari admin): tabel ledger harian
+     * dengan DP, pelunasan, sisa otomatis, ringkasan, filter, dan export.
      * Order checkout biasa tidak muncul di sini.
      */
     public function index(Request $request)
     {
         Gate::authorize('viewAny', Order::class);
 
-        $query = Order::withCount('items')->where('payment_method', 'manual');
+        $query = Order::withCount('items')
+            ->withSum('items as items_qty', 'quantity')
+            ->withSum('payments as payments_sum', 'amount')
+            ->where('payment_method', 'manual');
 
         if ($request->filled('status') && $request->input('status') !== 'all') {
             $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('pay_status') && $request->input('pay_status') !== 'all') {
+            match ($request->input('pay_status')) {
+                'lunas' => $query->whereNotNull('paid_at'),
+                'dp' => $query->whereNull('paid_at')->where(fn ($q) => $q->where('down_payment', '>', 0)->orWhereHas('payments')),
+                'belum' => $query->whereNull('paid_at')->where('down_payment', 0)->whereDoesntHave('payments'),
+                default => null,
+            };
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->input('date_to'));
         }
 
         if ($request->filled('search')) {
@@ -33,11 +54,116 @@ class InvoiceController extends Controller
             });
         }
 
-        $invoices = $query->orderBy('created_at', 'desc')
+        $summary = $this->ledgerSummary(clone $query);
+
+        $invoices = $query->with('items')->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.invoices.index', compact('invoices'));
+        return view('admin.invoices.index', compact('invoices', 'summary'));
+    }
+
+    /**
+     * Ringkasan ledger dari query yang sudah difilter (tanpa pagination).
+     */
+    private function ledgerSummary($query): array
+    {
+        $ids = (clone $query)->pluck('orders.id');
+
+        $base = (clone $query)->selectRaw(
+            'COUNT(*) as orders, COALESCE(SUM(total), 0) as grand, COALESCE(SUM(down_payment), 0) as dp, COUNT(DISTINCT customer_whatsapp) as customers'
+        )->first();
+
+        $qty = \App\Models\OrderItem::whereIn('order_id', $ids)->sum('quantity');
+        $paid = \App\Models\OrderPayment::whereIn('order_id', $ids)->sum('amount');
+
+        $grand = (int) ($base->grand ?? 0);
+        $dp = (int) ($base->dp ?? 0);
+
+        return [
+            'customers' => (int) ($base->customers ?? 0),
+            'orders' => (int) ($base->orders ?? 0),
+            'qty' => (int) $qty,
+            'grand' => $grand,
+            'dp' => $dp,
+            'paid' => $dp + (int) $paid,
+            'remaining' => max(0, $grand - $dp - (int) $paid),
+        ];
+    }
+
+    /**
+     * Export CSV ledger dengan filter yang sama seperti daftar.
+     */
+    public function export(Request $request)
+    {
+        Gate::authorize('viewAny', Order::class);
+
+        $query = Order::withCount('items')
+            ->withSum('items as items_qty', 'quantity')
+            ->withSum('payments as payments_sum', 'amount')
+            ->where('payment_method', 'manual');
+
+        if ($request->filled('status') && $request->input('status') !== 'all') {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('pay_status') && $request->input('pay_status') !== 'all') {
+            match ($request->input('pay_status')) {
+                'lunas' => $query->whereNotNull('paid_at'),
+                'dp' => $query->whereNull('paid_at')->where(fn ($q) => $q->where('down_payment', '>', 0)->orWhereHas('payments')),
+                'belum' => $query->whereNull('paid_at')->where('down_payment', 0)->whereDoesntHave('payments'),
+                default => null,
+            };
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->input('date_to'));
+        }
+
+        if ($request->filled('search')) {
+            $term = $request->input('search');
+            $query->where(function ($q) use ($term) {
+                $q->where('order_number', 'like', "%{$term}%")
+                    ->orWhere('customer_name', 'like', "%{$term}%")
+                    ->orWhere('customer_whatsapp', 'like', "%{$term}%");
+            });
+        }
+
+        $rows = $query->with('items')->orderBy('created_at', 'desc')->get();
+
+        $filename = 'rekapan-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['No Pesanan', 'Tanggal', 'Customer', 'WhatsApp', 'Alamat', 'Barang', 'Qty', 'Subtotal', 'Ongkir', 'Fee Jastip', 'DP', 'Pelunasan', 'Grand Total', 'Sisa', 'Status Bayar', 'Status Pesanan']);
+            foreach ($rows as $order) {
+                $paid = (int) $order->down_payment + (int) $order->payments_sum;
+                $items = $order->items->map(fn ($i) => $i->product_name.' x'.$i->quantity.' @ '.format_price($i->product_price))->implode('; ');
+                fputcsv($out, [
+                    '#'.$order->no,
+                    $order->created_at->format('Y-m-d H:i'),
+                    $order->customer_name,
+                    $order->customer_whatsapp,
+                    $order->customer_address,
+                    $items,
+                    $order->items_qty,
+                    $order->subtotal,
+                    $order->shipping_cost,
+                    $order->fee,
+                    $order->down_payment,
+                    $order->payments_sum,
+                    $order->total,
+                    max(0, $order->total - $paid),
+                    $order->payment_status_label,
+                    $order->status_label,
+                ]);
+            }
+            fclose($out);
+        }, $filename, ['Content-Type' => 'text/csv']);
     }
 
     /**

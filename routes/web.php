@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\PaymentProofController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\RecapController;
@@ -205,9 +206,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/pesanans/{order}/invoice', [InvoiceController::class, 'invoice'])->name('orders.invoice');
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
+        Route::post('/pesanans/{order}/pelunasan', [OrderPaymentController::class, 'store'])->name('orders.payments.store');
+        Route::delete('/pesanans/{order}/pelunasan/{payment}', [OrderPaymentController::class, 'destroy'])->name('orders.payments.destroy');
 
         // Daftar invoice manual (buat via form manual, bukan checkout).
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('/invoice/export', [InvoiceController::class, 'export'])->name('invoices.export');
 
         // Dokumen pratinjau cetak sampel invoice (struk thermal, preset COMPACT).
         Route::get('/invoice/sampel', [InvoiceController::class, 'sample'])->name('invoices.sample');

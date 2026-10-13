@@ -66,6 +66,10 @@
                     <span class="nb-badge bg-[#DCFCE7] text-[#166534]">
                         <x-icon name="check" class="w-3.5 h-3.5" /> Lunas
                     </span>
+                @elseif($order->totalPaid > 0)
+                    <span class="nb-badge bg-[#FEF3C7] text-[#92400E]">
+                        <x-icon name="clock" class="w-3.5 h-3.5" /> DP Masuk
+                    </span>
                 @else
                     <span class="nb-badge bg-[#FEF3C7] text-[#92400E]">
                         <x-icon name="clock" class="w-3.5 h-3.5" /> Belum bayar
@@ -143,8 +147,11 @@
                 @if(($order->down_payment ?? 0) > 0)
                     <div class="flex justify-between py-0.5"><span class="text-[#475569]">DP Masuk</span><span class="font-bold text-[#166534] num">-{{ format_price($order->down_payment) }}</span></div>
                 @endif
+                @foreach($order->payments as $pay)
+                    <div class="flex justify-between py-0.5"><span class="text-[#475569]">Bayar{{ $pay->paid_at ? ' ' . $pay->paid_at->format('d M y') : '' }}</span><span class="font-bold text-[#166534] num">-{{ format_price($pay->amount) }}</span></div>
+                @endforeach
             </div>
-            @if(($order->down_payment ?? 0) > 0 && ! $order->is_paid)
+            @if($order->totalPaid > 0 && ! $order->is_paid)
                 <div class="nb-money-strip px-4 py-3.5 space-y-1">
                     <div class="flex items-center justify-between text-[13px]">
                         <span class="font-bold">Total</span>
