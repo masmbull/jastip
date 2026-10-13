@@ -25,14 +25,15 @@ return new class extends Migration
     public function up(): void
     {
         foreach ($this->emoji as $slug => $icon) {
-            DB::table('categories')
-                ->where('slug', $slug)
-                ->where(function ($q) {
-                    $q->whereNull('icon')
-                        ->orWhere('icon', '')
-                        ->orWhereRaw("icon NOT GLOB '*[^ -~]*'"); // tanpa karakter emoji/unicode
-                })
-                ->update(['icon' => $icon]);
+            $current = DB::table('categories')->where('slug', $slug)->value('icon');
+
+            // Biarkan emoji/non-ASCII yang sudah diisi admin; isi hanya bila
+            // kosong atau masih berupa nama ikon lama (murni ASCII).
+            if ($current !== null && $current !== '' && preg_match('/[^\x20-\x7E]/', $current)) {
+                continue;
+            }
+
+            DB::table('categories')->where('slug', $slug)->update(['icon' => $icon]);
         }
     }
 

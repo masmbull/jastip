@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>@yield('title', setting('brand_name', 'NITIP DI END'))</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- PWA: admin ikut installable (istri akses dari sini di iPhone). --}}
+    <meta name="theme-color" content="#0891B2">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ setting('brand_name', 'NITIP DI END') }}">
+    <link rel="manifest" href="{{ asset('manifest-admin.webmanifest') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
+
     <script>
         /* Prevent FOUC - set dark mode before styles load */
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -141,6 +151,32 @@
 
 <x-toast />
 <x-confirm-modal />
+
+{{-- iOS (iPhone) tak punya prompt install otomatis: tampilkan petunjuk
+     "Add to Home Screen" sekali, hanya di Safari iOS dan bila belum standalone. --}}
+<div x-data="{
+        show: false,
+        init() {
+            const standalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const dismissed = localStorage.getItem('a2hs-dismissed') === '1';
+            this.show = isIOS && !standalone && !dismissed;
+        },
+        dismiss() { this.show = false; localStorage.setItem('a2hs-dismissed', '1'); }
+     }"
+     x-show="show" x-cloak x-transition
+     class="fixed inset-x-3 bottom-3 z-[450] sm:left-auto sm:right-6 sm:max-w-sm">
+    <div class="bg-[#1E293B] dark:bg-[#23252b] text-white rounded-xl shadow-xl p-4 flex items-start gap-3 border border-white/10">
+        <x-icon name="download" class="w-5 h-5 shrink-0 mt-0.5 text-orange-400" />
+        <div class="text-sm">
+            <p class="font-medium">Pasang sebagai aplikasi</p>
+            <p class="text-white/70 mt-0.5">Ketuk <span class="font-medium">Bagikan</span> lalu <span class="font-medium">Tambah ke Layar Utama</span> supaya kebuka seperti app.</p>
+        </div>
+        <button type="button" @click="dismiss()" class="shrink-0 text-white/60 hover:text-white p-0.5" aria-label="Tutup">
+            <x-icon name="x" class="w-4 h-4" />
+        </button>
+    </div>
+</div>
 
 {{-- Quick-view modal: dispatches on `quickview` event, fetches a Blade partial via fetch() --}}
 <div x-data="jdQuickview()"

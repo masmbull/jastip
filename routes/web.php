@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PaymentProofController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\RecapController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -206,6 +207,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Daftar invoice manual (buat via form manual, bukan checkout).
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
+
+        // Rekapan manual (spreadsheet/pivot sederhana: kolom & baris bebas).
+        Route::get('/rekapan', [RecapController::class, 'index'])->name('recaps.index');
+        Route::get('/rekapan/create', [RecapController::class, 'create'])->name('recaps.create');
+        Route::post('/rekapan', [RecapController::class, 'store'])->name('recaps.store');
+        Route::get('/rekapan/{recap}', [RecapController::class, 'show'])->name('recaps.show');
+        Route::get('/rekapan/{recap}/edit', [RecapController::class, 'edit'])->name('recaps.edit');
+        Route::put('/rekapan/{recap}', [RecapController::class, 'update'])->name('recaps.update');
+        Route::delete('/rekapan/{recap}', [RecapController::class, 'destroy'])->name('recaps.destroy');
 
         // Shipping / Ongkir
         Route::get('/ongkir', [App\Http\Controllers\Admin\ShippingController::class, 'index'])->name('shipping.index');

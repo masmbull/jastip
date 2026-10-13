@@ -186,6 +186,8 @@ class RouteSmokeTest extends TestCase
             '/admin/pesanans',
             '/admin/pesanans/create',
             '/admin/invoice',
+            '/admin/rekapan',
+            '/admin/rekapan/create',
             "/admin/pesanans/{$orderId}",
             "/admin/pesanans/{$orderId}/quickview",
             "/admin/pesanans/{$orderId}/invoice",
