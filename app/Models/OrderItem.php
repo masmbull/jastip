@@ -14,8 +14,21 @@ class OrderItem extends Model
         'product_price',
         'unit',
         'quantity',
+        'status',
         'subtotal',
     ];
+
+    public const STATUS_READY = 'ready';
+
+    public const STATUS_PO = 'po';
+
+    public static function statuses(): array
+    {
+        return [
+            self::STATUS_READY => 'Ready',
+            self::STATUS_PO => 'PO',
+        ];
+    }
 
     protected function casts(): array
     {

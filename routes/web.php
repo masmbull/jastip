@@ -197,7 +197,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/pesanans/create', [AdminOrderController::class, 'create'])->name('orders.create');
         Route::post('/pesanans', [AdminOrderController::class, 'store'])->name('orders.store');
         // JSON lookups for the manual-invoice form (must precede /pesanans/{order}).
-        Route::get('/pesanans/cari-pelanggan', [AdminOrderController::class, 'customerSearch'])->name('orders.customer-search');
+        Route::get('/pesanans/ongkir-kota', [AdminOrderController::class, 'shippingOptions'])->name('orders.shipping-options');
+        Route::get('/pesanans/cek-ongkir', [AdminOrderController::class, 'shippingQuote'])->name('orders.shipping-quote');
         Route::get('/pesanans/cari-produk', [AdminOrderController::class, 'productSearch'])->name('orders.product-search');
         Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');

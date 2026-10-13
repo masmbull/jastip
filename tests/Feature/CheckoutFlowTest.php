@@ -89,7 +89,7 @@ class CheckoutFlowTest extends TestCase
             ->assertSee($item->product_name, false)
             ->assertSee($item->unit, false)
             ->assertSee('Menunggu Pembayaran', false)
-            ->assertSee('Biaya Fee', false);
+            ->assertSee('Fee Jastip', false);
 
         $this->put(route('admin.orders.status', $order), ['status' => 'processing'])->assertRedirect();
 

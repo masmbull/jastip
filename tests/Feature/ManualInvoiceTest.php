@@ -62,6 +62,7 @@ class ManualInvoiceTest extends TestCase
         $this->actingAs($admin)->post(route('admin.orders.store'), [
             'customer_name' => 'Pelanggan Lunas',
             'customer_whatsapp' => '081200008888',
+            'customer_address' => 'Jl. Lunas 1',
             'mark_paid' => '1',
             'items' => [
                 ['product_name' => 'Barang C', 'quantity' => 1, 'product_price' => 50000],
@@ -134,31 +135,96 @@ class ManualInvoiceTest extends TestCase
             ->assertDontSee('NDTEST-QRIS01');
     }
 
-    public function test_customer_and_product_search_return_json(): void
+    public function test_product_search_returns_json(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
-
-        Order::create([
-            'order_number' => 'NDTEST-SEARCH01',
-            'customer_name' => 'Cari Nama Unik',
-            'customer_whatsapp' => '081200006666',
-            'customer_address' => 'Jl. Search',
-            'subtotal' => 1000,
-            'shipping_cost' => 0,
-            'total' => 1000,
-            'status' => Order::STATUS_PENDING,
-        ]);
-
-        $this->actingAs($admin)
-            ->getJson(route('admin.orders.customer-search', ['q' => 'Cari Nama']))
-            ->assertOk()
-            ->assertJsonFragment(['customer_whatsapp' => '081200006666']);
 
         // Empty term short-circuits to an empty list (no 500).
         $this->actingAs($admin)
             ->getJson(route('admin.orders.product-search', ['q' => '']))
             ->assertOk()
             ->assertExactJson([]);
+    }
+
+    public function test_shipping_options_and_quote_return_json(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->getJson(route('admin.orders.shipping-options'))
+            ->assertOk()
+            ->assertJsonFragment(['Jakarta']);
+
+        $this->actingAs($admin)
+            ->getJson(route('admin.orders.shipping-quote', ['city' => 'Jakarta', 'weight' => 1]))
+            ->assertOk()
+            ->assertJsonPath('city', 'Jakarta')
+            ->assertJsonStructure(['rows' => [['code', 'name', 'price']]]);
+    }
+
+    public function test_store_saves_down_payment_and_item_status(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP',
+            'customer_whatsapp' => '081200006667',
+            'customer_address' => 'Jl. DP 1',
+            'shipping_city' => 'Jakarta',
+            'shipping_method' => 'JNE Reguler',
+            'shipping_cost' => 15000,
+            'fee' => 2500,
+            'down_payment' => 20000,
+            'items' => [
+                ['product_name' => 'Barang PO', 'unit' => 'pcs', 'quantity' => 1, 'product_price' => 100000, 'status' => 'po'],
+                ['product_name' => 'Barang Ready', 'unit' => 'pcs', 'quantity' => 1, 'product_price' => 50000, 'status' => 'ready'],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200006667')->firstOrFail();
+        $this->assertSame(150_000, $order->subtotal);
+        $this->assertSame(167_500, $order->total);
+        $this->assertSame(20_000, $order->down_payment);
+        $this->assertSame(147_500, $order->remaining);
+        $this->assertSame('Jakarta', $order->city);
+        $this->assertSame('po', $order->items()->where('product_name', 'Barang PO')->firstOrFail()->status);
+        $this->assertSame('ready', $order->items()->where('product_name', 'Barang Ready')->firstOrFail()->status);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('DP Masuk')
+            ->assertSee('Sisa Bayar')
+            ->assertSee('Rp 147.500')
+            ->assertSee('PO');
+    }
+
+    public function test_store_rejects_down_payment_above_total(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Lebih',
+            'customer_whatsapp' => '081200006668',
+            'customer_address' => 'Jl. DP 2',
+            'down_payment' => 999999999,
+            'items' => [
+                ['product_name' => 'Barang D', 'quantity' => 1, 'product_price' => 50000],
+            ],
+        ])->assertSessionHasErrors('down_payment');
+    }
+
+    public function test_store_requires_address(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Tanpa Alamat',
+            'customer_whatsapp' => '081200006669',
+            'items' => [
+                ['product_name' => 'Barang E', 'quantity' => 1, 'product_price' => 50000],
+            ],
+        ])->assertSessionHasErrors('customer_address');
     }
 
     public function test_invoice_index_filters_by_status_and_search(): void

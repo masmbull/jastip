@@ -41,7 +41,7 @@
 </div>
 @endif
 
-<main class="sheet nb-card max-w-[880px] mx-auto sm:my-6 md:my-8 p-6 sm:p-9 md:p-11 !rounded-[14px]">
+<main class="sheet nb-card max-w-[880px] mx-auto sm:my-6 md:my-8 p-6 sm:p-9 md:p-11 rounded-[14px]!">
 
     <header class="flex flex-wrap items-start justify-between gap-6 pb-6 border-b-[3px] border-[#141414]">
         <div class="flex items-start gap-4 min-w-0">
@@ -109,7 +109,12 @@
                     <tbody class="divide-y-2 divide-[#141414]">
                         @forelse($order->items as $item)
                             <tr class="bg-white">
-                                <td class="py-2.5 px-3 font-bold leading-snug">{{ $item->product_name }}</td>
+                                <td class="py-2.5 px-3 font-bold leading-snug">
+                                    {{ $item->product_name }}
+                                    @if(($item->status ?? 'ready') === 'po')
+                                        <span class="nb-badge bg-[#FEF3C7] text-[#92400E] ml-1.5">PO</span>
+                                    @endif
+                                </td>
                                 <td class="py-2.5 px-3 text-[#475569]">{{ $item->unit }}</td>
                                 <td class="py-2.5 px-3 text-center font-bold num">{{ $item->quantity }}</td>
                                 <td class="py-2.5 px-3 text-right num">{{ format_price($item->product_price) }}</td>
@@ -130,16 +135,32 @@
                 <div class="flex justify-between py-0.5"><span class="text-[#475569]">Subtotal</span><span class="font-bold num">{{ format_price($order->subtotal) }}</span></div>
                 <div class="flex justify-between py-0.5"><span class="text-[#475569]">Ongkir</span><span class="font-bold num">{{ format_price($order->shipping_cost) }}</span></div>
                 @if(($order->fee ?? 0) > 0)
-                    <div class="flex justify-between py-0.5"><span class="text-[#475569]">Biaya layanan</span><span class="font-bold num">{{ format_price($order->fee) }}</span></div>
+                    <div class="flex justify-between py-0.5"><span class="text-[#475569]">Fee Jastip</span><span class="font-bold num">{{ format_price($order->fee) }}</span></div>
                 @endif
                 @if(($order->discount ?? 0) > 0)
                     <div class="flex justify-between py-0.5"><span class="text-[#475569]">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}</span><span class="font-bold text-[#166534] num">-{{ format_price($order->discount) }}</span></div>
                 @endif
+                @if(($order->down_payment ?? 0) > 0)
+                    <div class="flex justify-between py-0.5"><span class="text-[#475569]">DP Masuk</span><span class="font-bold text-[#166534] num">-{{ format_price($order->down_payment) }}</span></div>
+                @endif
             </div>
-            <div class="nb-money-strip flex items-center justify-between px-4 py-3.5">
-                <span class="text-sm font-black uppercase tracking-wide">Total bayar</span>
-                <span class="text-xl font-black num">{{ format_price($order->total) }}</span>
-            </div>
+            @if(($order->down_payment ?? 0) > 0 && ! $order->is_paid)
+                <div class="nb-money-strip px-4 py-3.5 space-y-1">
+                    <div class="flex items-center justify-between text-[13px]">
+                        <span class="font-bold">Total</span>
+                        <span class="font-bold num">{{ format_price($order->total) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-black uppercase tracking-wide">Sisa Bayar</span>
+                        <span class="text-xl font-black num">{{ format_price($order->remaining) }}</span>
+                    </div>
+                </div>
+            @else
+                <div class="nb-money-strip flex items-center justify-between px-4 py-3.5">
+                    <span class="text-sm font-black uppercase tracking-wide">Total bayar</span>
+                    <span class="text-xl font-black num">{{ format_price($order->total) }}</span>
+                </div>
+            @endif
         </div>
     </div>
 

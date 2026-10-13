@@ -1,25 +1,63 @@
 @push('scripts')
 <script>
-    {{-- Alpine component for the manual-invoice form. Pushed to the `scripts`
-         stack so both the full page and the modal reuse one definition. --}}
     function manualInvoice() {
+        const oldItems = {{ Js::from(collect(old('items', []))->values()) }};
         return {
-            customerName: {{ Js::from(old('customer_name', '')) }},
-            whatsapp: {{ Js::from(old('customer_whatsapp', '')) }},
-            address: {{ Js::from(old('customer_address', '')) }},
-            hits: [],
-            openCustomer: false,
-            loadingCustomer: false,
-            _customerAbort: null,
             shipping: {{ (int) old('shipping_cost', 0) }},
+            shipMethod: {{ Js::from(old('shipping_method', '')) }},
             feeAmt: {{ (int) old('fee', 0) }},
-            items: [{ key: 1, name: '', unit: 'pcs', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null }],
-            seq: 1,
+            dpAmt: {{ (int) old('down_payment', 0) }},
+            paidNow: false,
+            city: {{ Js::from(old('shipping_city', '')) }},
+            weight: 1,
+            cities: [],
+            quotes: [],
+            quoting: false,
+            quoteError: '',
+            selectedCourier: '',
+            items: oldItems.length ? oldItems.map((o, i) => ({
+                key: i + 1, name: o.product_name || '', unit: o.unit || 'pcs',
+                status: o.status || 'ready', qty: Number(o.quantity) || 1,
+                price: Number(o.product_price) || 0,
+                open: false, loading: false, suggestions: [], _abort: null,
+            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null }],
+            seq: oldItems.length || 1,
             saving: false,
+
+            init() {
+                fetch(`{{ route('admin.orders.shipping-options') }}`)
+                    .then(r => r.json())
+                    .then(j => { this.cities = j.cities || []; })
+                    .catch(() => {});
+            },
+
+            async fetchQuotes() {
+                if (!this.city) return;
+                this.quoting = true;
+                this.quoteError = '';
+                this.quotes = [];
+                try {
+                    const url = `{{ route('admin.orders.shipping-quote') }}?city=${encodeURIComponent(this.city)}&weight=${encodeURIComponent(this.weight || 1)}`;
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error('bad');
+                    const j = await res.json();
+                    this.quotes = (j.rows || []).filter(r => r.ok);
+                    if (!this.quotes.length) this.quoteError = 'Tidak ada ekspedisi aktif untuk kota ini.';
+                } catch (e) {
+                    this.quoteError = 'Gagal memuat ongkir. Isi ekspedisi dan ongkir manual.';
+                } finally {
+                    this.quoting = false;
+                }
+            },
+            pickQuote(q) {
+                this.selectedCourier = q.code;
+                this.shipMethod = q.name;
+                this.shipping = q.price || 0;
+            },
 
             addItem() {
                 this.seq++;
-                this.items.push({ key: this.seq, name: '', unit: 'pcs', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null });
+                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null });
             },
             removeItem(idx) {
                 if (this.items[idx]?._abort) this.items[idx]._abort.abort();
@@ -28,31 +66,10 @@
             lineTotal(item) { return (Number(item.qty) || 0) * (Number(item.price) || 0); },
             subtotal() { return this.items.reduce((sum, i) => sum + this.lineTotal(i), 0); },
             total() { return this.subtotal() + (Number(this.shipping) || 0) + (Number(this.feeAmt) || 0); },
+            dp() { return this.paidNow ? 0 : (Number(this.dpAmt) || 0); },
+            remaining() { return Math.max(0, this.total() - this.dp()); },
             formatRp(n) { return 'Rp ' + (Number(n) || 0).toLocaleString('id-ID'); },
 
-            async searchCustomer() {
-                const q = this.customerName.trim();
-                if (q.length < 2) { this.hits = []; this.openCustomer = false; this.loadingCustomer = false; return; }
-                if (this._customerAbort) this._customerAbort.abort();
-                const ctrl = this._customerAbort = new AbortController();
-                this.loadingCustomer = true;
-                this.openCustomer = true;
-                try {
-                    const res = await fetch(`{{ route('admin.orders.customer-search') }}?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
-                    this.hits = await res.json();
-                } catch (e) {
-                    if (e.name === 'AbortError') return;
-                    this.hits = [];
-                } finally {
-                    if (this._customerAbort === ctrl) { this.loadingCustomer = false; this._customerAbort = null; }
-                }
-            },
-            pickCustomer(h) {
-                this.customerName = h.customer_name;
-                this.whatsapp = h.customer_whatsapp;
-                this.address = h.customer_address || '';
-                this.openCustomer = false;
-            },
             async searchProduct(idx) {
                 const item = this.items[idx];
                 const q = item.name.trim();

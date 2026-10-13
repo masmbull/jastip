@@ -9,6 +9,8 @@ use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\ShippingEstimator;
+use App\Services\ShippingService;
 use App\Services\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -65,6 +68,7 @@ class OrderController extends Controller
             'product_name' => $item['product_name'],
             'unit' => ($item['unit'] ?? null) ?: 'pcs',
             'quantity' => (int) $item['quantity'],
+            'status' => $item['status'] ?? OrderItem::STATUS_READY,
             'product_price' => (int) $item['product_price'],
             'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
         ]);
@@ -73,22 +77,25 @@ class OrderController extends Controller
         $shippingCost = (int) $request->input('shipping_cost', 0);
         $fee = (int) $request->input('fee', 0);
         $paid = $request->boolean('mark_paid');
+        $downPayment = $paid ? 0 : (int) $request->input('down_payment', 0);
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
         // Harga & fee hanya dari input admin (invoice manual, bukan dari produk).
-        $order = DB::transaction(function () use ($request, $items, $subtotal, $shippingCost, $fee, $status, $paid) {
+        $order = DB::transaction(function () use ($request, $items, $subtotal, $shippingCost, $fee, $downPayment, $status, $paid) {
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
                 'customer_email' => $request->input('customer_email'),
-                'customer_address' => $request->input('customer_address') ?: '-',
+                'customer_address' => $request->input('customer_address'),
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),
+                'city' => $request->input('shipping_city'),
                 'shipping_method' => $request->input('shipping_method'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'fee' => $fee,
+                'down_payment' => $downPayment,
                 'total' => $subtotal + $shippingCost + $fee,
                 'status' => $status,
                 'paid_at' => $paid ? now() : null,
@@ -110,29 +117,43 @@ class OrderController extends Controller
     }
 
     /**
-     * Cari pelanggan lama (dari pesanan sebelumnya) untuk auto-isi form.
+     * Daftar kota tujuan + asal pengiriman untuk form invoice manual.
      */
-    public function customerSearch(Request $request)
+    public function shippingOptions(ShippingEstimator $estimator)
     {
-        $term = trim((string) $request->query('q', ''));
+        return response()->json([
+            'origin' => $estimator->origin(),
+            'cities' => array_keys($estimator->cities()),
+        ]);
+    }
 
-        if ($term === '') {
-            return response()->json([]);
-        }
+    /**
+     * Estimasi ongkir semua ekspedisi aktif untuk form invoice manual.
+     */
+    public function shippingQuote(Request $request, ShippingEstimator $estimator, ShippingService $shipping)
+    {
+        $data = $request->validate([
+            'city' => ['required', 'string', Rule::in(array_keys($estimator->cities()))],
+            'weight' => ['required', 'numeric', 'min:0.1', 'max:100'],
+        ]);
 
-        $rows = Order::query()
-            ->where(function ($q) use ($term) {
-                $q->where('customer_name', 'like', "%{$term}%")
-                    ->orWhere('customer_whatsapp', 'like', "%{$term}%");
-            })
-            ->orderByDesc('created_at')
-            ->limit(30)
-            ->get(['customer_name', 'customer_whatsapp', 'customer_email', 'customer_address'])
-            ->unique('customer_whatsapp')
-            ->take(8)
-            ->values();
+        $rows = $shipping->estimateAllEnabled($data['city'], (float) $data['weight']);
 
-        return response()->json($rows);
+        return response()->json([
+            'city' => $data['city'],
+            'weight' => (float) $data['weight'],
+            'rows' => array_map(fn (array $row) => [
+                'ok' => $row['ok'],
+                'code' => $row['courier']['code'],
+                'name' => $row['courier']['name'],
+                'type' => $row['courier']['type'],
+                'type_label' => $estimator->typeLabel($row['courier']['type']),
+                'price' => $row['price'] ?? null,
+                'price_formatted' => $row['price_formatted'] ?? null,
+                'etd' => $row['etd'] ?? null,
+                'message' => $row['message'] ?? null,
+            ], $rows),
+        ]);
     }
 
     /**

@@ -28,7 +28,7 @@
     </x-page-header>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-3 nb-card p-5 !bg-[#FFF7D6] dark:!bg-[#262626]">
+        <div class="lg:col-span-3 nb-card p-5 bg-[#FFF7D6]! dark:bg-[#262626]!">
             <h2 class="text-[12px] font-black text-[#92400E] dark:text-[#FDE68A] uppercase tracking-[0.12em] mb-3 flex items-center gap-2">
                 <x-icon name="qr-code" class="w-4 h-4" />
                 Info Pembayaran QRIS
@@ -76,8 +76,14 @@
             <div class="space-y-2 text-sm">
                 <div class="flex justify-between"><span class="text-[#475569] font-bold">Subtotal:</span> <span class="font-extrabold num">{{ format_price($order->subtotal) }}</span></div>
                 <div class="flex justify-between"><span class="text-[#475569] font-bold">Ongkir:</span> <span class="font-extrabold num">{{ format_price($order->shipping_cost) }}</span></div>
+                @if(($order->down_payment ?? 0) > 0)
+                    <div class="flex justify-between"><span class="text-[#475569] font-bold">DP Masuk:</span> <span class="font-extrabold text-[#166534] num">-{{ format_price($order->down_payment) }}</span></div>
+                    @if(! $order->is_paid)
+                        <div class="flex justify-between"><span class="text-[#475569] font-bold">Sisa Bayar:</span> <span class="font-extrabold num">{{ format_price($order->remaining) }}</span></div>
+                    @endif
+                @endif
                 @if(($order->fee ?? 0) > 0)
-                    <div class="flex justify-between"><span class="text-[#475569] font-bold">Biaya Fee:</span> <span class="font-extrabold num">{{ format_price($order->fee) }}</span></div>
+                    <div class="flex justify-between"><span class="text-[#475569] font-bold">Fee Jastip:</span> <span class="font-extrabold num">{{ format_price($order->fee) }}</span></div>
                 @endif
                 @if(($order->discount ?? 0) > 0)
                     <div class="flex justify-between"><span class="text-[#475569] font-bold">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}:</span> <span class="font-extrabold text-[#166534] num">-{{ format_price($order->discount) }}</span></div>
@@ -129,7 +135,12 @@
                                     <img src="https://placehold.co/40x40/FFC800/141414?text={{ urlencode(substr($item->product_name, 0, 1)) }}"
                                          alt="" class="w-10 h-10 rounded-[8px] border-2 border-[#141414] object-cover" loading="lazy" decoding="async">
                                     <div>
-                                        <p class="font-extrabold text-sm">{{ $item->product_name }}</p>
+                                        <p class="font-extrabold text-sm">
+                                            {{ $item->product_name }}
+                                            @if(($item->status ?? 'ready') === 'po')
+                                                <x-badge tone="warning" class="ml-1">PO</x-badge>
+                                            @endif
+                                        </p>
                                         <p class="text-xs font-bold text-[#475569]">{{ $item->unit ?? 'pcs' }}</p>
                                     </div>
                                 </div>

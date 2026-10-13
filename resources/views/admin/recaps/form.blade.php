@@ -8,7 +8,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center gap-3">
         <div class="flex items-center gap-2.5 min-w-0 flex-1">
             <a href="{{ $editing ? route('admin.recaps.show', $recap) : route('admin.recaps.index') }}"
-               class="nb-btn shrink-0 w-11 h-11 !px-0 bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]" aria-label="Kembali">
+               class="nb-btn shrink-0 w-11 h-11 px-0! bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]" aria-label="Kembali">
                 <x-icon name="arrow-left" class="w-5 h-5" />
             </a>
             <div class="min-w-0 flex-1">
@@ -37,7 +37,7 @@
     <form method="POST"
           action="{{ $editing ? route('admin.recaps.update', $recap) : route('admin.recaps.store') }}"
           @submit="saving = true"
-          class="nb-card !p-0 overflow-hidden flex flex-col">
+          class="nb-card p-0! overflow-hidden flex flex-col">
         @csrf
         @if($editing) @method('PUT') @endif
         <input type="hidden" name="name" :value="name">
@@ -97,7 +97,7 @@
                                 <div class="flex items-center gap-1.5 px-2.5 pb-2">
                                     <select :name="`columns[${ci}][type]`" x-model="col.type"
                                             :aria-label="'Tipe kolom ' + (col.label || (ci + 1))"
-                                            class="nb-input !min-h-[36px] text-[12px] font-bold !border-[#141414] px-1.5 py-1">
+                                            class="nb-input min-h-[36px]! text-[12px] font-bold px-1.5 py-1">
                                         <option value="text">Teks</option>
                                         <option value="number">Angka</option>
                                         <option value="currency">Rupiah</option>

@@ -24,7 +24,7 @@
                     </span>
                 </div>
                 @if(! empty($totals['perColumn']))
-                    <div class="mt-1 -mx-5 -mb-5 px-5 py-3 nb-money-strip !border-x-0 !border-b-0 rounded-b-[10px] flex items-baseline justify-between gap-2">
+                    <div class="mt-1 -mx-5 -mb-5 px-5 py-3 nb-money-strip border-x-0! border-b-0! rounded-b-[10px] flex items-baseline justify-between gap-2">
                         <span class="text-[11px] font-black uppercase tracking-[0.1em]">Grand total</span>
                         <span class="font-black num text-[15px]">{{ format_price((int) $totals['grand']) }}</span>
                     </div>

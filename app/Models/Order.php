@@ -24,6 +24,7 @@ class Order extends Model
         'subtotal',
         'shipping_cost',
         'fee',
+        'down_payment',
         'coupon_id',
         'discount',
         'stock_committed',
@@ -40,6 +41,7 @@ class Order extends Model
             'subtotal' => 'integer',
             'shipping_cost' => 'integer',
             'fee' => 'integer',
+            'down_payment' => 'integer',
             'discount' => 'integer',
             'stock_committed' => 'boolean',
             'total' => 'integer',
@@ -133,6 +135,11 @@ class Order extends Model
     public function getIsPaidAttribute(): bool
     {
         return ! is_null($this->paid_at);
+    }
+
+    public function getRemainingAttribute(): int
+    {
+        return max(0, (int) $this->total - (int) $this->down_payment);
     }
 
     public function getFormattedTotalAttribute(): string

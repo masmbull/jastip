@@ -1,19 +1,19 @@
 {{-- Modal: buat invoice manual (form identik dengan halaman create). --}}
 <div x-show="open" x-cloak class="fixed inset-0 z-[400] flex items-start justify-center overflow-y-auto">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
-    <div class="relative bg-[#F8FAFC] dark:bg-[#1a1a1a] rounded-xl shadow-xl w-full max-w-3xl mx-4 my-8 animate-scale-in"
+    <div class="absolute inset-0 bg-black/60" @click="open = false"></div>
+    <div class="relative nb-card w-full max-w-3xl mx-4 my-8 p-0! overflow-hidden"
          @click.stop x-data="manualInvoice()">
-        <div class="sticky top-0 z-10 p-4 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between bg-white dark:bg-[#23252b] rounded-t-xl">
+        <div class="sticky top-0 z-10 px-5 py-4 border-b-2 border-[#141414] dark:border-[#FAF6EF] flex items-center justify-between gap-3 bg-white dark:bg-[#1E1E1E]">
             <div>
-                <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Buat Invoice Manual</h3>
-                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Isi seperti invoice, nomor dibuat otomatis saat simpan.</p>
+                <h3 class="text-lg font-black">Buat Invoice Manual</h3>
+                <p class="text-xs font-medium text-[#475569] dark:text-[#D6D3D1]">Isi seperti invoice, nomor dibuat otomatis saat simpan.</p>
             </div>
             <button type="button" @click="open = false" aria-label="Tutup" title="Tutup"
-                    class="text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    class="shrink-0 inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px]">
                 <x-icon name="x" class="w-5 h-5" />
             </button>
         </div>
-        <div class="p-4 sm:p-6">
+        <div class="p-4 sm:p-5 bg-[#FAF6EF] dark:bg-[#121212]">
             @include('admin.orders._manual-form', ['cancel' => 'modal'])
         </div>
     </div>
