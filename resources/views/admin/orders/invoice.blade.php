@@ -104,7 +104,7 @@
                     <td class="py-2.5 px-3 text-right font-medium">{{ format_price($item->subtotal) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="py-4 px-3 text-center text-[#94A3B8]">Tidak ada item.</td></tr>
+                <tr><td colspan="5" class="py-4 px-3 text-center text-[#64748B]">Tidak ada item.</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -170,7 +170,7 @@
         @endif
     </div>
 
-    <div class="mt-8 pt-4 border-t border-[#E2E8F0] text-center text-xs text-[#94A3B8]">
+    <div class="mt-8 pt-4 border-t border-[#E2E8F0] text-center text-xs text-[#64748B]">
         Terima kasih telah menitip di {{ $brand }}.
     </div>
 </div>

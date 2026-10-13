@@ -77,9 +77,24 @@
 .animate-scale-in   { animation: scale-in .35s ease-out both; }
 .animate-shimmer    { background: linear-gradient(90deg, #f0e8e0 40%, #fdfbfa 50%, #f0e8e0 60%); background-size: 200% 100%; animation: shimmer 1.8s infinite; }
 
+/* Stagger: one-shot entrance for list/table rows so the eye lands on the
+   newest row first. Purpose: hierarchy on load, not decoration. Cap at 8 so
+   long tables never feel slow. */
+.stagger > * { animation: fade-up .4s ease-out both; }
+.stagger > *:nth-child(1) { animation-delay: .02s; }
+.stagger > *:nth-child(2) { animation-delay: .06s; }
+.stagger > *:nth-child(3) { animation-delay: .10s; }
+.stagger > *:nth-child(4) { animation-delay: .14s; }
+.stagger > *:nth-child(5) { animation-delay: .18s; }
+.stagger > *:nth-child(6) { animation-delay: .22s; }
+.stagger > *:nth-child(7) { animation-delay: .26s; }
+.stagger > *:nth-child(n+8) { animation-delay: .30s; }
+
 /* focus-visible: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .animate-fade-up, .animate-fade-in, .animate-scale-in { animation: none !important; }
+    .animate-fade-up, .animate-fade-in, .animate-scale-in, .animate-shimmer, .stagger > * {
+        animation: none !important;
+    }
 }
 
 /* focus ring consistency */

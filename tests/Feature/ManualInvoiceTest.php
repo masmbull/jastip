@@ -160,4 +160,34 @@ class ManualInvoiceTest extends TestCase
             ->assertOk()
             ->assertExactJson([]);
     }
+
+    public function test_invoice_index_filters_by_status_and_search(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        Order::create([
+            'order_number' => 'NDTEST-MANUAL-OK', 'customer_name' => 'Cari Ini',
+            'customer_whatsapp' => '081200004321', 'customer_address' => 'Jl. A',
+            'subtotal' => 1000, 'shipping_cost' => 0, 'total' => 1000,
+            'status' => Order::STATUS_AWAITING_PAYMENT, 'payment_method' => 'manual',
+        ]);
+        Order::create([
+            'order_number' => 'NDTEST-MANUAL-LUNAS', 'customer_name' => 'Sudah Bayar',
+            'customer_whatsapp' => '081200004322', 'customer_address' => 'Jl. B',
+            'subtotal' => 1000, 'shipping_cost' => 0, 'total' => 1000,
+            'status' => Order::STATUS_CONFIRMED, 'paid_at' => now(), 'payment_method' => 'manual',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.invoices.index', ['search' => 'Cari Ini']))
+            ->assertOk()
+            ->assertSee('NDTEST-MANUAL-OK')
+            ->assertDontSee('NDTEST-MANUAL-LUNAS');
+
+        $this->actingAs($admin)
+            ->get(route('admin.invoices.index', ['status' => Order::STATUS_CONFIRMED]))
+            ->assertOk()
+            ->assertSee('NDTEST-MANUAL-LUNAS')
+            ->assertDontSee('NDTEST-MANUAL-OK');
+    }
 }

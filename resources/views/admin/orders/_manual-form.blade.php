@@ -1,6 +1,6 @@
 {{-- $cancel = 'modal' -> tombol Batal menutup modal; else link ke daftar pesanan. --}}
 @php($cancel = $cancel ?? null)
-    <form method="POST" action="{{ route('admin.orders.store') }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.orders.store') }}" class="space-y-6" @submit="saving = true">
         @csrf
 
         {{-- Lembar invoice --}}
@@ -35,8 +35,11 @@
                                    @focus="hits.length && (openCustomer = true)" @click.away="openCustomer = false"
                                    autocomplete="off" required value="{{ old('customer_name') }}"
                                    class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('customer_name') border-red-500 @enderror">
-                            <div x-show="openCustomer && hits.length" x-cloak
+                            <div x-show="openCustomer && (loadingCustomer || hits.length)" x-cloak
                                  class="absolute z-20 mt-1 w-full bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                <div x-show="loadingCustomer" class="flex items-center gap-2 px-3 py-2 text-sm text-[#94A3B8]">
+                                    <x-spinner /> Mencari pelanggan…
+                                </div>
                                 <template x-for="h in hits" :key="h.customer_whatsapp">
                                     <button type="button" @click="pickCustomer(h)"
                                             class="w-full text-left px-3 py-2 text-sm hover:bg-orange-50 dark:hover:bg-orange-500/10">
@@ -44,6 +47,9 @@
                                         <span class="text-[#94A3B8]" x-text="' · ' + h.customer_whatsapp"></span>
                                     </button>
                                 </template>
+                                <div x-show="!loadingCustomer && !hits.length" class="px-3 py-2 text-sm text-[#94A3B8]">
+                                    Pelanggan tidak ditemukan. Isi manual saja.
+                                </div>
                             </div>
                             <p class="text-xs text-[#94A3B8] mt-1">Ketik untuk memilih pelanggan lama, atau isi manual.</p>
                         </div>
@@ -124,8 +130,11 @@
                                            @focus="item.suggestions.length && (item.open = true)"
                                            placeholder="Nama barang *" autocomplete="off"
                                            class="w-full px-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] rounded-lg">
-                                    <div x-show="item.open && item.suggestions.length" x-cloak
+                                    <div x-show="item.open && (item.loading || item.suggestions.length)" x-cloak
                                          class="absolute z-20 mt-1 w-full bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                        <div x-show="item.loading" class="flex items-center gap-2 px-3 py-2 text-sm text-[#94A3B8]">
+                                            <x-spinner /> Mencari produk…
+                                        </div>
                                         <template x-for="s in item.suggestions" :key="s.id">
                                             <button type="button" @click="pickProduct(idx, s)"
                                                     class="w-full text-left px-3 py-2 text-sm hover:bg-orange-50 dark:hover:bg-orange-500/10">
@@ -133,6 +142,9 @@
                                                 <span class="text-[#94A3B8]" x-text="' · ' + formatRp(s.price)"></span>
                                             </button>
                                         </template>
+                                        <div x-show="!item.loading && !item.suggestions.length" class="px-3 py-2 text-sm text-[#94A3B8]">
+                                            Produk tidak ditemukan. Isi manual saja.
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-span-4 sm:col-span-2">
@@ -186,8 +198,10 @@
                 @else
                     <a href="{{ route('admin.invoices.index') }}" class="px-4 py-2 text-sm text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]">Batal</a>
                 @endif
-                <button type="submit" class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg shadow-sm">
-                    Simpan &amp; Buat Invoice
+                <button type="submit" :disabled="saving"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-70 disabled:cursor-not-allowed text-white font-medium rounded-lg shadow-sm transition-colors">
+                    <x-spinner x-show="saving" x-cloak />
+                    <span x-text="saving ? 'Menyimpan…' : 'Simpan &amp; Buat Invoice'">Simpan &amp; Buat Invoice</span>
                 </button>
             </div>
         </div>

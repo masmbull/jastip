@@ -2,31 +2,56 @@
 @section('title', 'Pesanan | ' . setting('brand_name'))
 
 @section('content')
-<div class="p-6 space-y-6">
+<div class="p-4 sm:p-6 space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-up">
         <div>
             <h1 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Daftar Pesanan</h1>
             <p class="text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Kelola semua pesanan jastip</p>
         </div>
         <div class="flex gap-3">
+            <a href="{{ route('admin.invoices.index') }}"
+               class="px-4 py-2 text-sm bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] rounded-lg hover:bg-[#CBD5E1] dark:hover:bg-[#404854] font-medium transition-colors">
+                Invoice Manual
+            </a>
             <a href="{{ route('admin.orders.create') }}"
-               class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium">
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
                 <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
-            </a>
-            <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}"
-               class="px-4 py-2 text-sm bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 font-medium">
-                Pending
-            </a>
-            <a href="{{ route('admin.orders.index') }}"
-               class="px-4 py-2 text-sm bg-[#E2E8F0] text-[#64748B] rounded-lg hover:bg-[#E2E8F0] font-medium">
-                Semua Pesanan
             </a>
         </div>
     </div>
 
+    @php($activeStatus = request('status', 'all'))
+    <form method="GET" action="{{ route('admin.orders.index') }}"
+          class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] p-4 flex flex-col sm:flex-row gap-3 animate-fade-up"
+          style="animation-delay: 60ms">
+        <div class="relative flex-1">
+            <x-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8] pointer-events-none" />
+            <input type="search" name="search" value="{{ request('search') }}"
+                   placeholder="Cari no. pesanan, nama, atau WhatsApp"
+                   class="w-full pl-9 pr-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+        </div>
+        <select name="status"
+                class="px-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+            <option value="all">Semua status</option>
+            @foreach(\App\Models\Order::statuses() as $value => $label)
+                <option value="{{ $value }}" @selected($activeStatus === $value)>{{ $label }}</option>
+            @endforeach
+        </select>
+        <button type="submit"
+                class="px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
+            Terapkan
+        </button>
+        @if(request()->filled('search') || ($activeStatus !== 'all'))
+            <a href="{{ route('admin.orders.index') }}"
+               class="px-4 py-2 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 rounded-lg font-medium text-center transition-colors">
+                Reset
+            </a>
+        @endif
+    </form>
+
     <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden animate-fade-up transition-colors" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[900px]">
                 <thead>
                     <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                         <th class="px-4 py-3">No. Pesanan</th>
@@ -39,7 +64,7 @@
                         <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
+                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854] stagger">
                     @forelse($orders as $order)
                         <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-4 py-3">
@@ -48,11 +73,19 @@
                             <td class="px-4 py-3 text-sm">
                                 <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->customer_name }}</p>
                                 <p class="text-xs text-[#94A3B8] dark:text-[#64748B]">{{ $order->customer_whatsapp }}</p>
-                            </td><td class="px-4 py-3 text-xs font-medium uppercase {{ $order->payment_method === "qris" ? "text-amber-700 dark:text-amber-400" : "text-[#94A3B8] dark:text-[#64748B]" }}">{{ $order->payment_method ?? "qris" }}</td>
+                            </td>
                             <td class="px-4 py-3 text-sm text-[#94A3B8] dark:text-[#cbd5e1]">{{ $order->created_at->format('d M Y, H:i') }}</td>
+                            <td class="px-4 py-3 text-xs font-medium uppercase {{ $order->payment_method === 'qris' ? 'text-amber-700 dark:text-amber-400' : 'text-[#94A3B8] dark:text-[#64748B]' }}">{{ $order->payment_method ?? 'qris' }}</td>
                             <td class="px-4 py-3 text-sm text-[#1E293B] dark:text-[#f1f5f9]">{{ format_price($order->subtotal) }}</td>
                             <td class="px-4 py-3 text-sm text-[#1E293B] dark:text-[#f1f5f9]">{{ format_price($order->shipping_cost) }}</td>
                             <td class="px-4 py-3 text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ format_price($order->total) }}</td>
+                            <td class="px-4 py-3">
+                                @if($order->is_paid)
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">LUNAS</span>
+                                @else
+                                    <span class="px-2 py-1 text-xs rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">BELUM BAYAR</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 text-xs rounded-full {{ $order->status_badge_class }}">
                                     {{ $order->status_label }}
@@ -86,7 +119,7 @@
                                     </svg>
                                 </div>
                                 <p class="text-[#94A3B8] font-medium">Belum ada pesanan.</p>
-                                <p class="text-sm text-[#CBD5E1] mt-1">Order akan muncul di sini setelah pelanggan checkout.</p>
+                                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Order akan muncul di sini setelah pelanggan checkout.</p>
                             </td>
                         </tr>
                     @endforelse

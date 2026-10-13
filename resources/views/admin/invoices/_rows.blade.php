@@ -41,12 +41,21 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2Z"></path>
                 </svg>
             </div>
-            <p class="text-[#94A3B8] font-medium">Belum ada invoice.</p>
-            <p class="text-sm text-[#CBD5E1] mt-1">Buat invoice manual untuk pelanggan di luar checkout.</p>
-            <button type="button" @click="open = true"
-                    class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium">
-                <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
-            </button>
+            @if(request()->filled('search') || (request('status') && request('status') !== 'all'))
+                <p class="text-[#94A3B8] font-medium">Tidak ada invoice yang cocok.</p>
+                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Coba ubah kata kunci atau status.</p>
+                <a href="{{ route('admin.invoices.index') }}"
+                   class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] rounded-lg font-medium transition-colors">
+                    Reset filter
+                </a>
+            @else
+                <p class="text-[#94A3B8] font-medium">Belum ada invoice.</p>
+                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Buat invoice manual untuk pelanggan di luar checkout.</p>
+                <button type="button" @click="open = true"
+                        class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
+                    <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
+                </button>
+            @endif
         </td>
     </tr>
 @endforelse
