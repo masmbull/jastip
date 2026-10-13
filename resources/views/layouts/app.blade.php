@@ -11,7 +11,7 @@
     @php
         $brandName = setting('brand_name', 'NITIP DI END');
         $sectionTitle = app('view')->getSection('title');
-        $fullTitle = $sectionTitle ? ($sectionTitle . ' — ' . $brandName) : ($brandName . ' — Titipan Spesial');
+        $fullTitle = $sectionTitle ? ($sectionTitle . ' | ' . $brandName) : ($brandName . ': Titipan Spesial');
         $pageDescription = $metaDescription ?? setting('meta_description', 'Temukan berbagai produk impian harga terbaik, gratis ongkir di atas Rp150.000, COD, dan garansi autentik 100%.');
     @endphp
     <title>{{ $fullTitle }}</title>
@@ -98,20 +98,23 @@
         <div x-show="searchOpen"
              x-transition
              x-cloak
-             class="fixed inset-x-0 top-16 z-[200] bg-white/95 backdrop-blur border-b border-[#E2E8F0] shadow-lg">
+             class="fixed inset-x-0 top-16 z-[200] bg-white/95 dark:bg-[#1a1a1a]/95 backdrop-blur border-b border-[#E2E8F0] dark:border-[#404854] shadow-lg">
             <form method="GET" action="{{ route('products.index') }}"
                   @submit="searchOpen = false"
+                  role="search"
                   class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex gap-2">
-                <input type="search" name="q" placeholder="Cari produk..."
+                <label for="nav-search" class="sr-only">Cari produk</label>
+                <input type="search" id="nav-search" name="q" placeholder="Cari produk..."
                        autocomplete="off"
-                       class="flex-1 px-4 py-2.5 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                       class="flex-1 px-4 py-2.5 border border-[#E2E8F0] dark:border-[#404854] rounded-lg bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] dark:placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-orange-300">
                 <button type="submit"
-                        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Cari
                 </button>
                 <button type="button" @click="searchOpen = false"
-                        class="px-3 py-1 text-sm text-[#94A3B8] hover:text-[#1E293B]">
-                    <x-icon name="x" class="inline-block w-5 h-5 align-text-bottom" />
+                        aria-label="Tutup pencarian" title="Tutup"
+                        class="px-3 py-2.5 rounded-lg text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <x-icon name="x" class="w-5 h-5" />
                 </button>
             </form>
         </div>

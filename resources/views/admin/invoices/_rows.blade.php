@@ -1,3 +1,16 @@
+@php
+    $statusTones = [
+        'awaiting_payment' => 'warning',
+        'pending' => 'warning',
+        'confirmed' => 'info',
+        'processing' => 'brand',
+        'ready' => 'neutral',
+        'shipped' => 'info',
+        'completed' => 'success',
+        'cancelled' => 'danger',
+    ];
+@endphp
+
 @forelse($invoices as $invoice)
     <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
         <td class="px-4 py-3">
@@ -7,30 +20,30 @@
             <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $invoice->customer_name }}</p>
             <p class="text-xs text-[#94A3B8] dark:text-[#64748B]">{{ $invoice->customer_whatsapp }}</p>
         </td>
-        <td class="px-4 py-3 text-sm text-[#94A3B8] dark:text-[#cbd5e1]">{{ $invoice->created_at->format('d M Y, H:i') }}</td>
-        <td class="px-4 py-3 text-sm text-[#1E293B] dark:text-[#f1f5f9]">{{ $invoice->items_count }} item</td>
-        <td class="px-4 py-3 text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ format_price($invoice->total) }}</td>
+        <td class="px-4 py-3 text-sm text-[#64748B] dark:text-[#cbd5e1]">{{ $invoice->created_at->format('d M Y, H:i') }}</td>
+        <td class="px-4 py-3 text-sm text-[#1E293B] dark:text-[#f1f5f9] num">{{ $invoice->items_count }} item</td>
+        <td class="px-4 py-3 text-sm text-right font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($invoice->total) }}</td>
         <td class="px-4 py-3">
             @if($invoice->is_paid)
-                <span class="px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400">LUNAS</span>
+                <x-badge tone="success">LUNAS</x-badge>
             @else
-                <span class="px-2 py-1 text-xs rounded-full bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400">BELUM BAYAR</span>
+                <x-badge tone="warning">BELUM BAYAR</x-badge>
             @endif
         </td>
         <td class="px-4 py-3">
-            <span class="px-2 py-1 text-xs rounded-full {{ $invoice->status_badge_class }}">{{ $invoice->status_label }}</span>
+            <x-badge :tone="$statusTones[$invoice->status] ?? 'neutral'">{{ $invoice->status_label }}</x-badge>
         </td>
         <td class="px-4 py-3">
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center gap-2">
                 <button type="button"
-                   data-inv-url="{{ route('admin.orders.invoice', $invoice) }}?embed=1"
-                   data-inv-title="Invoice #{{ $invoice->no }}"
-                   @click="$dispatch('jd-invoice', {url:$el.dataset.invUrl, title:$el.dataset.invTitle})"
-                   class="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 text-sm font-medium transition-colors">
+                        data-inv-url="{{ route('admin.orders.invoice', $invoice) }}?embed=1"
+                        data-inv-title="Invoice #{{ $invoice->no }}"
+                        @click="$dispatch('jd-invoice', {url:$el.dataset.invUrl, title:$el.dataset.invTitle})"
+                        class="inline-flex items-center gap-1 text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 text-sm font-medium transition-colors">
                     <x-icon name="clipboard" class="w-4 h-4" /> Cetak
                 </button>
                 <a href="{{ route('admin.orders.show', $invoice->id) }}"
-                   class="text-[#94A3B8] hover:text-orange-600 text-sm font-medium transition-colors">
+                   class="text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 text-sm font-medium transition-colors">
                     Lihat
                 </a>
             </div>
@@ -38,27 +51,26 @@
     </tr>
 @empty
     <tr>
-        <td colspan="8" class="px-4 py-12 text-center">
-            <div class="w-16 h-16 mx-auto bg-[#F1F5F9] dark:bg-[#2e323b] rounded-full mb-4 flex items-center justify-center">
-                <svg class="w-8 h-8 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2Z"></path>
-                </svg>
-            </div>
-            @if(request()->filled('search') || (request('status') && request('status') !== 'all'))
-                <p class="text-[#94A3B8] font-medium">Tidak ada invoice yang cocok.</p>
-                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Coba ubah kata kunci atau status.</p>
-                <a href="{{ route('admin.invoices.index') }}"
-                   class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] rounded-lg font-medium transition-colors">
-                    Reset filter
-                </a>
-            @else
-                <p class="text-[#94A3B8] font-medium">Belum ada invoice.</p>
-                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Buat invoice manual untuk pelanggan di luar checkout.</p>
-                <button type="button" @click="open = true"
-                        class="mt-4 inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
-                    <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
-                </button>
-            @endif
+        <td colspan="8">
+            <x-empty-state icon="clipboard" :title="request()->filled('search') || (request('status') && request('status') !== 'all') ? 'Tidak ada invoice yang cocok.' : 'Belum ada invoice.'">
+                @if(request()->filled('search') || (request('status') && request('status') !== 'all'))
+                    Coba ubah kata kunci atau status.
+                    <div class="mt-4">
+                        <a href="{{ route('admin.invoices.index') }}"
+                           class="inline-flex items-center justify-center px-4 py-2 text-sm bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] rounded-lg font-medium transition-colors hover:bg-[#CBD5E1] dark:hover:bg-[#404854]">
+                            Reset filter
+                        </a>
+                    </div>
+                @else
+                    Buat invoice manual untuk pelanggan di luar checkout.
+                    <div class="mt-4">
+                        <button type="button" @click="open = true"
+                                class="inline-flex items-center gap-2 px-4 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            <x-icon name="plus" class="w-4 h-4" /> Buat Invoice
+                        </button>
+                    </div>
+                @endif
+            </x-empty-state>
         </td>
     </tr>
 @endforelse

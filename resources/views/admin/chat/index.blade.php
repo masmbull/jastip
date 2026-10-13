@@ -3,56 +3,60 @@
 @section('title', 'Chat Pelanggan')
 
 @section('content')
-<div class="px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-[#f1f5f9]">Chat Pelanggan</h1>
-        <p class="mt-1 text-sm text-gray-600 dark:text-[#cbd5e1]">Balas pertanyaan pelanggan dari halaman bantuan.</p>
-    </div>
+<div class="space-y-6">
 
-    <div class="bg-white dark:bg-[#23252b] rounded-lg shadow border border-gray-200 dark:border-[#404854] overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-[#404854]">
-            <thead class="bg-gray-50 dark:bg-[#2e323b]">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-[#cbd5e1] uppercase tracking-wider">Pelanggan</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-[#cbd5e1] uppercase tracking-wider">Pesan Terakhir</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-[#cbd5e1] uppercase tracking-wider">Waktu</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 dark:text-[#cbd5e1] uppercase tracking-wider">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-[#404854]">
-                @forelse($conversations as $conversation)
-                @php($unread = $unreadByUser[$conversation->id] ?? 0)
-                <tr class="hover:bg-gray-50 dark:hover:bg-[#404854] transition">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900 dark:text-[#f1f5f9]">{{ $conversation->name }}</div>
-                        <div class="text-xs text-gray-500 dark:text-[#9ca3af]">{{ $conversation->email }}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm text-gray-600 dark:text-[#cbd5e1] max-w-md truncate">
-                            {{ $conversation->latestChatMessage?->body }}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-[#9ca3af]">
-                        {{ $conversation->latestChatMessage?->created_at?->diffForHumans() }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('admin.chat.show', $conversation) }}" class="inline-flex items-center gap-2 text-[#06B6D4] hover:underline">
-                            Buka
-                            @if($unread > 0)
-                                <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unread }}</span>
-                            @endif
-                        </a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="px-6 py-8 text-center text-gray-500 dark:text-[#9ca3af]">
-                        Belum ada percakapan
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <x-page-header title="Chat Pelanggan" subtitle="Balas pertanyaan pelanggan dari halaman bantuan." class="animate-fade-up" />
+
+    <x-card padded="false" class="animate-fade-up" style="animation-delay: 120ms">
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px]">
+                <thead class="bg-[#F1F5F9] dark:bg-[#2e323b] border-b border-[#E2E8F0] dark:border-[#404854]">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wider">Pelanggan</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wider">Pesan Terakhir</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wider">Waktu</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854] stagger">
+                    @forelse($conversations as $conversation)
+                    @php($unread = $unreadByUser[$conversation->id] ?? 0)
+                    <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $conversation->name }}</div>
+                            <div class="text-xs text-[#64748B] dark:text-[#cbd5e1] break-all">{{ $conversation->email }}</div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm text-[#64748B] dark:text-[#cbd5e1] max-w-md truncate">
+                                {{ $conversation->latestChatMessage?->body }}
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-[#64748B] dark:text-[#cbd5e1]">
+                            {{ $conversation->latestChatMessage?->created_at?->diffForHumans() }}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm">
+                            <a href="{{ route('admin.chat.show', $conversation) }}"
+                               class="inline-flex items-center gap-2 text-[#0891B2] dark:text-[#22D3EE] font-medium hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                <x-icon name="chat" class="w-4 h-4" /> Buka
+                                @if($unread > 0)
+                                    <x-badge tone="danger" aria-label="{{ $unread }} pesan belum dibaca">{{ $unread }}</x-badge>
+                                @endif
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4">
+                            <x-empty-state icon="chat" title="Belum ada percakapan">
+                                Pesan dari pelanggan akan tampil di sini.
+                            </x-empty-state>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </x-card>
+
 </div>
 @endsection

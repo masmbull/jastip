@@ -1,172 +1,138 @@
 @extends('layouts.app')
 
-@section('title', 'Cari Produk | NITIP DI END')
+@section('title', 'Cari Produk')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        {{-- Search Bar --}}
-        <div class="mb-8">
-            <form method="GET" action="{{ route('search') }}" class="flex gap-2">
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..."
-                       class="flex-1 px-4 py-3 bg-white dark:bg-[#23252b] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]">
-                <button type="submit" class="px-6 py-3 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium">
-                    Cari
-                </button>
-            </form>
+    {{-- Search Bar --}}
+    <div class="mb-8">
+        <form method="GET" action="{{ route('search') }}" class="flex flex-col sm:flex-row gap-2" role="search">
+            <label for="search-q" class="sr-only">Cari produk</label>
+            <input type="text" id="search-q" name="q" value="{{ request('q') }}" placeholder="Cari produk..."
+                   class="flex-1 px-4 py-3 bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] dark:placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-orange-300">
+            <x-btn type="submit" variant="brand" icon="search" class="px-6 py-3">
+                Cari
+            </x-btn>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {{-- Sidebar Filters --}}
+        <div class="lg:col-span-1">
+            <x-card class="lg:sticky lg:top-24">
+                <h2 class="text-lg font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">Filter</h2>
+
+                <form method="GET" action="{{ route('search') }}" class="space-y-5">
+                    {{-- Search --}}
+                    <div>
+                        <label for="filter-q" class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Pencarian</label>
+                        <input type="text" id="filter-q" name="q" value="{{ request('q') }}"
+                               class="w-full mt-2 px-3 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    </div>
+
+                    {{-- Category --}}
+                    <div>
+                        <label for="filter-category" class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Kategori</label>
+                        <select id="filter-category" name="category" class="w-full mt-2 px-3 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            <option value="">Semua Kategori</option>
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Price Range --}}
+                    <fieldset>
+                        <legend class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-3">Harga</legend>
+                        <div class="space-y-2">
+                            <label for="filter-price-min" class="sr-only">Harga minimum</label>
+                            <input type="number" id="filter-price-min" name="price_min" value="{{ request('price_min') }}" placeholder="Min" step="10000"
+                                   class="w-full px-3 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            <label for="filter-price-max" class="sr-only">Harga maksimum</label>
+                            <input type="number" id="filter-price-max" name="price_max" value="{{ request('price_max') }}" placeholder="Max" step="10000"
+                                   class="w-full px-3 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        </div>
+                    </fieldset>
+
+                    {{-- Stock Filter --}}
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="in_stock" name="in_stock" value="1" {{ request('in_stock') ? 'checked' : '' }}
+                               class="w-5 h-5 rounded cursor-pointer accent-orange-500">
+                        <label for="in_stock" class="text-sm text-[#1E293B] dark:text-[#f1f5f9] cursor-pointer">
+                            Stok Tersedia
+                        </label>
+                    </div>
+
+                    {{-- Featured Filter --}}
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="featured" name="featured" value="1" {{ request('featured') ? 'checked' : '' }}
+                               class="w-5 h-5 rounded cursor-pointer accent-orange-500">
+                        <label for="featured" class="text-sm text-[#1E293B] dark:text-[#f1f5f9] cursor-pointer">
+                            Produk Unggulan
+                        </label>
+                    </div>
+
+                    {{-- Sort --}}
+                    <div>
+                        <label for="filter-sort" class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Urutkan</label>
+                        <select id="filter-sort" name="sort" class="w-full mt-2 px-3 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga Terendah</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
+                            <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating Tertinggi</option>
+                        </select>
+                    </div>
+
+                    {{-- Buttons --}}
+                    <div class="space-y-2">
+                        <x-btn type="submit" variant="brand" class="w-full">
+                            Terapkan Filter
+                        </x-btn>
+                        <x-btn as="a" :href="route('search')" variant="outline" class="w-full">
+                            Reset
+                        </x-btn>
+                    </div>
+                </form>
+            </x-card>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {{-- Sidebar Filters --}}
-            <div class="lg:col-span-1">
-                <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854] sticky top-24">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-[#f1f5f9] mb-4">Filter</h3>
-
-                    <form method="GET" action="{{ route('search') }}" class="space-y-6">
-                        {{-- Search --}}
-                        <div>
-                            <label class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">Pencarian</label>
-                            <input type="text" name="q" value="{{ request('q') }}"
-                                   class="w-full mt-2 px-3 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] text-sm">
-                        </div>
-
-                        {{-- Category --}}
-                        <div>
-                            <label class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">Kategori</label>
-                            <select name="category" class="w-full mt-2 px-3 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] text-sm">
-                                <option value="">Semua Kategori</option>
-                                @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        {{-- Price Range --}}
-                        <div>
-                            <label class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-3 block">Harga</label>
-                            <div class="space-y-2">
-                                <input type="number" name="price_min" value="{{ request('price_min') }}" placeholder="Min" step="10000"
-                                       class="w-full px-3 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] text-sm">
-                                <input type="number" name="price_max" value="{{ request('price_max') }}" placeholder="Max" step="10000"
-                                       class="w-full px-3 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] text-sm">
-                            </div>
-                        </div>
-
-                        {{-- Stock Filter --}}
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="in_stock" name="in_stock" value="1" {{ request('in_stock') ? 'checked' : '' }}
-                                   class="w-4 h-4 rounded cursor-pointer">
-                            <label for="in_stock" class="text-sm text-gray-700 dark:text-[#cbd5e1] cursor-pointer">
-                                Stok Tersedia
-                            </label>
-                        </div>
-
-                        {{-- Featured Filter --}}
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="featured" name="featured" value="1" {{ request('featured') ? 'checked' : '' }}
-                                   class="w-4 h-4 rounded cursor-pointer">
-                            <label for="featured" class="text-sm text-gray-700 dark:text-[#cbd5e1] cursor-pointer">
-                                Produk Unggulan
-                            </label>
-                        </div>
-
-                        {{-- Sort --}}
-                        <div>
-                            <label class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">Urutkan</label>
-                            <select name="sort" class="w-full mt-2 px-3 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] text-sm">
-                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga Terendah</option>
-                                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga Tertinggi</option>
-                                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Terpopuler</option>
-                                <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Rating Tertinggi</option>
-                            </select>
-                        </div>
-
-                        {{-- Buttons --}}
-                        <div class="space-y-2">
-                            <button type="submit" class="w-full px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium">
-                                Terapkan Filter
-                            </button>
-                            <a href="{{ route('search') }}" class="block w-full px-4 py-2 border border-gray-300 dark:border-[#404854] text-gray-700 dark:text-[#cbd5e1] rounded-lg hover:bg-gray-100 dark:hover:bg-[#404854] transition text-center text-sm">
-                                Reset
-                            </a>
-                        </div>
-                    </form>
-                </div>
+        {{-- Products Grid --}}
+        <div class="lg:col-span-3">
+            {{-- Results Info --}}
+            <div class="mb-6">
+                <p class="text-[#64748B] dark:text-[#cbd5e1]">
+                    Menampilkan <strong class="num">{{ $products->count() }}</strong> dari <strong class="num">{{ $products->total() }}</strong> produk
+                </p>
             </div>
 
-            {{-- Products Grid --}}
-            <div class="lg:col-span-3">
-                {{-- Results Info --}}
-                <div class="mb-6 flex items-center justify-between">
-                    <p class="text-gray-600 dark:text-[#cbd5e1]">
-                        Menampilkan <strong>{{ $products->count() }}</strong> dari <strong>{{ $products->total() }}</strong> produk
-                    </p>
+            @if($products->count() > 0)
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                    @foreach($products as $product)
+                        <x-product-card :product="$product" />
+                    @endforeach
                 </div>
 
-                @if($products->count() > 0)
-                    {{-- Products --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                        @foreach($products as $product)
-                        <div class="group">
-                            <a href="{{ route('products.show', $product) }}" class="block relative overflow-hidden rounded-lg bg-white dark:bg-[#23252b] shadow-lg hover:shadow-xl transition">
-                                {{-- Product Image --}}
-                                <div class="relative overflow-hidden bg-gray-200 dark:bg-[#404854] h-48">
-                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
-                                    
-                                    @if($product->is_featured)
-                                    <span class="absolute top-2 left-2 px-2 py-1 bg-[#06B6D4] text-white text-xs font-bold rounded">UNGGULAN</span>
-                                    @endif
-                                </div>
-
-                                {{-- Product Info --}}
-                                <div class="p-4">
-                                    <h3 class="font-bold text-gray-900 dark:text-[#f1f5f9] mb-2 line-clamp-2">{{ $product->name }}</h3>
-                                    
-                                    {{-- Rating --}}
-                                    @if($product->rating)
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-sm text-yellow-400"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /> {{ $product->rating }}</span>
-                                        <span class="text-xs text-gray-600 dark:text-[#9ca3af]">({{ $product->sold_count }}+ terjual)</span>
-                                    </div>
-                                    @endif
-
-                                    {{-- Price --}}
-                                    <p class="text-lg font-bold text-[#06B6D4] mb-3">{{ $product->formatted_price }}</p>
-
-                                    {{-- Stock Badge --}}
-                                    <span class="inline-block text-xs px-2 py-1 rounded {{ $product->isInStock() ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' }}">
-                                        {{ $product->isInStock() ? 'Tersedia' : 'Habis' }}
-                                    </span>
-                                </div>
-                            </a>
-                        </div>
-                        @endforeach
-                    </div>
-
-                    {{-- Pagination --}}
-                    @if($products->hasPages())
-                    <div class="mt-12">
-                        {{ $products->links() }}
-                    </div>
-                    @endif
-                @else
-                    {{-- Empty State --}}
-                    <div class="text-center py-12">
-                        <div class="text-5xl mb-4"><x-icon name="search" class="inline-block w-10 h-10 align-text-bottom" /></div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-2">Produk Tidak Ditemukan</h3>
-                        <p class="text-gray-600 dark:text-[#cbd5e1] mb-6">Coba ubah filter atau pencarian Anda</p>
-                        <a href="{{ route('search') }}" class="px-6 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition inline-block">
-                            Reset Filter
-                        </a>
-                    </div>
+                {{-- Pagination --}}
+                @if($products->hasPages())
+                <div class="mt-12">
+                    {{ $products->links('components.pagination') }}
+                </div>
                 @endif
-            </div>
+            @else
+                <x-empty-state icon="search" title="Produk Tidak Ditemukan">
+                    Coba ubah filter atau pencarianmu.
+                    <div class="mt-4">
+                        <x-btn as="a" :href="route('search')" variant="brand" class="rounded-full">
+                            Reset Filter
+                        </x-btn>
+                    </div>
+                </x-empty-state>
+            @endif
         </div>
     </div>
 </div>

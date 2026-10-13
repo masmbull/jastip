@@ -3,25 +3,21 @@
 @section('title', $product->name)
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {{-- Product Image --}}
         <div class="relative animate-fade-up">
             <img src="{{ $product->image_url }}"
                  alt="{{ $product->name }}"
-                 class="w-full rounded-xl shadow-lg object-cover aspect-square"
-                 loading="lazy" decoding="async"
+                 class="w-full rounded-xl shadow-lg object-cover aspect-square bg-[#F1F5F9] dark:bg-[#2e323b]"
+                 loading="eager" decoding="async"
                  sizes="(max-width: 1024px) 100vw, 50vw">
             @if($product->is_featured)
-                <span class="absolute top-4 left-4 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Produk Unggulan
-                </span>
+                <x-badge tone="brand" class="absolute top-4 left-4 font-bold shadow-sm">Produk Unggulan</x-badge>
             @endif
             @if(!$product->isInStock())
-                <span class="absolute top-4 right-4 bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Stok Habis
-                </span>
+                <x-badge tone="neutral" class="absolute top-4 right-4 font-bold shadow-sm">Stok Habis</x-badge>
             @endif
         </div>
 
@@ -29,52 +25,52 @@
         <div class="space-y-6 animate-fade-up" style="animation-delay: 120ms">
             <div>
                 <div class="flex items-center gap-2 mb-2">
-                    <p class="text-sm text-orange-600 font-medium">{{ $product->category->name ?? 'Lainnya' }}</p>
+                    <p class="text-sm text-orange-600 dark:text-orange-400 font-medium">{{ $product->category->name ?? 'Lainnya' }}</p>
                     @if($product->brand)
-                        <span class="text-xs text-[#94A3B8]">·</span>
-                        <p class="text-sm text-[#64748B]">oleh <span class="font-semibold text-[#1E293B]">{{ $product->brand }}</span></p>
+                        <span class="text-xs text-[#64748B] dark:text-[#cbd5e1]" aria-hidden="true">·</span>
+                        <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">oleh <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">{{ $product->brand }}</span></p>
                     @endif
                 </div>
-                <h1 class="text-3xl font-bold text-[#1E293B]">{{ $product->name }}</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">{{ $product->name }}</h1>
 
                 @if($product->rating_text || $product->sold_text)
                     <div class="flex flex-wrap items-center gap-3 mt-2 text-sm">
                         @if($product->rating_text)
                             <span class="flex items-center gap-1">
-                                <span class="text-amber-500"><x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
-                                <span class="font-semibold text-[#1E293B]">{{ $product->rating_text }}</span>
-                                <span class="text-[#94A3B8]">rating</span>
+                                <x-icon name="star" class="w-4 h-4 text-amber-500" />
+                                <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] num">{{ $product->rating_text }}</span>
+                                <span class="text-[#64748B] dark:text-[#cbd5e1]">rating</span>
                             </span>
                         @endif
                         @if($product->sold_text)
-                            <span class="text-[#94A3B8]">{{ $product->sold_text }}</span>
+                            <span class="text-[#64748B] dark:text-[#cbd5e1]">{{ $product->sold_text }}</span>
                         @endif
                     </div>
                 @endif
 
                 <a href="{{ route('products.reviews', $product) }}"
-                   class="inline-flex items-center gap-1 mt-2 text-sm font-medium text-orange-600 hover:text-orange-700">
+                   class="inline-flex items-center gap-1 mt-2 text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                     Lihat semua ulasan ({{ $product->getReviewCount() }})
                 </a>
 
                 <div class="mt-3">
-                    <p class="text-2xl font-bold text-orange-600">
+                    <p class="text-2xl font-bold text-orange-600 dark:text-orange-400 num">
                         {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}
                     </p>
                     @if($product->price_max)
-                        <p class="text-xs text-[#94A3B8] mt-0.5">rentang harga pasaran di Indonesia — hubungi admin untuk harga titipan terkini</p>
+                        <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-0.5">rentang harga pasaran di Indonesia, hubungi admin untuk harga titipan terkini</p>
                     @endif
                     @if($product->effectiveFee() > 0)
-                        <p class="text-sm text-[#64748B] mt-1">Biaya fee: <span class="font-semibold text-[#1E293B]">{{ $product->formatted_setbiaya_fee }}</span> / item</p>
+                        <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] mt-1">Biaya fee: <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] num">{{ $product->formatted_setbiaya_fee }}</span> / item</p>
                     @endif
                 </div>
 
-                <p class="mt-3 text-sm text-[#64748B]">
+                <p class="mt-3 text-sm text-[#64748B] dark:text-[#cbd5e1]">
                     Stok:
                     @if($product->isInStock())
-                        <span class="font-semibold text-emerald-600">Tersedia ({{ $product->stock }})</span>
+                        <span class="font-semibold text-emerald-600 dark:text-emerald-400">Tersedia (<span class="num">{{ $product->stock }}</span>)</span>
                     @else
-                        <span class="font-semibold text-red-600">Habis</span>
+                        <span class="font-semibold text-red-600 dark:text-red-400">Habis</span>
                     @endif
                 </p>
 
@@ -82,70 +78,69 @@
                     $shippingCost = (int) setting('shipping_cost', 0);
                     $minOrder = (int) setting('minimum_order', 0);
                 @endphp
-                <div class="mt-3 bg-[#F1F5F9] rounded-lg p-4 text-sm text-[#64748B] space-y-1.5">
-                    <p><x-icon name="truck" class="inline-block w-5 h-5 align-text-bottom" /> Ongkir: <span class="font-semibold text-[#1E293B]">{{ $shippingCost > 0 ? 'Rp ' . number_format($shippingCost, 0, ',', '.') : 'Gratis' }}</span> — sesuai kota tujuan, dihitung saat checkout.</p>
-                    <p><x-icon name="cube" class="inline-block w-5 h-5 align-text-bottom" /> Estimasi cepat: <a href="{{ route('shipping.index', ['weight' => 1]) }}" class="text-orange-600 hover:text-orange-700 font-semibold">cek ongkir ke kotamu</a> (15 ekspedisi).</p>
-                    <p><x-icon name="gift" class="inline-block w-5 h-5 align-text-bottom" /> Gratis ongkir untuk titipan di atas Rp150.000.</p>
+                <div class="mt-3 bg-[#F1F5F9] dark:bg-[#2e323b] rounded-lg p-4 text-sm text-[#64748B] dark:text-[#cbd5e1] space-y-1.5">
+                    <p class="flex items-center gap-2"><x-icon name="truck" class="w-4 h-4 text-orange-500 dark:text-orange-400 shrink-0" /> Ongkir: <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] num">{{ $shippingCost > 0 ? 'Rp ' . number_format($shippingCost, 0, ',', '.') : 'Gratis' }}</span> sesuai kota tujuan, dihitung saat checkout.</p>
+                    <p class="flex items-center gap-2"><x-icon name="cube" class="w-4 h-4 text-orange-500 dark:text-orange-400 shrink-0" /> Estimasi cepat: <a href="{{ route('shipping.index', ['weight' => 1]) }}" class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-semibold">cek ongkir ke kotamu</a> (15 ekspedisi).</p>
+                    <p class="flex items-center gap-2"><x-icon name="gift" class="w-4 h-4 text-orange-500 dark:text-orange-400 shrink-0" /> Gratis ongkir untuk titipan di atas Rp150.000.</p>
                     @if($minOrder > 0)
-                        <p><x-icon name="cart" class="inline-block w-5 h-5 align-text-bottom" /> Minimal titip: Rp {{ number_format($minOrder, 0, ',', '.') }}</p>
+                        <p class="flex items-center gap-2"><x-icon name="cart" class="w-4 h-4 text-orange-500 dark:text-orange-400 shrink-0" /> Minimal titip: Rp <span class="num">{{ number_format($minOrder, 0, ',', '.') }}</span></p>
                     @endif
-                    <p><x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> COD & QRIS tersedia — garansi autentik 100%.</p>
+                    <p class="flex items-center gap-2"><x-icon name="check-circle" class="w-4 h-4 text-orange-500 dark:text-orange-400 shrink-0" /> COD &amp; QRIS tersedia, garansi autentik 100%.</p>
                 </div>
 
                 @php
                     $badge = $product->availability_badge;
                 @endphp
-                <span class="inline-flex items-center px-3 py-1 text-sm rounded-full {{ $badge['class'] }}">
-                    {{ $badge['text'] }}
-                </span>
+                <x-badge :tone="$badge['class'] === 'bg-red-100 text-red-700' ? 'danger' : ($badge['class'] === 'bg-amber-100 text-amber-700' ? 'warning' : 'success')" class="mt-3 px-3 py-1 text-sm">
+                    <span class="num">{{ $badge['text'] }}</span>
+                </x-badge>
             </div>
 
             {{-- Price tiers (optional) --}}
             @if(isset($product->price_tiers) && $product->price_tiers)
-                <div class="bg-[#F1F5F9] rounded-lg p-4">
-                    <p class="text-sm font-medium text-[#1E293B] mb-2">Harga Grosir (opsional):</p>
+                <div class="bg-[#F1F5F9] dark:bg-[#2e323b] rounded-lg p-4">
+                    <p class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Harga Grosir (opsional):</p>
                     @foreach($product->price_tiers as $tier)
-                        <div class="flex justify-between text-sm">
-                            <span>{{ $tier['min'] }}+ {{ $tier['unit'] ?? 'pcs' }}</span>
-                            <span class="font-medium">{{ format_price($tier['price']) }}</span>
+                        <div class="flex justify-between text-sm text-[#64748B] dark:text-[#cbd5e1]">
+                            <span><span class="num">{{ $tier['min'] }}</span>+ {{ $tier['unit'] ?? 'pcs' }}</span>
+                            <span class="font-medium num">{{ format_price($tier['price']) }}</span>
                         </div>
                     @endforeach
                 </div>
             @endif
 
             <div>
-                <h3 class="text-lg font-semibold text-[#1E293B] mb-2">Deskripsi</h3>
-                <div class="text-[#64748B] leading-relaxed space-y-3 prose prose-sm max-w-none">
+                <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Deskripsi</h3>
+                <div class="text-[#64748B] dark:text-[#cbd5e1] leading-relaxed space-y-3 prose prose-sm max-w-none dark:prose-invert">
                     {{ strip_tags($product->description_html ?? $product->description) }}
                 </div>
             </div>
 
             @if($product->isInStock())
-            <div class="pt-4 border-t border-[#E2E8F0]">
+            <div class="pt-4 border-t border-[#E2E8F0] dark:border-[#404854]">
                 <form id="addToCartForm"
                       method="POST"
                       action="{{ route('cart.add', ['product' => $product->id]) }}"
                       data-async>
                     @csrf
-                    <div class="flex items-center space-x-4 mb-4">
-                        <label class="text-sm font-medium text-[#1E293B]">Jumlah:</label>
-                        <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                        <span class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Jumlah:</span>
+                        <div class="flex items-center gap-2">
                             <button type="button" onclick="decrementQty()"
-                                    class="w-10 h-10 flex items-center justify-center bg-[#F1F5F9] rounded-full text-[#1E293B] hover:bg-orange-100 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"></path>
-                                </svg>
+                                    class="w-11 h-11 flex items-center justify-center bg-[#F1F5F9] dark:bg-[#2e323b] rounded-full text-[#1E293B] dark:text-[#f1f5f9] hover:bg-orange-100 dark:hover:bg-orange-500/15 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                    aria-label="Kurangi jumlah" title="Kurangi jumlah">
+                                <x-icon name="minus" class="w-5 h-5" />
                             </button>
                             <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ $product->stock }}"
-                                   class="w-12 h-10 text-center text-lg font-medium border border-[#E2E8F0] rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                   aria-label="Jumlah"
+                                   class="w-14 h-11 text-center text-lg font-medium num border border-[#E2E8F0] dark:border-[#404854] rounded bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
                             <button type="button" onclick="incrementQty({{ $product->stock }})"
-                                    class="w-10 h-10 flex items-center justify-center bg-[#F1F5F9] rounded-full text-[#1E293B] hover:bg-orange-100 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m6-6H6"></path>
-                                </svg>
+                                    class="w-11 h-11 flex items-center justify-center bg-[#F1F5F9] dark:bg-[#2e323b] rounded-full text-[#1E293B] dark:text-[#f1f5f9] hover:bg-orange-100 dark:hover:bg-orange-500/15 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                    aria-label="Tambah jumlah" title="Tambah jumlah">
+                                <x-icon name="plus" class="w-5 h-5" />
                             </button>
                         </div>
-                        <span class="text-xs text-[#94A3B8]">Stok: {{ $product->isInStock() ? 'Tersedia (' . $product->stock . ')' : 'Habis' }}</span>
+                        <span class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Stok: {{ $product->isInStock() ? 'Tersedia (' . $product->stock . ')' : 'Habis' }}</span>
                     </div>
 
                     <button type="submit"
@@ -155,12 +150,10 @@
                     </button>
                 </form>
 
-                                <a href="{{ \App\Services\WhatsappService::contactUrl('Saya ingin nitip ' . $product->name) }}"
+                <a href="{{ \App\Services\WhatsappService::contactUrl('Saya ingin nitip ' . $product->name) }}"
                    target="_blank" rel="noopener noreferrer"
-                   class="mt-3 flex items-center justify-center w-full px-6 py-3 border-2 border-green-500 text-green-600 font-medium rounded-full hover:bg-green-50 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.52 3.48A11.94 11.94 0 0012 0a11.96 11.96 0 00-8.44 20.73l-2.53 7.55 7.67-2.08A11.88 11.88 0 0012 24c6.62 0 12-5.38 12-12 0-3.21-1.25-6.21-3.48-8.42z" />
-                    </svg>
+                   class="mt-3 flex items-center justify-center gap-2 w-full px-6 py-3 border-2 border-green-500 text-green-600 dark:text-green-400 font-medium rounded-full hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors focus:outline-none focus:ring-2 focus:ring-green-300">
+                    <x-icon name="chat" class="w-5 h-5" />
                     Nitip via WhatsApp
                 </a>
 
@@ -168,11 +161,8 @@
                 <button type="button"
                         data-wishlist-toggle
                         data-url="{{ route('wishlist.toggle', ['product' => $product->id]) }}"
-                        class="mt-3 flex items-center justify-center w-full px-6 py-3 border-2 border-red-400 text-red-500 font-medium rounded-full hover:bg-red-50 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path>
-                    </svg>
+                        class="mt-3 flex items-center justify-center gap-2 w-full px-6 py-3 border-2 border-red-400 text-red-500 font-medium rounded-full hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300">
+                    <x-icon name="heart" class="w-5 h-5" />
                     <span data-wishlist-label>Tambah ke Wishlist</span>
                 </button>
                 @endauth
@@ -180,7 +170,7 @@
             @else
             <div class="pt-4">
                 <button disabled
-                        class="w-full px-6 py-4 bg-gray-300 text-gray-500 font-medium rounded-full cursor-not-allowed">
+                        class="w-full px-6 py-4 bg-[#E2E8F0] dark:bg-[#2e323b] text-[#64748B] dark:text-[#cbd5e1] font-medium rounded-full cursor-not-allowed">
                     Stok Habis
                 </button>
             </div>
@@ -191,8 +181,8 @@
     {{-- Related Products --}}
     @if(isset($relatedProducts) && $relatedProducts->isNotEmpty())
     <section class="mt-16 animate-fade-up">
-        <h2 class="text-2xl font-bold text-[#1E293B] mb-6">Produk Serupa</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h2 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6">Produk Serupa</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             @foreach($relatedProducts as $related)
                 <x-product-card :product="$related" />
             @endforeach

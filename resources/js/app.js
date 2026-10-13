@@ -271,6 +271,26 @@ window.Alpine = Alpine;
         };
     };
 
+    /* ---- reveal on scroll (progressive enhancement) ----
+       Elemen `.reveal` muncul halus saat masuk viewport. Kalau
+       IntersectionObserver tidak ada atau user minta reduced motion, kita
+       tidak menyalakan mode reveal sama sekali: konten tetap tampil normal. */
+    (function initReveal() {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || !('IntersectionObserver' in window)) return;
+        document.documentElement.setAttribute('data-reveal', 'on');
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+        const observe = () => document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => io.observe(el));
+        observe();
+    })();
+
     /* ---- PWA: service worker + installability ---- */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {

@@ -8,63 +8,60 @@
     <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6 md:mb-8 animate-fade-up">Titipan Kamu</h1>
 
     @if($cartItems->isEmpty())
-        <div class="text-center py-12 md:py-16 animate-fade-up" style="animation-delay: 120ms">
-            <div class="w-24 md:w-32 h-24 md:h-32 mx-auto bg-orange-50 dark:bg-orange-500/20 rounded-full mb-4 md:mb-6 flex items-center justify-center transition-colors">
-                <x-icon name="bag" class="w-12 h-12 md:w-16 md:h-16 text-orange-400" />
+        <x-empty-state icon="bag" title="Titipan kamu masih kosong." class="animate-fade-up">
+            Belum ada produk yang ditambahkan ke titipan.
+            <div class="mt-4">
+                <x-btn as="a" :href="route('products.index')" class="rounded-full px-6 py-3">Lihat Semua Produk</x-btn>
             </div>
-            <h2 class="text-lg md:text-xl font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-2">Titipan kamu masih kosong.</h2>
-            <p class="text-sm md:text-base text-[#94A3B8] dark:text-[#cbd5e1] mb-4 md:mb-6">Belum ada produk yang ditambahkan ke titipan.</p>
-            <a href="{{ route('products.index') }}"
-               class="inline-flex items-center px-4 md:px-6 py-2 md:py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 text-sm md:text-base">
-                Lihat Semua Produk
-            </a>
-        </div>
+        </x-empty-state>
     @else
         <div class="space-y-4 md:space-y-6">
 
             {{-- Cart Table (Desktop) --}}
-            <div class="hidden sm:block bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden animate-fade-up transition-colors">
+            <x-card padded="false" class="hidden sm:block animate-fade-up">
                 <div class="overflow-x-auto">
                     <table class="w-full">
+                        <caption class="sr-only">Daftar produk dalam titipan</caption>
                         <thead class="bg-[#F1F5F9] dark:bg-[#2e323b]">
                             <tr>
-                                <th class="text-left px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Produk</th>
-                                <th class="text-center px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Harga</th>
-                                <th class="text-center px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Jumlah</th>
-                                <th class="text-right px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Subtotal</th>
-                                <th class="px-3 md:px-4 py-3 text-center text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Aksi</th>
+                                <th scope="col" class="text-left px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Produk</th>
+                                <th scope="col" class="text-right px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Harga</th>
+                                <th scope="col" class="text-center px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Jumlah</th>
+                                <th scope="col" class="text-right px-3 md:px-4 py-3 text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Subtotal</th>
+                                <th scope="col" class="px-3 md:px-4 py-3 text-center text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] uppercase">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
                             @foreach($cartItems as $item)
-                                <tr class="hover:bg-[#F8FAFC]">
+                                <tr class="hover:bg-[#F8FAFC] dark:hover:bg-[#2e323b] transition-colors">
                                     <td class="px-4 py-4">
                                         <div class="flex items-center space-x-3">
                                             <img src="{{ $item['image'] ?? 'https://placehold.co/60x60/ffe8f0/999999?text=' . urlencode($item['name']) }}"
                                                  alt="{{ $item['name'] }}"
-                                                 class="w-14 h-14 rounded-lg object-cover"
+                                                 class="w-14 h-14 rounded-lg object-cover bg-[#F1F5F9] dark:bg-[#2e323b]"
                                                  loading="lazy" decoding="async">
-                                            <div>
-                                                <p class="font-medium text-[#1E293B]">{{ $item['name'] }}</p>
-                                                <p class="text-sm text-[#94A3B8]">{{ $item['unit'] ?? 'pcs' }}</p>
+                                            <div class="min-w-0">
+                                                <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $item['name'] }}</p>
+                                                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">{{ $item['unit'] ?? 'pcs' }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center px-4 py-4">{{ format_price($item['price']) }}</td>
+                                    <td class="text-right px-4 py-4 text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($item['price']) }}</td>
                                     <td class="text-center px-4 py-4">
                                         <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
                                               data-async
                                               class="inline-flex items-center justify-center gap-1">
                                             @csrf
-                                            <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                                   class="w-10 h-8 text-center text-sm border border-[#E2E8F0] rounded focus:outline-none focus:ring-1 focus:ring-orange-300">
+                                            <label class="sr-only" for="qty-{{ $item['product_id'] }}">Jumlah {{ $item['name'] }}</label>
+                                            <input type="number" id="qty-{{ $item['product_id'] }}" name="quantity" value="{{ $item['quantity'] }}" min="1"
+                                                   class="w-14 h-10 text-center text-sm num border border-[#E2E8F0] dark:border-[#404854] rounded bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
                                             <button type="submit"
-                                                    class="text-xs px-2 py-1 bg-orange-500 text-white rounded hover:bg-orange-600">
+                                                    class="text-xs px-3 py-2 min-h-[44px] bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300">
                                                 OK
                                             </button>
                                         </form>
                                     </td>
-                                    <td class="text-right px-4 py-4 font-medium text-[#1E293B]">{{ format_price($item['subtotal']) }}</td>
+                                    <td class="text-right px-4 py-4 font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($item['subtotal']) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <form method="POST"
                                               action="{{ route('cart.remove', ['product' => $item['product_id']]) }}"
@@ -73,11 +70,9 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                    class="text-red-500 hover:text-red-700 p-2 rounded hover:bg-red-50 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                          d="M19 7l-.867 12.142a2 2 0 01-1.994 1.827H7.864a2 2 0 01-1.994-1.827L5 7M10 11V6a1 1 0 011-1h2a1 1 0 011 1v5m-4 0v9h6v-9m-6 0L8 21h8l-2-9h-4z"></path>
-                                                </svg>
+                                                    class="text-red-500 hover:text-red-700 p-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                                                    aria-label="Hapus {{ $item['name'] }} dari titipan" title="Hapus">
+                                                <x-icon name="trash" class="w-5 h-5" />
                                             </button>
                                         </form>
                                     </td>
@@ -86,89 +81,86 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-card>
 
             {{-- Mobile list --}}
             <div class="sm:hidden space-y-4">
                 @foreach($cartItems as $item)
-                    <div class="bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-4 flex gap-3 items-start">
-                        <img src="{{ $item['image'] ?? 'https://placehold.co/60x60/ffe8f0/999999?text=' . urlencode($item['name']) }}"
-                             alt="{{ $item['name'] }}"
-                             class="w-16 h-16 rounded-lg object-cover"
-                             loading="lazy" decoding="async">
-                        <div class="flex-1">
-                            <p class="font-medium text-[#1E293B]">{{ $item['name'] }}</p>
-                            <p class="text-xs text-[#94A3B8]">{{ $item['unit'] ?? 'pcs' }} · {{ format_price($item['price']) }}</p>
-                            <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
-                                  data-async
-                                  class="flex items-center gap-1 mt-2">
+                    <x-card class="animate-fade-up">
+                        <div class="flex gap-3 items-start">
+                            <img src="{{ $item['image'] ?? 'https://placehold.co/60x60/ffe8f0/999999?text=' . urlencode($item['name']) }}"
+                                 alt="{{ $item['name'] }}"
+                                 class="w-16 h-16 rounded-lg object-cover bg-[#F1F5F9] dark:bg-[#2e323b]"
+                                 loading="lazy" decoding="async">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $item['name'] }}</p>
+                                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">{{ $item['unit'] ?? 'pcs' }} · <span class="num">{{ format_price($item['price']) }}</span></p>
+                                <form method="POST" action="{{ route('cart.update', ['product' => $item['product_id']]) }}"
+                                      data-async
+                                      class="flex items-center gap-1 mt-2">
+                                    @csrf
+                                    <label class="sr-only" for="qty-m-{{ $item['product_id'] }}">Jumlah {{ $item['name'] }}</label>
+                                    <input type="number" id="qty-m-{{ $item['product_id'] }}" name="quantity" value="{{ $item['quantity'] }}" min="1"
+                                           class="w-14 h-10 text-center text-sm num border border-[#E2E8F0] dark:border-[#404854] rounded bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                    <button type="submit" class="text-xs px-3 py-2 min-h-[44px] bg-orange-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">OK</button>
+                                </form>
+                                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Subtotal: <span class="num">{{ format_price($item['subtotal']) }}</span></p>
+                            </div>
+                            <form method="POST"
+                                  action="{{ route('cart.remove', ['product' => $item['product_id']]) }}"
+                                  data-confirm="Yakin ingin menghapus produk ini dari titipan?"
+                                  class="self-start">
                                 @csrf
-                                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1"
-                                       class="w-10 h-8 text-center text-sm border border-[#E2E8F0] rounded">
-                                <button type="submit" class="text-xs px-2 py-1 bg-orange-500 text-white rounded">OK</button>
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 p-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-300"
+                                        aria-label="Hapus {{ $item['name'] }} dari titipan" title="Hapus">
+                                    <x-icon name="x" class="w-5 h-5" />
+                                </button>
                             </form>
-                            <p class="text-xs text-[#94A3B8] mt-1">Subtotal: {{ format_price($item['subtotal']) }}</p>
                         </div>
-                        <form method="POST"
-                              action="{{ route('cart.remove', ['product' => $item['product_id']]) }}"
-                              data-confirm="Yakin ingin menghapus produk ini dari titipan?"
-                              class="self-start">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 p-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
+                    </x-card>
                 @endforeach
             </div>
 
             {{-- Cart Summary --}}
-            <div class="mt-8 bg-white rounded-xl shadow-sm border border-[#E2E8F0] p-6 animate-fade-up">
+            <x-card class="mt-8 animate-fade-up">
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-[#64748B]">Subtotal ({{ $cartItems->sum('quantity') }} item)</span>
-                        <span class="font-bold text-[#1E293B]">{{ format_price($subtotal) }}</span>
+                        <span class="text-[#64748B] dark:text-[#cbd5e1]">Subtotal (<span class="num">{{ $cartItems->sum('quantity') }}</span> item)</span>
+                        <span class="font-bold text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($subtotal) }}</span>
                     </div>
-                                                            <div class="flex justify-between items-center">
-                        <span class="text-[#64748B]">Ongkir</span>
-                        <span class="text-[#94A3B8]">{{ format_price(setting('shipping_cost', 0)) }}</span>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#64748B] dark:text-[#cbd5e1]">Ongkir</span>
+                        <span class="text-[#64748B] dark:text-[#cbd5e1] num">{{ format_price(setting('shipping_cost', 0)) }}</span>
                     </div>
                     @if(($fee ?? 0) > 0)
                     <div class="flex justify-between items-center">
-                        <span class="text-[#64748B]">Biaya Fee</span>
-                        <span class="text-[#94A3B8]">{{ format_price($fee) }}</span>
+                        <span class="text-[#64748B] dark:text-[#cbd5e1]">Biaya Fee</span>
+                        <span class="text-[#64748B] dark:text-[#cbd5e1] num">{{ format_price($fee) }}</span>
                     </div>
                     @endif
-                    <div class="border-t border-[#E2E8F0] pt-3 mt-3">
+                    <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-3 mt-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-lg font-semibold text-[#1E293B]">Total</span>
-                            <span class="text-2xl font-bold text-orange-600">{{ format_price($subtotal + setting('shipping_cost', 0) + ($fee ?? 0)) }}</span>
+                            <span class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Total</span>
+                            <span class="text-2xl font-bold text-orange-600 dark:text-orange-400 num">{{ format_price($subtotal + setting('shipping_cost', 0) + ($fee ?? 0)) }}</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </x-card>
 
             {{-- Actions --}}
             <div class="mt-8 flex flex-col sm:flex-row gap-4 animate-fade-up">
-                <a href="{{ route('products.index') }}"
-                   class="flex-1 text-center px-6 py-3 border border-[#E2E8F0] text-[#64748B] font-medium rounded-full hover:bg-[#F1F5F9] transition-colors">
+                <x-btn as="a" :href="route('products.index')" variant="outline" class="flex-1 py-3 rounded-full">
                     Lanjutkan Belanja
-                </a>
+                </x-btn>
                 @auth
-                    <a href="{{ route('checkout.index') }}"
-                       class="flex-1 text-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <x-btn as="a" :href="route('checkout.index')" variant="brand" class="flex-1 py-3 rounded-full">
                         Lanjut Nitip
-                    </a>
+                    </x-btn>
                 @else
-                    <a href="{{ route('login') }}"
-                       class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
-                        <x-icon name="lock" class="w-4 h-4" />
+                    <x-btn as="a" :href="route('login')" variant="brand" icon="lock" class="flex-1 py-3 rounded-full">
                         Masuk untuk Lanjut Nitip
-                    </a>
+                    </x-btn>
                 @endauth
             </div>
         </div>

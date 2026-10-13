@@ -1,66 +1,65 @@
 @extends('layouts.app')
 
-@section('title', 'Ulasan ' . $product->name . ' | NITIP DI END')
+@section('title', 'Ulasan ' . $product->name)
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">
+<div class="py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {{-- Product Info Card --}}
-        <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-[#404854]">
+{{-- Product Info Card --}}
+        <x-card class="mb-8">
             <div class="flex flex-col md:flex-row gap-6">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" 
-                     class="w-24 h-24 object-cover rounded-lg shadow">
-                <div class="flex-1">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-2">{{ $product->name }}</h1>
-                    <p class="text-gray-600 dark:text-[#cbd5e1] mb-3">{{ $product->description }}</p>
-                    <div class="flex items-center gap-4">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
+                     class="w-24 h-24 object-cover rounded-lg shadow" loading="lazy" decoding="async">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-2">{{ $product->name }}</h1>
+                    <p class="text-[#64748B] dark:text-[#cbd5e1] mb-3 line-clamp-2">{{ $product->description }}</p>
+                    <div class="flex flex-wrap items-center gap-4">
                         <div class="flex items-center">
-                            <span class="text-2xl font-bold text-yellow-400">{{ number_format($averageRating, 1, ',', '.') }}</span>
-                            <span class="text-gray-500 dark:text-[#cbd5e1] ml-2">dari 5 ({{ $reviewCount }} ulasan)</span>
+                            <span class="text-2xl font-bold text-amber-500 num">{{ number_format($averageRating, 1, ',', '.') }}</span>
+                            <span class="text-[#64748B] dark:text-[#cbd5e1] ml-2">dari 5 (<span class="num">{{ $reviewCount }}</span> ulasan)</span>
                         </div>
-                        <a href="{{ route('products.show', $product) }}" 
-                           class="px-4 py-2 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition">
+                        <x-btn as="a" :href="route('products.show', $product)" variant="outline" icon="arrow-left" class="rounded-lg">
                             Kembali ke Produk
-                        </a>
+                        </x-btn>
                     </div>
                 </div>
             </div>
-        </div>
+        </x-card>
 
-        {{-- Rating Distribution --}}
-        <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-[#404854]">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Distribusi Rating</h2>
+{{-- Rating Distribution --}}
+        <x-card class="mb-8">
+            <h2 class="text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6">Distribusi Rating</h2>
             <div class="space-y-3">
                 @foreach([5, 4, 3, 2, 1] as $star)
                     @php $count = $ratingDistribution[$star]; @endphp
                     <div class="flex items-center gap-3">
-                        <span class="w-12 text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $star }} <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" /></span>
-                        <div class="flex-1 bg-gray-200 dark:bg-[#404854] rounded-full h-2">
-                            <div class="bg-yellow-400 h-2 rounded-full" 
+                        <span class="w-12 text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] flex items-center gap-1 num">{{ $star }} <x-icon name="star" class="w-4 h-4 text-amber-500" aria-hidden="true" /></span>
+                        <div class="flex-1 bg-[#E2E8F0] dark:bg-[#404854] rounded-full h-2">
+                            <div class="bg-amber-400 h-2 rounded-full"
                                  style="width: {{ $reviewCount > 0 ? ($count / $reviewCount) * 100 : 0 }}%"></div>
                         </div>
-                        <span class="text-sm text-gray-600 dark:text-[#cbd5e1] w-8 text-right">{{ $count }}</span>
+                        <span class="text-sm text-[#64748B] dark:text-[#cbd5e1] w-8 text-right num">{{ $count }}</span>
                     </div>
                 @endforeach
             </div>
-        </div>
+        </x-card>
 
-        {{-- Add Review Form --}}
+{{-- Add Review Form --}}
         @auth
-        <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-[#404854]">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9] mb-6">Tulis Ulasan Anda</h2>
+        <x-card class="mb-8">
+            <h2 class="text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6">Tulis Ulasan Anda</h2>
             <form id="reviewForm" class="space-y-4">
                 @csrf
-                
+
                 {{-- Rating --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-3">Rating</label>
-                    <div class="flex gap-2" id="ratingStars">
+                    <span class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-3">Rating</span>
+                    <div class="flex gap-2" id="ratingStars" role="group" aria-label="Pilih rating">
                         @for($i = 1; $i <= 5; $i++)
-                            <button type="button" class="star-btn text-3xl transition"
-                                    data-rating="{{ $i }}">
-                                <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
+                            <button type="button" class="star-btn w-11 h-11 flex items-center justify-center rounded-lg text-[#94A3B8] dark:text-[#64748B] hover:text-amber-400 transition focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                    data-rating="{{ $i }}" aria-label="Beri {{ $i }} bintang">
+                                <x-icon name="star" class="w-7 h-7" />
                             </button>
                         @endfor
                     </div>
@@ -69,88 +68,87 @@
 
                 {{-- Title --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Judul Ulasan</label>
-                    <input type="text" name="title" required maxlength="100"
-                           class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]"
+                    <label for="reviewTitle" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Judul Ulasan</label>
+                    <input type="text" id="reviewTitle" name="title" required maxlength="100"
+                           class="w-full px-4 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] dark:placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-orange-300"
                            placeholder="Contoh: Produk berkualitas dan terpercaya">
                 </div>
 
                 {{-- Content --}}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-[#cbd5e1] mb-2">Ulasan Detail</label>
-                    <textarea name="content" required maxlength="1000" rows="5"
-                              class="w-full px-4 py-2 bg-gray-100 dark:bg-[#404854] border border-gray-300 dark:border-[#404854] rounded-lg dark:text-[#f1f5f9] placeholder-gray-500 dark:placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#06B6D4]"
+                    <label for="reviewContent" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Ulasan Detail</label>
+                    <textarea name="content" id="reviewContent" required maxlength="1000" rows="5"
+                              class="w-full px-4 py-2 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] dark:placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-orange-300"
                               placeholder="Bagikan pengalaman Anda dengan produk ini..."></textarea>
-                    <p class="text-xs text-gray-500 dark:text-[#9ca3af] mt-1" id="charCount">0 / 1000</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1 num" id="charCount">0 / 1000</p>
                 </div>
 
                 {{-- Submit --}}
-                <button type="submit" class="w-full px-4 py-3 bg-[#06B6D4] hover:bg-[#0E7490] text-white font-semibold rounded-lg transition">
+                <x-btn type="submit" variant="brand" class="w-full py-3 text-base">
                     Kirim Ulasan
-                </button>
+                </x-btn>
             </form>
-        </div>
+        </x-card>
         @else
-        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-8">
+        <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-xl p-6 mb-8">
             <p class="text-blue-900 dark:text-blue-200">
-                <a href="{{ route('login') }}" class="font-bold hover:underline">Masuk</a> untuk menulis ulasan
+                <a href="{{ route('login') }}" class="font-bold hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">Masuk</a> untuk menulis ulasan
             </p>
         </div>
         @endauth
 
-        {{-- Reviews List --}}
+{{-- Reviews List --}}
         <div class="space-y-4">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-[#f1f5f9]">Ulasan Pelanggan</h2>
-            
+            <h2 class="text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Ulasan Pelanggan</h2>
+
             @forelse($reviews as $review)
-            <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-lg p-6 border border-gray-200 dark:border-[#404854]">
+            <x-card>
                 {{-- Review Header --}}
                 <div class="flex items-start justify-between mb-3">
-                    <div class="flex-1">
+                    <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-3 mb-2">
-                            <div class="w-10 h-10 bg-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold">
+                            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold shrink-0" aria-hidden="true">
                                 {{ strtoupper(substr($review->user?->name ?? 'P', 0, 1)) }}
                             </div>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-[#f1f5f9]">{{ $review->user?->name ?? 'Pengguna' }}</p>
-                                <p class="text-sm text-gray-500 dark:text-[#9ca3af]">{{ $review->created_at->diffForHumans() }}</p>
+                            <div class="min-w-0">
+                                <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">{{ $review->user?->name ?? 'Pengguna' }}</p>
+                                <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">{{ $review->created_at->diffForHumans() }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="flex text-yellow-400">
+                            <div class="flex text-amber-500" role="img" aria-label="Rating {{ $review->rating }} dari 5">
                                 @for($i = 0; $i < $review->rating; $i++)
-                                    <x-icon name="star" class="inline-block w-5 h-5 align-text-bottom" />
+                                    <x-icon name="star" class="w-4 h-4" aria-hidden="true" />
                                 @endfor
                             </div>
-                            <span class="text-sm font-medium text-gray-700 dark:text-[#cbd5e1]">{{ $review->rating }} dari 5</span>
+                            <span class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ $review->rating }} dari 5</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Review Title and Content --}}
-                <h3 class="font-bold text-gray-900 dark:text-[#f1f5f9] mb-2">{{ $review->title }}</h3>
-                <p class="text-gray-700 dark:text-[#cbd5e1] mb-4 leading-relaxed">{{ $review->content }}</p>
+                <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-2">{{ $review->title }}</h3>
+                <p class="text-[#64748B] dark:text-[#cbd5e1] mb-4 leading-relaxed">{{ $review->content }}</p>
 
                 {{-- Helpful Button --}}
-                <div class="flex items-center gap-3 border-t border-gray-200 dark:border-[#404854] pt-4">
-                    <button class="helpful-btn flex items-center gap-2 px-3 py-1 text-sm text-gray-600 dark:text-[#cbd5e1] hover:text-[#06B6D4] transition"
-                            data-review-id="{{ $review->id }}">
-                        <x-icon name="check-circle" class="inline-block w-5 h-5 align-text-bottom" /> <span class="helpful-count">{{ $review->helpful_count }}</span>
+                <div class="flex items-center gap-3 border-t border-[#E2E8F0] dark:border-[#404854] pt-4">
+                    <button class="helpful-btn flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 transition focus:outline-none focus:ring-2 focus:ring-orange-300"
+                            data-review-id="{{ $review->id }}" aria-label="Tandai ulasan bermanfaat">
+                        <x-icon name="check-circle" class="w-5 h-5" /> <span class="helpful-count num">{{ $review->helpful_count }}</span>
                     </button>
-                    <span class="text-sm text-gray-500 dark:text-[#9ca3af]">Bermanfaat?</span>
+                    <span class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Bermanfaat?</span>
                 </div>
-            </div>
+            </x-card>
             @empty
-            <div class="text-center py-12 text-gray-500 dark:text-[#cbd5e1]">
-                <p class="text-lg">Belum ada ulasan untuk produk ini</p>
-                <p class="text-sm mt-2">Jadilah yang pertama memberikan ulasan!</p>
-            </div>
+            <x-empty-state icon="chat" title="Belum ada ulasan untuk produk ini">
+                Jadilah yang pertama memberikan ulasan!
+            </x-empty-state>
             @endforelse
 
             {{-- Pagination --}}
             @if($reviews->hasPages())
             <div class="mt-8">
-                {{ $reviews->links() }}
+                {{ $reviews->links('components.pagination') }}
             </div>
             @endif
         </div>

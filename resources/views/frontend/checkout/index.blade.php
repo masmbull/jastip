@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Checkout | Titipan Kamu')
+@section('title', 'Checkout')
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
     <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6 md:mb-8">Isi Data Pesanan</h1>
@@ -9,21 +9,21 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <!-- Form Column -->
             <div class="md:col-span-2 space-y-6">
-                <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-6 space-y-4 transition-colors">
+                <x-card class="space-y-4">
                     <h2 class="text-lg md:text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">Data Diri</h2>
                     
                     <!-- Nama -->
                     <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nama Lengkap *</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required
+                        <label for="co-name" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nama Lengkap *</label>
+                        <input type="text" id="co-name" name="name" value="{{ old('name') }}" required autocomplete="name"
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('name') border-red-500 @enderror">
                         @error('name') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- WhatsApp -->
                     <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nomor WhatsApp *</label>
-                        <input type="text" name="whatsapp" value="{{ old('whatsapp') }}" required
+                        <label for="co-wa" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nomor WhatsApp *</label>
+                        <input type="text" id="co-wa" name="whatsapp" value="{{ old('whatsapp') }}" required autocomplete="tel"
                             placeholder="081234567890"
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('whatsapp') border-red-500 @enderror">
                         @error('whatsapp') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
@@ -31,18 +31,18 @@
 
                     <!-- Email (opsional) -->
                     <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Email (Opsional)</label>
-                        <input type="email" name="email" value="{{ old('email', auth()->user()?->email) }}"
+                        <label for="co-email" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Email (Opsional)</label>
+                        <input type="email" id="co-email" name="email" value="{{ old('email', auth()->user()?->email) }}" autocomplete="email"
                             placeholder="kamu@email.com"
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('email') border-red-500 @enderror">
-                        <p class="text-xs text-[#94A3B8] mt-1">Untuk kirim konfirmasi & status pesanan via email.</p>
+                        <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Untuk kirim konfirmasi &amp; status pesanan via email.</p>
                         @error('email') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Alamat -->
                     <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Alamat Lengkap *</label>
-                        <textarea name="address" rows="3" required
+                        <label for="co-address" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Alamat Lengkap *</label>
+                        <textarea id="co-address" name="address" rows="3" required autocomplete="street-address"
                             placeholder="Rumah, kantor, atau tempat lain..."
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 resize-none transition-colors @error('address') border-red-500 @enderror">{{ old('address') }}</textarea>
                         @error('address') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
@@ -50,8 +50,8 @@
 
                     <!-- Catatan -->
                     <div>
-                        <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Catatan (Opsional)</label>
-                        <textarea name="notes" rows="2"
+                        <label for="co-notes" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Catatan (Opsional)</label>
+                        <textarea id="co-notes" name="notes" rows="2"
                             placeholder="Warna, ukuran, atau pesan khusus..."
                             class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 resize-none transition-colors">{{ old('notes') }}</textarea>
                     </div>
@@ -59,22 +59,24 @@
                     <!-- Kota & Ekspedisi + Cek Ongkir -->
                     <div class="p-4 rounded-lg border border-[#E2E8F0] dark:border-[#404854] bg-[#F8FAFC] dark:bg-[#2e323b]">
                         <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2 flex items-center gap-2">
-                            <x-icon name="truck" class="w-4 h-4 text-[#0891B2]" />
+                            <x-icon name="truck" class="w-4 h-4 text-orange-500 dark:text-orange-400" />
                             Kota Tujuan & Ekspedisi *
                         </label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <select name="city" x-model="city" @change="check()" required
+                                <label for="co-city" class="sr-only">Kota tujuan</label>
+                                <select id="co-city" name="city" x-model="city" @change="check()" required
                                     class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('city') border-red-500 @enderror">
                                     <option value="">Pilih kota tujuan</option>
                                     @foreach($cities as $name => $meta)
-                                        <option value="{{ $name }}" @selected(old('city') === $name)>{{ $name }} — {{ $meta['province'] }}</option>
+                                        <option value="{{ $name }}" @selected(old('city') === $name)>{{ $name }}, {{ $meta['province'] }}</option>
                                     @endforeach
                                 </select>
                                 @error('city') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <select name="courier" x-model="courier" @change="check()" required
+                                <label for="co-courier" class="sr-only">Ekspedisi</label>
+                                <select id="co-courier" name="courier" x-model="courier" @change="check()" required
                                     class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('courier') border-red-500 @enderror">
                                     <option value="">Pilih ekspedisi</option>
                                     <template x-for="r in okRows" :key="r.code">
@@ -91,11 +93,9 @@
                             Estimasi berat: <span x-text="weight + ' kg'"></span>
                         </p>
 
-                        {{-- Hasil ongkir --}}
+{{-- Hasil ongkir --}}
                         <div class="mt-3" x-show="loading" x-cloak>
-                            <span class="text-xs text-[#64748B] dark:text-[#cbd5e1] inline-flex items-center gap-2">
-                                <x-icon name="arrow-path" class="w-4 h-4 animate-spin" /> Menghitung ongkir…
-                            </span>
+                            <x-spinner variant="brand" label="Menghitung ongkir..." class="text-xs text-[#64748B] dark:text-[#cbd5e1]" />
                         </div>
                         <div class="mt-3" x-show="!loading && error" x-cloak>
                             <span class="text-xs text-red-500" x-text="error"></span>
@@ -106,41 +106,41 @@
                                 <span class="text-xs" x-text="selected ? ' · ' + (selected.etd || '') : ''"></span>
                             </div>
                         </div>
-                        <p class="text-xs text-[#94A3B8] mt-2">Ongkir dihitung otomatis berdasarkan kota, ekspedisi, dan berat. Admin konfirmasi tarif final saat pengiriman.</p>
+                        <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-2">Ongkir dihitung otomatis berdasarkan kota, ekspedisi, dan berat. Admin konfirmasi tarif final saat pengiriman.</p>
                     </div>
-                </div>
+                </x-card>
             </div>
 
             <!-- Summary Column -->
             <div class="md:col-span-1">
-                <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm p-4 md:p-6 transition-colors sticky top-4 md:top-6">
+                <x-card class="md:p-6 sticky top-4 md:top-6">
                     <h3 class="text-base md:text-lg font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">Konfirmasi Pesanan</h3>
 
                     <div class="mb-4">
-                        <label class="block text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Kode Kupon (opsional)</label>
-                        <input type="text" name="coupon_code" value="{{ old('coupon_code') }}"
+                        <label for="co-coupon" class="block text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Kode Kupon (opsional)</label>
+                        <input type="text" id="co-coupon" name="coupon_code" value="{{ old('coupon_code') }}"
                             placeholder="Mis. HEMAT10"
                             class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg uppercase focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors">
                     </div>
 
                     <div class="space-y-3 mb-4 text-xs md:text-sm">
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
-                            <span>Produk ({{ $cartItems->sum('quantity') }} item)</span>
-                            <span class="font-medium">{{ format_price($subtotal) }}</span>
+                            <span>Produk (<span class="num">{{ $cartItems->sum('quantity') }}</span> item)</span>
+                            <span class="font-medium num">{{ format_price($subtotal) }}</span>
                         </div>
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
                             <span>Ongkir</span>
-                            <span class="font-medium" x-text="selectedPrice || 'Pilih ekspedisi'">Pilih ekspedisi</span>
+                            <span class="font-medium num" x-text="selectedPrice || 'Pilih ekspedisi'">Pilih ekspedisi</span>
                         </div>
                         @if(($fee ?? 0) > 0)
                         <div class="flex justify-between text-[#64748B] dark:text-[#cbd5e1]">
                             <span>Biaya Fee</span>
-                            <span class="font-medium">{{ format_price($fee) }}</span>
+                            <span class="font-medium num">{{ format_price($fee) }}</span>
                         </div>
                         @endif
                         <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-3 flex justify-between text-base font-bold">
                             <span class="text-[#1E293B] dark:text-[#f1f5f9]">Total</span>
-                            <span class="text-[#0891B2]" x-text="totalFormatted">{{ format_price($subtotal + ($fee ?? 0)) }}</span>
+                            <span class="text-orange-600 dark:text-orange-400 num" x-text="totalFormatted">{{ format_price($subtotal + ($fee ?? 0)) }}</span>
                         </div>
                     </div>
 
@@ -149,31 +149,24 @@
                         class="w-full px-4 md:px-6 py-3 md:py-4 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-300 text-sm md:text-base">
                         Lanjut Bayar via QRIS
                     </button>
-                    <p class="text-xs text-[#94A3B8] text-center mt-3">
-                        Pembayaran langsung QRIS. Setelah submit, scan QRIS & konfirmasi via WhatsApp.
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] text-center mt-3">
+                        Pembayaran langsung QRIS. Setelah submit, scan QRIS &amp; konfirmasi via WhatsApp.
                     </p>
-                </div>
+                </x-card>
 
-                <div class="bg-white rounded-xl shadow-sm p-6 mt-4">
-                    <h3 class="text-sm font-bold text-[#1E293B] mb-3 flex items-center gap-2">
-                        <span class="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
+                <x-card class="mt-4">
+                    <h3 class="text-sm font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3 flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 bg-orange-500 rounded-full" aria-hidden="true"></span>
                         Metode Pembayaran
                     </h3>
-                    <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                        <svg class="w-7 h-7 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="3" height="3"></rect>
-                            <rect x="18" y="18" width="3" height="3"></rect>
-                            <rect x="14" y="18" width="3" height="3"></rect>
-                        </svg>
+                    <div class="flex items-center gap-3 p-3 bg-orange-50 dark:bg-orange-500/10 rounded-lg border border-orange-200 dark:border-orange-500/30">
+                        <x-icon name="qr-code" class="w-7 h-7 text-orange-600 dark:text-orange-400" />
                         <div>
-                            <p class="font-bold text-orange-700 text-sm">QRIS</p>
-                            <p class="text-xs text-orange-600">Scan pakai e-wallet apa saja</p>
+                            <p class="font-bold text-orange-700 dark:text-orange-300 text-sm">QRIS</p>
+                            <p class="text-xs text-orange-600 dark:text-orange-400">Scan pakai e-wallet apa saja</p>
                         </div>
                     </div>
-                </div>
+                </x-card>
             </div>
         </div>
     </form>

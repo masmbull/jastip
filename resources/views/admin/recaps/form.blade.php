@@ -132,7 +132,7 @@
                             </template>
                             <td class="border-b border-[#E2E8F0] dark:border-[#404854] text-center">
                                 <button type="button" @click="removeRow(ri)"
-                                        class="text-[#CBD5E1] hover:text-red-600 p-1 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity" aria-label="Hapus baris">
+                                        class="text-[#94A3B8] hover:text-red-600 p-1 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity" aria-label="Hapus baris">
                                     <x-icon name="trash" class="w-4 h-4" />
                                 </button>
                             </td>

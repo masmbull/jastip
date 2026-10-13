@@ -6,10 +6,10 @@
         <div class="sticky top-0 z-10 p-4 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between bg-white dark:bg-[#23252b] rounded-t-xl">
             <div>
                 <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Buat Invoice Manual</h3>
-                <p class="text-xs text-[#94A3B8]">Isi seperti invoice, nomor dibuat otomatis saat simpan.</p>
+                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Isi seperti invoice, nomor dibuat otomatis saat simpan.</p>
             </div>
-            <button type="button" @click="open = false" aria-label="Tutup"
-                    class="text-[#94A3B8] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors">
+            <button type="button" @click="open = false" aria-label="Tutup" title="Tutup"
+                    class="text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                 <x-icon name="x" class="w-5 h-5" />
             </button>
         </div>

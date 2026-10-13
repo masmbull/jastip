@@ -5,17 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-    <div class="mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] mb-2">Kategori Produk</h1>
-        <p class="text-[#94A3B8]">Pilih kategori favoritmu</p>
-    </div>
+    <x-page-header title="Kategori Produk" subtitle="Pilih kategori favoritmu" class="mb-8" />
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         @forelse($categories as $category)
             <x-category-card :category="$category" />
         @empty
-            <div class="col-span-full text-center py-16">
-                <p class="text-[#94A3B8]">Belum ada kategori.</p>
+            <div class="col-span-full">
+                <x-empty-state icon="tag" title="Belum ada kategori." />
             </div>
         @endforelse
     </div>

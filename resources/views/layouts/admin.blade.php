@@ -25,7 +25,7 @@
 </head>
 <body class="bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] font-sans antialiased min-h-screen transition-colors duration-300">
 
-{{-- Loading splash: self-removing, no Alpine dependency — so it can't get
+{{-- Loading splash: self-removing, no Alpine dependency, so it cannot get
      stuck when the Alpine CDN is slow or the load event already fired. --}}
 <div id="jd-splash"
      style="z-index: 9999"
@@ -102,26 +102,23 @@
         <header class="bg-white dark:bg-[#23252b] border-b border-[#E2E8F0] dark:border-[#404854] px-4 sm:px-6 py-3 flex items-center justify-between transition-colors">
             <div class="flex items-center space-x-4">
                 <button type="button" @click="sidebarOpen = !sidebarOpen"
-                        class="lg:hidden text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-1 -ml-1 transition-colors"
+                        class="lg:hidden text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 p-2 -ml-1 rounded-lg transition-colors"
                         aria-label="Buka menu">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                    <x-icon name="menu" class="w-5 h-5" />
                 </button>
-                <div class="hidden sm:flex items-center space-x-2 text-sm text-[#94A3B8] dark:text-[#cbd5e1]">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
+                <div class="hidden sm:flex items-center gap-2 text-sm text-[#64748B] dark:text-[#cbd5e1]">
+                    <x-icon name="envelope" class="w-4 h-4" />
                     <span>{{ setting('whatsapp', '08123456789') }}</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <span class="text-sm text-[#94A3B8] dark:text-[#cbd5e1]">Halo, Admin</span>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <span class="hidden sm:inline text-sm text-[#64748B] dark:text-[#cbd5e1]">Halo, Admin</span>
 
                 {{-- Dark-mode toggle --}}
                 <button type="button"
                         @click="$dispatch('theme-toggle')"
-                        class="p-1.5 rounded-lg text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" title="Toggle dark mode">
+                        class="p-2 rounded-lg text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors"
+                        title="Ganti mode gelap" aria-label="Ganti mode gelap">
                     <svg x-show="!document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 12.75a9 9 0 1 1-9.25-9.25 7 7 0 0 0 9.25 9.25z"></path>
@@ -271,9 +268,7 @@
             @click="window.scrollTo({top:0, behavior:'smooth'})"
             aria-label="Kembali ke atas"
             class="w-11 h-11 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-300">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7 7 7v4"></path>
-        </svg>
+        <x-icon name="chevron-down" class="w-5 h-5 rotate-180" />
     </button>
 </div>
 

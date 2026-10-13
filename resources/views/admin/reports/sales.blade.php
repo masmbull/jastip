@@ -3,47 +3,47 @@
 @section('title', 'Laporan Penjualan | ' . setting('brand_name'))
 
 @section('content')
-<div class="p-6 space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Laporan Penjualan</h1>
-            <p class="text-sm text-[#94A3B8] dark:text-[#cbd5e1] mt-1">Rekap pesanan per hari</p>
-        </div>
+<div class="space-y-6">
+    <x-page-header title="Laporan Penjualan" subtitle="Rekap pesanan per hari" class="animate-fade-up">
         <form method="GET" class="flex flex-wrap items-end gap-3">
             <div>
-                <label class="block text-xs text-[#64748B] dark:text-[#cbd5e1] mb-1">Dari</label>
-                <input type="date" name="from" value="{{ $from }}"
-                    class="px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] dark:bg-[#2e323b] dark:text-[#f1f5f9] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                <label for="from" class="block text-xs text-[#64748B] dark:text-[#cbd5e1] mb-1">Dari</label>
+                <input id="from" type="date" name="from" value="{{ $from }}"
+                    class="px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
             </div>
             <div>
-                <label class="block text-xs text-[#64748B] dark:text-[#cbd5e1] mb-1">Sampai</label>
-                <input type="date" name="to" value="{{ $to }}"
-                    class="px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] dark:bg-[#2e323b] dark:text-[#f1f5f9] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                <label for="to" class="block text-xs text-[#64748B] dark:text-[#cbd5e1] mb-1">Sampai</label>
+                <input id="to" type="date" name="to" value="{{ $to }}"
+                    class="px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
             </div>
-            <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg">Filter</button>
+            <x-btn type="submit" variant="brand" icon="search">Filter</x-btn>
         </form>
-    </div>
+    </x-page-header>
 
-    <div class="bg-white dark:bg-[#23252b] rounded-xl shadow-sm border border-[#E2E8F0] dark:border-[#404854] overflow-hidden">
+    <x-card padded="false" class="animate-fade-up" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[560px]">
                 <thead>
                     <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                         <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3">Jumlah Pesanan</th>
-                        <th class="px-4 py-3">Total Penjualan</th>
+                        <th class="px-4 py-3 text-right">Jumlah Pesanan</th>
+                        <th class="px-4 py-3 text-right">Total Penjualan</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
+                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854] stagger">
                     @forelse($orders as $row)
                         <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
-                            <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">{{ \Carbon\Carbon::parse($row->date)->format('d M Y') }}</td>
-                            <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">{{ $row->count }}</td>
-                            <td class="px-4 py-3 font-medium text-orange-600 dark:text-orange-400">Rp {{ number_format((int) $row->total, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9] num">{{ \Carbon\Carbon::parse($row->date)->format('d M Y') }}</td>
+                            <td class="px-4 py-3 text-right text-[#1E293B] dark:text-[#f1f5f9] num">{{ $row->count }}</td>
+                            <td class="px-4 py-3 text-right font-medium text-orange-600 dark:text-orange-400 num">Rp {{ number_format((int) $row->total, 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-4 py-12 text-center text-[#94A3B8]">Tidak ada data pada periode ini.</td>
+                            <td colspan="3">
+                                <x-empty-state icon="clipboard" title="Tidak ada data pada periode ini.">
+                                    Ubah rentang tanggal lalu tekan Filter.
+                                </x-empty-state>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -51,13 +51,13 @@
                     <tfoot>
                         <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] font-semibold">
                             <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">Total</td>
-                            <td class="px-4 py-3 text-[#1E293B] dark:text-[#f1f5f9]">{{ $orders->sum('count') }}</td>
-                            <td class="px-4 py-3 text-orange-600 dark:text-orange-400">Rp {{ number_format((int) $orders->sum('total'), 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-right text-[#1E293B] dark:text-[#f1f5f9] num">{{ $orders->sum('count') }}</td>
+                            <td class="px-4 py-3 text-right text-orange-600 dark:text-orange-400 num">Rp {{ number_format((int) $orders->sum('total'), 0, ',', '.') }}</td>
                         </tr>
                     </tfoot>
                 @endif
             </table>
         </div>
-    </div>
+    </x-card>
 </div>
 @endsection

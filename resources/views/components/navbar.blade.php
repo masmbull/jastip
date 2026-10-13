@@ -56,25 +56,24 @@
             {{-- Desktop Right Side --}}
             <div class="flex items-center space-x-4">
                 {{-- Search --}}
-                <button @click="searchOpen = true" class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors" aria-label="Cari">
+                <button @click="searchOpen = true"
+                        class="p-2.5 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        aria-label="Cari" title="Cari produk">
                     <x-icon name="search" class="w-5 h-5" />
                 </button>
 
                 {{-- Theme Toggle --}}
                 <button type="button"
                         @click="$dispatch('theme-toggle')"
-                        class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] rounded-lg transition-colors" title="Toggle dark mode">
-                    <svg x-show="!document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg x-show="document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
+                        class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        aria-label="Ganti tema" title="Ganti mode gelap/terang">
+                    <x-icon name="sun" class="w-5 h-5 dark:hidden" />
+                    <x-icon name="moon" class="hidden w-5 h-5 dark:block" />
                 </button>
 
                                 {{-- Cart --}}
                 <a href="{{ route('cart.index') }}"
-                   class="relative p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded"
+                   class="relative p-2.5 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded-lg"
                    aria-label="Titipan" title="Titipan">
                     <x-icon name="bag" class="w-6 h-6" />
                     <span id="cart-count"
@@ -113,14 +112,16 @@
                     </div>
                 @else
                     <a href="{{ route('login') }}"
-                       class="p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                       class="p-2.5 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
                        title="Masuk" aria-label="Masuk">
                         <x-icon name="user-circle" class="w-6 h-6" />
                     </a>
                 @endauth
 
                 {{-- Mobile Menu Button --}}
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors" aria-label="Menu">
+                <button @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="md:hidden p-2.5 text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        aria-label="Menu" title="Menu" :aria-expanded="mobileMenuOpen">
                     <x-icon name="menu" class="w-6 h-6" x-show="!mobileMenuOpen" />
                     <x-icon name="x" class="w-6 h-6" x-show="mobileMenuOpen" x-cloak />
                 </button>
@@ -134,7 +135,7 @@
                         @foreach($links as $link)
                 @if(\Route::has($link['route']))
                     <a href="{{ route($link['route']) }}"
-                       class="block px-3 py-2 text-sm font-medium {{ request()->routeIs($link['route']) ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10' : 'text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400' }} rounded transition-colors">
+                       class="flex items-center min-h-[44px] px-3 py-2.5 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs($link['route']) ? 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10' : 'text-[#64748B] dark:text-[#cbd5e1] hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400' }}">
                         {{ $link['label'] }}
                     </a>
                 @else
