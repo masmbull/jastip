@@ -5,7 +5,9 @@
         return {
             shipping: {{ (int) old('shipping_cost', 0) }},
             shipMethod: {{ Js::from(old('shipping_method', '')) }},
+            mode: {{ Js::from(collect(['deposit', 'lunas'])->contains(old('mode', request('mode', 'deposit'))) ? old('mode', request('mode', 'deposit')) : 'deposit') }},
             feeAmt: {{ (int) old('fee', 0) }},
+            showFee: {{ ((int) old('fee', 0)) > 0 ? 'true' : 'false' }},
             dpAmt: {{ (int) old('down_payment', 0) }},
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
@@ -25,12 +27,32 @@
             saving: false,
 
             init() {
+                // Tombol "Buat Invoice Deposit / Lunas" di luar komponen ini
+                // kirim mode lewat event sebelum modal dibuka. Alpine v3 tidak
+                // punya this.$on (itu API v2, dipanggil bikin init meledak),
+                // jadi eventnya didengar langsung di window.
+                this._onSetMode = (e) => this.setMode(e.detail);
+                window.addEventListener('set-invoice-mode', this._onSetMode);
                 fetch(`{{ route('admin.orders.shipping-options') }}`)
                     .then(r => r.json())
                     .then(j => { this.cities = j.cities || []; })
                     .catch(() => {});
                 // Kota sudah terisi (old input / edit) -> langsung ambil ongkir.
                 if (this.city) this.fetchQuotes();
+            },
+
+            // Modal dibuang tiap kali ditutup, jadi listener window harus
+            // dilepas juga supaya tidak menumpuk.
+            destroy() {
+                window.removeEventListener('set-invoice-mode', this._onSetMode);
+            },
+
+            setMode(m) {
+                this.mode = m === 'lunas' ? 'lunas' : 'deposit';
+                if (this.mode === 'lunas') {
+                    // Mode lunas: deposit dipaksa nol, jadi nggak ada sisa tagihan.
+                    this.dpAmt = 0;
+                }
             },
 
             async fetchQuotes() {
@@ -69,6 +91,11 @@
             subtotal() { return this.items.reduce((sum, i) => sum + this.lineTotal(i), 0); },
             total() { return this.subtotal() + (Number(this.shipping) || 0) + (Number(this.feeAmt) || 0); },
             dp() { return this.paidNow ? 0 : (Number(this.dpAmt) || 0); },
+            toggleFee(on) {
+                this.showFee = on;
+                // Fee disembunyikan = fee ikut hilang dari total, jangan nyisa di belakang.
+                if (!on) this.feeAmt = 0;
+            },
             remaining() { return Math.max(0, this.total() - this.dp()); },
             formatRp(n) { return 'Rp ' + (Number(n) || 0).toLocaleString('id-ID'); },
 

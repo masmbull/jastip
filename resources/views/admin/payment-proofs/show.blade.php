@@ -66,7 +66,7 @@
                     </div>
                     <div class="flex justify-between gap-4">
                         <span class="text-[#64748B] dark:text-[#cbd5e1]">WhatsApp</span>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $paymentProof->order->customer_whatsapp) }}"
+                        <a href="{{ whatsapp_url($paymentProof->order->customer_whatsapp) }}"
                            target="_blank" rel="noopener"
                            class="font-medium text-orange-600 dark:text-orange-400 hover:underline num">
                             {{ $paymentProof->order->customer_whatsapp }}

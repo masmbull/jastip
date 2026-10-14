@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Service;
 use App\Services\ShippingService;
 use Illuminate\Support\Facades\Http;
 
@@ -67,17 +68,35 @@ class SystemStatusController extends Controller
             ],
         ]);
 
+        $diskTotal = (float) disk_total_space('/');
+        $diskFree = (float) disk_free_space('/');
+
         // System info
         $systemInfo = [
             'php_version' => phpversion(),
             'laravel_version' => app()->version(),
             'os' => php_uname('s'),
             'memory_usage' => $this->formatBytes(memory_get_usage(true)),
-            'disk_free' => $this->formatBytes(disk_free_space('/')),
-            'disk_total' => $this->formatBytes(disk_total_space('/')),
+            'disk_free' => $this->formatBytes($diskFree),
+            'disk_total' => $this->formatBytes($diskTotal),
+            'memory' => [
+                'current' => $this->formatBytes(memory_get_usage(true)),
+                'peak' => $this->formatBytes(memory_get_peak_usage(true)),
+                'limit' => $this->memoryLimitLabel(),
+            ],
+            'disk' => [
+                'total' => $this->formatBytes($diskTotal),
+                'used' => $this->formatBytes($diskTotal - $diskFree),
+                'percent' => $diskTotal > 0 ? round((1 - ($diskFree / $diskTotal)) * 100, 1) : 0.0,
+            ],
         ];
 
-        return view('admin.system.status', compact('services', 'systemInfo'));
+        // Layanan terpantau tersimpan di tabel `services`: beda dengan cek langsung
+        // di atas, tabel ini menyimpan riwayat cek terakhir, response time, dan
+        // galat per layanan. Dulu halaman ini terpisah jadi "Daftar Layanan".
+        $monitorServices = Service::orderBy('name')->get();
+
+        return view('admin.system.status', compact('services', 'systemInfo', 'monitorServices'));
     }
 
     /**
@@ -165,5 +184,35 @@ class SystemStatusController extends Controller
         $bytes /= (1 << (10 * $pow));
 
         return round($bytes, 2) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Batas memori PHP. Nilai "-1" berarti tidak dibatasi.
+     */
+    private function memoryLimitLabel(): string
+    {
+        $raw = trim((string) ini_get('memory_limit'));
+
+        if ($raw === '' || $raw === '-1') {
+            return 'Tidak dibatasi';
+        }
+
+        return $this->formatBytes($this->parseBytes($raw));
+    }
+
+    /**
+     * "128M" / "1G" / "512" -> byte. Dipakai memory_limit yang bisa
+     * membawa sufiks satuan.
+     */
+    private function parseBytes(string $value): int
+    {
+        $number = (float) $value;
+
+        return match (strtolower(substr($value, -1))) {
+            'g' => (int) ($number * 1024 ** 3),
+            'm' => (int) ($number * 1024 ** 2),
+            'k' => (int) ($number * 1024),
+            default => (int) $number,
+        };
     }
 }

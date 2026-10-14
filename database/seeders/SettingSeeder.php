@@ -25,9 +25,9 @@ class SettingSeeder extends Seeder
             ['key' => 'address', 'value' => 'Jl. Contoh No. 1, Jakarta, Indonesia', 'type' => 'string', 'group' => 'contact', 'is_public' => true],
 
             // Colors
-            ['key' => 'primary_color', 'value' => '#0891B2', 'type' => 'string', 'group' => 'design', 'is_public' => true],
-            ['key' => 'secondary_color', 'value' => '#155E75', 'type' => 'string', 'group' => 'design', 'is_public' => true],
-            ['key' => 'accent_color', 'value' => '#22D3EE', 'type' => 'string', 'group' => 'design', 'is_public' => true],
+            ['key' => 'primary_color', 'value' => '#141414', 'type' => 'string', 'group' => 'design', 'is_public' => true],
+            ['key' => 'secondary_color', 'value' => '#64748B', 'type' => 'string', 'group' => 'design', 'is_public' => true],
+            ['key' => 'accent_color', 'value' => '#FFC800', 'type' => 'string', 'group' => 'design', 'is_public' => true],
 
             // Site info
             ['key' => 'footer_text', 'value' => '© 2025 NITIP DI END. Didesain khusus untuk jastip lokal Indonesia.', 'type' => 'string', 'group' => 'site', 'is_public' => true],

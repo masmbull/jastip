@@ -77,38 +77,42 @@
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="sparkles" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Warna Brand
             </h2>
+            @php
+                $brandColors = [
+                    ['key' => 'primary_color', 'label' => 'Warna Teks Utama', 'fallback' => '#141414'],
+                    ['key' => 'secondary_color', 'label' => 'Warna Teks Sekunder', 'fallback' => '#64748B'],
+                    ['key' => 'accent_color', 'label' => 'Warna Aksen', 'fallback' => '#FFC800'],
+                ];
+            @endphp
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Warna Teks Utama</label>
-                    <div class="flex items-center gap-3">
-                        <input type="color" name="primary_color"
-                               value="{{ old('primary_color', setting('primary_color', '#0891B2')) }}"
-                               class="w-12 h-12 rounded border border-[#E2E8F0] dark:border-[#404854] cursor-pointer"
-                               onchange="this.nextElementSibling.style.backgroundColor = this.value">
-                        <span class="font-mono text-xs text-[#64748B] dark:text-[#cbd5e1]">{{ old('primary_color', setting('primary_color', '#0891B2')) }}</span>
+                @foreach ($brandColors as $color)
+                    @php
+                        $value = (string) old($color['key'], setting($color['key'], $color['fallback']));
+                        if (! preg_match('/^#[0-9A-Fa-f]{6}$/', $value)) {
+                            $value = $color['fallback'];
+                        }
+                    @endphp
+                    <div>
+                        <label for="{{ $color['key'] }}" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">{{ $color['label'] }}</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="{{ $color['key'] }}" name="{{ $color['key'] }}"
+                                   value="{{ $value }}"
+                                   class="w-12 h-12 shrink-0 rounded border border-[#E2E8F0] dark:border-[#404854] cursor-pointer"
+                                   onchange="this.nextElementSibling.style.borderLeftColor = this.value; this.nextElementSibling.textContent = this.value.toUpperCase()">
+                            {{-- Chip pakai border kiri, bukan latar, biar teks hex tetap terbaca
+                                 berapa pun warna yang dipilih. --}}
+                            <span class="font-mono text-xs px-2 py-2 rounded border border-[#E2E8F0] dark:border-[#404854] border-l-[10px] border-l-[#141414] text-[#1E293B] dark:text-[#f1f5f9]"
+                                  style="border-left-color: {{ $value }}">{{ strtoupper($value) }}</span>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Warna Teks Sekunder</label>
-                    <div class="flex items-center gap-3">
-                        <input type="color" name="secondary_color"
-                               value="{{ old('secondary_color', setting('secondary_color', '#1E293B')) }}"
-                               class="w-12 h-12 rounded border border-[#E2E8F0] dark:border-[#404854] cursor-pointer"
-                               onchange="this.nextElementSibling.style.backgroundColor = this.value">
-                        <span class="font-mono text-xs text-[#64748B] dark:text-[#cbd5e1]">{{ old('secondary_color', setting('secondary_color', '#1E293B')) }}</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Warna Aksen</label>
-                    <div class="flex items-center gap-3">
-                        <input type="color" name="accent_color"
-                               value="{{ old('accent_color', setting('accent_color', '#f43f5e')) }}"
-                               class="w-12 h-12 rounded border border-[#E2E8F0] dark:border-[#404854] cursor-pointer"
-                               onchange="this.nextElementSibling.style.backgroundColor = this.value">
-                        <span class="font-mono text-xs text-[#64748B] dark:text-[#cbd5e1]">{{ old('accent_color', setting('accent_color', '#f43f5e')) }}</span>
-                    </div>
-                </div>
+                @endforeach
             </div>
+            <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-3">
+                Ketiga warna ini mengganti warna yang sama di seluruh situs. Teks utama dan sekunder
+                berlaku di mode terang karena mode gelap memakai palet kontrasnya sendiri; aksen
+                berlaku di kedua mode. Pilih warna yang kontras dengan latarnya supaya teks tetap
+                terbaca.
+            </p>
         </x-card>
 
         {{-- Contact --}}
@@ -192,10 +196,11 @@
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Biaya Ongkir (Rp)</label>
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Biaya Ongkir Default (Rp)</label>
                     <input type="number" name="shipping_cost" value="{{ old('shipping_cost', setting('shipping_cost', 0)) }}"
                            min="0" step="1000"
                            class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Ongkir perkiraan di halaman keranjang &amp; produk. Ongkir final dihitung dari ekspedisi yang dipilih saat checkout.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Minimum Order (Rp)</label>
@@ -219,6 +224,16 @@
                 <x-icon name="credit-card" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Pembayaran QRIS
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2">
+                    <label class="flex items-center gap-3 cursor-pointer min-h-[44px] p-2 -m-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b]">
+                        <input type="hidden" name="qris_enabled" value="0">
+                        <input type="checkbox" name="qris_enabled" value="1"
+                               @checked((string) old('qris_enabled', setting('qris_enabled', '1')) === '1')
+                               class="w-5 h-5 accent-[#0E7490]">
+                        <span class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Aktifkan Pembayaran QRIS</span>
+                    </label>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Dimatikan = kode QRIS disembunyikan dari konfirmasi, halaman bayar, dan cetak invoice. Pelanggan tetap bisa pesan, konfirmasinya lewat WhatsApp.</p>
+                </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Gambar QRIS (Static QR)</label>
                     <input type="file" name="qris_image" accept="image/*"

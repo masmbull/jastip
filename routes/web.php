@@ -201,6 +201,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/pesanans/ongkir-kota', [AdminOrderController::class, 'shippingOptions'])->name('orders.shipping-options');
         Route::get('/pesanans/cek-ongkir', [AdminOrderController::class, 'shippingQuote'])->name('orders.shipping-quote');
         Route::get('/pesanans/cari-produk', [AdminOrderController::class, 'productSearch'])->name('orders.product-search');
+        Route::get('/pesanans/{order}/edit', [AdminOrderController::class, 'edit'])->name('orders.edit');
+        Route::put('/pesanans/{order}', [AdminOrderController::class, 'update'])->name('orders.update');
         Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');
         Route::get('/pesanans/{order}/invoice', [InvoiceController::class, 'invoice'])->name('orders.invoice');
@@ -263,6 +265,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Users Management
         Route::get('/user', [UserController::class, 'index'])->name('users.index');
+        Route::post('/user', [UserController::class, 'store'])->name('users.store');
         Route::get('/user/{user}', [UserController::class, 'show'])->name('users.show');
         Route::put('/user/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('users.destroy');

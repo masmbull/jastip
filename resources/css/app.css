@@ -14,54 +14,11 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Brand = ocean blue (#0891B2). Override Tailwind's rose/orange/amber
-       palettes so every color utility renders the sea-blue ramp site-wide,
-       no blade-by-blade edit needed. */
-    --color-rose-50:  #ecfeff;
-    --color-rose-100: #cffafe;
-    --color-rose-200: #a5f3fc;
-    --color-rose-300: #67e8f9;
-    --color-rose-400: #22d3ee;
-    --color-rose-500: #0891B2;
-    --color-rose-600: #0E7490;
-    --color-rose-700: #155E75;
-    --color-rose-800: #164E63;
-    --color-rose-900: #083344;
-
-    --color-orange-50:  #ecfeff;
-    --color-orange-100: #cffafe;
-    --color-orange-200: #a5f3fc;
-    --color-orange-300: #67e8f9;
-    --color-orange-400: #22d3ee;
-    --color-orange-500: #0891B2;
-    --color-orange-600: #0E7490;
-    --color-orange-700: #155E75;
-    --color-orange-800: #164E63;
-    --color-orange-900: #083344;
-
-    --color-amber-50:  #ecfeff;
-    --color-amber-100: #cffafe;
-    --color-amber-200: #a5f3fc;
-    --color-amber-300: #67e8f9;
-    --color-amber-400: #22d3ee;
-    --color-amber-500: #0891B2;
-    --color-amber-600: #0E7490;
-    --color-amber-700: #155E75;
-    --color-amber-800: #164E63;
-    --color-amber-900: #083344;
-
-    /* Blue utils (info/accent) — pull into the same sea ramp so indigo-blue
-       never clashes beside brand cyan. */
-    --color-blue-50:  #ecfeff;
-    --color-blue-100: #cffafe;
-    --color-blue-200: #a5f3fc;
-    --color-blue-300: #67e8f9;
-    --color-blue-400: #22d3ee;
-    --color-blue-500: #0891B2;
-    --color-blue-600: #0E7490;
-    --color-blue-700: #155E75;
-    --color-blue-800: #164E63;
-    --color-blue-900: #083344;
+    /* Palet Tailwind dipakai apa adanya — tiap nama warna benar-benar
+       berwarna seperti namanya. Dulu keluarga rose/orange/amber/blue semua
+       dipaksa jadi ramp biru laut yang sama, akibatnya tombol WhatsApp
+       (green-500) dan kotak error (red-500) sama-sama tampil biru.
+       Brand tetap cyan #0891B2 lewat hex literal di view. */
 }
 
 /* ===== Custom UI ===== */
@@ -325,24 +282,109 @@ html.dark [class*="bg-[#444444]"] { background-color: var(--dt-surface); }
    - Radius kecil konsisten (10-12px kartu, 8px tombol): hierarchy tool, bukan pil di semua elemen.
    - Motion MOTION 1: hanya hover/active translate, tanpa entrance loop. */
 :root {
+    /* Dipetakan dari Pengaturan lewat partials/theme-colors.blade.php. */
+    --nb-brand-ink: #141414;
+    --nb-brand-sub: #64748B;
+    --nb-brand-accent: #FFC800;
+    --nb-brand-accent-ink: #141414;
+    --nb-brand-accent-tint: #FFF7D6;
+
     --nb-ink: #141414;
     --nb-paper: #FAF6EF;
     --nb-card: #FFFFFF;
-    --nb-accent: #FFC800;
-    --nb-accent-ink: #141414;
+    --nb-accent: var(--nb-brand-accent);
+    --nb-accent-ink: var(--nb-brand-accent-ink);
     --nb-shadow: 4px 4px 0 var(--nb-ink);
     --nb-shadow-sm: 3px 3px 0 var(--nb-ink);
     --nb-radius: 12px;
     --nb-radius-sm: 8px;
+
+    /* RAINBOW MODE — tujuh warna blok. Geometri tetap brutalist (border tinta
+       + hard shadow); yang berubah cuma warna isi. Semua pastel terang supaya
+       tinta #141414 di atasnya tetap lulus AA. */
+    --nb-sun:    #FFD966;   /* kuning    */
+    --nb-sand:   #FFC58F;   /* oranye    */
+    --nb-coral:  #FF9B85;   /* koral     */
+    --nb-bubble: #FFB3D9;   /* permen    */
+    --nb-grape:  #C9B6FF;   /* ungu      */
+    --nb-sky:    #9BD7FF;   /* biru      */
+    --nb-mint:   #8FE3B0;   /* hijau     */
 }
 html.dark {
     --nb-ink: #FAF6EF;
     --nb-paper: #121212;
     --nb-card: #1E1E1E;
-    --nb-accent: #FFC800;
-    --nb-accent-ink: #141414;
+    --nb-accent: var(--nb-brand-accent);
+    --nb-accent-ink: var(--nb-brand-accent-ink);
     --nb-shadow: 4px 4px 0 #000000;
     --nb-shadow-sm: 3px 3px 0 #000000;
+}
+
+/* Literal hex dari view diganti variabel supaya picker warna di Pengaturan ikut
+   mengubahnya. Teks utama/sekunder hanya di mode terang: mode gelap memakai
+   palet kontrasnya sendiri di blok html.dark (R-25). Aturan ini di luar layer
+   utility supaya menang tanpa !important. */
+.text-\[\#141414\],
+.hover\:text-\[\#141414\]:hover,
+.group:hover .group-hover\:text-\[\#141414\] {
+    color: var(--nb-brand-ink);
+}
+
+.text-\[\#64748B\],
+.placeholder-\[\#64748B\]::placeholder {
+    color: var(--nb-brand-sub);
+}
+
+.bg-\[\#FFC800\],
+.hover\:bg-\[\#FFC800\]:hover,
+.group:hover .group-hover\:bg-\[\#FFC800\],
+.dark .dark\:bg-\[\#FFC800\] {
+    background-color: var(--nb-brand-accent);
+}
+
+.bg-\[\#FFF7D6\],
+.hover\:bg-\[\#FFF7D6\]:hover,
+.focus\:bg-\[\#FFF7D6\]:focus {
+    background-color: var(--nb-brand-accent-tint);
+}
+
+.text-\[\#FFC800\] {
+    color: var(--nb-brand-accent);
+}
+
+.border-\[\#FFC800\],
+.hover\:border-\[\#FFC800\]:hover {
+    border-color: var(--nb-brand-accent);
+}
+
+.border-t-\[\#FFC800\] {
+    border-top-color: var(--nb-brand-accent);
+}
+
+/* Varian Tailwind ber-!important (kartu Sisa di Rekapan, strip beranda) tidak
+   bisa dikalahkan aturan tanpa layer: untuk !important urutan layer dibalik,
+   jadi aturannya ikut masuk layer utilities setelah milik Tailwind. */
+@layer utilities {
+    .bg-\[\#FFC800\]\! {
+        background-color: var(--nb-brand-accent) !important;
+    }
+
+    .bg-\[\#FFF7D6\]\! {
+        background-color: var(--nb-brand-accent-tint) !important;
+    }
+
+    .border-\[\#FFC800\]\! {
+        border-color: var(--nb-brand-accent) !important;
+    }
+}
+
+/* Teks ink yang duduk di atas kotak aksen harus memakai pasangan kontras
+   aksen, bukan ink tetap, karena aksen bisa diganti ke warna gelap. */
+.bg-\[\#FFC800\] .text-\[\#141414\],
+.bg-\[\#FFC800\].text-\[\#141414\],
+.bg-\[\#FFC800\]\! .text-\[\#141414\],
+.bg-\[\#FFC800\]\!.text-\[\#141414\] {
+    color: var(--nb-brand-accent-ink);
 }
 
 .nb-card {
@@ -352,6 +394,28 @@ html.dark {
     box-shadow: var(--nb-shadow);
 }
 html.dark .nb-card { border-color: #FAF6EF; }
+
+/* RAINBOW MODE — dua cara pakai:
+   1. Otomatis: taruh class `nb-rainbow` di wadah grid. Tiap anaknya kebagi
+      warna pelangi berurutan, siklus 7, tanpa perlu nulis warna per kartu.
+   2. Manual: tambah `nb-tint-<warna>` di kartu mana pun (atau prop `tone`
+      di <x-card>). Tone manual selalu menang atas siklus otomatis, makanya
+      pembungkus `:where()` sengaja dibikin nol spesifisitas. */
+.nb-rainbow > :where(*:nth-child(7n+1)) { background: var(--nb-sun); }
+.nb-rainbow > :where(*:nth-child(7n+2)) { background: var(--nb-sand); }
+.nb-rainbow > :where(*:nth-child(7n+3)) { background: var(--nb-coral); }
+.nb-rainbow > :where(*:nth-child(7n+4)) { background: var(--nb-bubble); }
+.nb-rainbow > :where(*:nth-child(7n+5)) { background: var(--nb-grape); }
+.nb-rainbow > :where(*:nth-child(7n+6)) { background: var(--nb-sky); }
+.nb-rainbow > :where(*:nth-child(7n))   { background: var(--nb-mint); }
+
+.nb-tint-sun    { background: var(--nb-sun); }
+.nb-tint-sand   { background: var(--nb-sand); }
+.nb-tint-coral  { background: var(--nb-coral); }
+.nb-tint-bubble { background: var(--nb-bubble); }
+.nb-tint-grape  { background: var(--nb-grape); }
+.nb-tint-sky    { background: var(--nb-sky); }
+.nb-tint-mint   { background: var(--nb-mint); }
 
 .nb-btn {
     display: inline-flex;

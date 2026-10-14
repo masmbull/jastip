@@ -15,7 +15,7 @@
                 {{ setting('brand_name', 'NITIP DI END') }}
             </h1>
 
-            <p class="mt-5 text-base md:text-lg font-medium text-[#475569] dark:text-[#D6D3D1] leading-relaxed max-w-2xl">
+            <p class="mt-5 text-base md:text-lg font-medium text-[#334155] dark:text-[#D6D3D1] leading-relaxed max-w-2xl">
                 {{ setting('hero_description', 'Temukan berbagai produk impian dengan harga terbaik. Gratis ongkir untuk pemesanan di atas Rp 150.000.') }}
             </p>
 
@@ -41,14 +41,14 @@
 
 <div class="bg-white dark:bg-[#1E1E1E] transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 nb-rainbow">
             <div class="nb-card p-5 bg-[#FFF7D6]! dark:bg-[#262626]! flex gap-4 text-left">
                 <div class="shrink-0 w-12 h-12 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#141414]">
                     <x-icon name="truck" class="w-6 h-6" />
                 </div>
                 <div>
                     <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Gratis Ongkir</h2>
-                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Untuk pemesanan di atas Rp 150.000</p>
+                    <p class="text-sm font-medium text-[#334155] dark:text-[#D6D3D1] mt-1">Untuk pemesanan di atas Rp 150.000</p>
                 </div>
             </div>
             <div class="nb-card p-5 flex gap-4 text-left">
@@ -57,7 +57,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Bayar di Tempat</h2>
-                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Cash on delivery saat barang sampai</p>
+                    <p class="text-sm font-medium text-[#334155] dark:text-[#D6D3D1] mt-1">Cash on delivery saat barang sampai</p>
                 </div>
             </div>
             <div class="nb-card p-5 flex gap-4 text-left">
@@ -66,7 +66,7 @@
                 </div>
                 <div>
                     <h2 class="font-black text-[#141414] dark:text-[#FAF6EF]">Garansi Autentik</h2>
-                    <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mt-1">Produk asli terjamin</p>
+                    <p class="text-sm font-medium text-[#334155] dark:text-[#D6D3D1] mt-1">Produk asli terjamin</p>
                 </div>
             </div>
         </div>

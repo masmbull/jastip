@@ -26,7 +26,7 @@
             @php($isBoundary = $page == 1 || $page == $last)
             @php($isNear = abs($page - $current) < 2)
             @if ($isCurrent)
-                <li><span aria-current="page" class="inline-flex items-center justify-center min-w-11 h-11 px-3 text-sm font-medium text-white bg-orange-500 rounded-lg num">{{ $page }}</span></li>
+                <li><span aria-current="page" class="inline-flex items-center justify-center min-w-11 h-11 px-3 text-sm font-medium text-white bg-orange-600 rounded-lg num">{{ $page }}</span></li>
             @elseif ($isBoundary || $isNear)
                 <li><a href="{{ $url }}" aria-label="Halaman {{ $page }}"
                         class="inline-flex items-center justify-center min-w-11 h-11 px-3 text-sm text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 num">{{ $page }}</a></li>

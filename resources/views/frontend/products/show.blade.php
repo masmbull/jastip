@@ -182,7 +182,7 @@
     @if(isset($relatedProducts) && $relatedProducts->isNotEmpty())
     <section class="mt-16 animate-fade-up">
         <h2 class="text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-6">Produk Serupa</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 nb-rainbow">
             @foreach($relatedProducts as $related)
                 <x-product-card :product="$related" />
             @endforeach

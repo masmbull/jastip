@@ -28,6 +28,7 @@ class ManualOrderStoreRequest extends FormRequest
             'shipping_method' => ['nullable', 'string', 'max:100'],
             'shipping_cost' => ['nullable', 'integer', 'min:0'],
             'fee' => ['nullable', 'integer', 'min:0'],
+            'mode' => ['nullable', Rule::in(['deposit', 'lunas'])],
             'down_payment' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', Rule::in(array_keys(Order::statuses()))],
             'items' => ['required', 'array', 'min:1'],
@@ -43,6 +44,13 @@ class ManualOrderStoreRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             $dp = (int) $this->input('down_payment', 0);
+
+            // Mode deposit = invoice untuk menagih DP, jadi DP-nya wajib ada.
+            // Mode lunas / tanpa mode (API lama) bebas.
+            if ((string) $this->input('mode', '') === 'deposit' && $dp <= 0) {
+                $validator->errors()->add('down_payment', 'Mode Deposit butuh nilai deposit. Isi depositnya, atau ganti ke mode Lunas.');
+            }
+
             if ($dp <= 0) {
                 return;
             }
@@ -50,7 +58,7 @@ class ManualOrderStoreRequest extends FormRequest
                 ->sum(fn ($item) => (int) ($item['quantity'] ?? 0) * (int) ($item['product_price'] ?? 0));
             $total = $subtotal + (int) $this->input('shipping_cost', 0) + (int) $this->input('fee', 0);
             if ($dp > $total) {
-                $validator->errors()->add('down_payment', 'DP tidak boleh lebih besar dari total tagihan.');
+                $validator->errors()->add('down_payment', 'Deposit tidak boleh lebih besar dari total tagihan.');
             }
         });
     }

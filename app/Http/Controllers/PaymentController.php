@@ -45,7 +45,7 @@ class PaymentController extends Controller
                 ->with('error', 'Waktu pembayaran telah berakhir. Silakan buat pesanan baru.');
         }
 
-        $qrisImage = \Illuminate\Support\Facades\Storage::url(setting('qris_image'));
+        $qrisImage = qris_url();
         $qrisMerchant = setting('qris_merchant_name', setting('brand_name', 'NITIP DI END'));
         $paymentTimeout = 24; // hours
 
@@ -128,6 +128,11 @@ class PaymentController extends Controller
         if ($order->status !== Order::STATUS_AWAITING_PAYMENT) {
             return redirect()->route('home')
                 ->with('error', 'Pesanan tidak valid.');
+        }
+
+        if (! qris_enabled()) {
+            return redirect()->back()
+                ->with('error', 'Pembayaran QRIS sedang dinonaktifkan.');
         }
 
         $qrisPath = setting('qris_image');

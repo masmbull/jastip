@@ -7,7 +7,7 @@
 
     <x-page-header title="Moderasi Ulasan" subtitle="Kelola ulasan produk dari pelanggan" class="animate-fade-up" />
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up" style="animation-delay: 80ms">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up nb-rainbow" style="animation-delay: 80ms">
         <x-stat-card label="Total Ulasan" :value="$stats['total']" icon="clipboard" />
         <x-stat-card label="Pending" :value="$stats['pending']" icon="clock" />
         <x-stat-card label="Disetujui" :value="$stats['approved']" icon="check-circle" />

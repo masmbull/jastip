@@ -25,8 +25,8 @@ return [
         'design' => [
             'label' => 'Desain',
             'settings' => [
-                'primary_color' => ['type' => 'color', 'label' => 'Warna Background'],
-                'secondary_color' => ['type' => 'color', 'label' => 'Warna Teks'],
+                'primary_color' => ['type' => 'color', 'label' => 'Warna Teks Utama'],
+                'secondary_color' => ['type' => 'color', 'label' => 'Warna Teks Sekunder'],
                 'accent_color' => ['type' => 'color', 'label' => 'Warna Aksen'],
             ],
         ],
@@ -46,7 +46,7 @@ return [
         'business' => [
             'label' => 'Pengaturan Bisnis',
             'settings' => [
-                'shipping_cost' => ['type' => 'number', 'label' => 'Biaya Ongkir (Rp)'],
+                'shipping_cost' => ['type' => 'number', 'label' => 'Biaya Ongkir Default (Rp)'],
                 'minimum_order' => ['type' => 'number', 'label' => 'Minimum Order (Rp)'],
                 'setbiaya_fee' => ['type' => 'number', 'label' => 'Set Biaya Fee Global (Rp)'],
             ],

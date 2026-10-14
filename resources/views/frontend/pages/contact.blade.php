@@ -5,13 +5,13 @@
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
     <div class="text-center mb-12">
-        <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">Kontak</h1>
+        <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">Kontak</p>
         <p class="text-[#64748B] dark:text-[#cbd5e1] text-lg">Kirim pesan atau hubungi kami langsung melalui WhatsApp.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {{-- Contact Info --}}
-        <x-card class="space-y-6">
+        <div class="nb-card space-y-6">
             <h2 class="text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Cara Menghubungi Kami</h2>
 
             <div class="flex items-start gap-4">
@@ -20,7 +20,7 @@
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1">WhatsApp (Paling Cepat)</h3>
-                    <p class="text-[#64748B] dark:text-[#cbd5e1] text-sm">Hubungi kami langsung via WhatsApp. Admin akan membalas dalam beberapa menit.</p>
+                    <p class="text-[#64748B] dark:text-[#cbd51] text-sm">Hubungi kami langsung via WhatsApp. Admin akan membalas dalam beberapa menit.</p>
                     <a href="{{ whatsapp_url(setting('whatsapp', '6285123456789'), 'Halo, saya ingin bertanya tentang jastip') }}"
                        target="_blank" rel="noopener noreferrer"
                        class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-full mt-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors">
@@ -42,7 +42,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-                <div class="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center shrink-0">
+                <div class="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-flex items-center justify-center shrink-0">
                     <x-icon name="map-pin" class="w-6 h-6 text-[#0E7490] dark:text-[#67e8f9]" />
                 </div>
                 <div class="min-w-0">
@@ -61,12 +61,12 @@
                     <p class="text-[#64748B] dark:text-[#cbd5e1] text-sm mt-1">Minggu: Libur (kecuali hari besar)</p>
                 </div>
             </div>
-        </x-card>
+        </div>
 
         {{-- Quick Inquiry Form (WhatsApp Direct) --}}
-        <x-card class="space-y-4">
+        <div class="nb-card space-y-4">
             <h2 class="text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Kirim Pesan Cepat</h2>
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Isi form di bawah dan kami akan menghubungi Anda via WhatsApp.</p>
+            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Isi form di bawah dan kami akan menghubungi Anda via WhatsApp.</form>
 
             <form onsubmit="sendToWhatsApp(event)" class="space-y-4">
                 <div>
@@ -101,11 +101,11 @@
                 const wa = document.getElementById('inq-whatsapp').value.trim();
                 const msg = document.getElementById('inq-message').value.trim();
                 const text = 'Halo, saya ' + name + ' (' + wa + ').\n\n' + msg;
-                const target = '{{ setting('whatsapp', '6285123456789') }}'.replace(/\D/g, '');
-                window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(text), '_blank');
+const target = '{{ wa_phone(setting('whatsapp', '6285123456789')) }}';
+        window.open('https://wa.me/' + target + '?text=' + encodeURIComponent(text), '_blank');
             }
             </script>
-        </x-card>
+        </div>
     </div>
 </div>
 @endsection

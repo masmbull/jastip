@@ -44,7 +44,7 @@
             @endauth
         @else
             <div class="w-full h-full bg-[#FAF6EF] dark:bg-[#262626] flex items-center justify-center">
-                <x-icon name="cube" class="w-10 h-10 text-[#475569]" />
+                <x-icon name="cube" class="w-10 h-10 text-[#334155]" />
             </div>
         @endif
     </div>
@@ -52,19 +52,19 @@
     <div class="p-4 flex flex-col flex-1">
         @if($product)
             <div class="flex items-center justify-between gap-2 mb-1">
-                <p class="text-[11px] text-[#475569] font-black uppercase tracking-wider">{{ $product->category->name ?? 'Lainnya' }}</p>
+                <p class="text-[11px] text-[#334155] font-black uppercase tracking-wider">{{ $product->category->name ?? 'Lainnya' }}</p>
                 @if($product->sold_text)
-                    <span class="text-[11px] font-bold text-[#475569] num">{{ $product->sold_text }}</span>
+                    <span class="text-[11px] font-bold text-[#334155] num">{{ $product->sold_text }}</span>
                 @endif
             </div>
             <h3 class="font-extrabold text-[15px] leading-snug mb-1 line-clamp-2">{{ $product->name }}</h3>
 
             @if($product->brand)
-                <p class="text-xs font-medium text-[#475569] mb-1">oleh {{ $product->brand }}</p>
+                <p class="text-xs font-medium text-[#334155] mb-1">oleh {{ $product->brand }}</p>
             @endif
 
             @if($product->rating_text)
-                <p class="text-xs font-medium text-[#475569] mb-2 flex items-center gap-1">
+                <p class="text-xs font-medium text-[#334155] mb-2 flex items-center gap-1">
                     <x-icon name="star" class="w-4 h-4 text-[#B45309]" />
                     <span class="font-black num">{{ $product->rating_text }}</span>
                     <span>rating</span>
@@ -75,7 +75,7 @@
                 {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}
             </p>
             @if($product->price_max)
-                <p class="text-xs font-medium text-[#475569] mb-2">harga pasaran</p>
+                <p class="text-xs font-medium text-[#334155] mb-2">harga pasaran</p>
             @endif
 
             <div class="mb-3">
@@ -92,13 +92,13 @@
                     </x-btn>
                 @else
                     <button disabled
-                            class="w-full inline-flex items-center justify-center min-h-[44px] px-4 py-2 bg-[#FAF6EF] dark:bg-[#262626] border-2 border-[#141414]/20 text-[#475569] font-bold text-sm cursor-not-allowed">
+                            class="w-full inline-flex items-center justify-center min-h-[44px] px-4 py-2 bg-[#FAF6EF] dark:bg-[#262626] border-2 border-[#141414]/20 text-[#334155] font-bold text-sm cursor-not-allowed">
                         Stok Habis
                     </button>
                 @endif
             </div>
         @else
-            <p class="text-sm font-medium text-[#475569]">Data produk tidak tersedia.</p>
+            <p class="text-sm font-medium text-[#334155]">Data produk tidak tersedia.</p>
         @endif
     </div>
 </article>

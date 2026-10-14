@@ -21,7 +21,7 @@
              x-transition:leave-end="opacity-0"
              x-cloak
              class="flex items-start gap-2.5 px-4 py-3 rounded-xl shadow-lg text-white text-sm
-                    {{ ['success'=>'bg-green-600','error'=>'bg-red-600','info'=>'bg-blue-600'][$flash['type']] ?? 'bg-gray-700' }}">
+                    {{ ['success'=>'bg-green-700','error'=>'bg-red-600','info'=>'bg-blue-600'][$flash['type']] ?? 'bg-gray-700' }}">
             <span class="flex-1 break-words">{{ $flash['message'] }}</span>
             <button type="button" @click="show=false" class="flex-shrink-0 text-white/80 hover:text-white text-xl leading-none">×</button>
         </div>

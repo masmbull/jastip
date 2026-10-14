@@ -8,31 +8,45 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         <!-- QRIS Section -->
         <x-card class="space-y-4">
-            <h2 class="text-xl md:text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Scan QRIS</h2>
-            <p class="text-sm md:text-base text-[#64748B] dark:text-[#cbd5e1]">Scan dengan aplikasi perbankan atau e-wallet kamu</p>
+            @if($qrisImage)
+                <h2 class="text-xl md:text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Scan QRIS</h2>
+                <p class="text-sm md:text-base text-[#64748B] dark:text-[#cbd5e1]">Scan dengan aplikasi perbankan atau e-wallet kamu</p>
 
-            <!-- QRIS Image -->
-            <div class="bg-[#F1F5F9] dark:bg-[#2e323b] rounded-lg p-4 flex items-center justify-center transition-colors">
-                @if($qrisImage)
+                <!-- QRIS Image -->
+                <div class="bg-[#F1F5F9] dark:bg-[#2e323b] rounded-lg p-4 flex items-center justify-center transition-colors">
                     <img src="{{ $qrisImage }}" alt="Kode QRIS pembayaran pesanan {{ $order->order_number }}" class="max-w-sm w-full rounded" id="qrisImage">
-                @else
-                    <p class="text-[#64748B] dark:text-[#cbd5e1] text-center text-sm md:text-base">QRIS tidak tersedia</p>
+                </div>
+
+                <!-- Download Button -->
+                <a href="{{ route('payment.download-qris', $order) }}"
+                   class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 py-2 md:py-3 bg-[#0891B2] hover:bg-[#0E7490] text-white rounded-lg font-medium transition-colors text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <x-icon name="download" class="w-4 md:w-5 h-4 md:h-5" />
+                    Download QRIS
+                </a>
+
+                <!-- Merchant Info -->
+                <div class="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/30 rounded-lg p-3 md:p-4 transition-colors">
+                    <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-1">Atas nama</p>
+                    <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">{{ $qrisMerchant }}</p>
+                </div>
+            @else
+                <h2 class="text-xl md:text-2xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">
+                    {{ qris_enabled() ? 'QRIS Belum Tersedia' : 'Menunggu Konfirmasi Admin' }}
+                </h2>
+                <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-3 md:p-4 text-sm text-amber-800 dark:text-amber-300 transition-colors">
+                    {{ qris_enabled()
+                        ? 'Gambar QRIS belum diunggah admin. Minta kode QRIS lewat WhatsApp ya.'
+                        : 'Pembayaran QRIS sedang nonaktif. Admin yang kirim cara bayar & total finalnya lewat WhatsApp.' }}
+                </div>
+                @if(setting('whatsapp'))
+                <a href="{{ whatsapp_url((string) setting('whatsapp'), 'Halo, saya mau konfirmasi pesanan ' . $order->order_number) }}"
+                   target="_blank" rel="noopener noreferrer"
+                   class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 py-2 md:py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-colors text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-green-300">
+                    <x-icon name="chat" class="w-4 md:w-5 h-4 md:h-5" />
+                    Konfirmasi via WhatsApp
+                </a>
                 @endif
-            </div>
-
-            <!-- Download Button -->
-            <a href="{{ route('payment.download-qris', $order) }}"
-               class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 py-2 md:py-3 bg-[#0891B2] hover:bg-[#0E7490] text-white rounded-lg font-medium transition-colors text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-orange-300">
-                <x-icon name="download" class="w-4 md:w-5 h-4 md:h-5" />
-                Download QRIS
-            </a>
-
-            <!-- Merchant Info -->
-            <div class="bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/30 rounded-lg p-3 md:p-4 transition-colors">
-                <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-1">Atas nama</p>
-                <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">{{ $qrisMerchant }}</p>
-            </div>
-
+            @endif
             <!-- Amount -->
             <div class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-lg p-3 md:p-4 transition-colors">
                 <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-1">Total yang harus dibayar</p>
@@ -87,7 +101,9 @@
             <!-- Upload Proof Section -->
             <x-card class="space-y-4">
                 <h2 class="text-lg md:text-xl font-bold text-[#1E293B] dark:text-[#f1f5f9]">Unggah Bukti Pembayaran</h2>
-                <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1]">Screenshot atau foto struk pembayaran QRIS kamu</p>
+                <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1]">
+                    {{ qris_enabled() ? 'Screenshot atau foto struk pembayaran QRIS kamu' : 'Screenshot atau foto bukti transfer kamu' }}
+                </p>
 
                 <!-- Upload Area -->
                 <button type="button"
@@ -121,6 +137,7 @@
     </div>
 
     <!-- Info Box -->
+    @if(qris_enabled())
     <div class="mt-6 md:mt-8 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-4 md:p-6 transition-colors">
         <h3 class="font-semibold text-blue-900 dark:text-blue-300 mb-3 text-base md:text-lg flex items-center gap-1"><x-icon name="clipboard" class="w-5 h-5" /> Petunjuk Pembayaran</h3>
         <ul class="text-xs md:text-sm text-blue-800 dark:text-blue-200 space-y-2">
@@ -133,6 +150,7 @@
             <li class="flex items-start gap-2"><x-icon name="check" class="w-4 h-4 mt-0.5 shrink-0" /> Admin akan konfirmasi dalam beberapa menit</li>
         </ul>
     </div>
+    @endif
 </div>
 
 <script>

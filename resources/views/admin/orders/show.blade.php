@@ -18,6 +18,7 @@
 <div class="space-y-5">
     <x-page-header title="Pesanan #{{ $order->no }}">
         <x-btn as="a" :href="route('admin.orders.index')" variant="ghost" icon="arrow-left">Kembali</x-btn>
+        <x-btn as="a" :href="route('admin.orders.edit', $order)" icon="pencil">Edit Invoice</x-btn>
         <button type="button"
                 data-inv-url="{{ route('admin.orders.invoice', $order) }}?embed=1"
                 data-inv-title="Invoice #{{ $order->no }}"
@@ -48,14 +49,16 @@
                 </div>
             </div>
             <div class="mt-3 pt-3 border-t-2 border-[#141414] dark:border-[#FAF6EF]">
-                <p class="text-xs font-bold text-[#475569] dark:text-[#D6D3D1] mb-2">QRIS yang digunakan saat checkout:</p>
-                @if($qris_image && $qris_image !== '/storage/' && $qris_image !== Storage::url(null))
-                    <div class="flex items-center gap-3">
-                        <img src="{{ $qris_image }}" alt="QRIS {{ $qris_merchant }}" class="h-20 w-auto rounded-[8px] border-2 border-[#141414] bg-white">
-                        <span class="text-xs font-bold">{{ $qris_merchant }}</span>
-                    </div>
-                @else
-                    <p class="text-xs font-bold italic">QRIS belum diunggah. Unggah di halaman Pengaturan.</p>
+                @if(qris_enabled())
+                    <p class="text-xs font-bold text-[#475569] dark:text-[#D6D3D1] mb-2">QRIS yang digunakan saat checkout:</p>
+                    @if($qris_image)
+                        <div class="flex items-center gap-3">
+                            <img src="{{ $qris_image }}" alt="QRIS {{ $qris_merchant }}" class="h-20 w-auto rounded-[8px] border-2 border-[#141414] bg-white">
+                            <span class="text-xs font-bold">{{ $qris_merchant }}</span>
+                        </div>
+                    @else
+                        <p class="text-xs font-bold italic">QRIS belum diunggah. Unggah di halaman Pengaturan.</p>
+                    @endif
                 @endif
             </div>
         </div>
@@ -64,7 +67,7 @@
             <h2 class="text-[12px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-[0.12em] mb-3">Informasi Pelanggan</h2>
             <div class="space-y-2 text-sm">
                 <div><span class="text-[#475569] font-bold">Nama:</span> <span class="font-extrabold">{{ $order->customer_name }}</span></div>
-                <div><span class="text-[#475569] font-bold">WA:</span> <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="font-bold text-[#0E7490] dark:text-[#22D3EE] underline underline-offset-2">{{ $order->customer_whatsapp }}</a></div>
+                <div><span class="text-[#475569] font-bold">WA:</span> <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="font-bold text-[#0E7490] dark:text-[#22D3EE] underline underline-offset-2">{{ $order->customer_whatsapp }}</a></div>
                 <div><span class="text-[#475569] font-bold">Tgl:</span> <span class="font-bold num">{{ $order->created_at->format('d M Y, H:i') }}</span></div>
                 <div><span class="text-[#475569] font-bold">Metode:</span> <span class="font-bold">{{ $order->shipping_method ?? '-' }}</span></div>
                 @if($order->customer_notes)<div><span class="text-[#475569] font-bold">Catatan:</span> <span class="font-medium">{{ $order->customer_notes }}</span></div>@endif
@@ -77,7 +80,7 @@
                 <div class="flex justify-between"><span class="text-[#475569] font-bold">Subtotal:</span> <span class="font-extrabold num">{{ format_price($order->subtotal) }}</span></div>
                 <div class="flex justify-between"><span class="text-[#475569] font-bold">Ongkir:</span> <span class="font-extrabold num">{{ format_price($order->shipping_cost) }}</span></div>
                 @if(($order->down_payment ?? 0) > 0)
-                    <div class="flex justify-between"><span class="text-[#475569] font-bold">DP Masuk:</span> <span class="font-extrabold text-[#166534] num">-{{ format_price($order->down_payment) }}</span></div>
+                    <div class="flex justify-between"><span class="text-[#475569] font-bold">Deposit Masuk:</span> <span class="font-extrabold text-[#166534] num">-{{ format_price($order->down_payment) }}</span></div>
                     @if(! $order->is_paid)
                         <div class="flex justify-between"><span class="text-[#475569] font-bold">Sisa Bayar:</span> <span class="font-extrabold num">{{ format_price($order->remaining) }}</span></div>
                     @endif
@@ -116,11 +119,11 @@
 
     <div class="nb-card p-5" id="pelunasan">
         <h2 class="text-[12px] font-black uppercase tracking-[0.12em] mb-1">Pelunasan</h2>
-        <p class="text-xs font-medium text-[#475569] dark:text-[#D6D3D1] mb-4">DP dan pembayaran tambahan. Sisa dihitung otomatis.</p>
+        <p class="text-xs font-medium text-[#475569] dark:text-[#D6D3D1] mb-4">Deposit dan pembayaran tambahan. Sisa dihitung otomatis.</p>
 
         <div class="space-y-2 text-sm mb-4">
             <div class="flex justify-between"><span class="font-bold text-[#475569]">Total Tagihan</span><span class="font-black num">{{ format_price($order->total) }}</span></div>
-            <div class="flex justify-between"><span class="font-bold text-[#475569]">DP Masuk</span><span class="font-black num">{{ format_price($order->down_payment ?? 0) }}</span></div>
+            <div class="flex justify-between"><span class="font-bold text-[#475569]">Deposit Masuk</span><span class="font-black num">{{ format_price($order->down_payment ?? 0) }}</span></div>
             @forelse($order->payments as $pay)
                 <div class="flex items-center justify-between gap-2 border-2 border-[#141414]/15 dark:border-[#FAF6EF]/15 rounded-[8px] px-3 py-2">
                     <div class="min-w-0">

@@ -7,7 +7,7 @@
         <div class="space-y-2 text-sm">
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Nama:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->customer_name }}</span></div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">WA:</span>
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-orange-600 dark:text-orange-400 hover:underline">{{ $order->customer_whatsapp }}</a>
+                <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-orange-600 dark:text-orange-400 hover:underline">{{ $order->customer_whatsapp }}</a>
             </div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Tgl:</span> <span class="text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->created_at->format('d M Y, H:i') }}</span></div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Metode:</span> <span class="text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->shipping_method ?? '-' }}</span></div>
@@ -43,7 +43,7 @@
             <div class="mt-2"><span class="text-[#64748B] dark:text-[#cbd5e1]">Bayar pada:</span>
                 <span class="ml-1 text-sm text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->paid_at ? $order->paid_at->format('d M Y, H:i') : '-' }}</span>
             </div>
-            @if($qris_image && $qris_image !== '/storage/')
+            @if($qris_image)
                 <div class="mt-3 pt-2 border-t border-[#E2E8F0] dark:border-[#404854]">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mb-1">QRIS: <span class="text-[#1E293B] dark:text-[#f1f5f9]">{{ $qris_merchant ?? 'NITIP DI END' }}</span></p>
                     <img src="{{ $qris_image }}" alt="QRIS {{ $qris_merchant }}" class="h-16 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]">

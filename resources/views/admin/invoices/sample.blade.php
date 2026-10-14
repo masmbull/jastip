@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pratinjau Sampel Invoice | {{ $invoice['brand_line2'] }}</title>
     @vite(['resources/css/app.css'])
+    @include('partials.theme-colors')
     <style>
         :root { --ink: #141414; --muted: #475569; --line: #141414; }
         .receipt { -webkit-print-color-adjust: exact; print-color-adjust: exact;

@@ -18,14 +18,24 @@ class SettingController extends Controller
     {
         foreach (config('settings.groups', []) as $group => $meta) {
             foreach ($meta['settings'] ?? [] as $key => $definition) {
-                if (($definition['type'] ?? 'text') === 'image') {
+                $type = $definition['type'] ?? 'text';
+
+                if ($type === 'image') {
                     $this->storeImage($request, $key, $group);
 
                     continue;
                 }
 
                 if ($request->has($key)) {
-                    Setting::set($key, $request->input($key, ''), 'string', $group, true);
+                    // Tipe disimpan sama seperti SettingSeeder supaya cara baca
+                    // nilainya tidak berubah setelah admin mengedit satu field.
+                    $storageType = match ($type) {
+                        'boolean' => 'boolean',
+                        'number' => 'integer',
+                        default => 'string',
+                    };
+
+                    Setting::set($key, $request->input($key), $storageType, $group, true);
                 }
             }
         }

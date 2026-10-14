@@ -225,7 +225,7 @@
                     </div>
                     <div>
                         <p class="text-[#64748B] dark:text-[#cbd5e1]">WhatsApp</p>
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $order->customer_whatsapp) }}"
+                        <a href="{{ whatsapp_url($order->customer_whatsapp) }}"
                            target="_blank" rel="noopener noreferrer"
                            class="font-medium text-[#0E7490] dark:text-[#67e8f9] hover:underline num focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                             {{ $order->customer_whatsapp }}

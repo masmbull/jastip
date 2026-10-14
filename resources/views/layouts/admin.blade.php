@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ sidebarOpen: false, darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }" @theme-toggle.window="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')" @keydown.escape.window="sidebarOpen = false">
+<html lang="id" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -15,15 +15,10 @@
     <link rel="manifest" href="{{ asset('manifest-admin.webmanifest') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
 
-    <script>
-        /* Prevent FOUC - set dark mode before styles load */
-        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-colors')
 </head>
-<body class="bg-[#FAF6EF] dark:bg-[#121212] text-[#141414] dark:text-[#FAF6EF] font-sans antialiased min-h-screen transition-colors duration-150">
+<body class="bg-[#FAF6EF] text-[#141414] font-sans antialiased min-h-screen">
 
 {{-- Loading splash: self-removing, no Alpine dependency, so it cannot get
      stuck when the Alpine CDN is slow or the load event already fired. --}}
@@ -54,7 +49,7 @@
     {{-- Sidebar --}}
     <aside id="sidebar"
            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-white dark:bg-[#1E1E1E] border-r-2 border-[#141414] dark:border-[#FAF6EF] -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0">
+           class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-[#FAF6EF] border-r-2 border-[#141414] -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0">
 
         {{-- Logo --}}
         <div class="flex items-center justify-between p-5 border-b-2 border-[#141414] dark:border-[#FAF6EF]">
@@ -76,6 +71,17 @@
             </button>
         </div>
 
+        {{-- Strip pelangi: penanda visual RAINBOW MODE, sekaligus jeda antara
+             logo dan daftar menu. --}}
+        <div class="flex h-2 shrink-0 border-b-2 border-[#141414]" aria-hidden="true">
+            <span class="flex-1 bg-[var(--nb-sun)]"></span>
+            <span class="flex-1 bg-[var(--nb-sand)]"></span>
+            <span class="flex-1 bg-[var(--nb-coral)]"></span>
+            <span class="flex-1 bg-[var(--nb-bubble)]"></span>
+            <span class="flex-1 bg-[var(--nb-grape)]"></span>
+            <span class="flex-1 bg-[var(--nb-sky)]"></span>
+            <span class="flex-1 bg-[var(--nb-mint)]"></span>
+        </div>
 
         @include('layouts.partials.admin-nav')
 
@@ -113,21 +119,6 @@
             </div>
             <div class="flex items-center gap-2 sm:gap-3">
                 <span class="hidden sm:inline text-sm font-bold text-[#141414] dark:text-[#FAF6EF]">Halo, Admin</span>
-
-                {{-- Dark-mode toggle --}}
-                <button type="button"
-                        @click="$dispatch('theme-toggle')"
-                        class="p-2 rounded-[8px] min-w-[44px] min-h-[44px] flex items-center justify-center text-[#141414] dark:text-[#FAF6EF] border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] transition-colors"
-                        title="Ganti mode gelap" aria-label="Ganti mode gelap">
-                    <svg x-show="!document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 12.75a9 9 0 1 1-9.25-9.25 7 7 0 0 0 9.25 9.25z"></path>
-                    </svg>
-                    <svg x-show="document.documentElement.classList.contains('dark')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 3v2m0 14v2m8.66-10.66-1.42 1.42M4.76 4.76l1.42 1.42M19 12h2M3 12h2m14.66 4.66-1.42 1.42M4.76 19.24l1.42-1.42"></path>
-                    </svg>
-                </button>
 
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf

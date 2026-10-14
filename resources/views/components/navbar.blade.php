@@ -54,14 +54,6 @@
                     <x-icon name="search" class="w-5 h-5" />
                 </button>
 
-                <button type="button"
-                        @click="$dispatch('theme-toggle')"
-                        class="w-11 h-11 inline-flex items-center justify-center text-[#141414] dark:text-[#FAF6EF] hover:bg-[#FFF7D6] dark:hover:bg-[#262626] rounded-[8px] border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] transition-colors"
-                        aria-label="Ganti tema" title="Ganti mode gelap/terang">
-                    <x-icon name="sun" class="w-5 h-5 dark:hidden" />
-                    <x-icon name="moon" class="hidden w-5 h-5 dark:block" />
-                </button>
-
                 <a href="{{ route('cart.index') }}"
                    class="relative w-11 h-11 inline-flex items-center justify-center text-[#141414] dark:text-[#FAF6EF] hover:bg-[#FFF7D6] dark:hover:bg-[#262626] rounded-[8px] border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] transition-colors"
                    aria-label="Titipan" title="Titipan">

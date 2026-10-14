@@ -1,7 +1,17 @@
-{{-- $cancel = 'modal' -> tombol Batal menutup modal; else link ke daftar pesanan. --}}
-@php($cancel = $cancel ?? null)
-    <form method="POST" action="{{ route('admin.orders.store') }}" class="space-y-5" @submit="saving = true">
+{{-- Dipakai halaman Buat & Edit. $action/$method/$isEdit/$submitLabel/$cancel boleh di-override dari view pemanggil. --}}
+@php
+    $cancel = $cancel ?? null;
+    $action = $action ?? route('admin.orders.store');
+    $method = strtoupper($method ?? 'POST');
+    $isEdit = $isEdit ?? false;
+    $submitLabel = $submitLabel ?? 'Simpan dan Buat Invoice';
+@endphp
+    <form method="POST" action="{{ $action }}" class="space-y-5" @submit="saving = true">
         @csrf
+        <input type="hidden" name="mode" x-model="mode">
+        @unless($method === 'POST')
+            @method($method)
+        @endunless
 
         <div class="nb-card !p-0 overflow-hidden">
 
@@ -18,14 +28,31 @@
                 </div>
                 <div class="sm:text-right">
                     <div class="inline-block bg-[#141414] dark:bg-[#FAF6EF] text-white dark:text-[#141414] font-black tracking-tight text-xl px-3 py-1.5 rounded-[8px]">INVOICE</div>
-                    <div class="text-xs font-medium text-[#475569] dark:text-[#D6D3D1] mt-1.5">Nomor dan tanggal dibuat otomatis</div>
+                    <div class="text-xs font-medium text-[#475569] dark:text-[#D6D3D1] mt-1.5">
+                        @if($isEdit && isset($order))
+                            Nomor {{ $order->order_number }} · diubah {{ now()->format('d M Y, H:i') }}
+                        @else
+                            Nomor dan tanggal dibuat otomatis
+                        @endif
+                    </div>
                 </div>
             </div>
 
             <div class="p-5 space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-3.5">
-                        <h2 class="text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-[0.12em]">Tagihan untuk</h2>
+                        <div class="flex items-center justify-between gap-3">
+                            <h2 class="text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-[0.12em]">Tagihan untuk</h2>
+                            <div class="inline-flex border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[8px] overflow-hidden shrink-0"
+                                 role="group" aria-label="Mode invoice">
+                                <button type="button" @click="setMode('deposit')" :aria-pressed="mode === 'deposit'"
+                                        :class="mode === 'deposit' ? 'bg-[#FFC800] text-[#141414]' : 'bg-white dark:bg-[#1E1E1E] text-[#475569] dark:text-[#D6D3D1]'"
+                                        class="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider">Deposit</button>
+                                <button type="button" @click="setMode('lunas')" :aria-pressed="mode === 'lunas'"
+                                        :class="mode === 'lunas' ? 'bg-[#FFC800] text-[#141414]' : 'bg-white dark:bg-[#1E1E1E] text-[#475569] dark:text-[#D6D3D1]'"
+                                        class="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider border-l-2 border-[#141414] dark:border-[#FAF6EF]">Lunas</button>
+                            </div>
+                        </div>
                         <div>
                             <label class="block text-sm font-bold mb-1" for="mi-name">Nama Pelanggan *</label>
                             <input id="mi-name" type="text" name="customer_name" required value="{{ old('customer_name') }}"
@@ -120,14 +147,22 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-bold mb-1" for="mi-fee">Fee Jastip</label>
-                                <input id="mi-fee" type="number" min="0" name="fee" x-model.number="feeAmt" value="{{ old('fee', 0) }}"
-                                       class="nb-input w-full px-3 py-2 text-sm num">
+                                <label class="flex items-center gap-2 cursor-pointer select-none" for="mi-show-fee">
+                                    <input id="mi-show-fee" type="checkbox" :checked="showFee"
+                                           @change="toggleFee($event.target.checked)"
+                                           class="w-4 h-4 accent-[#0E7490]">
+                                    <span class="text-xs font-black uppercase tracking-wider text-[#475569] dark:text-[#D6D3D1]">Munculkan Fee</span>
+                                </label>
+                                <div x-show="showFee" x-cloak class="mt-2">
+                                    <label class="block text-sm font-bold mb-1" for="mi-fee">Fee Jastip</label>
+                                    <input id="mi-fee" type="number" min="0" name="fee" x-model.number="feeAmt" value="{{ old('fee', 0) }}"
+                                           class="nb-input w-full px-3 py-2 text-sm num">
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1" for="mi-dp">Down Payment (DP)</label>
+                            <div x-show="mode === 'deposit'" x-cloak>
+                                <label class="block text-sm font-bold mb-1" for="mi-dp">Deposit</label>
                                 <input id="mi-dp" type="number" min="0" name="down_payment" x-model.number="dpAmt" :disabled="paidNow" value="{{ old('down_payment', 0) }}"
-                                       placeholder="0 = tanpa DP"
+                                       placeholder="0 = tanpa deposit"
                                        class="nb-input w-full px-3 py-2 text-sm num disabled:opacity-50">
                                 @error('down_payment')<p class="text-xs font-bold text-[#991B1B] mt-1">{{ $message }}</p>@enderror
                             </div>
@@ -227,8 +262,8 @@
                         <div class="p-4 space-y-1.5">
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Subtotal</span><span class="font-black num" x-text="formatRp(subtotal())"></span></div>
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Ongkir</span><span class="font-black num" x-text="formatRp(shipping)"></span></div>
-                            <div class="flex justify-between"><span class="font-bold text-[#475569]">Fee Jastip</span><span class="font-black num" x-text="formatRp(feeAmt)"></span></div>
-                            <div class="flex justify-between" x-show="dpAmt > 0 && !paidNow" x-cloak><span class="font-bold text-[#475569]">DP Masuk</span><span class="font-black text-[#166534] num" x-text="'-' + formatRp(paidNow ? 0 : dpAmt)"></span></div>
+                            <div class="flex justify-between" x-show="showFee"><span class="font-bold text-[#475569]">Fee Jastip</span><span class="font-black num" x-text="formatRp(feeAmt)"></span></div>
+                            <div class="flex justify-between" x-show="dpAmt > 0 && !paidNow" x-cloak><span class="font-bold text-[#475569]">Deposit Masuk</span><span class="font-black text-[#166534] num" x-text="'-' + formatRp(paidNow ? 0 : dpAmt)"></span></div>
                         </div>
                         <div class="nb-money-strip px-4 py-3 space-y-1">
                             <div class="flex items-center justify-between">
@@ -246,7 +281,7 @@
         </div>
 
         <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-            <label class="flex items-center gap-2 cursor-pointer min-h-[44px]">
+            <label class="flex items-center gap-2 cursor-pointer min-h-[44px]" @if($isEdit) hidden @endif>
                 <input type="checkbox" name="mark_paid" value="1" x-model="paidNow" class="w-5 h-5 accent-[#0E7490]">
                 <span class="text-sm font-bold">Tandai sudah lunas</span>
             </label>
@@ -259,7 +294,8 @@
                 <button type="submit" :disabled="saving"
                         class="nb-btn px-6 py-2.5 bg-[#0E7490] text-white">
                     <x-spinner x-show="saving" x-cloak />
-                    <span x-text="saving ? 'Menyimpan...' : 'Simpan dan Buat Invoice'">Simpan dan Buat Invoice</span>
+                    <span data-label="{{ $submitLabel }}"
+                          x-text="saving ? 'Menyimpan...' : $el.dataset.label">{{ $submitLabel }}</span>
                 </button>
             </div>
         </div>

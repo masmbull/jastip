@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ManualOrderStoreRequest;
+use App\Http\Requests\ManualOrderUpdateRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Mail\OrderShipped;
 use App\Models\Order;
@@ -17,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -77,7 +77,10 @@ class OrderController extends Controller
         $shippingCost = (int) $request->input('shipping_cost', 0);
         $fee = (int) $request->input('fee', 0);
         $paid = $request->boolean('mark_paid');
-        $downPayment = $paid ? 0 : (int) $request->input('down_payment', 0);
+        // Mode lunas tidak menyimpan deposit apa pun.
+        $downPayment = ($paid || $request->input('mode') === 'lunas')
+            ? 0
+            : (int) $request->input('down_payment', 0);
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
         // Harga & fee hanya dari input admin (invoice manual, bukan dari produk).
@@ -114,6 +117,93 @@ class OrderController extends Controller
 
         return redirect()->route('admin.invoices.index')
             ->with('success', 'Invoice '.$order->order_number.' berhasil dibuat.');
+    }
+
+    /**
+     * Form edit invoice manual.
+     *
+     * Formnya memakai old() di mana-mana (hasil submit yang gagal), jadi
+     * isian awal di-flash sekali di sini supaya field keisi otomatis.
+     */
+    public function edit(Order $order)
+    {
+        Gate::authorize('update', $order);
+        $order->load('items');
+
+        session()->flashInput([
+            'customer_name' => $order->customer_name,
+            'customer_whatsapp' => $order->customer_whatsapp,
+            'customer_email' => $order->customer_email,
+            'customer_address' => $order->customer_address,
+            'customer_notes' => $order->customer_notes,
+            'admin_notes' => $order->admin_notes,
+            'shipping_city' => $order->city,
+            'shipping_method' => $order->shipping_method,
+            'shipping_cost' => $order->shipping_cost,
+            'fee' => $order->fee,
+            'down_payment' => $order->down_payment,
+            'items' => $order->items->map(fn ($item) => [
+                'product_name' => $item->product_name,
+                'unit' => $item->unit,
+                'status' => $item->status,
+                'quantity' => $item->quantity,
+                'product_price' => $item->product_price,
+            ])->values()->all(),
+        ]);
+
+        return view('admin.orders.edit', ['order' => $order]);
+    }
+
+    /**
+     * Simpan perubahan invoice.
+     *
+     * status & paid_at sengaja tidak disentuh: status urusan alur pesanan,
+     * bukan urusan koreksi isian. "Lunas" sendiri dihitung dari data bayar.
+     */
+    public function update(ManualOrderUpdateRequest $request, Order $order)
+    {
+        Gate::authorize('update', $order);
+
+        $items = collect($request->validated('items'))->map(fn ($item) => [
+            'product_name' => $item['product_name'],
+            'unit' => ($item['unit'] ?? null) ?: 'pcs',
+            'quantity' => (int) $item['quantity'],
+            'status' => $item['status'] ?? OrderItem::STATUS_READY,
+            'product_price' => (int) $item['product_price'],
+            'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
+        ]);
+
+        $subtotal = (int) $items->sum('subtotal');
+        $shippingCost = (int) $request->input('shipping_cost', 0);
+        $fee = (int) $request->input('fee', 0);
+
+        DB::transaction(function () use ($request, $order, $items, $subtotal, $shippingCost, $fee) {
+            $order->update([
+                'customer_name' => $request->input('customer_name'),
+                'customer_whatsapp' => $request->input('customer_whatsapp'),
+                'customer_email' => $request->input('customer_email'),
+                'customer_address' => $request->input('customer_address'),
+                'customer_notes' => $request->input('customer_notes'),
+                'admin_notes' => $request->input('admin_notes'),
+                'city' => $request->input('shipping_city'),
+                'shipping_method' => $request->input('shipping_method'),
+                'subtotal' => $subtotal,
+                'shipping_cost' => $shippingCost,
+                'fee' => $fee,
+                'down_payment' => (int) $request->input('down_payment', 0),
+                'total' => $subtotal + $shippingCost + $fee,
+            ]);
+
+            $order->items()->delete();
+            foreach ($items as $item) {
+                OrderItem::create($item + ['order_id' => $order->id]);
+            }
+
+            return $order;
+        });
+
+        return redirect()->route('admin.orders.show', $order)
+            ->with('success', 'Invoice ' . $order->order_number . ' berhasil diperbarui.');
     }
 
     /**
@@ -183,7 +273,7 @@ class OrderController extends Controller
 
         return view('admin.orders.show', [
             'order' => $order,
-            'qris_image' => Storage::url(setting('qris_image')),
+            'qris_image' => qris_url(),
             'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
         ]);
     }
@@ -195,7 +285,7 @@ class OrderController extends Controller
 
         return view('admin.orders._detail', [
             'order' => $order,
-            'qris_image' => Storage::url(setting('qris_image')),
+            'qris_image' => qris_url(),
             'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
         ]);
     }

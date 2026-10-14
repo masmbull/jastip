@@ -9,7 +9,7 @@
         <x-btn as="a" :href="route('admin.products.create')" icon="plus">Tambah Produk</x-btn>
     </x-page-header>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger nb-rainbow">
         <x-stat-card label="Total Produk" :value="$stats['products_count'] ?? 0" icon="cube" :href="route('admin.products.index')" />
         <x-stat-card label="Total Kategori" :value="$stats['categories_count'] ?? 0" icon="tag" :href="route('admin.categories.index')" />
         <x-stat-card label="Total Pesanan" :value="$stats['orders_count'] ?? 0" icon="cart" :href="route('admin.orders.index')" />

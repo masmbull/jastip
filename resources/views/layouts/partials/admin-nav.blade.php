@@ -34,12 +34,25 @@
         ['label' => 'Pengaturan', 'route' => 'admin.settings.index', 'match' => 'admin.settings.*', 'icon' => 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.28Z'],
         ['label' => 'Status Sistem', 'route' => 'admin.system.status', 'match' => 'admin.system.*', 'icon' => 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5'],
     ];
+
+    // RAINBOW MODE: tiap kelompok menu di sidebar punya warnanya sendiri,
+    // dipakai buat label kelompok dan item yang sedang aktif.
+    $groupTones = [
+        'Utama'        => 'coral',
+        'Katalog'      => 'sun',
+        'Pelanggan'    => 'mint',
+        'Analitik'     => 'sky',
+        'Operasional'  => 'grape',
+        'Sistem'       => 'bubble',
+    ];
 @endphp
 
 <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
+    @php($currentTone = 'sky')
     @foreach($adminNav as $item)
         @if(isset($item['group']))
-            <p class="px-3 pt-4 pb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#475569] dark:text-[#D6D3D1]">{{ $item['group'] }}</p>
+            @php($currentTone = $groupTones[$item['group']] ?? 'sky')
+            <p class="inline-block px-3 mx-3 mt-4 mb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#141414] nb-tint-{{ $currentTone }} border-2 border-[#141414] rounded-md">{{ $item['group'] }}</p>
         @elseif(\Route::has($item['route']))
             @php($active = request()->routeIs($item['match']))
             <a href="{{ route($item['route']) }}"
@@ -47,8 +60,8 @@
                @class([
                    'flex items-center space-x-3 px-3 py-2.5 font-bold border-2 transition-all min-h-[44px]',
                    'rounded-[10px]',
-                   'bg-[#141414] text-white border-[#141414] dark:bg-[#FFC800] dark:text-[#141414] dark:border-[#FAF6EF]' => $active,
-                   'bg-transparent text-[#334155] dark:text-[#E7E5E4] border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] hover:bg-white dark:hover:bg-[#262626]' => ! $active,
+                   'nb-tint-' . $currentTone . ' text-[#141414] border-[#141414]' => $active,
+                   'bg-transparent text-[#334155] border-transparent hover:border-[#141414] hover:bg-white' => ! $active,
                ])
                @if($active) aria-current="page" @endif>
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">

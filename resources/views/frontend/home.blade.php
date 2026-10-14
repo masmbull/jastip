@@ -15,7 +15,7 @@
         </div>
 
         @if($categories->isNotEmpty())
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 nb-rainbow">
                 @foreach($categories as $category)
                     <x-category-card :category="$category" />
                 @endforeach
@@ -35,7 +35,7 @@
         </div>
 
         @if($featuredProducts->isNotEmpty())
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 p-5 sm:p-7 pt-5">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 p-5 sm:p-7 pt-5 nb-rainbow">
                 @foreach($featuredProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -52,7 +52,7 @@
         </div>
 
         @if($popularProducts->isNotEmpty())
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 nb-rainbow">
                 @foreach($popularProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -72,7 +72,7 @@
                 <a href="{{ route('products.viral') }}" class="nb-btn px-5 py-2.5 bg-[#FFC800] text-[#141414] border-[#FFC800]!">Lihat Semua</a>
             </div>
 
-            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+            <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 nb-rainbow">
                 @foreach($viralProducts as $product)
                     <x-product-card :product="$product" />
                 @endforeach

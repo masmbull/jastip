@@ -9,20 +9,13 @@ use Illuminate\Support\Facades\Cache;
 
 class ServiceController
 {
+    /**
+     * Halaman Daftar Layanan sudah digabung ke Status Sistem.
+     * Rutenya tetap dipertahankan supaya tautan atau bookmark lama tidak 404.
+     */
     public function index()
     {
-        $services = Service::orderBy('name')->get();
-        
-        // Tambah info tambahan
-        $systemInfo = [
-            'database' => $this->checkDatabase(),
-            'cache' => $this->checkCache(),
-            'storage' => $this->checkStorage(),
-            'disk_usage' => $this->getDiskUsage(),
-            'memory_usage' => $this->getMemoryUsage(),
-        ];
-
-        return view('admin.services.index', compact('services', 'systemInfo'));
+        return redirect()->route('admin.system.status');
     }
 
     public function check(Service $service)
@@ -54,11 +47,16 @@ class ServiceController
             'error_message' => $errorMessage,
         ]);
 
-        return response()->json([
-            'status' => $status,
-            'response_time' => round($responseTime, 2),
-            'error_message' => $errorMessage,
-        ]);
+        // Balasan JSON mentah bikin browser menampilkan kurung kurawal mentah
+        // setelah tombol Check ditekan, karena tombolnya form biasa, bukan AJAX.
+        return redirect()
+            ->back()
+            ->with('success', sprintf(
+                'Cek %s selesai: %s (%s ms).',
+                $service->name,
+                $status,
+                round($responseTime, 2)
+            ));
     }
 
     public function checkAll()
@@ -89,8 +87,8 @@ class ServiceController
             }
         }
 
-        return redirect()->route('admin.services.index')
-            ->with('success', 'Service status checked');
+        return redirect()->route('admin.system.status')
+            ->with('success', 'Status semua layanan sudah diperbarui.');
     }
 
     private function checkDatabaseStatus()
@@ -130,76 +128,5 @@ class ServiceController
         if (!is_writable($path)) {
             throw new \Exception('Storage path not writable');
         }
-    }
-
-    private function checkDatabase()
-    {
-        try {
-            DB::connection()->getPdo();
-            return ['status' => 'online', 'message' => 'Connected'];
-        } catch (\Exception $e) {
-            return ['status' => 'offline', 'message' => $e->getMessage()];
-        }
-    }
-
-    private function checkCache()
-    {
-        try {
-            Cache::put('health_check', 'ok', 1);
-            Cache::forget('health_check');
-            return ['status' => 'online', 'message' => 'Working'];
-        } catch (\Exception $e) {
-            return ['status' => 'offline', 'message' => $e->getMessage()];
-        }
-    }
-
-    private function checkStorage()
-    {
-        try {
-            $path = storage_path('app');
-            if (!is_writable($path)) {
-                return ['status' => 'offline', 'message' => 'Not writable'];
-            }
-            return ['status' => 'online', 'message' => 'Writable'];
-        } catch (\Exception $e) {
-            return ['status' => 'offline', 'message' => $e->getMessage()];
-        }
-    }
-
-    private function getDiskUsage()
-    {
-        $total = disk_total_space('/');
-        $free = disk_free_space('/');
-        $used = $total - $free;
-
-        return [
-            'total' => $this->formatBytes($total),
-            'used' => $this->formatBytes($used),
-            'free' => $this->formatBytes($free),
-            'percent' => round(($used / $total) * 100, 2),
-        ];
-    }
-
-    private function getMemoryUsage()
-    {
-        $current = memory_get_usage(true);
-        $peak = memory_get_peak_usage(true);
-
-        return [
-            'current' => $this->formatBytes($current),
-            'peak' => $this->formatBytes($peak),
-            'limit' => ini_get('memory_limit'),
-        ];
-    }
-
-    private function formatBytes($bytes)
-    {
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        $bytes /= (1 << (10 * $pow));
-
-        return round($bytes, 2) . ' ' . $units[$pow];
     }
 }

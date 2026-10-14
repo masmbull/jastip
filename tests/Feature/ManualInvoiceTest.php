@@ -193,7 +193,7 @@ class ManualInvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('DP Masuk')
+            ->assertSee('Deposit Masuk')
             ->assertSee('Sisa Bayar')
             ->assertSee('Rp 147.500')
             ->assertSee('PO');

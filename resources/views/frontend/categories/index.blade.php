@@ -7,7 +7,7 @@
 
     <x-page-header title="Kategori Produk" subtitle="Pilih kategori favoritmu" class="mb-8" />
 
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 nb-rainbow">
         @forelse($categories as $category)
             <x-category-card :category="$category" />
         @empty

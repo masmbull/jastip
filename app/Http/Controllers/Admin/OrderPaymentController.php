@@ -12,7 +12,7 @@ class OrderPaymentController extends Controller
 {
     /**
      * Catat pelunasan tambahan. Sisa dihitung otomatis dari total
-     * dikurangi DP dan seluruh pelunasan. Lunas otomatis bila sisa nol.
+     * dikurangi deposit dan seluruh pelunasan. Lunas otomatis bila sisa nol.
      */
     public function store(Request $request, Order $order)
     {

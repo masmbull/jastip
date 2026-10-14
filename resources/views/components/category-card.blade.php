@@ -24,5 +24,5 @@
     @endif
 
     <h3 class="font-black text-base sm:text-lg leading-snug line-clamp-2">{{ $category->name }}</h3>
-    <p class="text-sm font-bold text-[#475569] dark:text-[#D6D3D1] mt-0.5"><span class="num">{{ $category->products_count }}</span> produk</p>
+    <p class="text-sm font-bold text-[#334155] dark:text-[#D6D3D1] mt-0.5"><span class="num">{{ $category->products_count }}</span> produk</p>
 </a>

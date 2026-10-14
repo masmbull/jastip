@@ -168,7 +168,7 @@ class Order extends Model
     {
         return [
             'belum' => 'Belum Bayar',
-            'dp' => 'DP',
+            'dp' => 'Deposit',
             'lunas' => 'Lunas',
         ][$this->payment_status];
     }

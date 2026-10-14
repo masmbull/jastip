@@ -189,7 +189,7 @@ class CheckoutController extends Controller
             'total' => $total,
             'owner_name' => $ownerName,
             'order_number' => $order->order_number,
-            'qris_image' => \Illuminate\Support\Facades\Storage::url(setting('qris_image')),
+            'qris_image' => qris_url(),
             'qris_merchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
         ];
 

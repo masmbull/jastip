@@ -30,7 +30,7 @@
                             class="px-4 py-2 text-sm text-[#64748B] hover:bg-[#F1F5F9] rounded-lg border border-[#E2E8F0]">{{ $cancelLabel }}</button>
                     <button type="button"
                             @click="ok()"
-                            class="px-4 py-2 text-sm text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm">{{ $okLabel }}</button>
+                            class="px-4 py-2 text-sm text-white bg-orange-600 hover:bg-orange-700 rounded-lg shadow-sm">{{ $okLabel }}</button>
                 </div>
             </div>
         </div>

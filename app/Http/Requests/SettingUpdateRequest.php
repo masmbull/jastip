@@ -21,6 +21,8 @@ class SettingUpdateRequest extends FormRequest
                     'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif,webp,ico', 'max:2048'],
                     'email' => ['nullable', 'email'],
                     'number' => ['nullable', 'numeric'],
+                    'boolean' => ['nullable', 'boolean'],
+                    'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
                     default => ['nullable', 'string'],
                 };
             }

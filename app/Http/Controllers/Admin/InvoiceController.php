@@ -7,13 +7,12 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
     /**
      * Rekapan pesanan (invoice manual dari admin): tabel ledger harian
-     * dengan DP, pelunasan, sisa otomatis, ringkasan, filter, dan export.
+     * dengan deposit, pelunasan, sisa otomatis, ringkasan, filter, dan export.
      * Order checkout biasa tidak muncul di sini.
      */
     public function index(Request $request)
@@ -145,7 +144,7 @@ class InvoiceController extends Controller
 
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['No Pesanan', 'Tanggal', 'Customer', 'WhatsApp', 'Alamat', 'Barang', 'Qty', 'Subtotal', 'Ongkir', 'Fee Jastip', 'DP', 'Pelunasan', 'Grand Total', 'Sisa', 'Status Bayar', 'Status Pesanan']);
+            fputcsv($out, ['No Pesanan', 'Tanggal', 'Customer', 'WhatsApp', 'Alamat', 'Barang', 'Qty', 'Subtotal', 'Ongkir', 'Fee Jastip', 'Deposit', 'Pelunasan', 'Grand Total', 'Sisa', 'Status Bayar', 'Status Pesanan']);
             foreach ($rows as $order) {
                 $paid = (int) $order->down_payment + (int) $order->payments_sum;
                 $items = $order->items->map(fn ($i) => $i->product_name.' x'.$i->quantity.' @ '.format_price($i->product_price))->implode('; ');
@@ -187,8 +186,7 @@ class InvoiceController extends Controller
         // jadi pakai asset() bukan disk storage.
         $publicUrl = fn (?string $path) => $path && is_file(public_path($path)) ? asset($path) : null;
 
-        $qrisPath = setting('qris_image');
-        $qrisImage = $qrisPath ? Storage::url($qrisPath) : null;
+        $qrisImage = qris_url();
 
         return view('admin.orders.invoice', [
             'order' => $order,

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }" @theme-toggle.window="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="theme-color" content="#0891B2">
@@ -49,19 +49,14 @@
     <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-colors')
     {{-- Service worker is registered once from resources/js/app.js (/sw.js).
          Do NOT register a second one here: two SWs at scope "/" fight over
          the cache and a cache-first one serves stale HTML pointing at old
          build hashes (breaks styles + Alpine site-wide). --}}
 
-    <script>
-        // Prevent FOUC (Flash of Unstyled Content) for dark mode
-        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
 </head>
-<body class="bg-[#FAF6EF] dark:bg-[#121212] text-[#141414] dark:text-[#FAF6EF] font-sans antialiased min-h-screen flex flex-col transition-colors duration-150"
+<body class="bg-[#FAF6EF] text-[#141414] font-sans antialiased min-h-screen flex flex-col"
       x-data="{ mobileMenuOpen: false, searchOpen: false }"
       x-cloak>
 

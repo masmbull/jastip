@@ -12,6 +12,16 @@
 @endphp
 
 <footer class="bg-[#083344] text-[#F1F5F9]">
+    {{-- Strip pelangi: nyambungin footer ke RAINBOW MODE di badan halaman. --}}
+    <div class="flex h-2" aria-hidden="true">
+        <span class="flex-1 bg-[var(--nb-sun)]"></span>
+        <span class="flex-1 bg-[var(--nb-sand)]"></span>
+        <span class="flex-1 bg-[var(--nb-coral)]"></span>
+        <span class="flex-1 bg-[var(--nb-bubble)]"></span>
+        <span class="flex-1 bg-[var(--nb-grape)]"></span>
+        <span class="flex-1 bg-[var(--nb-sky)]"></span>
+        <span class="flex-1 bg-[var(--nb-mint)]"></span>
+    </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div class="space-y-4">
