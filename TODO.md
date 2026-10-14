@@ -60,14 +60,20 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
     bikin teks #141414 menghilang di atas kartu #1E1E1E).
   - tint pelangi dapat varian gelap; focus ring disatukan jadi satu.
 
-- [x] **Kirim invoice SEKALIAN FOTONYA lewat WhatsApp**. Link `wa.me` memang
-  tidak bisa melampirkan file, jadi: halaman invoice hex-only
-  (`admin.orders.invoice-image`) dirender ke PNG memakai `html2canvas`
-  (dimuat malas / lazy chunk), lalu dibagikan lewat Web Share API
+- [x] **Kirim invoice SEKALIAN FOTONYA lewat WhatsApp**. Tombol WhatsApp di
+  tiap baris daftar Invoice kini mengirim **gambar + pesan** (bukan teks doang):
+  halaman invoice hex-only (`admin.orders.invoice-image`) dirender ke PNG
+  memakai `html2canvas` (dimuat malas), lalu dibagikan lewat Web Share API
   (`navigator.share({ files })`) sehingga pengguna memilih WhatsApp dan
   gambarnya terlampir. Kalau berbagi file tak didukung (umumnya desktop),
-  gambar diunduh otomatis dan chat WhatsApp dibuka berisi teks. Tombol
-  "Kirim gambar" ada di tiap baris daftar Invoice.
+  gambar diunduh otomatis dan chat WhatsApp dibuka berisi teks.
+
+- [ ] **Catatan: perubahan warna di-REVERT.** Upaya menyatukan palet di
+  `app.css` (cyan -> aksen kuning, remap ~500 hex biru-slate) ternyata bikin
+  tampilan "unexpected". `app.css` dikembalikan ke versi sebelum perubahan itu;
+  fitur foto invoice WhatsApp tetap dipertahankan. Perbaikan warna akan
+  dikerjakan ulang dengan pendekatan yang tidak mengubah warna yang sudah
+  benar-benar dipakai.
 
 ## Sudah kelar
 
