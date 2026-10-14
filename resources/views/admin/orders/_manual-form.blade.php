@@ -64,6 +64,7 @@
                             <div class="col-span-2 sm:col-span-1">
                                 <label class="block text-sm font-bold mb-1" for="mi-city">Kota Tujuan</label>
                                 <select id="mi-city" name="shipping_city" x-model="city"
+                                        @change="fetchQuotes()"
                                         class="nb-input w-full px-3 py-2 text-sm font-bold">
                                     <option value="">Pilih kota</option>
                                     <template x-for="c in cities" :key="c">
@@ -75,6 +76,7 @@
                                 <label class="block text-sm font-bold mb-1" for="mi-weight">Berat (kg)</label>
                                 <div class="flex gap-2">
                                     <input id="mi-weight" type="number" min="0.1" max="100" step="0.1" x-model.number="weight"
+                                           @input.debounce.600ms="city && fetchQuotes()"
                                            class="nb-input flex-1 min-w-0 px-3 py-2 text-sm num">
                                     <button type="button" @click="fetchQuotes()" :disabled="quoting || !city"
                                             class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white shrink-0">

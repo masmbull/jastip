@@ -29,6 +29,8 @@
                     .then(r => r.json())
                     .then(j => { this.cities = j.cities || []; })
                     .catch(() => {});
+                // Kota sudah terisi (old input / edit) -> langsung ambil ongkir.
+                if (this.city) this.fetchQuotes();
             },
 
             async fetchQuotes() {
