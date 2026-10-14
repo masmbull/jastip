@@ -152,9 +152,21 @@
                                     @if($waPhone)
                                         <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer"
                                            class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#15803D]"
-                                           title="Kirim invoice via WhatsApp" aria-label="WhatsApp {{ $invoice->customer_name }}">
+                                           title="Kirim teks lewat WhatsApp" aria-label="WhatsApp {{ $invoice->customer_name }}">
                                             <x-icon name="chat" class="w-5 h-5" />
                                         </a>
+                                        <button type="button"
+                                                data-state="idle"
+                                                @click="jdShareInvoice($el, {
+                                                    url: '{{ route('admin.orders.invoice-image', $invoice) }}',
+                                                    filename: 'invoice-{{ $invoice->no }}.png',
+                                                    text: 'Invoice #{{ $invoice->no }} - {{ $invoice->customer_name }}',
+                                                    waUrl: '{{ $waLink }}'
+                                                })"
+                                                class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#15803D] disabled:opacity-60"
+                                                title="Kirim gambar invoice lewat WhatsApp" aria-label="Kirim gambar invoice {{ $invoice->no }}">
+                                            <x-icon name="photo" class="w-5 h-5" />
+                                        </button>
                                     @endif
                                     <a href="{{ route('admin.orders.edit', $invoice->id) }}"
                                        class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#B45309]"

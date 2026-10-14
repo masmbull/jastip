@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\OrderPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -79,8 +81,8 @@ class InvoiceController extends Controller
             DB::raw('COUNT(DISTINCT customer_whatsapp) as customers'),
         ])->first();
 
-        $qty = \App\Models\OrderItem::whereIn('order_id', $ids)->sum('quantity');
-        $paid = \App\Models\OrderPayment::whereIn('order_id', $ids)->sum('amount');
+        $qty = OrderItem::whereIn('order_id', $ids)->sum('quantity');
+        $paid = OrderPayment::whereIn('order_id', $ids)->sum('amount');
 
         $grand = (int) ($base->grand ?? 0);
         $dp = (int) ($base->dp ?? 0);
@@ -197,6 +199,19 @@ class InvoiceController extends Controller
             'rekeningImage' => $publicUrl(config('invoice.rekening_image')),
             'paidImage' => $publicUrl(config('invoice.paid_image')),
         ]);
+    }
+
+    /**
+     * Halaman invoice dengan warna hex murni, khusus untuk dirender jadi PNG
+     * oleh html2canvas di sisi klien (kirim invoice sebagai gambar ke WhatsApp).
+     */
+    public function invoiceImage(Order $order)
+    {
+        Gate::authorize('view', $order);
+
+        $order->load('items');
+
+        return view('admin.orders.invoice-image', ['order' => $order]);
     }
 
     /**

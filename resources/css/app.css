@@ -80,8 +80,8 @@ html[data-reveal="on"] .reveal.is-visible {
     }
 }
 
-/* focus ring consistency */
-*:focus-visible { @apply outline outline-2 outline-offset-2 outline-rose-400; }
+/* focus ring consistency is defined once, in the neo-brutalism block below
+   (ink ring, accent ring in dark). Do not add another global ring here. */
 
 /* ===== Dark Mode Theme =====
    Dark class on <html> element for site-wide theme.
@@ -125,62 +125,26 @@ html.dark {
     color: var(--color-text-primary);
 }
 
-html.dark body {
-    @apply bg-[#1a1a1a] text-[#f1f5f9];
-}
-
-html.dark .bg-white {
-    @apply bg-[#23252b];
-}
-
-html.dark .bg-\[\#F8FAFC\] {
-    @apply bg-[#2e323b];
-}
-
-html.dark .bg-\[\#F1F5F9\] {
-    @apply bg-[#2e323b];
-}
-
-html.dark .bg-\[\#F8FAFC\],
-html.dark .bg-slate-50 {
-    @apply bg-[#2e323b];
-}
-
-html.dark .text-\[\#1E293B\] {
-    @apply text-[#f1f5f9];
-}
-
-html.dark .text-\[\#64748B\] {
-    @apply text-[#cbd5e1];
-}
-
-html.dark .text-\[\#94A3B8\] {
-    @apply text-[#94a3b8];
-}
-
-html.dark .border-\[\#E2E8F0\] {
-    @apply border-[#404854];
-}
-
 html.dark input,
 html.dark textarea,
 html.dark select {
-    @apply bg-[#2e323b] text-[#f1f5f9] border-[#404854];
+    background-color: var(--dt-surface-3);
+    color: var(--dt-text);
+    border-color: var(--dt-border);
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-    @apply text-[#64748b];
+    color: var(--dt-muted);
 }
 html.dark {
-    --dt-bg:        #111827;
-    --dt-surface:   #1e293a;
-    --dt-surface-2: #273449;
-    --dt-surface-3: #334155;
-    --dt-border:    #334155;
-    --dt-text:      #e5e7eb;
-    --dt-muted:     #94a3b8;
-    --dt-rose:      #0891B2;
+    --dt-bg:        #121212;
+    --dt-surface:   #1E1E1E;
+    --dt-surface-2: #1E1E1E;
+    --dt-surface-3: #2A2A2A;
+    --dt-border:    #3A3A3A;
+    --dt-text:      #F5F1EA;
+    --dt-muted:     #A8A29E;
 }
 
 html.dark body { background-color: var(--dt-bg); color: var(--dt-text); }
@@ -231,9 +195,9 @@ html.dark [class*="text-[#666666]"],
 html.dark [class*="text-[#444444]"],
 html.dark [class*="text-[#CBD5E1]"] { color: var(--dt-muted); }
 
-/* Links default to brand amber in dark mode (except brutalist buttons,
+/* Links default to the brand accent in dark mode (except brutalist buttons,
    which carry their own passing text color). */
-html.dark a:not(.nb-btn) { color: var(--dt-rose); }
+html.dark a:not(.nb-btn) { color: var(--nb-brand-accent); }
 
 /* Tailwind badge colors for status chips */
 html.dark .bg-amber-50 { background-color: rgba(8, 145, 178, 0.12); }
@@ -260,11 +224,11 @@ html.dark .text-gray-800 { color: var(--dt-muted); }
 html.dark .text-slate-600 { color: var(--dt-muted); }
 html.dark .text-gray-600 { color: var(--dt-muted); }
 
-/* Orange brand = amber in dark */
-html.dark .text-orange-600 { color: var(--dt-rose); }
-html.dark .text-orange-700 { color: #06B6D4; }
-html.dark .bg-orange-500 { background-color: var(--dt-rose); }
-html.dark .bg-orange-600 { background-color: #0E7490; }
+/* Orange brand = accent in dark */
+html.dark .text-orange-600 { color: var(--nb-brand-accent); }
+html.dark .text-orange-700 { color: var(--nb-brand-accent); }
+html.dark .bg-orange-500 { background-color: var(--nb-brand-accent); color: var(--nb-brand-accent-ink); }
+html.dark .bg-orange-600 { background-color: var(--nb-brand-accent); color: var(--nb-brand-accent-ink); }
 
 /* Dark button backgrounds (show.blade.php quick actions) */
 html.dark [class*="bg-[#1E293B]"] { background-color: var(--dt-surface-2); }
@@ -318,6 +282,21 @@ html.dark {
     --nb-accent-ink: var(--nb-brand-accent-ink);
     --nb-shadow: 4px 4px 0 #000000;
     --nb-shadow-sm: 3px 3px 0 #000000;
+
+    /* Teks brand (dari Pengaturan) harus dibalik di mode gelap: kalau tidak,
+       tinta #141414 tertinggal di atas kartu #1E1E1E dan teksnya hilang. */
+    --nb-brand-ink: #F5F1EA;
+    --nb-brand-sub: #A8A29E;
+
+    /* Tint pelangi versi gelap: pastel terang di atas kertas gelap bikin
+       teks krem tak terbaca, jadi tint digelapkan (bukan dibuang). */
+    --nb-sun:    #3B3113;
+    --nb-sand:   #3A2A17;
+    --nb-coral:  #3B211B;
+    --nb-bubble: #3A1F2C;
+    --nb-grape:  #292340;
+    --nb-sky:    #16303F;
+    --nb-mint:   #153A28;
 }
 
 /* Literal hex dari view diganti variabel supaya picker warna di Pengaturan ikut
@@ -385,6 +364,39 @@ html.dark {
 .bg-\[\#FFC800\]\! .text-\[\#141414\],
 .bg-\[\#FFC800\]\!.text-\[\#141414\] {
     color: var(--nb-brand-accent-ink);
+}
+
+/* Cyan lama (#0E7490 / #0891B2 / #22D3EE) dipakai ratusan kali di view sebagai
+   warna "brand". Sekarang brand tunggal = aksen dari Pengaturan, jadi ketiganya
+   dipetakan ke token yang sama supaya tidak ada lagi biru yang menabrak kuning.
+   - latar aksi  -> aksen + teks pasangan aksen (mengalahkan `text-white`)
+   - teks/ikon   -> tinta (terbaca di kertas terang maupun gelap)
+   - garis tepi  -> tinta (motif brutalist) */
+.bg-\[\#0E7490\],
+.hover\:bg-\[\#0E7490\]:hover,
+.bg-\[\#0891B2\],
+.hover\:bg-\[\#0891B2\]:hover {
+    background-color: var(--nb-brand-accent);
+    color: var(--nb-brand-accent-ink);
+}
+
+.text-\[\#0E7490\],
+.text-\[\#0891B2\],
+.hover\:text-\[\#0E7490\]:hover,
+.hover\:text-\[\#0891B2\]:hover,
+.dark .dark\:text-\[\#22D3EE\] {
+    color: var(--nb-brand-ink);
+}
+
+.border-\[\#0E7490\],
+.border-\[\#0891B2\] {
+    border-color: var(--nb-brand-ink);
+}
+
+/* Varian ber-!important (kartu/harga) perlu ikut layer utilities. */
+@layer utilities {
+    .bg-\[\#0E7490\]\! { background-color: var(--nb-brand-accent) !important; color: var(--nb-brand-accent-ink) !important; }
+    .bg-\[\#0891B2\]\! { background-color: var(--nb-brand-accent) !important; color: var(--nb-brand-accent-ink) !important; }
 }
 
 .nb-card {
@@ -499,3 +511,36 @@ html.dark *:focus-visible { outline-color: #FFC800 !important; }
 @media print {
     .nb-card, .nb-table-shell, .nb-btn { box-shadow: none !important; }
 }
+
+/* ===== Dark-mode colour reconciliation =====
+   View lama menulis langsung hex biru-slate (mis. `dark:bg-[#2e323b]`,
+   `border-[#404854]`) sehingga kartu terang dan kartu brutalist tampil dua
+   warna abu berbeda. Di bawah ini tiap hex itu dipetakan ke satu set token
+   netral yang sama (netral hangat, senada dengan --nb-*), jadi tidak ada lagi
+   biru yang menabrak. Memakai pencocokan substring pada atribut class supaya
+   varian hover/divide/focus ikut tertangkap tanpa menyentuh view. */
+html.dark [class*="bg-[#2e323b]"],
+html.dark [class*="bg-[#23252b]"],
+html.dark [class*="bg-[#1E1E1E]"],
+html.dark [class*="bg-[#2A2A2A]"],
+html.dark [class*="bg-slate-800"],
+html.dark [class*="bg-slate-900"] { background-color: var(--dt-surface); }
+
+html.dark [class*="bg-[#1a1a1a]"],
+html.dark [class*="bg-[#121212]"] { background-color: var(--dt-bg); }
+
+html.dark [class*="bg-[#262626]"],
+html.dark [class*="bg-[#334155]"] { background-color: var(--dt-surface-3); }
+
+html.dark [class*="border-[#404854]"],
+html.dark [class*="border-[#334155]"],
+html.dark [class*="border-slate-700"],
+html.dark [class*="border-slate-600"] { border-color: var(--dt-border); }
+
+html.dark [class*="divide-[#404854]"] { border-color: var(--dt-border); }
+
+html.dark [class*="text-[#f1f5f9]"],
+html.dark [class*="text-slate-100"] { color: var(--dt-text); }
+
+html.dark [class*="text-[#cbd5e1]"],
+html.dark [class*="text-slate-300"] { color: var(--dt-muted); }

@@ -45,6 +45,30 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
   `UserObserver`, jadi store pakai `updateOrCreate` (hindari duplikat
   `user_profiles.user_id`). Modal Alpine + validasi + tampil error.
 
+- [x] **Warna bertabrakan (UI berantakan)** — app.css punya 3 palet tumpang
+  tindih: hex literal + `html.dark .bg-white`, patch `[class*="bg-[#...]"]`
+  dengan `--dt-*` (biru-slate #111827), dan neo-brutalist `--nb-*` (netral
+  #121212). Plus aksen bentrok: cyan `#0E7490`/`#0891B2` (127 tempat) vs
+  aksen kuning. Perbaikan:
+  - `--dt-*` disetel netral & senada `--nb-*`; blok dark lama yang duplikat
+    dibuang; patch `[class*="bg-[#2e323b]/#404854/#1E1E1E/...]` ditambah
+    supaya ~500 hex biru-slate di view ikut jadi netral.
+  - cyan dipetakan ke `var(--nb-brand-accent)` (latar aksi, teks pasangan
+    kontras) dan `var(--nb-brand-ink)` (teks/ikon/garis) lewat CSS, jadi
+    brand tunggal tanpa edit 127 tempat.
+  - `--nb-brand-ink`/`--nb-brand-sub` ikut dibalik di mode gelap (ini yang
+    bikin teks #141414 menghilang di atas kartu #1E1E1E).
+  - tint pelangi dapat varian gelap; focus ring disatukan jadi satu.
+
+- [x] **Kirim invoice SEKALIAN FOTONYA lewat WhatsApp**. Link `wa.me` memang
+  tidak bisa melampirkan file, jadi: halaman invoice hex-only
+  (`admin.orders.invoice-image`) dirender ke PNG memakai `html2canvas`
+  (dimuat malas / lazy chunk), lalu dibagikan lewat Web Share API
+  (`navigator.share({ files })`) sehingga pengguna memilih WhatsApp dan
+  gambarnya terlampir. Kalau berbagi file tak didukung (umumnya desktop),
+  gambar diunduh otomatis dan chat WhatsApp dibuka berisi teks. Tombol
+  "Kirim gambar" ada di tiap baris daftar Invoice.
+
 ## Sudah kelar
 
 - [x] Warna brand di Pengaturan → CSS variable (`--nb-brand-*`), sweep kontras 4.096 warna lulus.

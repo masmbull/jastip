@@ -206,6 +206,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');
         Route::get('/pesanans/{order}/invoice', [InvoiceController::class, 'invoice'])->name('orders.invoice');
+        // Versi hex-only untuk dirender jadi PNG (kirim gambar via WhatsApp).
+        Route::get('/pesanans/{order}/invoice-image', [InvoiceController::class, 'invoiceImage'])->name('orders.invoice-image');
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
         Route::post('/pesanans/{order}/pelunasan', [OrderPaymentController::class, 'store'])->name('orders.payments.store');
@@ -217,7 +219,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Dokumen pratinjau cetak sampel invoice (struk thermal, preset COMPACT).
         Route::get('/invoice/sampel', [InvoiceController::class, 'sample'])->name('invoices.sample');
-
         // Rekapan manual (spreadsheet/pivot sederhana: kolom & baris bebas).
         Route::get('/rekapan', [RecapController::class, 'index'])->name('recaps.index');
         Route::get('/rekapan/create', [RecapController::class, 'create'])->name('recaps.create');

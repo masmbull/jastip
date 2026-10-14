@@ -271,6 +271,75 @@ window.Alpine = Alpine;
         };
     };
 
+    /* ---- kirim invoice sebagai GAMBAR ke WhatsApp ----
+       Link wa.me tidak bisa melampirkan file, jadi invoice dirender ke PNG di
+       sisi klien (html2canvas dimuat malas / lazy) lalu dibagikan lewat Web
+       Share API: pengguna memilih WhatsApp dan gambar ikut terlampir. Kalau
+       berbagi file tak didukung (umumnya desktop), gambar diunduh dan chat
+       WhatsApp dibuka dengan teks siap kirim. */
+    window.jdShareInvoice = async function (btn, opts) {
+        const { url, filename, text, waUrl } = opts;
+        const setState = (s) => {
+            if (!btn) return;
+            btn.dataset.state = s;
+            btn.disabled = s === 'busy';
+            if (s === 'busy') btn.setAttribute('aria-busy', 'true');
+            else btn.removeAttribute('aria-busy');
+        };
+
+        setState('busy');
+        try {
+            const { default: html2canvas } = await import('html2canvas');
+
+            // Dokumen invoice dirender di iframe same-origin tersembunyi.
+            const frame = document.createElement('iframe');
+            frame.setAttribute('aria-hidden', 'true');
+            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:760px;height:1200px;border:0;';
+            document.body.appendChild(frame);
+
+            const html = await fetch(url, { headers: { 'X-Requested-With': 'true' }, credentials: 'same-origin' })
+                .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))));
+
+            await new Promise((resolve) => {
+                frame.onload = resolve;
+                frame.srcdoc = html;
+            });
+
+            const target = frame.contentDocument.getElementById('invoice-canvas') || frame.contentDocument.body;
+            const canvas = await html2canvas(target, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, logging: false });
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+            document.body.removeChild(frame);
+
+            if (!blob) throw new Error('Gagal membuat gambar');
+
+            const file = new File([blob], filename || 'invoice.png', { type: 'image/png' });
+            const canShareFiles = navigator.canShare && navigator.canShare({ files: [file] });
+
+            if (canShareFiles) {
+                await navigator.share({ files: [file], text: text || '' });
+                setState('done');
+                return;
+            }
+
+            // Fallback desktop: unduh PNG, lalu buka chat WhatsApp dengan teks.
+            const objectUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = objectUrl;
+            a.download = filename || 'invoice.png';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
+
+            if (waUrl) window.open(waUrl, '_blank', 'noopener');
+            setState('done');
+        } catch (err) {
+            setState('error');
+            if (typeof window.toast === 'function') window.toast('Gagal membuat gambar invoice. Coba lagi.', 'error');
+            console.error('[jdShareInvoice]', err);
+        }
+    };
+
     /* ---- reveal on scroll (progressive enhancement) ----
        Elemen `.reveal` muncul halus saat masuk viewport. Kalau
        IntersectionObserver tidak ada atau user minta reduced motion, kita
