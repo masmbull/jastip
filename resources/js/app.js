@@ -271,6 +271,65 @@ window.Alpine = Alpine;
         };
     };
 
+    /* ---- Kirim invoice PDF sebagai FILE ke WhatsApp (Web Share) ----
+       Link wa.me TIDAK bisa melampirkan file, itu sebabnya sebelumnya cuma
+       terkirim link. Di sini PDF asli (dirender server, dompdf) diambil sebagai
+       blob, dibungkus File, lalu dibagikan lewat Share Sheet Android dengan
+       file terlampir. Fallback (browser tanpa file sharing): unduh PDF +
+       buka chat WhatsApp dengan pesan siap kirim. Tidak mengklaim terkirim. */
+    window.jdShareInvoicePdf = async function (btn, opts) {
+        const { url, filename, text, waUrl } = opts;
+        if (btn && btn.dataset.busy === '1') return;
+
+        const setBusy = (on) => {
+            if (!btn) return;
+            btn.dataset.busy = on ? '1' : '';
+            btn.disabled = !!on;
+            if (on) btn.setAttribute('aria-busy', 'true');
+            else btn.removeAttribute('aria-busy');
+        };
+
+        setBusy(true);
+        try {
+            const res = await fetch(url, { credentials: 'same-origin' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const blob = await res.blob();
+            if (!blob.size) throw new Error('kosong');
+
+            const file = new File([blob], filename || 'invoice.pdf', { type: 'application/pdf' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file], title: filename || 'Invoice', text: text || '' });
+                } catch (err) {
+                    // Batal share = bukan kegagalan.
+                    if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
+                        window.toast('Gagal membagikan invoice. Coba lagi.', 'error');
+                    }
+                }
+            } else {
+                // Fallback: unduh PDF, lalu buka chat WhatsApp (tanpa lampiran).
+                const objectUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objectUrl;
+                a.download = filename || 'invoice.pdf';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
+                if (waUrl) window.open(waUrl, '_blank', 'noopener');
+                if (typeof window.toast === 'function') {
+                    window.toast('Browser ini belum bisa lampirkan file. PDF diunduh, chat WhatsApp dibuka: lampirkan PDF-nya manual.', 'info');
+                }
+            }
+        } catch (e) {
+            console.error('[jdShareInvoicePdf]', e);
+            if (typeof window.toast === 'function') window.toast('Gagal menyiapkan PDF invoice. Coba lagi.', 'error');
+        } finally {
+            setBusy(false);
+        }
+    };
+
     /* ---- Kirim invoice baris Rekapan via WhatsApp (PNG + Web Share) ----
        Alur: susun invoice sebagai DOM (warna hex inline supaya html2canvas
        tidak tersandung color(oklch) milik Tailwind v4) -> render ke PNG ->

@@ -218,11 +218,18 @@ class InvoiceController extends Controller
         $options->set('defaultFont', 'DejaVu Sans');
 
         $dompdf = new Dompdf($options);
-        $dompdf->loadHtml(view('invoices.pdf', ['doc' => $this->docFromOrder($order)])->render());
+        $html = view('invoices.pdf', ['doc' => $this->docFromOrder($order)])->render();
+        // Buang BOM UTF-8 (kalau ada) dari output view. BOM sebelum "%PDF"
+        // membuat sebagian pembaca PDF menolak file.
+        $html = preg_replace('/^\xEF\xBB\xBF/', '', $html);
+        $dompdf->loadHtml($html);
         $dompdf->setPaper('a4');
         $dompdf->render();
 
-        return response($dompdf->output(), 200, [
+        $pdf = $dompdf->output();
+        $pdf = preg_replace('/^\xEF\xBB\xBF/', '', $pdf);
+
+        return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="invoice-'.$order->no.'.pdf"',
         ]);

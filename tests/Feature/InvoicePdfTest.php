@@ -58,7 +58,9 @@ class InvoicePdfTest extends TestCase
         $res = $this->get($order->public_pdf_url);
         $res->assertOk();
         $res->assertHeader('Content-Type', 'application/pdf');
-        $this->assertStringStartsWith('%PDF-', $res->getContent());
+        // Harus mulai tepat dengan %PDF (tanpa BOM / byte sampah di depan),
+        // kalau tidak sebagian pembaca PDF menolak file.
+        $this->assertStringStartsWith('%PDF', $res->getContent());
     }
 
     public function test_unknown_token_returns_404(): void
