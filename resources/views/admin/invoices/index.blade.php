@@ -45,9 +45,9 @@
             <p class="text-[11px] font-black uppercase tracking-wider text-[#334155]">Masuk</p>
             <p class="text-[15px] font-black text-[#166534] num mt-1">{{ format_price($summary['paid']) }}</p>
         </div>
-        <div class="nb-card p-3.5 bg-[#FFC800]!">
-            <p class="text-[11px] font-black uppercase tracking-wider text-[#141414]">Sisa</p>
-            <p class="text-[15px] font-black text-[#141414] num mt-1">{{ format_price($summary['remaining']) }}</p>
+        <div class="nb-card p-3.5">
+            <p class="text-[11px] font-black uppercase tracking-wider text-[#334155]">Sisa</p>
+            <p class="text-[15px] font-black text-[#141414] dark:text-[#FAF6EF] num mt-1">{{ format_price($summary['remaining']) }}</p>
         </div>
     </div>
 

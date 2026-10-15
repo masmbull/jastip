@@ -35,33 +35,24 @@
         ['label' => 'Status Sistem', 'route' => 'admin.system.status', 'match' => 'admin.system.*', 'icon' => 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5'],
     ];
 
-    // RAINBOW MODE: tiap kelompok menu di sidebar punya warnanya sendiri,
-    // dipakai buat label kelompok dan item yang sedang aktif.
-    $groupTones = [
-        'Utama'        => 'coral',
-        'Katalog'      => 'sun',
-        'Pelanggan'    => 'mint',
-        'Analitik'     => 'sky',
-        'Operasional'  => 'grape',
-        'Sistem'       => 'bubble',
-    ];
+    // Label kelompok memakai satu gaya netral; item aktif memakai SATU aksen
+    // (tinta + kuning). Sebelumnya tiap kelompok punya warnanya sendiri
+    // (merah/kuning/hijau/biru) sehingga sidebar terasa "nabrak".
+    $groupLabelClass = 'inline-block px-3 mx-3 mt-4 mb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#475569] dark:text-[#D6D3D1]';
 @endphp
 
 <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
-    @php($currentTone = 'sky')
     @foreach($adminNav as $item)
         @if(isset($item['group']))
-            @php($currentTone = $groupTones[$item['group']] ?? 'sky')
-            <p class="inline-block px-3 mx-3 mt-4 mb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#141414] nb-tint-{{ $currentTone }} border-2 border-[#141414] rounded-md">{{ $item['group'] }}</p>
+            <p class="{{ $groupLabelClass }}">{{ $item['group'] }}</p>
         @elseif(\Route::has($item['route']))
             @php($active = request()->routeIs($item['match']))
             <a href="{{ route($item['route']) }}"
                @click="sidebarOpen = false"
                @class([
-                   'flex items-center space-x-3 px-3 py-2.5 font-bold border-2 transition-all min-h-[44px]',
-                   'rounded-[10px]',
-                   'nb-tint-' . $currentTone . ' text-[#141414] border-[#141414]' => $active,
-                   'bg-transparent text-[#334155] border-transparent hover:border-[#141414] hover:bg-white' => ! $active,
+                   'flex items-center space-x-3 px-3 py-2.5 font-bold border-2 transition-all min-h-[44px] rounded-[10px]',
+                   'bg-[#FFC800] text-[#141414] border-[#141414] shadow-[3px_3px_0_#141414]' => $active,
+                   'bg-transparent text-[#334155] dark:text-[#D6D3D1] border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] hover:bg-white dark:hover:bg-[#262626]' => ! $active,
                ])
                @if($active) aria-current="page" @endif>
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">

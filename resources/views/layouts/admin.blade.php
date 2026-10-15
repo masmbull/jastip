@@ -71,17 +71,8 @@
             </button>
         </div>
 
-        {{-- Strip pelangi: penanda visual RAINBOW MODE, sekaligus jeda antara
-             logo dan daftar menu. --}}
-        <div class="flex h-2 shrink-0 border-b-2 border-[#141414]" aria-hidden="true">
-            <span class="flex-1 bg-[var(--nb-sun)]"></span>
-            <span class="flex-1 bg-[var(--nb-sand)]"></span>
-            <span class="flex-1 bg-[var(--nb-coral)]"></span>
-            <span class="flex-1 bg-[var(--nb-bubble)]"></span>
-            <span class="flex-1 bg-[var(--nb-grape)]"></span>
-            <span class="flex-1 bg-[var(--nb-sky)]"></span>
-            <span class="flex-1 bg-[var(--nb-mint)]"></span>
-        </div>
+        {{-- Garis aksen tunggal (dulu strip pelangi 7 warna: terlalu ramai). --}}
+        <div class="h-1.5 shrink-0 bg-[#FFC800] border-b-2 border-[#141414]" aria-hidden="true"></div>
 
         @include('layouts.partials.admin-nav')
 

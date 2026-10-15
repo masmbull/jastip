@@ -114,8 +114,26 @@ bentrok.
 
 ## Sisa TODO
 
-- [ ] Sweep ~500 hex ad-hoc di view ke token + audit kontras menyeluruh.
+- [x] **Sweep warna (sebagian besar) + verifikasi visual.** Cara kerja: jalan
+  app lokal + screenshot Playwright/Chromium (admin+frontend), perbaiki, ulang.
+  Yang diperbaiki:
+  - sisa cyan/teal (`#0E7490`, `#0891B2`, `#155E75`, `#083344`, `#67e8f9`,
+    `#22D3EE`) dipetakan ke aksen+pasangan tinta / tinta (lewat CSS, jadi
+    ratusan tempat ikut beres): tombol, link, garis.
+  - permukaan biru-slate & biru muda (kotak info, body auth lama) -> netral.
+  - sidebar admin: item aktif sekarang SATU aksen (kuning + tinta + shadow),
+    label kelompok netral. Dulu tiap kelompok beda warna (merah/kuning/hijau/
+    biru) sehingga sidebar terasa "nabrak".
+  - strip pelangi 7 warna (sidebar + footer) -> satu garis aksen kuning.
+  - **KUNCI**: `.nb-rainbow > *` tidak lagi mengisi kartu dengan 7 warna penuh
+    (itu penyebab utama "berantakan"), melainkan strip aksen tipis di atas
+    kartu; badan kartu tetap netral. Efeknya kelihatan di 15 tempat sekaligus.
+    Kartu ringkasan Invoice "Sisa" dan kartu trust di hero juga diseragamkan.
 - [ ] Landmark/ARIA audit menyeluruh (belum pernah dikerjakan).
+
+Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
+`artisan serve`; halaman admin login `admin` / `admin123` (seeder).
+
 
 ## Riset referensi eksternal
 - [x] Scrape **jastipify.biz.id** (Playwright/Chromium). Login situs hanya via

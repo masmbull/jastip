@@ -412,19 +412,21 @@ html.dark {
 }
 html.dark .nb-card { border-color: #FAF6EF; }
 
-/* RAINBOW MODE — dua cara pakai:
-   1. Otomatis: taruh class `nb-rainbow` di wadah grid. Tiap anaknya kebagi
-      warna pelangi berurutan, siklus 7, tanpa perlu nulis warna per kartu.
-   2. Manual: tambah `nb-tint-<warna>` di kartu mana pun (atau prop `tone`
-      di <x-card>). Tone manual selalu menang atas siklus otomatis, makanya
-      pembungkus `:where()` sengaja dibikin nol spesifisitas. */
-.nb-rainbow > :where(*:nth-child(7n+1)) { background: var(--nb-sun); }
-.nb-rainbow > :where(*:nth-child(7n+2)) { background: var(--nb-sand); }
-.nb-rainbow > :where(*:nth-child(7n+3)) { background: var(--nb-coral); }
-.nb-rainbow > :where(*:nth-child(7n+4)) { background: var(--nb-bubble); }
-.nb-rainbow > :where(*:nth-child(7n+5)) { background: var(--nb-grape); }
-.nb-rainbow > :where(*:nth-child(7n+6)) { background: var(--nb-sky); }
-.nb-rainbow > :where(*:nth-child(7n))   { background: var(--nb-mint); }
+/* WARNA AKSEN PER KARTU — dua cara pakai:
+   1. Otomatis: class `nb-rainbow` di wadah grid. Tiap anaknya dapat GARIS
+      AKSEN di atas (bukan blok penuh berwarna), warna berputar berurutan.
+      Sebelumnya tiap kartu diisi warna penuh -> deretan kartu jadi ramai dan
+      terasa "nabrak". Sekarang warna jadi aksen tipis, badan kartu tetap
+      netral, jadi tetap berwarna tapi tenang.
+   2. Manual: `nb-tint-<warna>` untuk blok yang memang ingin berwarna penuh
+      (mis. badge harga). Tone manual menang atas siklus otomatis. */
+.nb-rainbow > :where(*:nth-child(7n+1)) { box-shadow: inset 0 6px 0 0 var(--nb-sun); }
+.nb-rainbow > :where(*:nth-child(7n+2)) { box-shadow: inset 0 6px 0 0 var(--nb-sand); }
+.nb-rainbow > :where(*:nth-child(7n+3)) { box-shadow: inset 0 6px 0 0 var(--nb-coral); }
+.nb-rainbow > :where(*:nth-child(7n+4)) { box-shadow: inset 0 6px 0 0 var(--nb-bubble); }
+.nb-rainbow > :where(*:nth-child(7n+5)) { box-shadow: inset 0 6px 0 0 var(--nb-grape); }
+.nb-rainbow > :where(*:nth-child(7n+6)) { box-shadow: inset 0 6px 0 0 var(--nb-sky); }
+.nb-rainbow > :where(*:nth-child(7n))   { box-shadow: inset 0 6px 0 0 var(--nb-mint); }
 
 .nb-tint-sun    { background: var(--nb-sun); }
 .nb-tint-sand   { background: var(--nb-sand); }
@@ -516,3 +518,33 @@ html.dark *:focus-visible { outline-color: #FFC800 !important; }
 @media print {
     .nb-card, .nb-table-shell, .nb-btn { box-shadow: none !important; }
 }
+
+/* ===== Sisa warna lama (cyan/teal & biru-slate) -> token neo-brutalist =====
+   View lama masih menulis hex era sebelumnya. Daripada menyunting ratusan
+   tempat, di sini dipetakan supaya tampilan konsisten:
+   - cyan/teal solid (tombol/link aksi) -> aksen + tinta pasangannya
+   - teks/ikon/garis cyan -> tinta (terang) / krem (gelap)
+   - permukaan biru-slate & biru muda -> netral (netral hangat) yang sama */
+.bg-\[\#0E7490\], .bg-\[\#0891B2\], .bg-\[\#155E75\], .bg-\[\#083344\],
+.hover\:bg-\[\#0E7490\]:hover, .hover\:bg-\[\#0891B2\]:hover {
+    background-color: var(--nb-brand-accent);
+    color: var(--nb-brand-accent-ink);
+}
+
+.text-\[\#0E7490\], .text-\[\#0891B2\], .text-\[\#67e8f9\], .text-\[\#22D3EE\],
+.hover\:text-\[\#0E7490\]:hover, .hover\:text-\[\#0891B2\]:hover,
+.dark\:text-\[\#22D3EE\] {
+    color: var(--nb-brand-ink);
+}
+
+.border-\[\#0E7490\], .border-\[\#0891B2\], .border-\[\#155E75\] {
+    border-color: var(--nb-brand-ink);
+}
+
+/* Permukaan biru muda (kotak info layanan, body auth lama). */
+.bg-\[\#E0F2FE\], .bg-\[\#ecfeff\], .bg-\[\#e0f2fe\] {
+    background-color: var(--nb-card);
+}
+
+.bg-sky-50, .dark\:bg-sky-500\/10 { background-color: #FEF3C7; }
+.border-sky-200, .dark\:border-sky-500\/30 { border-color: #141414; }

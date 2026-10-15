@@ -42,7 +42,7 @@
 <div class="bg-white dark:bg-[#1E1E1E] transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 nb-rainbow">
-            <div class="nb-card p-5 bg-[#FFF7D6]! dark:bg-[#262626]! flex gap-4 text-left">
+            <div class="nb-card p-5 flex gap-4 text-left">
                 <div class="shrink-0 w-12 h-12 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#141414]">
                     <x-icon name="truck" class="w-6 h-6" />
                 </div>
