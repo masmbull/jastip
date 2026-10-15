@@ -36,7 +36,7 @@
                     <label for="chat-body" class="sr-only">Tulis pesan</label>
                     <textarea id="chat-body" name="body" rows="2" required maxlength="2000"
                               placeholder="Tulis pesan..."
-                              class="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">{{ old('body') }}</textarea>
+                              class="nb-input w-full">{{ old('body') }}</textarea>
                     @error('body')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-300">{{ $message }}</p>
                     @enderror

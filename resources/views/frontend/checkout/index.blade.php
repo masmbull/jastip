@@ -16,7 +16,7 @@
                     <div>
                         <label for="co-name" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nama Lengkap *</label>
                         <input type="text" id="co-name" name="name" value="{{ old('name') }}" required autocomplete="name"
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('name') border-red-500 @enderror">
+                            class="nb-input w-full @error('name') border-red-500 @enderror">
                         @error('name') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -25,7 +25,7 @@
                         <label for="co-wa" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Nomor WhatsApp *</label>
                         <input type="text" id="co-wa" name="whatsapp" value="{{ old('whatsapp') }}" required autocomplete="tel"
                             placeholder="081234567890"
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('whatsapp') border-red-500 @enderror">
+                            class="nb-input w-full @error('whatsapp') border-red-500 @enderror">
                         @error('whatsapp') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -34,7 +34,7 @@
                         <label for="co-email" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Email (Opsional)</label>
                         <input type="email" id="co-email" name="email" value="{{ old('email', auth()->user()?->email) }}" autocomplete="email"
                             placeholder="kamu@email.com"
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors @error('email') border-red-500 @enderror">
+                            class="nb-input w-full @error('email') border-red-500 @enderror">
                         <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Untuk kirim konfirmasi &amp; status pesanan via email.</p>
                         @error('email') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -44,7 +44,7 @@
                         <label for="co-address" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Alamat Lengkap *</label>
                         <textarea id="co-address" name="address" rows="3" required autocomplete="street-address"
                             placeholder="Rumah, kantor, atau tempat lain..."
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 resize-none transition-colors @error('address') border-red-500 @enderror">{{ old('address') }}</textarea>
+                            class="nb-input w-full @error('address') border-red-500 @enderror">{{ old('address') }}</textarea>
                         @error('address') <p class="text-xs md:text-sm text-red-500 mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -53,7 +53,7 @@
                         <label for="co-notes" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-2">Catatan (Opsional)</label>
                         <textarea id="co-notes" name="notes" rows="2"
                             placeholder="Warna, ukuran, atau pesan khusus..."
-                            class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 resize-none transition-colors">{{ old('notes') }}</textarea>
+                            class="nb-input w-full">{{ old('notes') }}</textarea>
                     </div>
 
                     <!-- Kota & Ekspedisi + Cek Ongkir -->
@@ -66,7 +66,7 @@
                             <div>
                                 <label for="co-city" class="sr-only">Kota tujuan</label>
                                 <select id="co-city" name="city" x-model="city" @change="check()" required
-                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('city') border-red-500 @enderror">
+                                    class="nb-input w-full @error('city') border-red-500 @enderror">
                                     <option value="">Pilih kota tujuan</option>
                                     @foreach($cities as $name => $meta)
                                         <option value="{{ $name }}" @selected(old('city') === $name)>{{ $name }}, {{ $meta['province'] }}</option>
@@ -77,7 +77,7 @@
                             <div>
                                 <label for="co-courier" class="sr-only">Ekspedisi</label>
                                 <select id="co-courier" name="courier" x-model="courier" @change="check()" required
-                                    class="w-full px-3 md:px-4 py-2 md:py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#23252b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891B2]/40 @error('courier') border-red-500 @enderror">
+                                    class="nb-input w-full @error('courier') border-red-500 @enderror">
                                     <option value="">Pilih ekspedisi</option>
                                     <template x-for="r in okRows" :key="r.code">
                                         <option :value="r.code" x-text="r.name + ' · ' + (r.etd || '') + ' · ' + r.price_formatted"></option>
@@ -120,7 +120,7 @@
                         <label for="co-coupon" class="block text-xs font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Kode Kupon (opsional)</label>
                         <input type="text" id="co-coupon" name="coupon_code" value="{{ old('coupon_code') }}"
                             placeholder="Mis. HEMAT10"
-                            class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg uppercase focus:outline-none focus:ring-2 focus:ring-orange-300 dark:focus:ring-orange-500/50 transition-colors">
+                            class="nb-input w-full">
                     </div>
 
                     <div class="space-y-3 mb-4 text-xs md:text-sm">

@@ -129,7 +129,16 @@ bentrok.
     (itu penyebab utama "berantakan"), melainkan strip aksen tipis di atas
     kartu; badan kartu tetap netral. Efeknya kelihatan di 15 tempat sekaligus.
     Kartu ringkasan Invoice "Sisa" dan kartu trust di hero juga diseragamkan.
-- [ ] Landmark/ARIA audit menyeluruh (belum pernah dikerjakan).
+- [x] **Sisa halaman checkout & profil (brutalist)** — kartu-kartunya ternyata
+  sudah `nb-card` (ganti `x-card` dulu ke brutalist), yang ketinggalan adalah
+  **input** bergaya lama (`border-[#E2E8F0] bg-white rounded-lg`). Semua input di
+  `checkout` + `profile` (address-form, edit, settings, chat) diganti `nb-input`;
+  atribut `@error(...)` dipertahankan. Diverifikasi visual (screenshot) +
+  axe-core 0 pelanggaran di 8 halaman profil.
+
+- [ ] Landmark/ARIA audit menyeluruh — **SUDAH DIKERJAKAN** (lihat catatan di
+  atas: axe-core 20 halaman + 8 halaman profil, 0 pelanggaran). Baris ini
+  tinggal penanda.
 
 Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
 `artisan serve`; halaman admin login `admin` / `admin123` (seeder).

@@ -18,7 +18,7 @@
                 <div>
                     <label for="current_password" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Password Saat Ini *</label>
                     <input type="password" id="current_password" name="current_password" required autocomplete="current-password"
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     @error('current_password')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -28,7 +28,7 @@
                     <label for="password" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Password Baru *</label>
                     <input type="password" id="password" name="password" required autocomplete="new-password"
                            placeholder="Min. 8 karakter"
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Minimal 8 karakter</p>
                     @error('password')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
@@ -38,7 +38,7 @@
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Konfirmasi Password Baru *</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     @error('password_confirmation')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
                     @enderror

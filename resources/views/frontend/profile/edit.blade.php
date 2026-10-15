@@ -49,7 +49,7 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Nama Lengkap</label>
                     <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" required
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     @error('name')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -59,7 +59,7 @@
                 <div>
                     <label for="email" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Email</label>
                     <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" required
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     @error('email')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -69,7 +69,7 @@
                 <div>
                     <label for="phone" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">No. Telepon</label>
                     <input type="tel" id="phone" name="phone" value="{{ old('phone', $profile->phone) }}"
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300"
+                           class="nb-input w-full"
                            placeholder="08xxxxxxxxxx">
                     @error('phone')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
@@ -80,7 +80,7 @@
                 <div>
                     <label for="date_of_birth" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Tanggal Lahir</label>
                     <input type="date" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth', $profile->date_of_birth?->format('Y-m-d')) }}"
-                           class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     @error('date_of_birth')
                         <p class="text-red-600 dark:text-red-300 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -89,7 +89,7 @@
                 {{-- Gender --}}
                 <div>
                     <label for="gender" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Jenis Kelamin</label>
-                    <select id="gender" name="gender" class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <select id="gender" name="gender" class="nb-input w-full">
                         <option value="">-- Pilih --</option>
                         <option value="male" {{ old('gender', $profile->gender) === 'male' ? 'selected' : '' }}>Pria</option>
                         <option value="female" {{ old('gender', $profile->gender) === 'female' ? 'selected' : '' }}>Wanita</option>
@@ -104,7 +104,7 @@
                 <div>
                     <label for="bio" class="block text-sm font-medium text-[#1E293B] dark:text-[#cbd5e1] mb-2">Biodata</label>
                     <textarea id="bio" name="bio" rows="4" maxlength="500"
-                              class="w-full px-4 py-2.5 bg-[#F8FAFC] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300"
+                              class="nb-input w-full"
                               placeholder="Ceritakan tentang Anda...">{{ old('bio', $profile->bio) }}</textarea>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Max 500 karakter</p>
                     @error('bio')
