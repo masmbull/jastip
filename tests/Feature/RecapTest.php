@@ -145,9 +145,10 @@ class RecapTest extends TestCase
 
         $this->assertSame('Si A', $doc['customer_name']);
         $this->assertSame('08123456789', $doc['wa']);
-        $this->assertSame('Rp 150.000', $doc['total']);
+        // Qty TIDAK boleh dijumlahkan sebagai uang: total = qty x harga = 300.000.
+        $this->assertSame('Rp 300.000', $doc['total']);
         $this->assertSame('Rp 100.000', $doc['dp']);
-        $this->assertSame('Rp 50.000', $doc['sisa']);
+        $this->assertSame('Rp 200.000', $doc['sisa']);
         $this->assertSame('DEPOSIT', $doc['status']);
         $this->assertCount(1, $doc['items']);
         $this->assertSame('Rp 300.000', $doc['items'][0]['subtotal']);

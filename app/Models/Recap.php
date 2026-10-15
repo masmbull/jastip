@@ -90,18 +90,27 @@ class Recap extends Model
         $price = $find(['/harga|price|jual|modal|nominal/']);
         $dpField = $find(['/\bdp\b|deposit|down\s*payment|panjar/']);
 
-        // Total baris = jumlah kolom angka yang ditandai "total" (aturan sama
-        // dengan totals()), agar konsisten dengan Grand Total di tabel.
+        // Total baris = nilai uang untuk baris INI.
+        // Catatan: kolom "Qty" juga bertipe angka dan ditandai total (untuk
+        // Grand Total lembar), jadi TIDAK boleh dijumlahkan langsung sebagai
+        // uang. Kalau ada pasangan Harga & Qty, total = harga x qty; kalau
+        // tidak, pakai jumlah kolom uang (currency) yang ditandai total.
+        $unitPrice = (float) $price['value'];
+        $qtyValue = (float) $qty['value'] ?: 1;
+
         $total = 0.0;
-        $feeTotal = 0.0;
         foreach ($this->columns ?? [] as $col) {
-            if (! self::isNumericType($col['type'] ?? 'text')) {
+            if (($col['type'] ?? '') !== 'currency' || empty($col['total'])) {
                 continue;
             }
-            $value = (float) ($cells[$col['key']] ?? 0);
-            if (! empty($col['total'])) {
-                $total += $value;
+            // Lewati kolom harga kalau sudah dihitung lewat harga x qty.
+            if ($price['key'] !== null && $col['key'] === $price['key'] && $qty['key'] !== null) {
+                continue;
             }
+            $total += (float) ($cells[$col['key']] ?? 0);
+        }
+        if ($price['key'] !== null && $qty['key'] !== null) {
+            $total += $unitPrice * $qtyValue;
         }
 
         $dp = (float) $dpField['value'];
@@ -109,8 +118,6 @@ class Recap extends Model
 
         $items = [];
         if ($product['value'] !== '' || $qty['value'] !== '' || $price['value'] !== '') {
-            $unitPrice = (float) $price['value'];
-            $qtyValue = (float) $qty['value'] ?: 1;
             $items[] = [
                 'name' => (string) $product['value'],
                 'qty' => $qtyValue,
