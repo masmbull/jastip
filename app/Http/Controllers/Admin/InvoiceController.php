@@ -206,13 +206,12 @@ class InvoiceController extends Controller
     /**
      * Versi PDF invoice untuk dikirim lewat WhatsApp.
      *
-     * Route-nya PUBLIK tapi ditandatangani (signed URL), supaya tautan yang
-     * dibagikan ke pelanggan bisa dibuka tanpa login namun tetap tidak bisa
-     * ditebak. Ini yang bikin tombol WhatsApp cukup membawa link: pelanggan
-     * klik, PDF langsung terbuka/tersimpan.
+     * Route PUBLIK tanpa login, diakses lewat token acak pendek (link /i/{token}).
+     * Token tak bisa ditebak, jadi data pelanggan tetap aman.
      */
-    public function invoicePdf(Order $order)
+    public function invoicePdf(string $token)
     {
+        $order = Order::where('public_token', $token)->firstOrFail();
         $order->load('items');
 
         $options = new Options;

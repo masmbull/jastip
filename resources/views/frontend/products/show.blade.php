@@ -2,6 +2,48 @@
 
 @section('title', $product->name)
 
+@php
+    // Meta khusus halaman produk: deskripsi & gambar ikut produk, supaya
+    // pratinjau link (OG/Twitter) menampilkan foto + harga, bukan default situs.
+    $metaDescription = \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 155)
+        ?: ($product->name . ' - ' . format_price($product->price) . ' di ' . setting('brand_name', 'NITIP DI END') . '.');
+    $ogImage = $product->image_url ?: null;
+@endphp
+
+@push('seo')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $product->name,
+    'description' => \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 300),
+    'image' => $product->image_url ? [$product->image_url] : null,
+    'sku' => $product->sku ?? null,
+    'brand' => ['@type' => 'Brand', 'name' => setting('brand_name', 'NITIP DI END')],
+    'offers' => [
+        '@type' => 'Offer',
+        'url' => url()->current(),
+        'priceCurrency' => 'IDR',
+        'price' => (float) $product->price,
+        'availability' => ($product->stock ?? 0) > 0
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Beranda', 'item' => route('home')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Produk', 'item' => route('products.index')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $product->name, 'item' => url()->current()],
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
+
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 

@@ -1,34 +1,42 @@
 {
-  "_fonts-C9MNnjVw.css": {
-    "file": "assets/fonts-C9MNnjVw.css",
-    "src": "_fonts-C9MNnjVw.css"
+  "_dm-sans-400-normal-BwCSEQnW.woff": {
+    "file": "assets/dm-sans-400-normal-BwCSEQnW.woff",
+    "src": "_dm-sans-400-normal-BwCSEQnW.woff"
   },
-  "_instrument-sans-400-normal-D1W7dsQl.woff": {
-    "file": "assets/instrument-sans-400-normal-D1W7dsQl.woff",
-    "src": "_instrument-sans-400-normal-D1W7dsQl.woff"
+  "_dm-sans-400-normal-CW0RaeGs.woff2": {
+    "file": "assets/dm-sans-400-normal-CW0RaeGs.woff2",
+    "src": "_dm-sans-400-normal-CW0RaeGs.woff2"
   },
-  "_instrument-sans-400-normal-DRC__1Mx.woff2": {
-    "file": "assets/instrument-sans-400-normal-DRC__1Mx.woff2",
-    "src": "_instrument-sans-400-normal-DRC__1Mx.woff2"
+  "_dm-sans-500-normal-B9HHJjqV.woff2": {
+    "file": "assets/dm-sans-500-normal-B9HHJjqV.woff2",
+    "src": "_dm-sans-500-normal-B9HHJjqV.woff2"
   },
-  "_instrument-sans-500-normal-Dk9ku72i.woff2": {
-    "file": "assets/instrument-sans-500-normal-Dk9ku72i.woff2",
-    "src": "_instrument-sans-500-normal-Dk9ku72i.woff2"
+  "_dm-sans-500-normal-Dr3UlScf.woff": {
+    "file": "assets/dm-sans-500-normal-Dr3UlScf.woff",
+    "src": "_dm-sans-500-normal-Dr3UlScf.woff"
   },
-  "_instrument-sans-500-normal-Z6ESRlEs.woff": {
-    "file": "assets/instrument-sans-500-normal-Z6ESRlEs.woff",
-    "src": "_instrument-sans-500-normal-Z6ESRlEs.woff"
+  "_dm-sans-700-normal-CUSSCpQX.woff": {
+    "file": "assets/dm-sans-700-normal-CUSSCpQX.woff",
+    "src": "_dm-sans-700-normal-CUSSCpQX.woff"
   },
-  "_instrument-sans-600-normal-B7fBEWYG.woff2": {
-    "file": "assets/instrument-sans-600-normal-B7fBEWYG.woff2",
-    "src": "_instrument-sans-600-normal-B7fBEWYG.woff2"
+  "_dm-sans-700-normal-DvUfVpUG.woff2": {
+    "file": "assets/dm-sans-700-normal-DvUfVpUG.woff2",
+    "src": "_dm-sans-700-normal-DvUfVpUG.woff2"
   },
-  "_instrument-sans-600-normal-B9e8oLYv.woff": {
-    "file": "assets/instrument-sans-600-normal-B9e8oLYv.woff",
-    "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
+  "_dm-sans-900-normal-Bm36EmVp.woff": {
+    "file": "assets/dm-sans-900-normal-Bm36EmVp.woff",
+    "src": "_dm-sans-900-normal-Bm36EmVp.woff"
+  },
+  "_dm-sans-900-normal-BmOyECvA.woff2": {
+    "file": "assets/dm-sans-900-normal-BmOyECvA.woff2",
+    "src": "_dm-sans-900-normal-BmOyECvA.woff2"
+  },
+  "_fonts-BmO20axv.css": {
+    "file": "assets/fonts-BmO20axv.css",
+    "src": "_fonts-BmO20axv.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app-SvHoxob4.css",
+    "file": "assets/app-BXMg1zpN.css",
     "name": "app",
     "names": [
       "app.css"

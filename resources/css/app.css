@@ -11,7 +11,7 @@
 @source '../../resources/views/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
     /* Palet Tailwind dipakai apa adanya — tiap nama warna benar-benar
@@ -300,15 +300,17 @@ html.dark [class*="bg-[#444444]"] { background-color: var(--dt-surface); }
     --nb-radius-sm: 8px;
 
     /* RAINBOW MODE — tujuh warna blok. Geometri tetap brutalist (border tinta
-       + hard shadow); yang berubah cuma warna isi. Semua pastel terang supaya
-       tinta #141414 di atasnya tetap lulus AA. */
-    --nb-sun:    #FFD966;   /* kuning    */
-    --nb-sand:   #FFC58F;   /* oranye    */
-    --nb-coral:  #FF9B85;   /* koral     */
-    --nb-bubble: #FFB3D9;   /* permen    */
-    --nb-grape:  #C9B6FF;   /* ungu      */
-    --nb-sky:    #9BD7FF;   /* biru      */
-    --nb-mint:   #8FE3B0;   /* hijau     */
+       + hard shadow); yang berubah cuma warna isi. Diambil dari palet aksen
+       neobrutalism yang sudah terbukti (neobrutalism.dev / Gumroad): biru,
+       koral, kuning, hijau, ungu, pink. Semua cukup pekat tapi tetap lolos
+       kontras dengan tinta #141414 di atasnya (AA). */
+    --nb-sun:    #FACC00;   /* kuning  */
+    --nb-sand:   #FF9F43;   /* oranye  */
+    --nb-coral:  #FF4D50;   /* koral   */
+    --nb-bubble: #FF90E8;   /* pink    */
+    --nb-grape:  #7A83FF;   /* ungu    */
+    --nb-sky:    #5294FF;   /* biru    */
+    --nb-mint:   #05E17A;   /* hijau   */
 }
 html.dark {
     --nb-ink: #FAF6EF;
@@ -318,6 +320,21 @@ html.dark {
     --nb-accent-ink: var(--nb-brand-accent-ink);
     --nb-shadow: 4px 4px 0 #000000;
     --nb-shadow-sm: 3px 3px 0 #000000;
+
+    /* Teks brand dibalik di mode gelap, kalau tidak tinta gelap hilang di
+       atas kartu gelap. */
+    --nb-brand-ink: #F5F1EA;
+    --nb-brand-sub: #A8A29E;
+
+    /* Tint versi gelap: warna aksen digelapkan, bukan dibuang, supaya teks
+       krem tetap terbaca dan tetap berwarna (tidak nabrak). */
+    --nb-sun:    #4A3A00;
+    --nb-sand:   #4A2E08;
+    --nb-coral:  #4A1618;
+    --nb-bubble: #4A1F3C;
+    --nb-grape:  #232A5C;
+    --nb-sky:    #12305C;
+    --nb-mint:   #04402A;
 }
 
 /* Literal hex dari view diganti variabel supaya picker warna di Pengaturan ikut

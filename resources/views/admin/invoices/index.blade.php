@@ -122,9 +122,8 @@
                             $left = max(0, (int) $invoice->total - $paid);
                             $ps = $invoice->paid_at ? 'lunas' : ($paid > 0 ? 'dp' : 'belum');
 
-                            // Link PDF invoice bertanda tangan (berlaku 30 hari, tanpa login).
-                            // Ini yang dikirim ke WhatsApp: pelanggan klik, PDF langsung terbuka.
-                            $pdfUrl = URL::temporarySignedRoute('invoice.pdf', now()->addDays(30), ['order' => $invoice->id]);
+                            // Link pendek PDF invoice: /i/{token}. Pelanggan klik → PDF terbuka.
+                            $pdfUrl = $invoice->public_pdf_url;
                             $waMessage = 'Halo kak '.$invoice->customer_name.', ini invoice #'.$invoice->no
                                 .' (total '.format_price($invoice->total).', sisa '.format_price($left).").\n\n"
                                 .'Lihat / unduh invoice (PDF): '.$pdfUrl."\n\nTerima kasih.";

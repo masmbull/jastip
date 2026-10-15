@@ -1,8 +1,11 @@
-{{-- JSON-LD Structured Data for SEO --}}
+{{-- JSON-LD Structured Data for SEO.
+     PENTING: `@@context` / `@@type` sengaja dobel-@ supaya Blade mencetak
+     karakter `@` literal. Kalau ditulis `@context`, Blade menganggapnya
+     direktif dan hasil compile-nya rusak (ParseError). --}}
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "E-commerce",
+  "@@context": "https://schema.org",
+  "@@type": "E-commerce",
   "name": "{{ setting('brand_name', 'NITIP DI END') }}",
   "description": "{{ setting('meta_description', 'Titipan spesial dengan harga terbaik') }}",
   "url": "{{ config('app.url') }}",
@@ -13,13 +16,13 @@
     "{{ setting('social_whatsapp', '#') }}"
   ],
   "contactPoint": {
-    "@type": "ContactPoint",
+    "@@type": "ContactPoint",
     "contactType": "Customer Service",
     "telephone": "{{ setting('whatsapp', '6285123456789') }}",
     "availableLanguage": ["id", "en"]
   },
   "address": {
-    "@type": "PostalAddress",
+    "@@type": "PostalAddress",
     "addressCountry": "ID"
   }
 }
@@ -28,8 +31,8 @@
 {{-- Organization Schema --}}
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Organization",
+  "@@context": "https://schema.org",
+  "@@type": "Organization",
   "name": "{{ setting('brand_name', 'NITIP DI END') }}",
   "url": "{{ config('app.url') }}",
   "logo": "{{ asset('images/icons/icon-512.png') }}",

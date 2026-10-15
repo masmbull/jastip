@@ -74,6 +74,26 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
 - [ ] Catatan: auto-attach tanpa buka WhatsApp sama sekali hanya mungkin lewat
   WhatsApp Cloud API (butuh akun Meta Business + nomor + token). Belum dipakai.
 
+## Tema neo-brutalism (warna + font)
+
+Referensi global yang dipakai: **neobrutalism.dev** (repo `ekmas/neobrutalism-components`)
+dan palet Gumroad. Yang diadopsi:
+
+- Palet aksen warna-warni (menggantikan tint pastel yang kusam):
+  kuning `#FACC00`, oranye `#FF9F43`, koral `#FF4D50`, pink `#FF90E8`,
+  ungu `#7A83FF`, biru `#5294FF`, hijau `#05E17A`. Semua lolos kontras AA
+  dengan tinta `#141414` di atasnya.
+- Tinta `#141414` + kertas `#FAF6EF` + kartu putih, border 2px + hard shadow
+  `4px 4px 0` (sudah ada, dipertahankan).
+- **Font diganti total**: `Instrument Sans` -> **DM Sans** (400/500/700/900),
+  self-host lewat plugin Bunny di `vite.config.js`.
+- Tint pelangi dapat varian mode gelap (dulu tidak ada, ini salah satu
+  penyebab "nabrak" saat tema gelap: pastel terang + teks krem).
+
+Catatan: neobrutalism.dev aslinya light-only (tanpa mode gelap). App ini tetap
+menyediakan mode gelap, tapi kini diturunkan dari token yang sama supaya tidak
+bentrok.
+
 - [ ] **Catatan: perubahan warna di-REVERT.** Upaya menyatukan palet di
   `app.css` (cyan -> aksen kuning, remap ~500 hex biru-slate) ternyata bikin
   tampilan "unexpected". `app.css` dikembalikan ke versi sebelum perubahan itu;

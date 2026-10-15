@@ -14,28 +14,8 @@
         $fullTitle = $sectionTitle ? ($sectionTitle . ' | ' . $brandName) : ($brandName . ': Titipan Spesial');
         $pageDescription = $metaDescription ?? setting('meta_description', 'Temukan berbagai produk impian harga terbaik, gratis ongkir di atas Rp150.000, COD, dan garansi autentik 100%.');
     @endphp
-    <title>{{ $fullTitle }}</title>
 
-    @if ($pageDescription)
-        <meta name="description" content="{{ $pageDescription }}">
-    @endif
-
-    @if (setting('meta_keywords'))
-        <meta name="keywords" content="{{ setting('meta_keywords') }}">
-    @endif
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="{{ $fullTitle }}">
-    <meta property="og:description" content="{{ $pageDescription }}">
-    <meta property="og:image" content="{{ $ogImage ?? (setting('homepage_hero') ? asset('storage/' . setting('homepage_hero')) : asset('images/icons/icon-512.png')) }}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:site_name" content="{{ setting('brand_name', 'NITIP DI END') }}">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ $fullTitle }}">
-    <meta name="twitter:description" content="{{ $pageDescription }}">
+    @include('partials.seo')
 
     <!-- Favicon -->
     @php
@@ -50,6 +30,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')
+    @include('components.seo-structured-data')
     {{-- Service worker is registered once from resources/js/app.js (/sw.js).
          Do NOT register a second one here: two SWs at scope "/" fight over
          the cache and a cache-first one serves stale HTML pointing at old

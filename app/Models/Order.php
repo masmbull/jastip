@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Order extends Model
 {
@@ -51,12 +52,19 @@ class Order extends Model
     }
 
     public const STATUS_AWAITING_PAYMENT = 'awaiting_payment';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_PROCESSING = 'processing';
+
     public const STATUS_READY = 'ready';
+
     public const STATUS_SHIPPED = 'shipped';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     public static function statuses(): array
@@ -101,6 +109,27 @@ class Order extends Model
     public function getNoAttribute(): string
     {
         return $this->order_number;
+    }
+
+    /**
+     * Token publik dibuat otomatis (acak) saat order pertama kali disimpan.
+     * Dipakai untuk link PDF invoice yang pendek dan tidak bisa ditebak.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (self $order) {
+            if (empty($order->public_token)) {
+                $order->public_token = Str::random(16);
+            }
+        });
+    }
+
+    /**
+     * Link pendek PDF invoice: {app}/i/{token}. Dipakai di pesan WhatsApp.
+     */
+    public function getPublicPdfUrlAttribute(): ?string
+    {
+        return $this->public_token ? route('invoice.public', ['token' => $this->public_token]) : null;
     }
 
     /**
@@ -175,22 +204,22 @@ class Order extends Model
 
     public function getFormattedTotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->total, 0, ',', '.');
+        return 'Rp '.number_format($this->total, 0, ',', '.');
     }
 
     public function getFormattedSubtotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+        return 'Rp '.number_format($this->subtotal, 0, ',', '.');
     }
 
     public function getFormattedFeeAttribute(): string
     {
-        return 'Rp ' . number_format($this->fee ?? 0, 0, ',', '.');
+        return 'Rp '.number_format($this->fee ?? 0, 0, ',', '.');
     }
 
     public function getFormattedDiscountAttribute(): string
     {
-        return 'Rp ' . number_format($this->discount ?? 0, 0, ',', '.');
+        return 'Rp '.number_format($this->discount ?? 0, 0, ',', '.');
     }
 
     public static function generateOrderNumber(): string
@@ -198,7 +227,8 @@ class Order extends Model
         // Generate order number with date + random hex suffix for uniqueness
         $date = now()->format('Ymd');
         $random = strtoupper(bin2hex(random_bytes(4)));
-        return 'ND' . $date . '-' . $random;
+
+        return 'ND'.$date.'-'.$random;
     }
 
     /**
@@ -224,7 +254,7 @@ class Order extends Model
      */
     public function isPaymentValid(): bool
     {
-        if (!$this->payment_hash) {
+        if (! $this->payment_hash) {
             return false;
         }
 

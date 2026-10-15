@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class InvoicePdfTest extends TestCase
@@ -43,23 +42,36 @@ class InvoicePdfTest extends TestCase
         return $order;
     }
 
-    public function test_signed_pdf_url_returns_pdf_without_login(): void
+    public function test_order_gets_a_public_token_automatically(): void
     {
         $order = $this->makeOrder();
 
-        $url = URL::temporarySignedRoute('invoice.pdf', now()->addDays(30), ['order' => $order->id]);
+        $this->assertNotEmpty($order->public_token);
+        $this->assertSame(16, strlen($order->public_token));
+        $this->assertStringContainsString('/i/'.$order->public_token, $order->public_pdf_url);
+    }
 
-        $res = $this->get($url);
+    public function test_public_token_url_returns_pdf_without_login(): void
+    {
+        $order = $this->makeOrder();
+
+        $res = $this->get($order->public_pdf_url);
         $res->assertOk();
         $res->assertHeader('Content-Type', 'application/pdf');
         $this->assertStringStartsWith('%PDF-', $res->getContent());
     }
 
-    public function test_pdf_url_without_valid_signature_is_rejected(): void
+    public function test_unknown_token_returns_404(): void
+    {
+        $this->get(route('invoice.public', ['token' => 'abcdefghijklmnop']))->assertNotFound();
+    }
+
+    public function test_short_link_is_short(): void
     {
         $order = $this->makeOrder();
 
-        $this->get(route('invoice.pdf', ['order' => $order->id]))->assertForbidden();
+        // Link pendek: {app}/i/{16 char} - jauh lebih rapi dari signed URL.
+        $this->assertLessThan(80, strlen($order->public_pdf_url));
     }
 
     public function test_dashboard_admin_still_renders_invoice_page(): void

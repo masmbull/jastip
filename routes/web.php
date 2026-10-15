@@ -34,6 +34,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -156,17 +157,18 @@ Route::middleware('auth')->group(function () {
 Route::get('/tentang', [PageController::class, 'about'])->name('about');
 Route::get('/cara-nitip', [PageController::class, 'howTo'])->name('how-to');
 Route::get('/kontak', [PageController::class, 'contact'])->name('contact');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('terms');
 Route::get('/kebijakan-privasi', [PageController::class, 'privacy'])->name('privacy');
 
 // =============================================================================
-// Public invoice PDF (signed URL, tanpa login) - untuk dikirim ke pelanggan
-// lewat WhatsApp. Tanda tangan membuat link tidak bisa ditebak.
+// Public invoice PDF via short token (tanpa login) - untuk dikirim ke pelanggan
+// lewat WhatsApp. Link pendek: /i/{token}. Token acak 16 karakter per order.
 // =============================================================================
 
-Route::get('/invoice/{order}/pdf', [InvoiceController::class, 'invoicePdf'])
-    ->middleware('signed')
-    ->name('invoice.pdf');
+Route::get('/i/{token}', [InvoiceController::class, 'invoicePdf'])
+    ->where('token', '[A-Za-z0-9]{16,32}')
+    ->name('invoice.public');
 
 // =============================================================================
 // Admin Routes
