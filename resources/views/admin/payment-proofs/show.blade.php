@@ -20,7 +20,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <x-card padded="false" class="lg:col-span-2 animate-fade-up" style="animation-delay: 80ms">
             <div class="bg-[#F8FAFC] dark:bg-[#2e323b] p-4 sm:p-8 flex items-center justify-center min-h-64 sm:min-h-96">
-                <img src="{{ Storage::url($paymentProof->file_path) }}"
+                <img src="{{ Storage::disk('public')->url($paymentProof->file_path) }}"
                      alt="Bukti Pembayaran"
                      class="max-w-full max-h-96 rounded-lg">
             </div>

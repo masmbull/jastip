@@ -211,6 +211,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // JSON lookups for the manual-invoice form (must precede /pesanans/{order}).
         Route::get('/pesanans/ongkir-kota', [AdminOrderController::class, 'shippingOptions'])->name('orders.shipping-options');
         Route::get('/pesanans/cek-ongkir', [AdminOrderController::class, 'shippingQuote'])->name('orders.shipping-quote');
+        // Dropdown bertingkat wilayah (kota -> kecamatan -> kelurahan).
+        Route::get('/pesanans/wilayah', [AdminOrderController::class, 'wilayah'])->name('orders.wilayah');
         Route::get('/pesanans/cari-produk', [AdminOrderController::class, 'productSearch'])->name('orders.product-search');
         Route::get('/pesanans/{order}/edit', [AdminOrderController::class, 'edit'])->name('orders.edit');
         Route::put('/pesanans/{order}', [AdminOrderController::class, 'update'])->name('orders.update');

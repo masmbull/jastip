@@ -11,6 +11,10 @@
             dpAmt: {{ (int) old('down_payment', 0) }},
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
+            district: {{ Js::from(old('shipping_district', '')) }},
+            village: {{ Js::from(old('shipping_village', '')) }},
+            districts: [],
+            villages: [],
             weight: {{ (float) old('weight', 0) }} ? {{ (float) old('weight', 0) }} : 1,
             weightManual: false,
             cities: [],
@@ -38,8 +42,44 @@
                     .then(r => r.json())
                     .then(j => { this.cities = j.cities || []; })
                     .catch(() => {});
-                // Kota sudah terisi (old input / edit) -> langsung ambil ongkir.
-                if (this.city) this.fetchQuotes();
+                // Kota sudah terisi (old input / edit) -> langsung ambil ongkir
+                // dan daftar kecamatan/kelurahan.
+                if (this.city) {
+                    this.fetchQuotes();
+                    this.loadDistricts();
+                    if (this.district) this.loadVillages();
+                }
+            },
+
+            // Wilayah bertingkat: kota -> kecamatan -> kelurahan.
+            async loadDistricts() {
+                this.districts = [];
+                this.villages = [];
+                if (!this.city) return;
+                try {
+                    const res = await fetch(`{{ route('admin.orders.wilayah') }}?city=${encodeURIComponent(this.city)}`);
+                    const j = await res.json();
+                    this.districts = j.districts || [];
+                } catch (e) { this.districts = []; }
+            },
+            async loadVillages() {
+                this.villages = [];
+                if (!this.city || !this.district) return;
+                try {
+                    const res = await fetch(`{{ route('admin.orders.wilayah') }}?city=${encodeURIComponent(this.city)}&district=${encodeURIComponent(this.district)}`);
+                    const j = await res.json();
+                    this.villages = j.villages || [];
+                } catch (e) { this.villages = []; }
+            },
+            onCityChange() {
+                this.district = '';
+                this.village = '';
+                this.loadDistricts();
+                this.fetchQuotes();
+            },
+            onDistrictChange() {
+                this.village = '';
+                this.loadVillages();
             },
 
             // Modal dibuang tiap kali ditutup, jadi listener window harus

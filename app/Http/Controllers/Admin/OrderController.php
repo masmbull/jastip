@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Services\ShippingEstimator;
 use App\Services\ShippingService;
 use App\Services\StockService;
+use App\Services\WilayahService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -94,6 +95,8 @@ class OrderController extends Controller
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),
                 'city' => $request->input('shipping_city'),
+                'district' => $request->input('shipping_district'),
+                'village' => $request->input('shipping_village'),
                 'shipping_method' => $request->input('shipping_method'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
@@ -138,6 +141,8 @@ class OrderController extends Controller
             'customer_notes' => $order->customer_notes,
             'admin_notes' => $order->admin_notes,
             'shipping_city' => $order->city,
+            'shipping_district' => $order->district,
+            'shipping_village' => $order->village,
             'shipping_method' => $order->shipping_method,
             'shipping_cost' => $order->shipping_cost,
             'fee' => $order->fee,
@@ -186,6 +191,8 @@ class OrderController extends Controller
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),
                 'city' => $request->input('shipping_city'),
+                'district' => $request->input('shipping_district'),
+                'village' => $request->input('shipping_village'),
                 'shipping_method' => $request->input('shipping_method'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
@@ -218,8 +225,29 @@ class OrderController extends Controller
     }
 
     /**
-     * Estimasi ongkir semua ekspedisi aktif untuk form invoice manual.
+     * Dropdown bertingkat wilayah untuk form invoice manual.
+     *
+     * Tanpa parameter -> daftar kecamatan untuk sebuah kota.
+     * Dengan `district` -> daftar kelurahan untuk kota + kecamatan itu.
      */
+    public function wilayah(Request $request, WilayahService $wilayah)
+    {
+        $city = (string) $request->query('city', '');
+        $district = (string) $request->query('district', '');
+
+        if ($city === '') {
+            return response()->json(['districts' => [], 'villages' => []]);
+        }
+
+        if ($district !== '') {
+            return response()->json(['villages' => $wilayah->villages($city, $district)]);
+        }
+
+        return response()->json(['districts' => $wilayah->districts($city)]);
+    }
+
+    /**
+     * Estimasi ongkir semua ekspedisi aktif untuk form invoice manual.     */
     public function shippingQuote(Request $request, ShippingEstimator $estimator, ShippingService $shipping)
     {
         $data = $request->validate([

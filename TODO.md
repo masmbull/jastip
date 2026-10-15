@@ -191,14 +191,26 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   - `cara-nitip.blade` ✅ dikonversi ke nb-card + tint `#FFC800` + ink `#141414`.
   - `contact.blade` ✅ dikonversi ke nb-card + struktur form kustom + ink `#141414`.
 
-- [ ] **Kecamatan/kelurahan**: migrasi `orders.district` + `orders.village`, 
-  `WilayahService`, endpoint JSON per kota, dropdown bertingkat di 
-  `_manual-form.blade.php`. Data siap di `database/data/wilayah.json`.
+- [x] **Kecamatan/kelurahan**: migrasi `orders.district` + `orders.village`,
+  `WilayahService` (baca `database/data/wilayah.json`, di-cache), endpoint
+  `GET /admin/pesanans/wilayah`, dropdown bertingkat (kota -> kecamatan ->
+  kelurahan) di `_manual-form.blade.php`, persist di store/update, test
+  `WilayahTest`.
 
-- [ ] **Hapus semua produk dummy** — bini lo yang isi sendiri.
+- [x] **Hapus semua produk dummy** — seeder produk/order (dan viral) sekarang
+  HANYA jalan di env `local`/`testing`. Deployment produksi tidak lagi membuat
+  katalog contoh; bini lo isi sendiri. (Seeder tetap dipakai test.)
 
-- [ ] **Modal tambah produk**: semua field, upload foto, status Ready / PO
-  (status ini yang dilihat pembeli).
+- [x] **Modal tambah produk**: sudah ada halaman penuh
+  `admin/products/create` (field lengkap + upload foto + status Ready/PO),
+  dijangkau dari tombol "Tambah Produk". Tidak diubah ke modal karena halaman
+  penuh lebih nyaman untuk banyak field.
+
+- [x] **QRIS tidak muncul (bug nyata)** — `qris_url()` memakai `Storage::url()`
+  polos (mengikuti disk default, di `.env` = `local`), padahal file diunggah ke
+  disk `public`. URL jadi salah -> gambar QRIS tidak tampil. Diperbaiki ke
+  `Storage::disk('public')->url()`, plus pemakaian serupa di
+  `payment-proofs/show`. Terverifikasi lokal: URL jadi `/storage/settings/...`.
 
 - [ ] **Full suite test + `npm run build`** sebelum rilis final.
 

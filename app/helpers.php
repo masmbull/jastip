@@ -34,7 +34,11 @@ if (! function_exists('qris_url')) {
     {
         $path = setting('qris_image');
 
-        return qris_enabled() && $path ? Storage::url($path) : null;
+        // Upload disimpan di disk `public` (lihat SettingController::update),
+        // jadi URL HARUS diambil dari disk itu. Memakai Storage::url() polos
+        // mengikuti disk default (di .env: `local`), sehingga URL-nya salah dan
+        // gambar QRIS tidak muncul di halaman pembayaran.
+        return qris_enabled() && $path ? Storage::disk('public')->url($path) : null;
     }
 }
 

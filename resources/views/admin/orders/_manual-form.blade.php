@@ -91,11 +91,33 @@
                             <div class="col-span-2 sm:col-span-1">
                                 <label class="block text-sm font-bold mb-1" for="mi-city">Kota Tujuan</label>
                                 <select id="mi-city" name="shipping_city" x-model="city"
-                                        @change="fetchQuotes()"
+                                        @change="onCityChange()"
                                         class="nb-input w-full px-3 py-2 text-sm font-bold">
                                     <option value="">Pilih kota</option>
                                     <template x-for="c in cities" :key="c">
                                         <option :value="c" x-text="c" :selected="c === {{ Js::from(old('shipping_city', '')) }}"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-sm font-bold mb-1" for="mi-district">Kecamatan</label>
+                                <select id="mi-district" name="shipping_district" x-model="district"
+                                        @change="onDistrictChange()" :disabled="!districts.length"
+                                        class="nb-input w-full px-3 py-2 text-sm font-bold disabled:opacity-60">
+                                    <option value="">Pilih kecamatan</option>
+                                    <template x-for="d in districts" :key="d">
+                                        <option :value="d" x-text="d" :selected="d === {{ Js::from(old('shipping_district', '')) }}"></option>
+                                    </template>
+                                </select>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="block text-sm font-bold mb-1" for="mi-village">Kelurahan</label>
+                                <select id="mi-village" name="shipping_village" x-model="village"
+                                        :disabled="!villages.length"
+                                        class="nb-input w-full px-3 py-2 text-sm font-bold disabled:opacity-60">
+                                    <option value="">Pilih kelurahan</option>
+                                    <template x-for="v in villages" :key="v">
+                                        <option :value="v" x-text="v" :selected="v === {{ Js::from(old('shipping_village', '')) }}"></option>
                                     </template>
                                 </select>
                             </div>

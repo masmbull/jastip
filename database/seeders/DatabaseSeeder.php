@@ -12,12 +12,20 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             CategorySeeder::class,
-            ProductSeeder::class,
-            ViralProductSeeder::class,
             SettingSeeder::class,
-            OrderSeeder::class,
             ServiceSeeder::class,
         ]);
+
+        // Data contoh (produk & order dummy) HANYA untuk lokal/testing, supaya
+        // katalog produksi bersih dan diisi sendiri oleh admin. Test butuh
+        // produk untuk crawl/meta, jadi seedernya tetap dipakai di testing.
+        if (app()->environment('local', 'testing')) {
+            $this->call([
+                ProductSeeder::class,
+                ViralProductSeeder::class,
+                OrderSeeder::class,
+            ]);
+        }
 
         // Password di-hash dengan Hash::make() sebelum disimpan
         User::updateOrCreate(

@@ -25,6 +25,8 @@ class ManualOrderStoreRequest extends FormRequest
             'customer_notes' => ['nullable', 'string'],
             'admin_notes' => ['nullable', 'string'],
             'shipping_city' => ['nullable', 'string', 'max:100'],
+            'shipping_district' => ['nullable', 'string', 'max:150'],
+            'shipping_village' => ['nullable', 'string', 'max:150'],
             'shipping_method' => ['nullable', 'string', 'max:100'],
             'shipping_cost' => ['nullable', 'integer', 'min:0'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],

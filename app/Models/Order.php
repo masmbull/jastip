@@ -18,6 +18,8 @@ class Order extends Model
         'customer_notes',
         'shipping_method',
         'city',
+        'district',
+        'village',
         'resi',
         'courier',
         'shipped_at',
