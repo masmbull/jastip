@@ -203,7 +203,7 @@ class OrderController extends Controller
         });
 
         return redirect()->route('admin.orders.show', $order)
-            ->with('success', 'Invoice ' . $order->order_number . ' berhasil diperbarui.');
+            ->with('success', 'Invoice '.$order->order_number.' berhasil diperbarui.');
     }
 
     /**
@@ -261,7 +261,7 @@ class OrderController extends Controller
             ->where('name', 'like', "%{$term}%")
             ->orderBy('name')
             ->limit(8)
-            ->get(['id', 'name', 'price', 'unit']);
+            ->get(['id', 'name', 'price', 'unit', 'weight']);
 
         return response()->json($rows);
     }

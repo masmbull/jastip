@@ -27,6 +27,7 @@ class ManualOrderStoreRequest extends FormRequest
             'shipping_city' => ['nullable', 'string', 'max:100'],
             'shipping_method' => ['nullable', 'string', 'max:100'],
             'shipping_cost' => ['nullable', 'integer', 'min:0'],
+            'weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'fee' => ['nullable', 'integer', 'min:0'],
             'mode' => ['nullable', Rule::in(['deposit', 'lunas'])],
             'down_payment' => ['nullable', 'integer', 'min:0'],
@@ -36,6 +37,7 @@ class ManualOrderStoreRequest extends FormRequest
             'items.*.unit' => ['nullable', 'string', 'max:30'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.product_price' => ['required', 'integer', 'min:0'],
+            'items.*.weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'items.*.status' => ['nullable', Rule::in([OrderItem::STATUS_READY, OrderItem::STATUS_PO])],
         ];
     }

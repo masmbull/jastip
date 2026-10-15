@@ -100,16 +100,28 @@
                                 </select>
                             </div>
                             <div class="col-span-2 sm:col-span-1">
-                                <label class="block text-sm font-bold mb-1" for="mi-weight">Berat (kg)</label>
+                                <label class="block text-sm font-bold mb-1" for="mi-weight">
+                                    Berat (kg)
+                                    <span class="text-[11px] font-medium text-[#475569] dark:text-[#D6D3D1]"
+                                          x-text="weightManual ? '(manual)' : '(otomatis dari item)'"></span>
+                                </label>
                                 <div class="flex gap-2">
-                                    <input id="mi-weight" type="number" min="0.1" max="100" step="0.1" x-model.number="weight"
-                                           @input.debounce.600ms="city && fetchQuotes()"
+                                    <input id="mi-weight" type="number" min="0.1" max="100" step="0.01" name="weight"
+                                           x-model.number="weight" @input="onWeightInput(); city && fetchQuotes()"
                                            class="nb-input flex-1 min-w-0 px-3 py-2 text-sm num">
+                                    <button type="button" @click="weightManual = false; syncWeight(); fetchQuotes()"
+                                            x-show="weightManual" x-cloak
+                                            class="nb-btn px-3 py-2 text-sm bg-white text-[#141414] shrink-0"
+                                            title="Hitung otomatis dari item">
+                                        Auto
+                                    </button>
                                     <button type="button" @click="fetchQuotes()" :disabled="quoting || !city"
                                             class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white shrink-0">
                                         <span x-text="quoting ? 'Mencari...' : 'Cek Ongkir'">Cek Ongkir</span>
                                     </button>
                                 </div>
+                                <p class="text-[11px] font-medium text-[#475569] dark:text-[#D6D3D1] mt-1"
+                                   x-text="'Total berat item: ' + autoWeight().toLocaleString('id-ID') + ' kg'"></p>
                             </div>
                         </div>
 
@@ -120,13 +132,27 @@
                             <div class="border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] overflow-hidden divide-y divide-[#141414]/15 dark:divide-[#FAF6EF]/15 max-h-52 overflow-y-auto" role="radiogroup" aria-label="Pilihan ekspedisi">
                                 <template x-for="q in quotes" :key="q.code">
                                     <button type="button" @click="pickQuote(q)" role="radio" :aria-checked="selectedCourier === q.code"
-                                            :class="selectedCourier === q.code ? 'bg-[#FFF7D6] dark:bg-[#333]' : 'bg-white dark:bg-[#1E1E1E]'"
+                                            :class="selectedCourier === q.code
+                                                ? 'bg-[#FFC800] ring-2 ring-inset ring-[#141414]'
+                                                : 'bg-white dark:bg-[#1E1E1E] hover:bg-[#FAF6EF]'"
                                             class="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left min-h-[52px]">
-                                        <span class="min-w-0">
-                                            <span class="block text-sm font-black truncate" x-text="q.name"></span>
-                                            <span class="block text-[11px] font-bold text-[#475569]" x-text="(q.type_label || '') + (q.etd ? ' · ' + q.etd : '')"></span>
+                                        <span class="min-w-0 flex items-center gap-2">
+                                            <span class="shrink-0 w-5 h-5 rounded-full border-2 border-[#141414] flex items-center justify-center"
+                                                  :class="selectedCourier === q.code ? 'bg-[#141414]' : 'bg-transparent'">
+                                                <svg x-show="selectedCourier === q.code" class="w-3 h-3 text-[#FFC800]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0Z" clip-rule="evenodd" />
+                                                </svg>
+                                            </span>
+                                            <span class="min-w-0">
+                                                <span class="block text-sm font-black truncate" x-text="q.name"></span>
+                                                <span class="block text-[11px] font-bold text-[#475569]" x-text="(q.type_label || '') + (q.etd ? ' · ' + q.etd : '')"></span>
+                                            </span>
                                         </span>
-                                        <span class="shrink-0 text-sm font-black num" x-text="q.price_formatted || q.message"></span>
+                                        <span class="shrink-0 text-right">
+                                            <span class="block text-sm font-black num" x-text="q.price_formatted || q.message"></span>
+                                            <span class="block text-[10px] font-bold uppercase tracking-wide"
+                                                  :class="selectedCourier === q.code ? 'text-[#141414]' : 'text-transparent'">Terpilih</span>
+                                        </span>
                                     </button>
                                 </template>
                             </div>
@@ -237,7 +263,7 @@
                                 </div>
                                 <div class="col-span-4 sm:col-span-1">
                                     <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Qty *</span>
-                                    <input type="number" min="1" :name="`items[${idx}][quantity]`" x-model.number="item.qty" required
+                                    <input type="number" min="1" :name="`items[${idx}][quantity]`" x-model.number="item.qty" @input="recalcShipping()" required
                                            class="nb-input w-full px-2 py-2 text-sm text-center num">
                                 </div>
                                 <div class="col-span-8 sm:col-span-2">

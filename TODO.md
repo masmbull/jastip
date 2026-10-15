@@ -94,6 +94,21 @@ Catatan: neobrutalism.dev aslinya light-only (tanpa mode gelap). App ini tetap
 menyediakan mode gelap, tapi kini diturunkan dari token yang sama supaya tidak
 bentrok.
 
+## Riset referensi eksternal
+
+- [x] Scrape **jastipify.biz.id** (Playwright/Chromium). Login situs hanya via
+  Google OAuth, jadi halaman dalam tidak bisa diambil; yang terekam hanya
+  permukaan publik (landing, register, forgot-password). Hasil ekstraksi:
+  font `Poppins`, latar `#FFF8F9`, tinta `#0F172A`, aksen `#FD9602`, halaman
+  auth berupa **split panel** (panel marketing + form).
+- [x] Putuskan **signature kita sendiri** (tidak meniru): tetap neo-brutalism,
+  `DM Sans`, kertas `#FAF6EF`, tinta `#141414`, aksen dari Pengaturan brand,
+  tint warna-warni. Struktur split panel dipinjam, tampilan tidak.
+  Detail: `docs/DESIGN-DIRECTION.md`.
+- [x] Terapkan split panel neo-brutalist di `layouts/auth` + `auth/login` +
+  `auth/register`.
+- [ ] Sisa: sweep ~500 hex ad-hoc di view ke token + audit kontras menyeluruh.
+
 - [ ] **Catatan: perubahan warna di-REVERT.** Upaya menyatukan palet di
   `app.css` (cyan -> aksen kuning, remap ~500 hex biru-slate) ternyata bikin
   tampilan "unexpected". `app.css` dikembalikan ke versi sebelum perubahan itu;

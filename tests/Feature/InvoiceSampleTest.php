@@ -23,40 +23,34 @@ class InvoiceSampleTest extends TestCase
         $res = $this->actingAs($admin)->get(route('admin.invoices.sample'));
         $res->assertOk();
 
-        // Header brand + nomor + tanggal (fixture).
-        $res->assertSee('JASTIP IMOBY BANDUNG BY');
-        $res->assertSee('DANESHA');
-        $res->assertSee('STRUK INVOICE JASTIP ESTIMASI (SAMPEL)');
+        // Header dokumen (pratinjau memakai template yang sama dengan PDF).
+        $res->assertSee('INVOICE');
         $res->assertSee('INV-SAMPLE-2026');
         $res->assertSee('28-09-2026 00:00');
+        $res->assertSee('BELUM BAYAR');
 
         // Pelanggan.
         $res->assertSee('Nabila Putri (Sampel Pelanggan)');
         $res->assertSee('628123456789');
         $res->assertSee('JNE YES (Express)');
 
-        // Produk + detail.
+        // Produk.
         $res->assertSee('Uniqlo Heattech Extra Warm Thermal');
         $res->assertSee('Gentle Monster Her 01 Sunglasses');
-        $res->assertSee('Black [L]');
-        $res->assertSee('Glossy Black [Free Size]');
 
-        // Perhitungan: 2x299000=598000, 1x3200000=3200000,
-        // jastip 2x35000 + 1x250000 = 320000, packing 15000,
-        // total = 3798000 + 320000 + 15000 = 4133000.
+        // Perhitungan: 2x299000=598000 + 1x3200000=3200000 = 3798000,
+        // ongkir 30000, layanan 320000, total = 4148000.
         $res->assertSee('Rp 598.000');
         $res->assertSee('Rp 3.200.000');
         $res->assertSee('Rp 3.798.000');
+        $res->assertSee('Rp 30.000');
         $res->assertSee('Rp 320.000');
-        $res->assertSee('Rp 15.000');
-        $res->assertSee('Rp 4.133.000');
+        $res->assertSee('Rp 4.148.000');
         $res->assertSee('3 pcs');
 
         // Pembayaran + footer.
-        $res->assertSee('REK. PEMBAYARAN:');
-        $res->assertSee('BCA 098765432');
-        $res->assertSee('An Damesha');
-        $res->assertSee('=== SIMPAN STRUK INI SEBAGAI BUKTI PESANAN ===');
+        $res->assertSee('Silakan transfer');
+        $res->assertSee('Terima kasih');
     }
 
     public function test_sample_preview_honours_preset_label(): void

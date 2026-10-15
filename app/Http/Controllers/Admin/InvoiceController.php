@@ -212,14 +212,13 @@ class InvoiceController extends Controller
     public function invoicePdf(string $token)
     {
         $order = Order::where('public_token', $token)->firstOrFail();
-        $order->load('items');
 
         $options = new Options;
         $options->set('isRemoteEnabled', true);
         $options->set('defaultFont', 'DejaVu Sans');
 
         $dompdf = new Dompdf($options);
-        $dompdf->loadHtml(view('invoices.pdf', ['order' => $order])->render());
+        $dompdf->loadHtml(view('invoices.pdf', ['doc' => $this->docFromOrder($order)])->render());
         $dompdf->setPaper('a4');
         $dompdf->render();
 
@@ -230,14 +229,11 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Dokumen pratinjau cetak untuk SAMPEL invoice (struk thermal).
+     * Pratinjau cetak (modal "Pratinjau Cetak Sampel Invoice").
      *
-     * Dimuat di dalam <iframe> modal "Pratinjau Cetak Sampel Invoice" pada
-     * halaman daftar invoice. Isi memakai data contoh (fixture): preview dan
-     * PDF identik karena keduanya merender halaman yang sama.
-     *
-     * Ganti isi sampleInvoice() dengan data transaksi nyata bila sudah tersedia;
-     * struktur data sudah dipisah dari view supaya view tidak perlu diubah.
+     * Memakai TEMPLATE YANG SAMA dengan PDF (invoices/_template). Bedanya hanya
+     * sumber data: di sini data contoh, di PDF data pesanan nyata. Jadi apa yang
+     * dilihat di pratinjau identik dengan hasil PDF.
      */
     public function sample(Request $request)
     {
@@ -245,59 +241,132 @@ class InvoiceController extends Controller
 
         return view('admin.invoices.sample', [
             'preset' => strtoupper((string) $request->input('preset', 'COMPACT')),
-            'invoice' => $this->sampleInvoice(),
+            'doc' => $this->docFromFixture(),
         ]);
     }
 
     /**
-     * Data contoh (fixture) untuk pratinjau sampel. Perhitungan dilakukan dari
-     * baris item (qty x harga, fee jastip per pc), bukan angka total hardcoded.
+     * Susun view-model dokumen dari pesanan nyata.
      *
      * @return array<string, mixed>
      */
-    private function sampleInvoice(): array
+    private function docFromOrder(Order $order): array
+    {
+        $order->loadMissing('items');
+
+        $paid = (int) $order->down_payment + (int) $order->payments_sum;
+        $left = max(0, (int) $order->total - $paid);
+        $storeWa = setting('whatsapp');
+
+        $totals = [
+            ['label' => 'Subtotal', 'value' => format_price($order->subtotal)],
+            ['label' => 'Ongkir', 'value' => format_price($order->shipping_cost)],
+        ];
+        if ((int) ($order->fee ?? 0) > 0) {
+            $totals[] = ['label' => 'Biaya layanan', 'value' => format_price($order->fee)];
+        }
+        if ((int) ($order->discount ?? 0) > 0) {
+            $totals[] = ['label' => 'Diskon', 'value' => '-'.format_price($order->discount), 'muted' => true];
+        }
+
+        $payment = $order->is_paid
+            ? 'Pembayaran diterima. Terima kasih'.($order->paid_at ? ', '.$order->paid_at->format('d M Y, H:i') : '').'.'
+            : 'Silakan transfer, lalu kirim bukti via WhatsApp'.($storeWa ? ' ('.$storeWa.')' : '').' dengan menyebut nomor invoice #'.$order->no.'.';
+
+        return [
+            'brand' => setting('brand_name', 'NITIP DI END'),
+            'owner' => setting('brand_owner'),
+            'store_wa' => $storeWa,
+            'title' => $paid > 0 && ! $order->is_paid ? 'TAGIHAN' : 'INVOICE',
+            'number' => $order->no,
+            'date' => $order->created_at->format('d M Y, H:i'),
+            'status_text' => $order->is_paid ? 'LUNAS' : 'BELUM BAYAR',
+            'status_color' => $order->is_paid ? '#15803D' : '#B45309',
+            'customer' => [
+                'name' => $order->customer_name,
+                'wa' => $order->customer_whatsapp,
+                'address' => $order->customer_address,
+            ],
+            'shipping' => array_values(array_filter([
+                ['label' => 'Ekspedisi', 'value' => $order->shipping_method ?: '-'],
+                $order->resi ? ['label' => 'Resi', 'value' => $order->resi] : null,
+                ['label' => 'Jumlah item', 'value' => $order->items->sum('quantity').' pcs'],
+            ])),
+            'items' => $order->items->map(fn ($i) => [
+                'name' => $i->product_name,
+                'unit' => $i->unit,
+                'qty' => $i->quantity,
+                'price' => format_price($i->product_price),
+                'subtotal' => format_price($i->subtotal),
+            ])->all(),
+            'totals' => $totals,
+            'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],
+            'left' => $left > 0 ? ['label' => 'Sisa', 'value' => format_price($left)] : null,
+            'payment_text' => $payment,
+            'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
+        ];
+    }
+
+    /**
+     * Contoh data untuk pratinjau. Struktur ini SAMA dengan docFromOrder(),
+     * jadi template identik. Angka dihitung dari baris item, bukan hardcode.
+     *
+     * @return array<string, mixed>
+     */
+    private function docFromFixture(): array
     {
         $items = [
-            ['name' => 'Uniqlo Heattech Extra Warm Thermal', 'qty' => 2, 'price' => 299000, 'jastip' => 35000, 'variant' => 'Black [L]'],
-            ['name' => 'Gentle Monster Her 01 Sunglasses', 'qty' => 1, 'price' => 3200000, 'jastip' => 250000, 'variant' => 'Glossy Black [Free Size]'],
+            ['name' => 'Uniqlo Heattech Extra Warm Thermal', 'unit' => 'pcs', 'qty' => 2, 'price' => 299000],
+            ['name' => 'Gentle Monster Her 01 Sunglasses', 'unit' => 'pcs', 'qty' => 1, 'price' => 3200000],
         ];
 
         $qty = 0;
         $subtotal = 0;
-        $feeJastip = 0;
-
-        foreach ($items as &$item) {
-            $item['subtotal'] = $item['qty'] * $item['price'];
-            $item['fee_total'] = $item['qty'] * $item['jastip'];
+        $rows = [];
+        foreach ($items as $item) {
+            $line = $item['qty'] * $item['price'];
             $qty += $item['qty'];
-            $subtotal += $item['subtotal'];
-            $feeJastip += $item['fee_total'];
+            $subtotal += $line;
+            $rows[] = [
+                'name' => $item['name'],
+                'unit' => $item['unit'],
+                'qty' => $item['qty'],
+                'price' => format_price($item['price']),
+                'subtotal' => format_price($line),
+            ];
         }
-        unset($item);
 
-        $packing = 15000;
+        $ongkir = 30000;
+        $fee = 320000;
 
         return [
-            'brand_line1' => 'JASTIP IMOBY BANDUNG BY',
-            'brand_line2' => 'DANESHA',
-            'logo_text' => 'D',
-            'subtitle' => 'STRUK INVOICE JASTIP ESTIMASI (SAMPEL)',
+            'brand' => setting('brand_name', 'JASTIP IMOBY BANDUNG BY DANESHA'),
+            'owner' => setting('brand_owner'),
+            'store_wa' => setting('whatsapp'),
+            'title' => 'INVOICE',
             'number' => 'INV-SAMPLE-2026',
             'date' => '28-09-2026 00:00',
+            'status_text' => 'BELUM BAYAR',
+            'status_color' => '#B45309',
             'customer' => [
                 'name' => 'Nabila Putri (Sampel Pelanggan)',
                 'wa' => '628123456789',
-                'courier' => 'JNE YES (Express)',
+                'address' => 'Jl. Contoh No. 1, Bandung',
             ],
-            'items' => $items,
-            'qty' => $qty,
-            'subtotal' => $subtotal,
-            'fee_jastip' => $feeJastip,
-            'packing' => $packing,
-            'total' => $subtotal + $feeJastip + $packing,
-            'payment' => ['title' => 'REK. PEMBAYARAN:', 'lines' => ['BCA 098765432', 'An Damesha']],
-            'thanks' => 'Terima kasih telah berbelanja jastip bersama Jastip Imoby By Damesha!',
-            'footer_note' => '=== SIMPAN STRUK INI SEBAGAI BUKTI PESANAN ===',
+            'shipping' => [
+                ['label' => 'Ekspedisi', 'value' => 'JNE YES (Express)'],
+                ['label' => 'Jumlah item', 'value' => $qty.' pcs'],
+            ],
+            'items' => $rows,
+            'totals' => [
+                ['label' => 'Subtotal', 'value' => format_price($subtotal)],
+                ['label' => 'Ongkir', 'value' => format_price($ongkir)],
+                ['label' => 'Biaya layanan', 'value' => format_price($fee)],
+            ],
+            'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($subtotal + $ongkir + $fee)],
+            'left' => ['label' => 'Sisa', 'value' => format_price($subtotal + $ongkir + $fee)],
+            'payment_text' => 'Silakan transfer, lalu kirim bukti via WhatsApp dengan menyebut nomor invoice #INV-SAMPLE-2026.',
+            'footer' => 'Terima kasih telah berbelanja jastip bersama Jastip Imoby By Damesha.',
         ];
     }
 }

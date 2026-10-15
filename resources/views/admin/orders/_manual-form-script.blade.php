@@ -11,7 +11,8 @@
             dpAmt: {{ (int) old('down_payment', 0) }},
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
-            weight: 1,
+            weight: {{ (float) old('weight', 0) }} ? {{ (float) old('weight', 0) }} : 1,
+            weightManual: false,
             cities: [],
             quotes: [],
             quoting: false,
@@ -20,9 +21,9 @@
             items: oldItems.length ? oldItems.map((o, i) => ({
                 key: i + 1, name: o.product_name || '', unit: o.unit || 'pcs',
                 status: o.status || 'ready', qty: Number(o.quantity) || 1,
-                price: Number(o.product_price) || 0,
+                price: Number(o.product_price) || 0, weight: Number(o.weight) || 0,
                 open: false, loading: false, suggestions: [], _abort: null,
-            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null }],
+            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, open: false, loading: false, suggestions: [], _abort: null }],
             seq: oldItems.length || 1,
             saving: false,
 
@@ -55,13 +56,35 @@
                 }
             },
 
+            // Berat efektif: kalau admin belum menimpa manual, dihitung dari
+            // total berat produk (berat produk x qty). Ini yang dipakai untuk
+            // request ongkir, jadi angka kg selalu cocok dengan isi keranjang.
+            autoWeight() {
+                const sum = this.items.reduce((s, i) => s + (Number(i.weight) || 0) * (Number(i.qty) || 0), 0);
+                return Math.round(sum * 100) / 100;
+            },
+            effectiveWeight() {
+                return this.weightManual ? (Number(this.weight) || 0) : this.autoWeight();
+            },
+            onWeightInput() {
+                this.weightManual = true;
+            },
+            syncWeight() {
+                if (!this.weightManual) this.weight = this.autoWeight() || this.weight;
+            },
+            recalcShipping() {
+                this.syncWeight();
+                if (this.city) this.fetchQuotes();
+            },
+
             async fetchQuotes() {
                 if (!this.city) return;
+                this.syncWeight();
                 this.quoting = true;
                 this.quoteError = '';
                 this.quotes = [];
                 try {
-                    const url = `{{ route('admin.orders.shipping-quote') }}?city=${encodeURIComponent(this.city)}&weight=${encodeURIComponent(this.weight || 1)}`;
+                    const url = `{{ route('admin.orders.shipping-quote') }}?city=${encodeURIComponent(this.city)}&weight=${encodeURIComponent(this.effectiveWeight() || 1)}`;
                     const res = await fetch(url);
                     if (!res.ok) throw new Error('bad');
                     const j = await res.json();
@@ -81,11 +104,12 @@
 
             addItem() {
                 this.seq++;
-                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, open: false, loading: false, suggestions: [], _abort: null });
+                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, open: false, loading: false, suggestions: [], _abort: null });
             },
             removeItem(idx) {
                 if (this.items[idx]?._abort) this.items[idx]._abort.abort();
                 this.items.splice(idx, 1);
+                this.recalcShipping();
             },
             lineTotal(item) { return (Number(item.qty) || 0) * (Number(item.price) || 0); },
             subtotal() { return this.items.reduce((sum, i) => sum + this.lineTotal(i), 0); },
@@ -121,7 +145,9 @@
                 this.items[idx].name = s.name;
                 this.items[idx].price = s.price;
                 if (s.unit) this.items[idx].unit = s.unit;
+                this.items[idx].weight = Number(s.weight) || 0;
                 this.items[idx].open = false;
+                this.recalcShipping();
             },
         };
     }
