@@ -17,7 +17,6 @@
         "@laravel/multiplex": "^0.4.1"
     },
     "dependencies": {
-        "alpinejs": "^3.13.5",
-        "html2canvas": "^1.4.1"
+        "alpinejs": "^3.13.5"
     }
 }

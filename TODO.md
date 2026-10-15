@@ -60,13 +60,19 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
     bikin teks #141414 menghilang di atas kartu #1E1E1E).
   - tint pelangi dapat varian gelap; focus ring disatukan jadi satu.
 
-- [x] **Kirim invoice SEKALIAN FOTONYA lewat WhatsApp**. Tombol WhatsApp di
-  tiap baris daftar Invoice kini mengirim **gambar + pesan** (bukan teks doang):
-  halaman invoice hex-only (`admin.orders.invoice-image`) dirender ke PNG
-  memakai `html2canvas` (dimuat malas), lalu dibagikan lewat Web Share API
-  (`navigator.share({ files })`) sehingga pengguna memilih WhatsApp dan
-  gambarnya terlampir. Kalau berbagi file tak didukung (umumnya desktop),
-  gambar diunduh otomatis dan chat WhatsApp dibuka berisi teks.
+- [x] **Kirim invoice ke WhatsApp sebagai PDF.** Tombol WhatsApp di tiap baris
+  daftar Invoice membuka chat WhatsApp berisi **link PDF invoice** (bertanda
+  tangan, berlaku 30 hari, tanpa login) + pesan. Pelanggan klik link → PDF
+  langsung terbuka/tersimpan. Tidak ada sheet berbagi dan tidak ada langkah
+  unduh untuk admin.
+  - PDF dihasilkan server dengan `dompdf/dompdf` (template table-based +
+    CSS inline; dompdf tidak mendukung flex/grid).
+  - Route publik `invoice.pdf` memakai middleware `signed` supaya link tak
+    bisa ditebak; data pelanggan tidak terbuka untuk umum.
+  - Pendekatan lama (html2canvas + Web Share sheet / PNG unduh) DIHAPUS.
+
+- [ ] Catatan: auto-attach tanpa buka WhatsApp sama sekali hanya mungkin lewat
+  WhatsApp Cloud API (butuh akun Meta Business + nomor + token). Belum dipakai.
 
 - [ ] **Catatan: perubahan warna di-REVERT.** Upaya menyatukan palet di
   `app.css` (cyan -> aksen kuning, remap ~500 hex biru-slate) ternyata bikin

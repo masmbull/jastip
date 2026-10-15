@@ -27,17 +27,8 @@
     "file": "assets/instrument-sans-600-normal-B9e8oLYv.woff",
     "src": "_instrument-sans-600-normal-B9e8oLYv.woff"
   },
-  "node_modules/html2canvas/dist/html2canvas.js": {
-    "file": "assets/html2canvas-D9S0xZzF.js",
-    "name": "html2canvas",
-    "src": "node_modules/html2canvas/dist/html2canvas.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.js"
-    ]
-  },
   "resources/css/app.css": {
-    "file": "assets/app-iCzKnGpL.css",
+    "file": "assets/app-SvHoxob4.css",
     "name": "app",
     "names": [
       "app.css"
@@ -46,12 +37,9 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-B3dVB7BZ.js",
+    "file": "assets/app-DaxV1zQI.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true,
-    "dynamicImports": [
-      "node_modules/html2canvas/dist/html2canvas.js"
-    ]
+    "isEntry": true
   }
 }

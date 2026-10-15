@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -202,16 +204,30 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Halaman invoice dengan warna hex murni, khusus untuk dirender jadi PNG
-     * oleh html2canvas di sisi klien (kirim invoice sebagai gambar ke WhatsApp).
+     * Versi PDF invoice untuk dikirim lewat WhatsApp.
+     *
+     * Route-nya PUBLIK tapi ditandatangani (signed URL), supaya tautan yang
+     * dibagikan ke pelanggan bisa dibuka tanpa login namun tetap tidak bisa
+     * ditebak. Ini yang bikin tombol WhatsApp cukup membawa link: pelanggan
+     * klik, PDF langsung terbuka/tersimpan.
      */
-    public function invoiceImage(Order $order)
+    public function invoicePdf(Order $order)
     {
-        Gate::authorize('view', $order);
-
         $order->load('items');
 
-        return view('admin.orders.invoice-image', ['order' => $order]);
+        $options = new Options;
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'DejaVu Sans');
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml(view('invoices.pdf', ['order' => $order])->render());
+        $dompdf->setPaper('a4');
+        $dompdf->render();
+
+        return response($dompdf->output(), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="invoice-'.$order->no.'.pdf"',
+        ]);
     }
 
     /**

@@ -160,6 +160,15 @@ Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('terms')
 Route::get('/kebijakan-privasi', [PageController::class, 'privacy'])->name('privacy');
 
 // =============================================================================
+// Public invoice PDF (signed URL, tanpa login) - untuk dikirim ke pelanggan
+// lewat WhatsApp. Tanda tangan membuat link tidak bisa ditebak.
+// =============================================================================
+
+Route::get('/invoice/{order}/pdf', [InvoiceController::class, 'invoicePdf'])
+    ->middleware('signed')
+    ->name('invoice.pdf');
+
+// =============================================================================
 // Admin Routes
 // =============================================================================
 
@@ -206,8 +215,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/pesanans/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::get('/pesanans/{order}/quickview', [AdminOrderController::class, 'quickView'])->name('orders.quickview');
         Route::get('/pesanans/{order}/invoice', [InvoiceController::class, 'invoice'])->name('orders.invoice');
-        // Versi hex-only untuk dirender jadi PNG (kirim gambar via WhatsApp).
-        Route::get('/pesanans/{order}/invoice-image', [InvoiceController::class, 'invoiceImage'])->name('orders.invoice-image');
         Route::put('/pesanans/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
         Route::delete('/pesanans/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
         Route::post('/pesanans/{order}/pelunasan', [OrderPaymentController::class, 'store'])->name('orders.payments.store');
