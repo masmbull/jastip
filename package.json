@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "build:fresh": "npm ci && vite build",
         "dev": "vite"
     },
     "devDependencies": {

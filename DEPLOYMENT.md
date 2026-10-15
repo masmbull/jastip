@@ -411,3 +411,36 @@ php artisan tinker
 
 *Deployment Guide Version: 1.0*  
 *Last Updated: October 7, 2026*
+
+---
+
+## PENTING: Aset frontend sudah di-commit (jangan build tanpa `npm ci`)
+
+Folder `public/build/` (CSS, JS, font, chunk html2canvas) **ikut di-commit ke
+repo**. Artinya server **tidak perlu** menjalankan `npm run build` sama sekali —
+cukup `git pull`.
+
+Kalau tetap ingin build di server, **wajib** `npm ci` dulu:
+
+```bash
+cd /var/www/jastip
+npm ci          # WAJIB: menyiapkan node_modules (alpinejs, html2canvas, dll)
+npm run build
+```
+
+**Kenapa berbahaya build tanpa `npm ci`:** `vite build` mengosongkan
+`public/build/` lebih dulu, baru membangun ulang. Kalau dependency belum ada
+(mis. `alpinejs` belum terpasang), build gagal di tengah dan folder aset bisa
+tertinggal kosong → halaman kehilangan CSS/JS.
+
+**Kalau build terlanjur gagal**, pulihkan aset dari repo:
+
+```bash
+git checkout -- public/build
+git clean -fd public/build
+php artisan optimize:clear
+php artisan optimize
+```
+
+Ringkas: **deploy normal cukup `git pull` + `php artisan optimize:clear` +
+`php artisan optimize`.** Build frontend hanya untuk pengembangan.
