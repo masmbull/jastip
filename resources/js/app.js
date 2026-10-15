@@ -271,6 +271,155 @@ window.Alpine = Alpine;
         };
     };
 
+    /* ---- Kirim invoice baris Rekapan via WhatsApp (PNG + Web Share) ----
+       Alur: susun invoice sebagai DOM (warna hex inline supaya html2canvas
+       tidak tersandung color(oklch) milik Tailwind v4) -> render ke PNG ->
+       bagikan lewat Web Share API (Android: muncul sheet, pilih WhatsApp).
+       Kalau file sharing tak didukung (umumnya desktop), fallback: unduh PNG
+       + buka chat WhatsApp berisi teks. TIDAK mengklaim terkirim otomatis:
+       pengiriman tetap butuh aksi pengguna di WhatsApp. */
+    window.waPhone = function (input) {
+        let d = String(input || '').replace(/[^0-9]/g, '');
+        if (!d) return '';
+        if (d.startsWith('0')) return '62' + d.slice(1);
+        if (d.startsWith('62')) return d;
+        if (d.startsWith('8')) return '62' + d;
+        return d;
+    };
+
+    (function defineRecapInvoice() {
+        const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+        function buildNode(doc) {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:720px;background:#FFFFFF;color:#141414;font-family:Arial,Helvetica,sans-serif;font-size:12px;padding:36px;box-sizing:border-box;';
+
+            const row = (l, r, strong) => `<tr><td style="padding:2px 0;color:${strong ? '#141414' : '#475569'};${strong ? 'font-weight:bold;' : ''}">${esc(l)}</td><td style="padding:2px 0;text-align:right;${strong ? 'font-weight:bold;' : ''}">${esc(r)}</td></tr>`;
+            const items = (doc.items || []).map((it) => `
+                <tr>
+                    <td style="border-bottom:1px solid #E2E8F0;padding:7px 8px;">${esc(it.name)}</td>
+                    <td style="border-bottom:1px solid #E2E8F0;padding:7px 8px;text-align:center;">${esc(it.qty)}</td>
+                    <td style="border-bottom:1px solid #E2E8F0;padding:7px 8px;text-align:right;">${esc(it.price)}</td>
+                    <td style="border-bottom:1px solid #E2E8F0;padding:7px 8px;text-align:right;font-weight:bold;">${esc(it.subtotal)}</td>
+                </tr>`).join('');
+
+            const brand = esc(doc.brand || 'NITIP DI END');
+            wrap.innerHTML = `
+                <table style="width:100%;border-collapse:collapse;">
+                    <tr>
+                        <td style="vertical-align:top;">
+                            <div style="font-size:20px;font-weight:bold;">${brand}</div>
+                            <div style="color:#475569;">Invoice Rekapan</div>
+                        </td>
+                        <td style="vertical-align:top;text-align:right;">
+                            <div style="font-size:20px;font-weight:bold;">INVOICE</div>
+                            <div style="font-weight:bold;">#${esc(doc.row)}</div>
+                            <div style="color:#475569;">${esc(doc.date)}</div>
+                            <div style="margin-top:6px;display:inline-block;padding:3px 9px;border:2px solid #B45309;color:#B45309;font-weight:bold;font-size:10px;">${esc(doc.status)}</div>
+                        </td>
+                    </tr>
+                </table>
+                <div style="border-top:3px solid #141414;margin:6px 0 14px;"></div>
+                <table style="width:100%;border-collapse:collapse;">
+                    <tr><td style="vertical-align:top;">
+                        <div style="color:#475569;font-size:10px;font-weight:bold;">DITAGIHKAN KEPADA</div>
+                        <div style="font-weight:bold;padding-top:2px;">${esc(doc.customer_name)}</div>
+                        ${doc.wa ? `<div style="color:#475569;">WA: ${esc(doc.wa)}</div>` : ''}
+                    </td>
+                    <td style="vertical-align:top;text-align:right;">
+                        <div style="color:#475569;font-size:10px;font-weight:bold;">REKAPAN</div>
+                        <div style="font-weight:bold;padding-top:2px;">${esc(doc.number)}</div>
+                    </td></tr>
+                </table>
+                ${items ? `<table style="width:100%;border-collapse:collapse;margin-top:14px;">
+                    <tr>
+                        <td style="background:#141414;color:#FFFFFF;font-weight:bold;padding:7px 8px;">Barang</td>
+                        <td style="background:#141414;color:#FFFFFF;font-weight:bold;padding:7px 8px;text-align:center;">Qty</td>
+                        <td style="background:#141414;color:#FFFFFF;font-weight:bold;padding:7px 8px;text-align:right;">Harga</td>
+                        <td style="background:#141414;color:#FFFFFF;font-weight:bold;padding:7px 8px;text-align:right;">Subtotal</td>
+                    </tr>${items}</table>` : ''}
+                <table style="width:100%;border-collapse:collapse;margin-top:14px;">
+                    <tr><td style="width:55%;"></td><td><table style="width:100%;border-collapse:collapse;">
+                        ${row('Total', doc.total, true)}
+                        ${row('Deposit', doc.dp)}
+                        ${row('Sisa', doc.sisa, true)}
+                    </table></td></tr>
+                </table>
+                <div style="border-top:1px solid #E2E8F0;margin:16px 0 8px;"></div>
+                <div style="text-align:center;color:#475569;">${esc(doc.footer || '')}</div>`;
+            return wrap;
+        }
+
+        window.jdRecapInvoice = async function (btn, docsJson, index) {
+            if (btn && btn.dataset.busy === '1') return; // guard double-click
+            let docs;
+            try {
+                docs = typeof docsJson === 'string' ? JSON.parse(docsJson) : docsJson;
+            } catch (e) {
+                if (typeof window.toast === 'function') window.toast('Data invoice tidak terbaca.', 'error');
+                return;
+            }
+            const doc = (docs || [])[index];
+            if (!doc) {
+                if (typeof window.toast === 'function') window.toast('Data baris tidak ditemukan.', 'error');
+                return;
+            }
+
+            const wa = window.waPhone(doc.wa);
+            if (!wa) {
+                if (typeof window.toast === 'function') window.toast('Nomor WhatsApp baris ini kosong atau tidak valid. Isi dulu di Rekapan.', 'error');
+                return;
+            }
+
+            if (btn) { btn.dataset.busy = '1'; btn.setAttribute('aria-busy', 'true'); }
+            let node = null;
+            try {
+                const { default: html2canvas } = await import('html2canvas');
+
+                node = buildNode(doc);
+                document.body.appendChild(node);
+
+                const canvas = await html2canvas(node, { backgroundColor: '#FFFFFF', scale: 2, logging: false });
+                const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+                if (!blob) throw new Error('render gagal');
+
+                const file = new File([blob], `invoice-rekap-${doc.row}.png`, { type: 'image/png' });
+                const shareText = `Halo ${doc.customer_name}, ini invoice #${doc.row} (${doc.number}). Total ${doc.total}, deposit ${doc.dp}, sisa ${doc.sisa}. Terima kasih.`;
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file], text: shareText });
+                    } catch (err) {
+                        // Pengguna membatalkan sheet = bukan kegagalan.
+                        if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
+                            window.toast('Gagal membagikan invoice. Coba lagi.', 'error');
+                        }
+                    }
+                } else {
+                    // Fallback: unduh PNG lalu buka chat WhatsApp (tanpa lampiran).
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `invoice-rekap-${doc.row}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    setTimeout(() => URL.revokeObjectURL(url), 4000);
+                    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+                    if (typeof window.toast === 'function') {
+                        window.toast('Browser ini belum bisa lampirkan file. Gambar diunduh, chat WhatsApp dibuka: lampirkan gambarnya manual.', 'info');
+                    }
+                }
+            } catch (e) {
+                console.error('[jdRecapInvoice]', e);
+                if (typeof window.toast === 'function') window.toast('Gagal membuat gambar invoice. Coba lagi.', 'error');
+            } finally {
+                if (node && node.parentNode) node.parentNode.removeChild(node);
+                if (btn) { btn.dataset.busy = ''; btn.removeAttribute('aria-busy'); }
+            }
+        };
+    })();
+
     /* ---- reveal on scroll (progressive enhancement) ----
        Elemen `.reveal` muncul halus saat masuk viewport. Kalau
        IntersectionObserver tidak ada atau user minta reduced motion, kita

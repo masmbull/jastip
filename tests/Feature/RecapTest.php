@@ -119,6 +119,63 @@ class RecapTest extends TestCase
         ])->assertSessionHasErrors('columns');
     }
 
+    public function test_recap_show_embeds_per_row_invoice_docs(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $recap = Recap::create([
+            'name' => 'Rekapan WA',
+            'columns' => [
+                ['key' => 'pelanggan', 'label' => 'Pelanggan', 'type' => 'text', 'total' => false],
+                ['key' => 'wa', 'label' => 'No WA', 'type' => 'text', 'total' => false],
+                ['key' => 'produk', 'label' => 'Produk', 'type' => 'text', 'total' => false],
+                ['key' => 'qty', 'label' => 'Qty', 'type' => 'number', 'total' => false],
+                ['key' => 'harga', 'label' => 'Harga', 'type' => 'currency', 'total' => true],
+                ['key' => 'dp', 'label' => 'DP', 'type' => 'currency', 'total' => false],
+            ],
+            'rows' => [
+                ['key' => 'r1', 'cells' => [
+                    'pelanggan' => 'Si A', 'wa' => '08123456789', 'produk' => 'Sepatu',
+                    'qty' => '2', 'harga' => '150000', 'dp' => '100000',
+                ]],
+            ],
+        ]);
+
+        $doc = $recap->invoiceForRow($recap->rows[0], 1);
+
+        $this->assertSame('Si A', $doc['customer_name']);
+        $this->assertSame('08123456789', $doc['wa']);
+        $this->assertSame('Rp 150.000', $doc['total']);
+        $this->assertSame('Rp 100.000', $doc['dp']);
+        $this->assertSame('Rp 50.000', $doc['sisa']);
+        $this->assertSame('DEPOSIT', $doc['status']);
+        $this->assertCount(1, $doc['items']);
+        $this->assertSame('Rp 300.000', $doc['items'][0]['subtotal']);
+
+        // Halaman menampilkan data + tombol kirim untuk baris ini.
+        $this->actingAs($admin)
+            ->get(route('admin.recaps.show', $recap))
+            ->assertOk()
+            ->assertSee('data-recap-docs', false)
+            ->assertSee('jdRecapInvoice', false)
+            ->assertSee('Kirim');
+    }
+
+    public function test_recap_row_without_wa_has_empty_number(): void
+    {
+        $recap = Recap::create([
+            'name' => 'Tanpa WA',
+            'columns' => [['key' => 'pelanggan', 'label' => 'Pelanggan', 'type' => 'text', 'total' => false]],
+            'rows' => [['key' => 'r1', 'cells' => ['pelanggan' => 'Si B']]],
+        ]);
+
+        $doc = $recap->invoiceForRow($recap->rows[0], 1);
+
+        $this->assertSame('', $doc['wa']);
+        $this->assertSame('BELUM BAYAR', $doc['status']);
+        $this->assertSame('Rp 0', $doc['total']);
+    }
+
     public function test_admin_can_delete_recap(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();

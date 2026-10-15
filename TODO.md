@@ -94,8 +94,30 @@ Catatan: neobrutalism.dev aslinya light-only (tanpa mode gelap). App ini tetap
 menyediakan mode gelap, tapi kini diturunkan dari token yang sama supaya tidak
 bentrok.
 
-## Riset referensi eksternal
+## Tombol Kirim Invoice via WhatsApp di halaman Rekapan
 
+- [x] Tombol **Kirim** per baris di `admin/recaps/show` (kolom "Aksi").
+  Alur: data baris diubah jadi dokumen invoice **di server**
+  (`Recap::invoiceForRow()`, pakai aturan kolom yang sama dengan `totals()`
+  supaya angka konsisten) -> di-embed sebagai JSON -> JS membangun invoice
+  (DOM + warna hex inline, hindari `oklch` Tailwind v4) -> `html2canvas`
+  render PNG (lazy chunk) -> **Web Share API** (`navigator.canShare({files})`)
+  agar sheet Android muncul dan pengguna pilih WhatsApp.
+- [x] Fallback bila file sharing tak didukung: unduh PNG + buka chat `wa.me`
+  (tanpa lampiran), dengan pesan jelas bahwa gambar harus dilampirkan manual.
+- [x] Normalisasi nomor Indonesia di JS (`waPhone()`: 08.. / +62.. / 62.. / 8..),
+  validasi nomor kosong/tidak valid, guard double-click, loading state,
+  pembatalan sheet (AbortError) dianggap bukan kegagalan.
+- [x] Tidak ada API berbayar / WhatsApp Business API / automation. Tidak
+  mengklaim terkirim otomatis: pengiriman tetap butuh aksi pengguna di WhatsApp.
+- [x] Test: `RecapTest` (dok invoice per baris + total/DP/sisa/status).
+
+## Sisa TODO
+
+- [ ] Sweep ~500 hex ad-hoc di view ke token + audit kontras menyeluruh.
+- [ ] Landmark/ARIA audit menyeluruh (belum pernah dikerjakan).
+
+## Riset referensi eksternal
 - [x] Scrape **jastipify.biz.id** (Playwright/Chromium). Login situs hanya via
   Google OAuth, jadi halaman dalam tidak bisa diambil; yang terekam hanya
   permukaan publik (landing, register, forgot-password). Hasil ekstraksi:
