@@ -34,7 +34,7 @@
             <div class="nb-card p-5 text-center md:text-left">
                 <x-icon :name="$step['icon']" class="w-9 h-9 mx-auto md:mx-0 mb-4 text-orange-500" />
                 <span class="text-xs font-bold text-[#0E7490] dark:text-[#67e8f9] uppercase tracking-wider">Langkah {{ $loop->iteration }}</span>
-                <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] text-lg mb-2 mt-1">{{ $step['title'] }}</h3>
+                <h2 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] text-lg mb-2 mt-1">{{ $step['title'] }}</h2>
                 <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] leading-relaxed">{{ $step['desc'] }}</p>
             </div>
         @endforeach

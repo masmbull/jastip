@@ -3,7 +3,7 @@
     $brandName = setting('brand_name', 'NITIP DI END');
 @endphp
 
-<div class="fixed bottom-6 right-4 sm:right-6 z-40 group">
+<div class="fixed bottom-6 right-4 sm:right-6 z-40 group" role="region" aria-label="Bantuan cepat">
     <a href="{{ whatsapp_url(preg_replace('/[^0-9]/', '', $whatsapp), 'Halo Kak, saya tertarik untuk nitip di ' . $brandName) }}"
        target="_blank" rel="noopener noreferrer"
        aria-label="Chat admin via WhatsApp" title="Chat Admin"

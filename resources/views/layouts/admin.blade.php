@@ -19,6 +19,11 @@
     @include('partials.theme-colors')
 </head>
 <body class="bg-[#FAF6EF] text-[#141414] font-sans antialiased min-h-screen">
+    {{-- Skip to content --}}
+    <a href="#admin-main"
+       class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[999] focus:px-4 focus:py-2 focus:bg-[#FFC800] focus:text-[#141414] focus:font-bold focus:border-2 focus:border-[#141414] focus:rounded-[8px]">
+        Lewati ke konten
+    </a>
 
 {{-- Loading splash: self-removing, no Alpine dependency, so it cannot get
      stuck when the Alpine CDN is slow or the load event already fired. --}}
@@ -122,7 +127,7 @@
         </header>
 
         {{-- Page Content --}}
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main id="admin-main" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             @yield('content')
         </main>
     </div>

@@ -36,7 +36,7 @@
 
             {{-- Contact --}}
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-white">Hubungi Kami</h3>
+                <p class="text-lg font-semibold text-white">Hubungi Kami</p>
                 <ul class="space-y-3 text-sm">
                     <li class="flex items-start space-x-3">
                         <x-icon name="phone" class="w-5 h-5 text-orange-400 flex-shrink-0 mt-0.5" />
@@ -57,7 +57,7 @@
 
             {{-- Social Media --}}
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-white">Ikuti Kami</h3>
+                <p class="text-lg font-semibold text-white">Ikuti Kami</p>
                 <div class="flex space-x-4">
                     <a href="https://instagram.com/{{ $instagram }}" target="_blank" rel="noopener"
                        aria-label="Instagram {{ $instagram }}" title="Instagram"
@@ -80,7 +80,7 @@
 
             {{-- Quick Links --}}
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-white">Quick Links</h3>
+                <p class="text-lg font-semibold text-white">Quick Links</p>
                 <ul class="space-y-2 text-sm">
                     <li><a href="{{ route('home') }}" class="text-[#CBD5E1] hover:text-orange-400 transition-colors">Beranda</a></li>
                     <li><a href="{{ route('products.index') }}" class="text-[#CBD5E1] hover:text-orange-400 transition-colors">Semua Produk</a></li>

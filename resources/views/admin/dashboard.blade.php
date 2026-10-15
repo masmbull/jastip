@@ -16,11 +16,11 @@
         <x-stat-card label="Menunggu Konfirmasi" :value="$stats['orders_pending'] ?? 0" icon="clock" :href="route('admin.orders.index', ['status' => 'pending'])" />
     </div>
 
-    <div class="bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/30 rounded-xl p-5">
-        <h3 class="text-sm font-semibold text-sky-900 dark:text-sky-200 mb-1 flex items-center gap-1.5">
+    <div class="bg-[#FEF3C7] dark:bg-[#262626] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-xl p-5">
+        <h2 class="text-sm font-black text-[#141414] dark:text-[#FAF6EF] mb-1 flex items-center gap-1.5">
             <x-icon name="bell" class="w-5 h-5" /> Pemantauan Layanan
-        </h3>
-        <p class="text-sm text-sky-800 dark:text-sky-300 mb-3">Cek kesehatan sistem dan layanan yang terhubung.</p>
+        </h2>
+        <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mb-3">Cek kesehatan sistem dan layanan yang terhubung.</p>
         <x-btn as="a" :href="route('admin.services.index')" icon="arrow-right">Buka Pemantauan</x-btn>
     </div>
 </div>

@@ -488,7 +488,12 @@ html.dark .nb-input:focus { outline-color: #FFC800; }
 }
 html.dark .nb-table-shell { border-color: #FAF6EF; }
 .nb-table-head { background: #141414; color: #fff; }
+/* Header tabel memaksa warna teks terang. View lama menulis
+   text-[#64748B] di dalam <th>, yang menimpa warna header dan gagal
+   kontras (abu gelap di atas tinta). */
+.nb-table-head th, .nb-table-head td { color: #FAF6EF !important; }
 html.dark .nb-table-head { background: #000; color: #FAF6EF; border-bottom: 2px solid #FAF6EF; }
+html.dark .nb-table-head th, html.dark .nb-table-head td { color: #FAF6EF !important; }
 .nb-money-strip {
     background: var(--nb-accent);
     color: var(--nb-accent-ink);
@@ -548,3 +553,12 @@ html.dark *:focus-visible { outline-color: #FFC800 !important; }
 
 .bg-sky-50, .dark\:bg-sky-500\/10 { background-color: #FEF3C7; }
 .border-sky-200, .dark\:border-sky-500\/30 { border-color: #141414; }
+
+/* Kontras teks redup di atas kertas/putih. #64748B di atas #FAF6EF hanya
+   ~4.4:1 (gagal AA untuk teks normal). Digelapkan sedikit -> ~5.6:1. */
+.text-\[\#64748B\] { color: #475569; }
+
+/* Teks oranye (harga/link) di atas kertas/putih: orange-600 hanya ~3.5:1.
+   Digelapkan ke amber-700 (~5:1) supaya lolos AA. Varian gelap tidak diubah. */
+.text-orange-600 { color: #B45309; }
+.hover\:text-orange-600:hover { color: #B45309; }
