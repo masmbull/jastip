@@ -3,20 +3,9 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
 
 ## Baru masuk
 
-- [ ] **RAINBOW MODE** — tema warna-warni ceria, gaya "pelangi terstruktur"
-  (geometri brutalist tetap, cuma warna isinya yang pelangi).
-  Sudah kelar:
-  - Palet Tailwind dilepas dari pemadatan biru tunggal — `green-500`
-    tombol WhatsApp akhirnya benar-benar hijau, `red-500` error jadi merah.
-  - Token 7 warna blok (`--nb-sun` … `--nb-mint`) + utilitas `.nb-rainbow`
-    (siklus otomatis di grid) dan `.nb-tint-<warna>` (manual).
-  - Prop `tone` di `<x-card>` dan `<x-stat-card>`.
-  - Sidebar admin: strip pelangi + tiap kelompok menu punya warna sendiri.
-  - Grid: dashboard, ringkasan Rekapan, produk & kategori (depan + list).
-  Belum: halaman checkout, profil, dan halaman statis. Catatan: halaman-halaman
-  itu masih pakai kartu gaya lama (`bg-white rounded-xl shadow_sm` cards, bukan
-  `nb-card`), jadi urutannya harus diconvert ke brutalist dulu — kalau
-  `nb-rainbow` dipasang duluan hasilnya kotak warna datar tanpa garis tinta.
+- [x] **RAINBOW MODE** — SELESAI. Semua halaman (termasuk checkout, profil, dan
+  halaman statis) sudah neo-brutalist + memakai token warna; sweep teal selesai
+  (0 teal di view). Detail lengkap ada di bagian "Sisa TODO" di bawah.
 
 ## Bug ketemu & diperbaiki
 
@@ -136,9 +125,8 @@ bentrok.
   atribut `@error(...)` dipertahankan. Diverifikasi visual (screenshot) +
   axe-core 0 pelanggaran di 8 halaman profil.
 
-- [ ] Landmark/ARIA audit menyeluruh — **SUDAH DIKERJAKAN** (lihat catatan di
-  atas: axe-core 20 halaman + 8 halaman profil, 0 pelanggaran). Baris ini
-  tinggal penanda.
+- [x] Landmark/ARIA audit menyeluruh — SUDAH DIKERJAKAN (axe-core 20 halaman +
+  8 halaman profil, 0 pelanggaran).
 
 Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
 `artisan serve`; halaman admin login `admin` / `admin123` (seeder).
@@ -156,14 +144,14 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   Detail: `docs/DESIGN-DIRECTION.md`.
 - [x] Terapkan split panel neo-brutalist di `layouts/auth` + `auth/login` +
   `auth/register`.
-- [ ] Sisa: sweep ~500 hex ad-hoc di view ke token + audit kontras menyeluruh.
+- [x] Sweep hex ad-hoc di view ke token + audit kontras menyeluruh. Sisa teal
+  (`bg/text/focus ring/checkbox accent`) di ~33 file diganti aksen+pasangan
+  tinta; `text-white` di atas aksen kuning dibetulkan (kontras) di 15 file.
+  Hasil: **0 teal** di seluruh view, axe-core 0 pelanggaran (20 halaman).
 
-- [ ] **Catatan: perubahan warna di-REVERT.** Upaya menyatukan palet di
-  `app.css` (cyan -> aksen kuning, remap ~500 hex biru-slate) ternyata bikin
-  tampilan "unexpected". `app.css` dikembalikan ke versi sebelum perubahan itu;
-  fitur foto invoice WhatsApp tetap dipertahankan. Perbaikan warna akan
-  dikerjakan ulang dengan pendekatan yang tidak mengubah warna yang sudah
-  benar-benar dipakai.
+- [x] Catatan REVERT warna: **selesai dikerjakan ulang.** Pendekatan lama
+  (cyan dipaksa kuning + remap ~500 hex) di-revert; perbaikan ulang dilakukan
+  bertahap per-halaman dengan verifikasi screenshot + axe, bukan remap global.
 
 ## Sudah kelar
 
@@ -187,18 +175,12 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
 
 ## Antrean
 
-- [ ] **QRIS** — Setelah admin upload QRIS lewat Pengaturan → payment page 
-  masih nggak muncul. **Suspek utama**: `setting()` cache 1 jam, `Setting::set()` 
-  baru lupa cache; `config/filesystems.php` default disk `local` tapi filenya 
-  dipakai disk `public`; dan/atau checkbox `qris_enabled` lagi mati. 
-  Butuh verifikasi manual di production server (check: `public/storage` symlink,
-  `Setting::set()` dipakai di settings save controller, cek checkbox `qris_enabled`).
+- [x] **QRIS** — sudah diperbaiki (lihat "QRIS tidak muncul (bug nyata)" di
+  bawah: `qris_url()` kini memakai disk `public`). Di server tetap pastikan
+  symlink ada: `php artisan storage:link`.
 
-- [ ] **Brutalist-convert static pages** (about, cara-nitip, contact) dari
-  Tailwind `x-card` ke `nb-card` (2px ink border, hard shadow, paper `#FAF6EF`).
-  - `about.blade` ✅ sudah dikonversi ke nb-card + tint `#FFC800` + ink `#141414`.
-  - `cara-nitip.blade` ✅ dikonversi ke nb-card + tint `#FFC800` + ink `#141414`.
-  - `contact.blade` ✅ dikonversi ke nb-card + struktur form kustom + ink `#141414`.
+- [x] **Brutalist-convert static pages** (about, cara-nitip, contact) — selesai
+  (nb-card + ink `#141414` + aksen).
 
 - [x] **Kecamatan/kelurahan**: migrasi `orders.district` + `orders.village`,
   `WilayahService` (baca `database/data/wilayah.json`, di-cache), endpoint
@@ -210,10 +192,11 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   HANYA jalan di env `local`/`testing`. Deployment produksi tidak lagi membuat
   katalog contoh; bini lo isi sendiri. (Seeder tetap dipakai test.)
 
-- [x] **Modal tambah produk**: sudah ada halaman penuh
-  `admin/products/create` (field lengkap + upload foto + status Ready/PO),
-  dijangkau dari tombol "Tambah Produk". Tidak diubah ke modal karena halaman
-  penuh lebih nyaman untuk banyak field.
+- [x] **Modal tambah produk** — selesai: form produk kini SATU partial
+  (`admin/products/_form.blade.php`) dipakai halaman create, edit, DAN modal di
+  daftar produk. Sudah brutalist + opsi **Ready Stock / Pre-Order (PO)** +
+  **Estimasi Barang Siap** (`ready_date`). Pembeli melihat badge status di
+  halaman produk.
 
 - [x] **QRIS tidak muncul (bug nyata)** — `qris_url()` memakai `Storage::url()`
   polos (mengikuti disk default, di `.env` = `local`), padahal file diunggah ke
@@ -221,22 +204,14 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   `Storage::disk('public')->url()`, plus pemakaian serupa di
   `payment-proofs/show`. Terverifikasi lokal: URL jadi `/storage/settings/...`.
 
-- [ ] **Full suite test + `npm run build`** sebelum rilis final.
-
-- [ ] **Commit + push + deployment ke server**:
-  `git pull`, `php artisan migrate --force`, `php artisan optimize:clear`,
-  `php artisan optimize`, `sudo systemctl reload php8.3-fpm`.
-
-- [ ] `php artisan test` full suite hijau.
-- [ ] `npm run build`.
-- [ ] Commit + push, lalu di server: `git pull`,
-  `php artisan migrate --force`, `php artisan optimize:clear`,
-  `php artisan optimize`, `sudo systemctl reload php8.3-fpm`.
-
-## Rilis
-
-- [ ] `php artisan test` full suite hijau.
-- [ ] `npm run build`.
-- [ ] Commit + push, lalu di server: `git pull`,
-  `php artisan migrate --force`, `php artisan optimize:clear`,
-  `php artisan optimize`, `sudo systemctl reload php8.3-fpm`.
+- [x] **Full suite test + `npm run build` + commit/push (rilis).**
+  `php artisan view:cache` OK, `npm run build` OK, `php artisan test` hijau,
+  commit + push ke `main`. Deployment server (setelah `git pull`):
+  ```bash
+  php artisan migrate --force
+  php artisan optimize:clear
+  php artisan optimize
+  sudo systemctl reload php8.3-fpm
+  ```
+  Jangan `npm run build` di server (aset `public/build` sudah di-commit);
+  kalau memang perlu: `npm ci && npm run build`.
