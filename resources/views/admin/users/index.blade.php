@@ -12,7 +12,7 @@
 
     <x-page-header title="Daftar Pelanggan" subtitle="Kelola akun pelanggan" class="animate-fade-up">
         <button type="button" @click="open = true"
-                class="nb-btn inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#0E7490] text-white text-sm"
+                class="nb-btn inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#FFC800] text-[#141414] text-sm"
                 aria-haspopup="dialog" aria-label="Tambah pelanggan baru">
             <x-icon name="plus" class="w-4 h-4" /> Tambah Pelanggan
         </button>
@@ -51,7 +51,7 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-1">
                                     <a href="{{ route('admin.users.show', $user) }}"
-                                       class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#475569] dark:text-[#CBD5E1] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0E7490]"
+                                       class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#475569] dark:text-[#CBD5E1] transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAB308]"
                                        title="Lihat" aria-label="Lihat pelanggan {{ $user->name }}">
                                         <x-icon name="eye" class="w-4 h-4" />
                                     </a>
@@ -60,7 +60,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#B91C1C] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0E7490]"
+                                                class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#B91C1C] transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAB308]"
                                                 title="Hapus" aria-label="Hapus pelanggan {{ $user->name }}">
                                             <x-icon name="trash" class="w-4 h-4" />
                                         </button>
@@ -97,7 +97,7 @@
             <div class="flex items-center justify-between px-5 py-4 border-b-2 border-[#141414] dark:border-[#FAF6EF]">
                 <h3 id="add-customer-title" class="text-lg font-black text-[#141414] dark:text-[#FAF6EF]">Tambah Pelanggan Baru</h3>
                 <button type="button" @click="open = false" aria-label="Tutup" title="Tutup"
-                        class="inline-flex items-center justify-center w-10 h-10 rounded-[8px] text-[#141414] dark:text-[#FAF6EF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0E7490]">
+                        class="inline-flex items-center justify-center w-10 h-10 rounded-[8px] text-[#141414] dark:text-[#FAF6EF] hover:bg-black/5 dark:hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-[#EAB308]">
                     <x-icon name="x" class="w-5 h-5" />
                 </button>
             </div>
@@ -165,7 +165,7 @@
                         Batal
                     </button>
                     <button type="submit"
-                            class="nb-btn px-4 py-2.5 bg-[#0E7490] text-white text-sm">
+                            class="nb-btn px-4 py-2.5 bg-[#FFC800] text-[#141414] text-sm">
                         Simpan Pelanggan
                     </button>
                 </div>

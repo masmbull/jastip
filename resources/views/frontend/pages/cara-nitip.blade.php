@@ -7,7 +7,7 @@
 
     {{-- Header --}}
     <div class="text-center mb-14">
-        <span class="inline-block px-4 py-1.5 bg-orange-100 dark:bg-orange-500/20 text-[#0E7490] dark:text-[#67e8f9] text-xs font-semibold uppercase tracking-wider rounded-full mb-4">
+        <span class="inline-block px-4 py-1.5 bg-orange-100 dark:bg-orange-500/20 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] text-xs font-semibold uppercase tracking-wider rounded-full mb-4">
             Cara Kerja
         </span>
         <h1 class="text-3xl md:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-3">
@@ -33,7 +33,7 @@
         @foreach($steps as $step)
             <div class="nb-card p-5 text-center md:text-left">
                 <x-icon :name="$step['icon']" class="w-9 h-9 mx-auto md:mx-0 mb-4 text-orange-500" />
-                <span class="text-xs font-bold text-[#0E7490] dark:text-[#67e8f9] uppercase tracking-wider">Langkah {{ $loop->iteration }}</span>
+                <span class="text-xs font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] uppercase tracking-wider">Langkah {{ $loop->iteration }}</span>
                 <h2 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] text-lg mb-2 mt-1">{{ $step['title'] }}</h2>
                 <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] leading-relaxed">{{ $step['desc'] }}</p>
             </div>

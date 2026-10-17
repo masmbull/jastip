@@ -27,7 +27,7 @@
                 <div class="p-4">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase font-medium">{{ $wishlist->product->category->name ?? 'Lainnya' }}</p>
                     <h3 class="font-bold text-[#1E293B] dark:text-[#f1f5f9] line-clamp-1 mb-1">{{ $wishlist->product->name }}</h3>
-                    <p class="text-[#0E7490] dark:text-[#67e8f9] font-bold mb-3 num">{{ $wishlist->product->formatted_price }}</p>
+                    <p class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] font-bold mb-3 num">{{ $wishlist->product->formatted_price }}</p>
                     <button type="button"
                             data-wishlist-toggle
                             data-url="{{ route('wishlist.toggle', ['product' => $wishlist->product->id]) }}"

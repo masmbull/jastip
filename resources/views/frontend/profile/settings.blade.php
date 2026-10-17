@@ -94,7 +94,7 @@
                     </div>
 
                     <noscript>
-                        <button type="submit" class="mt-3 px-4 py-2.5 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0E7490] transition font-medium text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        <button type="submit" class="mt-3 px-4 py-2.5 bg-[#06B6D4] text-[#141414] rounded-lg hover:bg-[#FFC800] transition font-medium text-sm focus:outline-none focus:ring-2 focus:ring-orange-300">
                             Simpan
                         </button>
                     </noscript>

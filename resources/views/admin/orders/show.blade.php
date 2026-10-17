@@ -23,7 +23,7 @@
                 data-inv-url="{{ route('admin.orders.invoice', $order) }}?embed=1"
                 data-inv-title="Invoice #{{ $order->no }}"
                 @click="$dispatch('jd-invoice', {url:$el.dataset.invUrl, title:$el.dataset.invTitle})"
-                class="nb-btn px-4 py-2 text-sm bg-[#0E7490] text-white">
+                class="nb-btn px-4 py-2 text-sm bg-[#FFC800] text-[#141414]">
             <x-icon name="clipboard" class="w-4 h-4" /> Buat Invoice
         </button>
     </x-page-header>
@@ -67,7 +67,7 @@
             <h2 class="text-[12px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-[0.12em] mb-3">Informasi Pelanggan</h2>
             <div class="space-y-2 text-sm">
                 <div><span class="text-[#475569] font-bold">Nama:</span> <span class="font-extrabold">{{ $order->customer_name }}</span></div>
-                <div><span class="text-[#475569] font-bold">WA:</span> <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="font-bold text-[#0E7490] dark:text-[#22D3EE] underline underline-offset-2">{{ $order->customer_whatsapp }}</a></div>
+                <div><span class="text-[#475569] font-bold">WA:</span> <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] underline underline-offset-2">{{ $order->customer_whatsapp }}</a></div>
                 <div><span class="text-[#475569] font-bold">Tgl:</span> <span class="font-bold num">{{ $order->created_at->format('d M Y, H:i') }}</span></div>
                 <div><span class="text-[#475569] font-bold">Metode:</span> <span class="font-bold">{{ $order->shipping_method ?? '-' }}</span></div>
                 @if($order->customer_notes)<div><span class="text-[#475569] font-bold">Catatan:</span> <span class="font-medium">{{ $order->customer_notes }}</span></div>@endif
@@ -170,7 +170,7 @@
                            class="nb-input w-full px-3 py-2 text-sm">
                 </div>
                 <div class="col-span-2">
-                    <button type="submit" class="nb-btn w-full px-4 py-2 text-sm bg-[#0E7490] text-white">Catat Pelunasan</button>
+                    <button type="submit" class="nb-btn w-full px-4 py-2 text-sm bg-[#FFC800] text-[#141414]">Catat Pelunasan</button>
                 </div>
             </form>
         @elseif($order->is_paid)
@@ -242,7 +242,7 @@
             <form method="POST" action="{{ route('admin.orders.status', $order->id) }}">
                 @csrf @method('PUT')
                 <input type="hidden" name="status" value="{{ $order->status === 'processing' ? 'ready' : 'completed' }}">
-                <button type="submit" class="nb-btn px-4 py-2 text-sm {{ $order->status === 'processing' ? 'bg-[#15803D]' : 'bg-[#0E7490]' }} text-white">
+                <button type="submit" class="nb-btn px-4 py-2 text-sm {{ $order->status === 'processing' ? 'bg-[#15803D]' : 'bg-[#FFC800]' }} text-[#141414]">
                     @if($order->status === 'processing') Tandai Siap Kirim @else Selesaikan Pesanan @endif
                 </button>
             </form>
@@ -258,7 +258,7 @@
                 <label class="sr-only" for="courier-input">Kurir</label>
                 <input id="courier-input" type="text" name="courier" value="{{ $order->courier }}" placeholder="Kurir (mis. JNE)"
                        class="nb-input px-3 py-1.5 text-sm w-36">
-                <button type="submit" class="nb-btn px-4 py-1.5 text-sm bg-[#0E7490] text-white">
+                <button type="submit" class="nb-btn px-4 py-1.5 text-sm bg-[#FFC800] text-[#141414]">
                     <x-icon name="truck" class="w-4 h-4" /> Kirim
                 </button>
             </form>

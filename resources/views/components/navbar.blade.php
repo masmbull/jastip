@@ -19,7 +19,7 @@
                 @endif
                 <div class="min-w-0">
                     <span class="font-black text-lg leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ $brandName }}</span>
-                    <span class="block text-[11px] font-extrabold uppercase tracking-widest text-[#0E7490] dark:text-[#22D3EE] truncate">{{ setting('brand_tagline', 'EH, NITIP DONG!') }}</span>
+                    <span class="block text-[11px] font-extrabold uppercase tracking-widest text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] truncate">{{ setting('brand_tagline', 'EH, NITIP DONG!') }}</span>
                 </div>
             </div>
 
@@ -70,7 +70,7 @@
                         <button type="button" @click="accountOpen = !accountOpen"
                                 class="flex items-center p-1 rounded-[8px] border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] transition-colors"
                                 title="Akun saya" aria-haspopup="true" :aria-expanded="accountOpen">
-                            <span class="h-8 w-8 rounded-[8px] bg-[#141414] dark:bg-[#FFC800] text-white dark:text-[#141414] border-2 border-[#141414] dark:border-[#FAF6EF] text-sm font-black flex items-center justify-center">
+                            <span class="h-8 w-8 rounded-[8px] bg-[#141414] dark:bg-[#FFC800] text-[#141414] dark:text-[#141414] border-2 border-[#141414] dark:border-[#FAF6EF] text-sm font-black flex items-center justify-center">
                                 {{ strtoupper(substr($accountUser->name, 0, 1)) }}
                             </span>
                         </button>

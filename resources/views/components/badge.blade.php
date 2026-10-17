@@ -10,8 +10,8 @@
         'success' => 'bg-[#DCFCE7] text-[#166534] dark:bg-[#14532D] dark:text-[#BBF7D0]',
         'warning' => 'bg-[#FEF3C7] text-[#92400E] dark:bg-[#78350F] dark:text-[#FDE68A]',
         'danger' => 'bg-[#FEE2E2] text-[#991B1B] dark:bg-[#7F1D1D] dark:text-[#FECACA]',
-        'info' => 'bg-[#CFFAFE] text-[#155E75] dark:bg-[#164E63] dark:text-[#A5F3FC]',
-        'brand' => 'bg-[#0E7490] text-white dark:bg-[#22D3EE] dark:text-[#083344]',
+        'info' => 'bg-[#E0E7FF] text-[#3730A3] dark:bg-[#312E81] dark:text-[#C7D2FE]',
+        'brand' => 'bg-[#FFC800] text-[#141414] dark:bg-[#FFC800] dark:text-[#141414]',
     ];
 @endphp
 

@@ -71,7 +71,7 @@
                 </p>
             @endif
 
-            <p class="text-[#0E7490] dark:text-[#22D3EE] font-black text-lg mb-1 num">
+            <p class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] font-black text-lg mb-1 num">
                 {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}
             </p>
             @if($product->price_max)

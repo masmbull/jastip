@@ -35,7 +35,7 @@
             <x-icon name="arrow-left" class="w-4 h-4" /> Kembali ke pesanan
         </a>
         <button type="button" onclick="window.print()"
-                class="nb-btn px-4 py-2 bg-[#0E7490] text-white text-sm">
+                class="nb-btn px-4 py-2 bg-[#FFC800] text-[#141414] text-sm">
             <x-icon name="printer" class="w-4 h-4" /> Cetak / Simpan PDF
         </button>
     </div>
@@ -213,7 +213,7 @@
             </div>
             <p class="text-xs text-[#475569] mt-3 leading-relaxed border-l-4 border-[#FFC800] pl-3">
                 Setelah transfer, kirim bukti pembayaran lewat WhatsApp
-                @if($whatsapp)<a href="https://wa.me/{{ $waDigits }}" class="font-bold text-[#0E7490] underline underline-offset-2" target="_blank" rel="noopener noreferrer">{{ $whatsapp }}</a>@else<span class="font-bold">{{ $owner }}</span>@endif
+                @if($whatsapp)<a href="https://wa.me/{{ $waDigits }}" class="font-bold text-[#141414] dark:text-[#FAF6EF] underline underline-offset-2" target="_blank" rel="noopener noreferrer">{{ $whatsapp }}</a>@else<span class="font-bold">{{ $owner }}</span>@endif
                 dengan menyebut nomor invoice <span class="font-bold text-[#141414] num">#{{ $order->order_number }}</span>.
             </p>
         @endif

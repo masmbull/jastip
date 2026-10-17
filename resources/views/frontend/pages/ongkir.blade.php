@@ -33,7 +33,7 @@
             'api' => 'API Gratis',
         ] as $key => $label)
             <button type="button" @click="tab = '{{ $key }}'" role="tab" :aria-selected="tab === '{{ $key }}'"
-                    :class="tab === '{{ $key }}' ? 'border-[#06B6D4] text-[#0891B2]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#0891B2]'"
+                    :class="tab === '{{ $key }}' ? 'border-[#06B6D4] text-[#141414] dark:text-[#FAF6EF]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#141414] dark:text-[#FAF6EF]'"
                     class="min-h-[44px] px-4 py-3 text-sm font-semibold border-b-2 -mb-px transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded-t">{{ $label }}</button>
         @endforeach
     </nav>
@@ -46,7 +46,7 @@
                 <div>
                     <label for="city" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1] mb-2">Kota Tujuan</label>
                     <select name="city" id="city"
-                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#0891B2]">
+                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#EAB308]">
                         @foreach($citiesByZone as $zone => $zoneCities)
                             <optgroup label="Zona {{ $zone }}: {{ $zoneLabels[$zone] ?? '' }}">
                                 @foreach($zoneCities as $zoneCity)
@@ -61,14 +61,14 @@
                     <label for="weight" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1] mb-2">Berat Paket (kg)</label>
                     <input type="number" name="weight" id="weight" min="0.1" max="100" step="0.1"
                            value="{{ $weight }}"
-                           class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] num focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#0891B2]">
+                           class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] num focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#EAB308]">
                     <p class="mt-1 text-xs text-[#64748B] dark:text-[#cbd5e1]">Pembulatan kurir: per 0,5 kg (kargo per 1 kg).</p>
                 </div>
 
                 <div>
                     <label for="courier" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1] mb-2">Ekspedisi (opsional)</label>
                     <select name="courier" id="courier"
-                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#0891B2]">
+                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#EAB308]">
                         <option value="">Bandingkan semua</option>
                         @foreach($enabledByType as $type => $group)
                             <optgroup label="{{ $typeLabel($type) }}">
@@ -87,7 +87,7 @@
                     Hitung Ongkir
                 </button>
                 <a href="{{ route('shipping.index') }}"
-                   class="inline-flex items-center min-h-[44px] px-6 py-2.5 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#0891B2] font-semibold rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                   class="inline-flex items-center min-h-[44px] px-6 py-2.5 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#141414] dark:text-[#FAF6EF] font-semibold rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Reset
                 </a>
             </div>
@@ -98,24 +98,24 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <div class="bg-white dark:bg-[#23252b] rounded-2xl border border-[#E2E8F0] dark:border-[#404854] p-5 flex items-start gap-4 transition-colors">
                     <div class="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center shrink-0">
-                        <x-icon name="banknotes" class="w-5 h-5 text-[#0E7490] dark:text-[#67e8f9]" />
+                        <x-icon name="banknotes" class="w-5 h-5 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1]">Termurah</p>
                         <p class="font-bold text-[#1E293B] dark:text-[#f1f5f9]">{{ $highlights['cheapest']['courier']['name'] }}</p>
-                        <p class="text-[#0E7490] dark:text-[#67e8f9] font-bold text-xl num">{{ $highlights['cheapest']['price_formatted'] }}</p>
+                        <p class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] font-bold text-xl num">{{ $highlights['cheapest']['price_formatted'] }}</p>
                         <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Estimasi {{ $highlights['cheapest']['etd'] }}</p>
                     </div>
                 </div>
 
                 <div class="bg-white dark:bg-[#23252b] rounded-2xl border border-[#E2E8F0] dark:border-[#404854] p-5 flex items-start gap-4 transition-colors">
                     <div class="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center shrink-0">
-                        <x-icon name="bolt" class="w-5 h-5 text-[#0E7490] dark:text-[#67e8f9]" />
+                        <x-icon name="bolt" class="w-5 h-5 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1]">Tercepat</p>
                         <p class="font-bold text-[#1E293B] dark:text-[#f1f5f9]">{{ $highlights['fastest']['courier']['name'] }}</p>
-                        <p class="text-[#0E7490] dark:text-[#67e8f9] font-bold text-xl num">{{ $highlights['fastest']['price_formatted'] }}</p>
+                        <p class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] font-bold text-xl num">{{ $highlights['fastest']['price_formatted'] }}</p>
                         <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Estimasi {{ $highlights['fastest']['etd'] }}</p>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                                 </td>
                                 <td class="px-4 py-4 text-right">
                                     @if($row['ok'])
-                                        <span class="font-bold text-[#0E7490] dark:text-[#67e8f9] num">{{ $row['price_formatted'] }}</span>
+                                        <span class="font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] num">{{ $row['price_formatted'] }}</span>
                                         <span class="block text-xs text-[#64748B] dark:text-[#cbd5e1] num">{{ $row['billable_weight'] }} kg terhitung</span>
                                     @else
                                         <span class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Tidak tersedia</span>
@@ -180,7 +180,7 @@
                                 <td class="px-6 py-4 text-right">
                                     @if($row['ok'])
                                         <a href="{{ route('shipping.index', ['city' => $city, 'weight' => $weight, 'courier' => $row['courier']['code']]) }}"
-                                           class="text-xs font-semibold text-[#0E7490] dark:text-[#67e8f9] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">Detail</a>
+                                           class="text-xs font-semibold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">Detail</a>
                                     @endif
                                 </td>
                             </tr>
@@ -204,7 +204,7 @@
                 <dl class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                     <div>
                         <dt class="text-xs uppercase text-[#64748B] dark:text-[#cbd5e1]">Estimasi biaya</dt>
-                        <dd class="font-bold text-[#0E7490] dark:text-[#67e8f9] text-lg num">{{ $selectedResult['price_formatted'] }}</dd>
+                        <dd class="font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] text-lg num">{{ $selectedResult['price_formatted'] }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs uppercase text-[#64748B] dark:text-[#cbd5e1]">Berat dihitung</dt>
@@ -226,7 +226,7 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach($selectedResult['tracking_links'] as $link)
                             <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer"
-                               class="text-xs font-semibold px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#0891B2] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                               class="text-xs font-semibold px-4 py-2.5 min-h-[44px] inline-flex items-center rounded-full border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#141414] dark:text-[#FAF6EF] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                                 {{ $link['label'] }}
                             </a>
                         @endforeach
@@ -276,7 +276,7 @@
                                         <td class="px-4 py-4 font-semibold text-[#1E293B] dark:text-[#f1f5f9] whitespace-nowrap">{{ $courier['name'] }}</td>
                                         <td class="px-4 py-4 text-xs text-[#64748B] dark:text-[#cbd5e1]">{{ $courier['services'] }}</td>
                                         <td class="px-4 py-4 text-right whitespace-nowrap">
-                                            <span class="font-bold text-[#0E7490] dark:text-[#67e8f9] num">{{ format_price($courier['per_kg']) }}/kg</span>
+                                            <span class="font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] num">{{ format_price($courier['per_kg']) }}/kg</span>
                                             @if(($courier['min_charge'] ?? 0) > ($courier['per_kg'] ?? 0))
                                                 <span class="block text-xs text-[#64748B] dark:text-[#cbd5e1] num">min. {{ format_price($courier['min_charge']) }}</span>
                                             @endif
@@ -356,7 +356,7 @@
                 <div>
                     <label for="resi_courier" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1] mb-2">Ekspedisi</label>
                     <select id="resi_courier" x-model="code"
-                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#0891B2]">
+                            class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#EAB308]">
                         <template x-for="c in couriers" :key="c.code">
                             <option :value="c.code" x-text="c.name"></option>
                         </template>
@@ -369,7 +369,7 @@
                     <label for="resi_awb" class="block text-xs font-semibold uppercase tracking-wide text-[#64748B] dark:text-[#cbd5e1] mb-2">Nomor Resi</label>
                     <input type="text" id="resi_awb" x-model="awb" @input="detect()" autocomplete="off"
                            placeholder="Contoh: JNE1234567890"
-                           class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#0891B2]">
+                           class="w-full rounded-xl border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] px-3 py-2.5 text-sm text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-[#EAB308]">
                     <p class="mt-1 text-xs" :class="ready ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#64748B] dark:text-[#cbd5e1]'"
                        x-text="ready ? 'Nomor resi siap dilacak.' : 'Minimal 6 karakter. Nomor resi biasanya ada di nota/chat admin.'"></p>
                 </div>
@@ -382,12 +382,12 @@
                     Lacak Sekarang
                 </a>
                 <a :href="ready ? aggregatorUrl : '#'" target="_blank" rel="noopener noreferrer"
-                   :class="ready ? 'border-orange-300 text-[#0891B2] hover:bg-orange-50 dark:hover:bg-orange-500/10' : 'border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] pointer-events-none'"
+                   :class="ready ? 'border-orange-300 text-[#141414] dark:text-[#FAF6EF] hover:bg-orange-50 dark:hover:bg-orange-500/10' : 'border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] pointer-events-none'"
                    class="inline-flex items-center min-h-[44px] px-5 py-2.5 bg-white dark:bg-[#2e323b] border font-semibold rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Cek via <span x-text="aggName" class="ml-1"></span>
                 </a>
                 <a :href="selected ? selected.page : '#'" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center min-h-[44px] px-5 py-2.5 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#0891B2] font-semibold rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                   class="inline-flex items-center min-h-[44px] px-5 py-2.5 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#64748B] dark:text-[#cbd5e1] hover:border-orange-300 hover:text-[#141414] dark:text-[#FAF6EF] font-semibold rounded-full text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     Halaman Resmi <span x-text="selected ? selected.name : ''" class="ml-1"></span>
                 </a>
             </div>
@@ -410,7 +410,7 @@
                     <article class="rounded-xl border border-[#E2E8F0] dark:border-[#404854] p-5 hover:border-orange-300 transition-colors">
                         <div class="flex items-start justify-between gap-3">
                             <a href="{{ $api['url'] }}" target="_blank" rel="noopener noreferrer"
-                               class="font-bold text-[#1E293B] dark:text-[#f1f5f9] hover:text-[#0891B2] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
+                               class="font-bold text-[#1E293B] dark:text-[#f1f5f9] hover:text-[#141414] dark:text-[#FAF6EF] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                                 {{ $api['name'] }}
                             </a>
                             <x-badge tone="brand" class="shrink-0">{{ $api['kind'] }}</x-badge>
@@ -432,7 +432,7 @@
                         </dl>
 
                         <a href="{{ $api['url'] }}" target="_blank" rel="noopener noreferrer"
-                           class="inline-flex items-center gap-1 mt-4 text-xs font-semibold text-[#0E7490] dark:text-[#67e8f9] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
+                           class="inline-flex items-center gap-1 mt-4 text-xs font-semibold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                             Buka dokumentasi <x-icon name="arrow-right" class="w-4 h-4" />
                         </a>
                     </article>

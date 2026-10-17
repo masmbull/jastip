@@ -29,6 +29,8 @@ class Product extends Model
         'is_featured',
         'is_viral',
         'viral_rank',
+        'is_po',
+        'ready_date',
     ];
 
     protected function casts(): array
@@ -45,8 +47,10 @@ class Product extends Model
             'sold_count' => 'integer',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
-            'is_viral' => 'boolean',
-            'viral_rank' => 'integer',
+'is_viral' => 'boolean',
+        'viral_rank' => 'integer',
+        'is_po' => 'boolean',
+        'ready_date' => 'date',
         ];
     }
 

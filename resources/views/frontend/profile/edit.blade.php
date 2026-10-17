@@ -36,7 +36,7 @@
                                    class="block w-full text-sm text-[#64748B] dark:text-[#cbd5e1]
                                    file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
                                    file:text-sm file:font-semibold file:bg-[#06B6D4] file:text-white
-                                   hover:file:bg-[#0E7490] focus:outline-none focus:ring-2 focus:ring-orange-300 rounded-lg">
+                                   hover:file:bg-[#FFC800] focus:outline-none focus:ring-2 focus:ring-orange-300 rounded-lg">
                             <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-2">Max 2MB. Format: JPG, PNG, GIF</p>
                         </div>
                     </div>

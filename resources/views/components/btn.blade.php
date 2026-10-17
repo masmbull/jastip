@@ -1,13 +1,14 @@
 {{--
   Tombol brutalist. Border 2px tinta + hard shadow sebagai motif identitas.
-  Kontras: teks putih di #0E7490 (5.36:1, lolos AA), bukan #0891B2 (3.68:1).
+  Aksen dari Pengaturan brand (default kuning #FFC800) selalu dipasangkan teks
+  tinta #141414 supaya kontras lolos AA.
 --}}
 @props(['as' => 'button', 'variant' => 'brand', 'icon' => null, 'type' => 'button'])
 
 @php
     $base = 'nb-btn px-4 py-2 text-sm';
     $variants = [
-        'brand' => 'bg-[#0E7490] hover:bg-[#155E75] text-white',
+        'brand' => 'bg-[#FFC800] hover:bg-[#FFC800] text-[#141414]',
         'accent' => 'bg-[#FFC800] hover:bg-[#F5B800] text-[#141414]',
         'ghost' => 'bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]',
         'outline' => 'bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]',

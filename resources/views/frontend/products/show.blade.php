@@ -116,6 +116,20 @@
                     @endif
                 </p>
 
+                {{-- Status ketersediaan dari admin: Ready Stock atau Pre-Order (PO) --}}
+                @if($product->is_po)
+                    <p class="mt-2 text-sm">
+                        <x-badge tone="warning" class="font-bold">Pre-Order (PO)</x-badge>
+                        @if($product->ready_date)
+                            <span class="ml-1 font-medium text-[#475569] dark:text-[#D6D3D1]">Estimasi siap: <span class="font-bold">{{ $product->ready_date->format('d M Y') }}</span></span>
+                        @endif
+                    </p>
+                @else
+                    <p class="mt-2 text-sm">
+                        <x-badge tone="success" class="font-bold">Ready Stock</x-badge>
+                    </p>
+                @endif
+
                 @php
                     $shippingCost = (int) setting('shipping_cost', 0);
                     $minOrder = (int) setting('minimum_order', 0);

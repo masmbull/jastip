@@ -31,7 +31,7 @@
                     <!-- Awaiting Payment -->
                     <div class="flex gap-4">
                         <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full {{ $order->status !== 'awaiting_payment' ? 'bg-emerald-500' : 'bg-[#0891B2]' }} flex items-center justify-center text-white font-bold">
+                            <div class="w-10 h-10 rounded-full {{ $order->status !== 'awaiting_payment' ? 'bg-emerald-500' : 'bg-[#FFC800]' }} flex items-center justify-center text-[#141414] font-bold">
                                 @if($order->status === 'awaiting_payment')
                                     <x-icon name="clock" class="w-5 h-5" />
                                 @else
@@ -46,7 +46,7 @@
                             <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Menunggu Pembayaran</p>
                             <p class="text-sm text-[#64748B] dark:text-[#cbd5e1] num">{{ $order->created_at->format('d M Y H:i') }}</p>
                             @if($order->status === 'awaiting_payment')
-                                <p class="text-xs text-[#0E7490] dark:text-[#67e8f9] mt-1 flex items-center gap-1"><x-icon name="clock" class="w-4 h-4" /> Waktu pembayaran berakhir {{ $order->created_at->addHours(24)->format('d M Y H:i') }}</p>
+                                <p class="text-xs text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] mt-1 flex items-center gap-1"><x-icon name="clock" class="w-4 h-4" /> Waktu pembayaran berakhir {{ $order->created_at->addHours(24)->format('d M Y H:i') }}</p>
                             @endif
                         </div>
                     </div>
@@ -113,12 +113,12 @@
                             <p class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Dikirim</p>
                             @if($order->resi)
                                 <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">
-                                    Resi <span class="font-mono font-semibold text-[#0891B2] num">{{ $order->resi }}</span>
+                                    Resi <span class="font-mono font-semibold text-[#141414] dark:text-[#FAF6EF] num">{{ $order->resi }}</span>
                                     @if($order->courier) &middot; {{ $order->courier }} @endif
                                 </p>
                                 @if($order->tracking_url)
                                     <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener noreferrer"
-                                       class="inline-flex items-center gap-1 text-sm font-medium text-[#0891B2] hover:underline mt-1 focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
+                                       class="inline-flex items-center gap-1 text-sm font-medium text-[#141414] dark:text-[#FAF6EF] hover:underline mt-1 focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                                         <x-icon name="truck" class="w-4 h-4" />
                                         Lacak paket
                                     </a>
@@ -205,7 +205,7 @@
                     @endif
                     <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-3 flex justify-between gap-4">
                         <span class="font-bold text-[#1E293B] dark:text-[#f1f5f9]">Total</span>
-                        <span class="text-lg font-bold text-[#0E7490] dark:text-[#67e8f9] num">{{ format_price($order->total) }}</span>
+                        <span class="text-lg font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] num">{{ format_price($order->total) }}</span>
                     </div>
                 </div>
 
@@ -227,7 +227,7 @@
                         <p class="text-[#64748B] dark:text-[#cbd5e1]">WhatsApp</p>
                         <a href="{{ whatsapp_url($order->customer_whatsapp) }}"
                            target="_blank" rel="noopener noreferrer"
-                           class="font-medium text-[#0E7490] dark:text-[#67e8f9] hover:underline num focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
+                           class="font-medium text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] hover:underline num focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                             {{ $order->customer_whatsapp }}
                         </a>
                     </div>

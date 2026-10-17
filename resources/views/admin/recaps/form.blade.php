@@ -44,7 +44,7 @@
 
         <div class="flex flex-wrap items-center gap-2 px-3 sm:px-4 py-3 border-b-2 border-[#141414] dark:border-[#FAF6EF] bg-white dark:bg-[#1E1E1E]">
             <button type="button" @click="addRow(); $nextTick(() => { const c = $el.closest('form').querySelector('[data-cell]'); })"
-                    class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white">
+                    class="nb-btn px-3 py-2 text-sm bg-[#FFC800] text-[#141414]">
                 <x-icon name="plus" class="w-4 h-4" /> Baris
             </button>
             <button type="button" @click="addColumn()"
@@ -104,7 +104,7 @@
                                     </select>
                                     <label class="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#475569] dark:text-[#D6D3D1] cursor-pointer min-h-[36px]" title="Ikut grand total">
                                         <input type="checkbox" value="1" :name="`columns[${ci}][total]`" x-model="col.total"
-                                               class="w-4 h-4 accent-[#0E7490]">
+                                               class="w-4 h-4 accent-[#EAB308]">
                                         Total
                                     </label>
                                     <button type="button" @click="removeColumn(ci)" x-show="columns.length > 1"
@@ -176,7 +176,7 @@
                     Batal
                 </a>
                 <button type="submit" :disabled="saving"
-                        class="nb-btn px-5 py-2.5 bg-[#0E7490] text-white">
+                        class="nb-btn px-5 py-2.5 bg-[#FFC800] text-[#141414]">
                     <x-spinner x-show="saving" x-cloak />
                     <span x-text="saving ? 'Menyimpan...' : 'Simpan'">Simpan</span>
                 </button>

@@ -30,6 +30,8 @@ class ProductStoreRequest extends FormRequest
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
             'is_viral' => ['boolean'],
+            'is_po' => ['boolean'],
+            'ready_date' => ['nullable', 'date'],
         ];
     }
 
@@ -50,6 +52,7 @@ class ProductStoreRequest extends FormRequest
             'image.mimes' => 'Format gambar yang didukung: jpeg, png, jpg, gif, webp.',
             'image.max' => 'Ukuran gambar maksimal 2MB.',
             'stock.required' => 'Stok wajib diisi.',
+            'ready_date.date' => 'Tanggal siap tidak valid.',
             'sku.unique' => 'SKU ini sudah digunakan.',
         ];
     }

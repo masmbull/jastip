@@ -87,7 +87,7 @@
                 <input id="inv-to" type="date" name="date_to" value="{{ request('date_to') }}" class="nb-input w-full px-3 py-2 text-sm num">
             </div>
             <div class="col-span-2 lg:col-span-12 flex flex-wrap gap-2">
-                <button type="submit" class="nb-btn px-4 py-2 text-sm bg-[#0E7490] text-white">Terapkan</button>
+                <button type="submit" class="nb-btn px-4 py-2 text-sm bg-[#FFC800] text-[#141414]">Terapkan</button>
                 @if(request()->filled('search') || $activeStatus !== 'all' || $activePay !== 'all' || request()->filled('date_from') || request()->filled('date_to'))
                     <a href="{{ route('admin.invoices.index') }}" class="nb-btn px-4 py-2 text-sm bg-white dark:bg-[#1E1E1E]">Reset</a>
                 @endif
@@ -136,7 +136,7 @@
                         @endphp
                         <tr class="bg-white dark:bg-[#1E1E1E] hover:bg-[#FFFDF0] dark:hover:bg-[#262626] transition-colors">
                             <td class="px-4 py-3">
-                                <span class="font-mono text-sm font-black text-[#0E7490] dark:text-[#22D3EE]">#{{ $invoice->no }}</span>
+                                <span class="font-mono text-sm font-black text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE]">#{{ $invoice->no }}</span>
                             </td>
                             <td class="px-4 py-3 text-xs font-bold text-[#334155] num whitespace-nowrap">{{ $invoice->created_at->format('d M Y') }}<br>{{ $invoice->created_at->format('H:i') }}</td>
                             <td class="px-4 py-3 text-sm">
@@ -186,7 +186,7 @@
                                             data-inv-url="{{ route('admin.orders.invoice', $invoice) }}?embed=1"
                                             data-inv-title="Invoice #{{ $invoice->no }}"
                                             @click="$dispatch('jd-invoice', {url:$el.dataset.invUrl, title:$el.dataset.invTitle})"
-                                            class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#0E7490]"
+                                            class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#141414] dark:text-[#FAF6EF]"
                                             title="Cetak" aria-label="Cetak invoice {{ $invoice->no }}">
                                         <x-icon name="clipboard" class="w-4 h-4" />
                                     </button>

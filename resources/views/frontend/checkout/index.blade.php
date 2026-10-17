@@ -101,7 +101,7 @@
                             <span class="text-xs text-red-500" x-text="error"></span>
                         </div>
                         <div class="mt-3" x-show="!loading && !error && selected" x-cloak>
-                            <div class="rounded-lg bg-[#0891B2]/10 border border-[#0891B2]/30 px-3 py-2 text-sm text-[#0E7490] dark:text-[#67e8f9]">
+                            <div class="rounded-lg bg-[#FFC800]/10 border border-[#141414] px-3 py-2 text-sm text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]">
                                 Ongkir <strong x-text="selected.name"></strong>: <strong x-text="selectedPrice"></strong>
                                 <span class="text-xs" x-text="selected ? ' · ' + (selected.etd || '') : ''"></span>
                             </div>

@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="nb-card p-5 flex gap-4 text-left">
-                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#0E7490] dark:text-[#22D3EE]">
+                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE]">
                     <x-icon name="lock" class="w-6 h-6" />
                 </div>
                 <div>
@@ -61,7 +61,7 @@
                 </div>
             </div>
             <div class="nb-card p-5 flex gap-4 text-left">
-                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#0E7490] dark:text-[#22D3EE]">
+                <div class="shrink-0 w-12 h-12 bg-white dark:bg-[#1E1E1E] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE]">
                     <x-icon name="shield-check" class="w-6 h-6" />
                 </div>
                 <div>

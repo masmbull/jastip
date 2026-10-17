@@ -229,7 +229,7 @@
                         <input type="hidden" name="qris_enabled" value="0">
                         <input type="checkbox" name="qris_enabled" value="1"
                                @checked((string) old('qris_enabled', setting('qris_enabled', '1')) === '1')
-                               class="w-5 h-5 accent-[#0E7490]">
+                               class="w-5 h-5 accent-[#EAB308]">
                         <span class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Aktifkan Pembayaran QRIS</span>
                     </label>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Dimatikan = kode QRIS disembunyikan dari konfirmasi, halaman bayar, dan cetak invoice. Pelanggan tetap bisa pesan, konfirmasinya lewat WhatsApp.</p>

@@ -36,7 +36,7 @@
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm">
                             <a href="{{ route('admin.chat.show', $conversation) }}"
-                               class="inline-flex items-center gap-2 text-[#0891B2] dark:text-[#22D3EE] font-medium hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                               class="inline-flex items-center gap-2 text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] font-medium hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
                                 <x-icon name="chat" class="w-4 h-4" /> Buka
                                 @if($unread > 0)
                                     <x-badge tone="danger" aria-label="{{ $unread }} pesan belum dibaca">{{ $unread }}</x-badge>

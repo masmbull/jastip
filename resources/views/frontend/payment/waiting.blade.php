@@ -19,7 +19,7 @@
 
                 <!-- Download Button -->
                 <a href="{{ route('payment.download-qris', $order) }}"
-                   class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 py-2 md:py-3 bg-[#0891B2] hover:bg-[#0E7490] text-white rounded-lg font-medium transition-colors text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-orange-300">
+                   class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-3 md:px-4 py-2 md:py-3 bg-[#FFC800] hover:bg-[#FFC800] text-[#141414] rounded-lg font-medium transition-colors text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-orange-300">
                     <x-icon name="download" class="w-4 md:w-5 h-4 md:h-5" />
                     Download QRIS
                 </a>
@@ -83,7 +83,7 @@
                     @endif
                     <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-2 flex justify-between gap-4">
                         <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Total</span>
-                        <span class="text-base md:text-lg font-bold text-[#0E7490] dark:text-[#67e8f9] num">{{ format_price($order->total) }}</span>
+                        <span class="text-base md:text-lg font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] num">{{ format_price($order->total) }}</span>
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
                 <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-3 md:p-4 transition-colors">
                     <p class="text-xs md:text-sm text-[#64748B] dark:text-[#cbd5e1] mb-2 flex items-center gap-1"><x-icon name="clock" class="w-4 h-4" /> Waktu pembayaran</p>
                     <div class="flex items-baseline gap-2">
-                        <p class="text-2xl font-bold text-[#0E7490] dark:text-[#67e8f9] num" id="countdown">--:--:--</p>
+                        <p class="text-2xl font-bold text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] num" id="countdown">--:--:--</p>
                         <span class="text-xs text-[#64748B] dark:text-[#cbd5e1]">sisa waktu</span>
                     </div>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-2">Pembayaran harus selesai sebelum waktu habis</p>

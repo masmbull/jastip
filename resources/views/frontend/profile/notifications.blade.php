@@ -35,7 +35,7 @@
                     @unless($notification->read_at)
                     <form method="POST" action="{{ route('notifications.read', $notification) }}">
                         @csrf
-                        <button type="submit" class="min-h-[44px] text-xs px-3 py-1.5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-[#0E7490] dark:text-[#67e8f9] hover:bg-orange-200 dark:hover:bg-orange-500/30 transition whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        <button type="submit" class="min-h-[44px] text-xs px-3 py-1.5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] hover:bg-orange-200 dark:hover:bg-orange-500/30 transition whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-orange-300">
                             Tandai terbaca
                         </button>
                     </form>

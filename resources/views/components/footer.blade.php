@@ -96,8 +96,8 @@
             </div>
         </div>
 
-        <div class="border-t border-[#155E75] pt-6">
-            <p class="text-center text-sm text-[#67e8f9]">{!! $footerText !!}</p>
+        <div class="border-t border-[#FAF6EF]/20 pt-6">
+            <p class="text-center text-sm text-[#141414] dark:text-[#FAF6EF]">{!! $footerText !!}</p>
         </div>
     </div>
 </footer>

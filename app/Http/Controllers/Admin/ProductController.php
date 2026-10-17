@@ -57,6 +57,11 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->boolean('is_featured', false);
         $validated['is_viral'] = $request->boolean('is_viral', false);
         $validated['setbiaya_fee'] = (int) ($validated['setbiaya_fee'] ?? 0);
+        $validated['is_po'] = $request->boolean('is_po', false);
+        // Tanggal siap hanya relevan untuk barang PO.
+        if (! $validated['is_po']) {
+            $validated['ready_date'] = null;
+        }
 
         Product::create($validated);
 
@@ -95,6 +100,10 @@ class ProductController extends Controller
         $validated['is_featured'] = $request->boolean('is_featured', false);
         $validated['is_viral'] = $request->boolean('is_viral', false);
         $validated['setbiaya_fee'] = (int) ($validated['setbiaya_fee'] ?? 0);
+        $validated['is_po'] = $request->boolean('is_po', false);
+        if (! $validated['is_po']) {
+            $validated['ready_date'] = null;
+        }
 
         $product->update($validated);
 

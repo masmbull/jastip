@@ -42,7 +42,7 @@
             <section>
                 <h2 class="text-xl font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-3">6. Kontak</h2>
                 <p>Pertanyaan tentang syarat & ketentuan? Hubungi admin via
-                    <a href="{{ whatsapp_url(setting('whatsapp', '6285123456789')) }}" target="_blank" rel="noopener noreferrer" class="text-[#0E7490] dark:text-[#67e8f9] font-medium hover:underline">WhatsApp</a>
+                    <a href="{{ whatsapp_url(setting('whatsapp', '6285123456789')) }}" target="_blank" rel="noopener noreferrer" class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] font-medium hover:underline">WhatsApp</a>
                     atau email {{ setting('email', 'hello@nitipdiend.com') }}.</p>
             </section>
         </div>

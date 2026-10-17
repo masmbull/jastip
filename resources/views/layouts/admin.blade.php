@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- PWA: admin ikut installable (istri akses dari sini di iPhone). --}}
-    <meta name="theme-color" content="#0891B2">
+    <meta name="theme-color" content="#FFC800">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -64,7 +64,7 @@
                 </div>
                 <div>
                     <span class="font-black text-[17px] leading-tight text-[#141414] dark:text-[#FAF6EF]">{{ setting('brand_name', 'NITIP DI END') }}</span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#0E7490] dark:text-[#22D3EE] block">Admin Panel</span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] block">Admin Panel</span>
                 </div>
             </div>
             <button type="button" @click="sidebarOpen = false"
@@ -119,7 +119,7 @@
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit"
-                            class="nb-btn px-3 py-1.5 text-sm bg-[#0E7490] text-white">
+                            class="nb-btn px-3 py-1.5 text-sm bg-[#FFC800] text-[#141414]">
                         Keluar
                     </button>
                 </form>
@@ -173,7 +173,7 @@
                 {{-- Footer actions --}}
                 <div class="shrink-0 px-4 sm:px-5 py-3 border-t-2 border-[#141414] dark:border-[#FAF6EF] flex items-center justify-between gap-3 bg-white dark:bg-[#1E1E1E]">
                     <a :href="url" target="_blank" rel="noopener"
-                       class="text-sm text-[#0E7490] dark:text-[#22D3EE] font-bold underline underline-offset-2">
+                       class="text-sm text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] font-bold underline underline-offset-2">
                         Buka di tab
                     </a>
                     <div class="flex items-center gap-2">
@@ -182,7 +182,7 @@
                             Tutup
                         </button>
                         <button type="button" @click="print()"
-                                class="nb-btn px-4 py-2 text-sm bg-[#0E7490] text-white">
+                                class="nb-btn px-4 py-2 text-sm bg-[#FFC800] text-[#141414]">
                             <x-icon name="printer" class="w-4 h-4" /> Cetak
                         </button>
                     </div>

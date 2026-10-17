@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="theme-color" content="#0891B2">
+    <meta name="theme-color" content="#FFC800">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -87,7 +87,7 @@
                        autocomplete="off"
                        class="nb-input flex-1 px-4 py-2.5 text-sm">
                 <button type="submit"
-                        class="nb-btn px-5 py-2.5 text-sm bg-[#0E7490] text-white">
+                        class="nb-btn px-5 py-2.5 text-sm bg-[#FFC800] text-[#141414]">
                     Cari
                 </button>
                 <button type="button" @click="searchOpen = false"

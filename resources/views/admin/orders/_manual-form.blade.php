@@ -138,7 +138,7 @@
                                         Auto
                                     </button>
                                     <button type="button" @click="fetchQuotes()" :disabled="quoting || !city"
-                                            class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white shrink-0">
+                                            class="nb-btn px-3 py-2 text-sm bg-[#FFC800] text-[#141414] shrink-0">
                                         <span x-text="quoting ? 'Mencari...' : 'Cek Ongkir'">Cek Ongkir</span>
                                     </button>
                                 </div>
@@ -198,7 +198,7 @@
                                 <label class="flex items-center gap-2 cursor-pointer select-none" for="mi-show-fee">
                                     <input id="mi-show-fee" type="checkbox" :checked="showFee"
                                            @change="toggleFee($event.target.checked)"
-                                           class="w-4 h-4 accent-[#0E7490]">
+                                           class="w-4 h-4 accent-[#EAB308]">
                                     <span class="text-xs font-black uppercase tracking-wider text-[#475569] dark:text-[#D6D3D1]">Munculkan Fee</span>
                                 </label>
                                 <div x-show="showFee" x-cloak class="mt-2">
@@ -232,7 +232,7 @@
                     <div class="flex items-center justify-between gap-3">
                         <h2 class="text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-[0.12em]">Item</h2>
                         <button type="button" @click="addItem()"
-                                class="nb-btn px-3 py-2 text-sm bg-[#0E7490] text-white">
+                                class="nb-btn px-3 py-2 text-sm bg-[#FFC800] text-[#141414]">
                             <x-icon name="plus" class="w-4 h-4" /> Tambah Item
                         </button>
                     </div>
@@ -330,7 +330,7 @@
 
         <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
             <label class="flex items-center gap-2 cursor-pointer min-h-[44px]" @if($isEdit) hidden @endif>
-                <input type="checkbox" name="mark_paid" value="1" x-model="paidNow" class="w-5 h-5 accent-[#0E7490]">
+                <input type="checkbox" name="mark_paid" value="1" x-model="paidNow" class="w-5 h-5 accent-[#EAB308]">
                 <span class="text-sm font-bold">Tandai sudah lunas</span>
             </label>
             <div class="flex items-center justify-end gap-2">
@@ -340,7 +340,7 @@
                     <a href="{{ route('admin.invoices.index') }}" class="nb-btn px-4 py-2 text-sm bg-white dark:bg-[#1E1E1E]">Batal</a>
                 @endif
                 <button type="submit" :disabled="saving"
-                        class="nb-btn px-6 py-2.5 bg-[#0E7490] text-white">
+                        class="nb-btn px-6 py-2.5 bg-[#FFC800] text-[#141414]">
                     <x-spinner x-show="saving" x-cloak />
                     <span data-label="{{ $submitLabel }}"
                           x-text="saving ? 'Menyimpan...' : $el.dataset.label">{{ $submitLabel }}</span>

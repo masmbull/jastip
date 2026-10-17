@@ -70,17 +70,17 @@
             @if($order->resi)
                 <div class="mt-8 pt-8 border-t border-[#E2E8F0] dark:border-[#404854]">
                     <h2 class="text-lg font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
-                        <x-icon name="truck" class="w-5 h-5 text-[#0891B2]" /> Pengiriman
+                        <x-icon name="truck" class="w-5 h-5 text-[#141414] dark:text-[#FAF6EF]" /> Pengiriman
                     </h2>
                     <div class="flex flex-wrap items-center gap-3 text-sm">
                         <span class="text-[#64748B] dark:text-[#cbd5e1]">Resi:</span>
-                        <span class="font-mono font-semibold text-[#0891B2] num">{{ $order->resi }}</span>
+                        <span class="font-mono font-semibold text-[#141414] dark:text-[#FAF6EF] num">{{ $order->resi }}</span>
                         @if($order->courier)
                             <span class="text-[#64748B] dark:text-[#cbd5e1]">&middot; {{ $order->courier }}</span>
                         @endif
                         @if($order->tracking_url)
                             <a href="{{ $order->tracking_url }}" target="_blank" rel="noopener noreferrer"
-                               class="inline-flex items-center gap-1 font-medium text-[#0891B2] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
+                               class="inline-flex items-center gap-1 font-medium text-[#141414] dark:text-[#FAF6EF] hover:underline focus:outline-none focus:ring-2 focus:ring-orange-300 rounded">
                                 <x-icon name="map-pin" class="w-4 h-4" /> Lacak paket
                             </a>
                         @endif

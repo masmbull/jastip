@@ -37,13 +37,13 @@
                 <div class="min-w-0">
                     <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1">Email</h3>
                     <a href="mailto:{{ setting('email', 'hello@nitipdiend.com') }}"
-                       class="text-[#0E7490] dark:text-[#67e8f9] hover:underline text-sm break-all">{{ setting('email', 'hello@nitipdiend.com') }}</a>
+                       class="text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] hover:underline text-sm break-all">{{ setting('email', 'hello@nitipdiend.com') }}</a>
                 </div>
             </div>
 
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-flex items-center justify-center shrink-0">
-                    <x-icon name="map-pin" class="w-6 h-6 text-[#0E7490] dark:text-[#67e8f9]" />
+                    <x-icon name="map-pin" class="w-6 h-6 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1">Alamat</h3>
@@ -53,7 +53,7 @@
 
             <div class="flex items-start gap-4">
                 <div class="w-12 h-12 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center shrink-0">
-                    <x-icon name="clock" class="w-6 h-6 text-[#0E7490] dark:text-[#67e8f9]" />
+                    <x-icon name="clock" class="w-6 h-6 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1">Jam Operasional</h3>

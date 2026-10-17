@@ -7,7 +7,7 @@
 
     <div class="text-center mb-12 sm:mb-16">
         <h1 class="text-3xl sm:text-4xl font-bold text-[#1E293B] dark:text-[#f1f5f9] mb-4">Tentang {{ $brandName }}</h1>
-        <p class="text-lg sm:text-xl text-[#0E7490] dark:text-[#67e8f9] font-medium">{{ $brandTagline }}</p>
+        <p class="text-lg sm:text-xl text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF] font-medium">{{ $brandTagline }}</p>
         <div class="mt-4 flex items-center justify-center gap-2 text-sm text-[#64748B] dark:text-[#cbd5e1]">
             <span>by</span><span class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $brandOwner }}</span>
         </div>
@@ -58,7 +58,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <x-card class="text-center">
                 <div class="w-14 h-14 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <x-icon name="lock" class="w-7 h-7 text-[#0E7490] dark:text-[#67e8f9]" />
+                    <x-icon name="lock" class="w-7 h-7 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                 </div>
                 <h3 class="font-bold text-lg text-[#1E293B] dark:text-[#f1f5f9] mb-2">Privasi Terjaga</h3>
                 <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Setiap data pelanggan kami jaga dengan baik. Tidak ada info yang bocor atau dijual ke pihak manapun.</p>
@@ -72,7 +72,7 @@
             </x-card>
             <x-card class="text-center">
                 <div class="w-14 h-14 bg-cyan-100 dark:bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <x-icon name="bolt" class="w-7 h-7 text-[#0E7490] dark:text-[#67e8f9]" />
+                    <x-icon name="bolt" class="w-7 h-7 text-[#141414] dark:text-[#FAF6EF] dark:text-[#141414] dark:text-[#FAF6EF]" />
                 </div>
                 <h3 class="font-bold text-lg text-[#1E293B] dark:text-[#f1f5f9] mb-2">Cepat &amp; Mudah</h3>
                 <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Cukup ketik di WhatsApp, transfer, dan barang sampai. Proses jastip kita runcing biar nggak lama.</p>
