@@ -3,6 +3,18 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
 
 ## Batch 17 Okt (deposit, rekening, invoice PNG, PWA/favicon)
 
+- [x] **Tombol Hapus Invoice** di daftar Invoice (kolom Aksi). Hapus memakai
+  route `admin.orders.destroy` + konfirmasi `data-confirm`; item, pelunasan,
+  dan bukti bayar ikut terhapus (FK cascade), lalu balik ke halaman asal.
+- [x] **Halaman Pengaturan dirapikan**: semua input jadi `nb-input` (brutalist)
+  + `aria-label` biar lolos audit aksesibilitas (dulu 13 pelanggaran `label`).
+- [x] **Hapus 4 skrip debug nyasar** (`diag.php`, `debug_qris.php`,
+  `_tmp_diag.php`, `_tmp_repro.php`) — sisa debug QRIS, sudah tidak perlu.
+- [ ] **Catatan server "tidak berubah"**: `.env` produksi `APP_ENV=production`,
+  dan deploy menjalankan `php artisan optimize` (view/config/route cache).
+  Setelah `git pull`, cache itu BASI sampai di-clear. Wajib jalankan
+  `php artisan optimize:clear && php artisan optimize` (dan `migrate --force`).
+
 - [x] **Deposit per barang (tanpa hitung manual).** Kolom `order_items.deposit`;
   form invoice manual punya input deposit tiap barang; total deposit pesanan
   dijumlahkan otomatis (`dpAmt` = jumlah deposit item). Order lama yang tidak

@@ -195,6 +195,16 @@
                                        class="inline-flex items-center min-h-[44px] px-1 text-sm font-bold underline underline-offset-2">
                                         Bayar
                                     </a>
+                                    <form method="POST" action="{{ route('admin.orders.destroy', $invoice) }}" class="inline"
+                                          data-confirm="Hapus invoice {{ $invoice->no }} ({{ $invoice->customer_name }})? Item dan pelunasan ikut terhapus. Tindakan ini tidak bisa dibatalkan.">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#991B1B]"
+                                                title="Hapus invoice" aria-label="Hapus invoice {{ $invoice->no }}">
+                                            <x-icon name="trash" class="w-4 h-4" />
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

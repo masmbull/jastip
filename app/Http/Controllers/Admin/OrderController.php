@@ -381,9 +381,13 @@ class OrderController extends Controller
     public function destroy(Request $request, Order $order)
     {
         Gate::authorize('delete', $order);
+
+        $label = $order->no;
+        // Item, pelunasan, dan bukti bayar ikut terhapus (FK cascade).
         $order->delete();
 
-        return redirect()->route('admin.orders.index')
-            ->with('success', 'Pesanan berhasil dihapus!');
+        return redirect()
+            ->back(fallback: route('admin.invoices.index'))
+            ->with('success', 'Invoice #'.$label.' berhasil dihapus.');
     }
 }

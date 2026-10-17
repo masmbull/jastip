@@ -282,4 +282,34 @@ class ManualInvoiceTest extends TestCase
             ->assertSee('NDTEST-MANUAL-LUNAS')
             ->assertDontSee('NDTEST-MANUAL-OK');
     }
+
+    public function test_admin_can_delete_invoice_from_the_list(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $order = Order::create([
+            'order_number' => 'NDTEST-DEL-01', 'customer_name' => 'Hapus Saya',
+            'customer_whatsapp' => '081200004444', 'customer_address' => 'Jl. Hapus',
+            'subtotal' => 1000, 'shipping_cost' => 0, 'total' => 1000,
+            'status' => Order::STATUS_PENDING, 'payment_method' => 'manual',
+        ]);
+        $order->items()->create([
+            'product_name' => 'Barang Hapus', 'product_price' => 1000,
+            'quantity' => 1, 'unit' => 'pcs', 'subtotal' => 1000,
+        ]);
+
+        // Tombol hapus ada di daftar invoice.
+        $this->actingAs($admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertSee(route('admin.orders.destroy', $order), false);
+
+        // Hapus -> order + item ikut hilang.
+        $this->actingAs($admin)
+            ->delete(route('admin.orders.destroy', $order))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+        $this->assertSame(0, $order->items()->count());
+    }
 }

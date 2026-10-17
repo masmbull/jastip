@@ -23,18 +23,18 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Brand</label>
-                    <input type="text" name="brand_name" value="{{ old('brand_name', setting('brand_name')) }}"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="text" name="brand_name" value="{{ old('brand_name', setting('brand_name')) }}" aria-label="Nama Brand"
+                           class="nb-input w-full">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Tagline</label>
-                    <input type="text" name="brand_tagline" value="{{ old('brand_tagline', setting('brand_tagline')) }}"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="text" name="brand_tagline" value="{{ old('brand_tagline', setting('brand_tagline')) }}" aria-label="Tagline"
+                           class="nb-input w-full">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Pemilik Brand</label>
-                    <input type="text" name="brand_owner" value="{{ old('brand_owner', setting('brand_owner')) }}"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="text" name="brand_owner" value="{{ old('brand_owner', setting('brand_owner')) }}" aria-label="Pemilik Brand"
+                           class="nb-input w-full">
                 </div>
             </div>
         </x-card>
@@ -47,8 +47,8 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Logo</label>
-                    <input type="file" name="brand_logo"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="file" name="brand_logo" aria-label="Logo"
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan ukuran 200×60px, format PNG transparan.</p>
                     @if(setting('brand_logo'))
                         <div class="mt-2 flex items-center gap-3">
@@ -59,8 +59,8 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Favicon</label>
-                    <input type="file" name="brand_favicon" accept="image/png,image/svg+xml"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="file" name="brand_favicon" accept="image/png,image/svg+xml" aria-label="Favicon"
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan 32×32px atau 16×16px, format PNG.</p>
                     @if(setting('brand_favicon'))
                         <div class="mt-2 flex items-center gap-3">
@@ -123,32 +123,32 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nomor WhatsApp</label>
-                    <input type="text" name="whatsapp" value="{{ old('whatsapp', setting('whatsapp')) }}"
+                    <input type="text" name="whatsapp" value="{{ old('whatsapp', setting('whatsapp')) }}" aria-label="Nomor WhatsApp"
                            placeholder="Contoh: 628123456789"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Format: negara+angka tanpa spasi/dash.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Email</label>
-                    <input type="email" name="email" value="{{ old('email', setting('email')) }}"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="email" name="email" value="{{ old('email', setting('email')) }}" aria-label="Email"
+                           class="nb-input w-full">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Alamat</label>
-                    <textarea name="address" rows="2"
-                              class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">{{ old('address', setting('address')) }}</textarea>
+                    <textarea name="address" rows="2" aria-label="Alamat"
+                              class="nb-input w-full">{{ old('address', setting('address')) }}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username Instagram</label>
-                    <input type="text" name="instagram" value="{{ old('instagram', setting('instagram')) }}"
+                    <input type="text" name="instagram" value="{{ old('instagram', setting('instagram')) }}" aria-label="Username Instagram"
                            placeholder="tanpa @"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username TikTok</label>
-                    <input type="text" name="tiktok" value="{{ old('tiktok', setting('tiktok')) }}"
+                    <input type="text" name="tiktok" value="{{ old('tiktok', setting('tiktok')) }}" aria-label="Username TikTok"
                            placeholder="username"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
             </div>
         </x-card>
@@ -161,8 +161,8 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Teks Footer</label>
-                    <textarea name="footer_text" rows="2"
-                              class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">{{ old('footer_text', setting('footer_text')) }}</textarea>
+                    <textarea name="footer_text" rows="2" aria-label="Teks Footer"
+                              class="nb-input w-full">{{ old('footer_text', setting('footer_text')) }}</textarea>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Teks yang muncul di footer halaman depan.</p>
                 </div>
             </div>
@@ -176,15 +176,15 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Description</label>
-                    <textarea name="meta_description" rows="3"
-                              class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">{{ old('meta_description', setting('meta_description')) }}</textarea>
+                    <textarea name="meta_description" rows="3" aria-label="Meta Description"
+                              class="nb-input w-full">{{ old('meta_description', setting('meta_description')) }}</textarea>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Deskripsi untuk meta tag dan sosial media preview.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Keywords</label>
-                    <input type="text" name="meta_keywords" value="{{ old('meta_keywords', setting('meta_keywords')) }}"
+                    <input type="text" name="meta_keywords" value="{{ old('meta_keywords', setting('meta_keywords')) }}" aria-label="Meta Keywords"
                            placeholder="jastip, nitip, parfum, tumbler"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
             </div>
         </x-card>
@@ -197,22 +197,22 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Biaya Ongkir Default (Rp)</label>
-                    <input type="number" name="shipping_cost" value="{{ old('shipping_cost', setting('shipping_cost', 0)) }}"
+                    <input type="number" name="shipping_cost" value="{{ old('shipping_cost', setting('shipping_cost', 0)) }}" aria-label="Biaya Ongkir Default (Rp)"
                            min="0" step="1000"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Ongkir perkiraan di halaman keranjang &amp; produk. Ongkir final dihitung dari ekspedisi yang dipilih saat checkout.</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Minimum Order (Rp)</label>
-                    <input type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}"
+                    <input type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}" aria-label="Minimum Order (Rp)"
                            min="0" step="1000"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Set Biaya Fee Global (Rp)</label>
-                    <input type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', setting('setbiaya_fee', 0)) }}"
+                    <input type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', setting('setbiaya_fee', 0)) }}" aria-label="Set Biaya Fee Global (Rp)"
                            min="0" step="500"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Fee layanan global per produk. Dikenakan ke semua order.</p>
                 </div>
             </div>
@@ -236,8 +236,8 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Gambar QRIS (Static QR)</label>
-                    <input type="file" name="qris_image" accept="image/*"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                    <input type="file" name="qris_image" accept="image/*" aria-label="Gambar QRIS (Static QR)"
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Upload QRIS statis dari e-wallet atau bank kamu. Akan ditampilkan saat customer checkout.</p>
                     @if(setting('qris_image'))
                         <div class="mt-2 flex items-center gap-3">
@@ -248,9 +248,9 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Merchant (opsional)</label>
-                    <input type="text" name="qris_merchant_name" value="{{ old('qris_merchant_name', setting('qris_merchant_name', setting('brand_name'))) }}"
+                    <input type="text" name="qris_merchant_name" value="{{ old('qris_merchant_name', setting('qris_merchant_name', setting('brand_name'))) }}" aria-label="Nama Merchant (opsional)"
                            placeholder="NITIP DI END"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Teks merchant yang ditampilkan di bawah QRIS.</p>
                 </div>
             </div>
@@ -266,25 +266,25 @@
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_name">Nama Bank</label>
                     <input id="bank_name" type="text" name="bank_name" value="{{ old('bank_name', setting('bank_name')) }}"
                            placeholder="BCA / Mandiri / BRI"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_account_number">Nomor Rekening</label>
                     <input id="bank_account_number" type="text" name="bank_account_number" inputmode="numeric"
                            value="{{ old('bank_account_number', setting('bank_account_number')) }}" placeholder="1234567890"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 num">
+                           class="nb-input w-full">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_account_name">Atas Nama</label>
                     <input id="bank_account_name" type="text" name="bank_account_name" value="{{ old('bank_account_name', setting('bank_account_name')) }}"
                            placeholder="Nama pemilik rekening"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="qris_max_amount">Batas Nominal QRIS (Rp)</label>
                     <input id="qris_max_amount" type="number" min="0" step="1000" name="qris_max_amount"
                            value="{{ old('qris_max_amount', setting('qris_max_amount', 500000)) }}"
-                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 num">
+                           class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Invoice dengan total DI ATAS angka ini hanya menampilkan rekening (QRIS disembunyikan). Default Rp 500.000.</p>
                 </div>
             </div>
