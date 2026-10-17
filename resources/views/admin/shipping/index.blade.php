@@ -52,7 +52,7 @@
                         <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-6 py-4 text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">
                                 {{ $courier['name'] }}
-                                <span class="text-xs text-[#94A3B8] dark:text-[#64748B] font-mono">({{ $courier['code'] }})</span>
+                                <span class="text-xs text-[#475569] dark:text-[#cbd5e1] font-mono">({{ $courier['code'] }})</span>
                             </td>
                             <td class="px-6 py-4 text-sm">
                                 <x-badge :tone="$courier['type'] === 'instant' ? 'danger' : ($courier['type'] === 'kargo' ? 'brand' : 'neutral')">
@@ -75,7 +75,7 @@
                             <td class="px-6 py-4 text-sm font-semibold text-orange-600 dark:text-orange-400 text-right num">
                                 Rp {{ number_format($courier['per_kg'], 0, ',', '.') }}
                                 @if ($courier['per_kg'] !== $courier['default_per_kg'])
-                                    <span class="text-xs font-normal text-[#94A3B8] dark:text-[#64748B] block">
+                                    <span class="text-xs font-normal text-[#475569] dark:text-[#cbd5e1] block">
                                         (default: Rp {{ number_format($courier['default_per_kg'], 0, ',', '.') }})
                                     </span>
                                 @endif
@@ -83,7 +83,7 @@
                             <td class="px-6 py-4 text-sm font-semibold text-orange-600 dark:text-orange-400 text-right num">
                                 Rp {{ number_format($courier['min_charge'], 0, ',', '.') }}
                                 @if ($courier['min_charge'] !== $courier['default_min_charge'])
-                                    <span class="text-xs font-normal text-[#94A3B8] dark:text-[#64748B] block">
+                                    <span class="text-xs font-normal text-[#475569] dark:text-[#cbd5e1] block">
                                         (default: Rp {{ number_format($courier['default_min_charge'], 0, ',', '.') }})
                                     </span>
                                 @endif

@@ -20,10 +20,10 @@
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1">WhatsApp (Paling Cepat)</h3>
-                    <p class="text-[#64748B] dark:text-[#cbd51] text-sm">Hubungi kami langsung via WhatsApp. Admin akan membalas dalam beberapa menit.</p>
+                    <p class="text-[#64748B] dark:text-[#cbd5e1] text-sm">Hubungi kami langsung via WhatsApp. Admin akan membalas dalam beberapa menit.</p>
                     <a href="{{ whatsapp_url(setting('whatsapp', '6285123456789'), 'Halo, saya ingin bertanya tentang jastip') }}"
                        target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-full mt-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors">
+                       class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-full mt-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0012 0a11.96 11.96 0 00-8.44 20.73l-2.53 7.55 7.67-2.08A11.88 11.88 0 0012 24c6.62 0 12-5.38 12-12 0-3.21-1.25-6.21-3.48-8.42z" /></svg>
                         Chat via WhatsApp
                     </a>
@@ -86,7 +86,7 @@
                               class="w-full px-4 py-3 bg-white dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] rounded-lg text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300"></textarea>
                 </div>
                 <button type="submit"
-                        class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 bg-orange-500 hover:bg-orange-600 text-[#141414] font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20.52 3.48A11.94 11.94 0 0012 0a11.96 11.96 0 00-8.44 20.73l-2.53 7.55 7.67-2.08A11.88 11.88 0 0012 24c6.62 0 12-5.38 12-12 0-3.21-1.25-6.21-3.48-8.42z" />
                     </svg>
