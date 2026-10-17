@@ -6,6 +6,9 @@
     <title>@yield('title', setting('brand_name', 'NITIP DI END'))</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#FAF6EF">
+    @php($authFav = media_url(setting('brand_favicon')) ?? asset('images/icons/favicon-32.png'))
+    <link rel="icon" href="{{ $authFav }}">
+    <link rel="apple-touch-icon" href="{{ media_url(setting('brand_favicon')) ?? asset('images/icons/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')

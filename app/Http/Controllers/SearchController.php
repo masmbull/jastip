@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -19,8 +20,8 @@ class SearchController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('brand', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('brand', 'like', "%{$search}%");
             });
         }
 
@@ -72,7 +73,7 @@ class SearchController extends Controller
         }
 
         $products = $query->paginate(12);
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
 
         return view('frontend.search', compact('products', 'categories'));
     }
@@ -82,7 +83,7 @@ class SearchController extends Controller
      */
     public function suggestions(Request $request)
     {
-        if (!$request->filled('q')) {
+        if (! $request->filled('q')) {
             return response()->json([]);
         }
 
@@ -91,7 +92,7 @@ class SearchController extends Controller
         $products = Product::where('is_active', true)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('brand', 'like', "%{$search}%");
+                    ->orWhere('brand', 'like', "%{$search}%");
             })
             ->select('id', 'name', 'slug', 'image', 'price')
             ->limit(10)

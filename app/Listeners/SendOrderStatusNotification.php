@@ -28,7 +28,7 @@ class SendOrderStatusNotification
             ]);
         }
 
-        if (!$order->customer_whatsapp) {
+        if (! $order->customer_whatsapp) {
             return;
         }
 
@@ -52,14 +52,14 @@ class SendOrderStatusNotification
             };
 
             if ($whatsappUrl) {
-                Log::info("Order status notification sent", [
+                Log::info('Order status notification sent', [
                     'order_number' => $order->order_number,
                     'customer_phone' => $order->customer_whatsapp,
                     'status' => $newStatus,
                 ]);
             }
         } catch (\Exception $e) {
-            Log::error("Failed to send order status notification", [
+            Log::error('Failed to send order status notification', [
                 'order_number' => $order->order_number,
                 'error' => $e->getMessage(),
             ]);

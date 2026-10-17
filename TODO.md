@@ -1,6 +1,38 @@
 # TODO JASTIP
 Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dihapus.
 
+## Batch 17 Okt (deposit, rekening, invoice PNG, PWA/favicon)
+
+- [x] **Deposit per barang (tanpa hitung manual).** Kolom `order_items.deposit`;
+  form invoice manual punya input deposit tiap barang; total deposit pesanan
+  dijumlahkan otomatis (`dpAmt` = jumlah deposit item). Order lama yang tidak
+  punya deposit per barang tetap pakai nilai `down_payment` manual.
+- [x] **Field No. Rekening di Pengaturan.** Grup baru "Rekening Pembayaran":
+  nama bank, nomor rekening, atas nama. Ditambah juga "Batas Nominal QRIS".
+- [x] **Invoice: QRIS + rekening + rule nominal.** Invoice menampilkan QRIS dan
+  rekening. Kalau total **> batas** (default Rp 500.000, diatur di Pengaturan)
+  QRIS disembunyikan, hanya rekening. Invoice lunas hanya menampilkan
+  "Pembayaran sudah diterima" (tanpa instruksi transfer).
+- [x] **Invoice LUNAS: stempel PAID** di dokumen (ikut ke PNG).
+- [x] **Kirim ke WhatsApp = PNG (gambar), bukan PDF.** Tombol WhatsApp merender
+  invoice jadi gambar (template yang sama) lalu dibagikan via Web Share API.
+  Route PDF lama tetap ada tapi tidak dipakai tombol.
+- [x] **Template invoice disatukan.** Halaman cetak, pratinjau, PDF, dan PNG
+  semua memakai `invoices/_template.blade.php` (satu sumber).
+- [x] **Pesan WhatsApp format baru** (peringatan "TRANSFER HANYA KE NO REK ATAU
+  QRIS ... selain itu diluar tanggung jawab kami").
+- [x] **Favicon baru** dari `2bcf5a61-....jpg` -> `tools/make_icons.php`
+  menghasilkan favicon-16/32, apple-touch-icon, icon-192/512, maskable-192/512.
+- [x] **Upload gambar di Pengaturan terasa "tidak berefek"**: akarnya (a) admin
+  login pakai `layouts.auth` tanpa favicon, (b) browser cache gambar lama.
+  Ditambah `media_url()` (cache-buster `?v=mtime`) dan ikon/favicon dipakai di
+  layout admin + auth.
+- [x] **Bug: "Sisa" di invoice salah** kalau ada pelunasan (dulu memakai
+  `payments_sum` yang hanya diisi di halaman index). Sekarang pakai accessor
+  `totalPaid`.
+- [x] **Nav "Daftar Layanan" dihapus** + halaman **Status Sistem dirombak**
+  (lihat bagian di bawah).
+
 ## Baru masuk
 
 - [x] **RAINBOW MODE** — SELESAI. Semua halaman (termasuk checkout, profil, dan

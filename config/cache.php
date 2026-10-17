@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 return [
@@ -136,9 +139,9 @@ return [
     // Without this, database cache reads return __PHP_Incomplete_Class -> 500.
     'serializable_classes' => [
         Illuminate\Database\Eloquent\Collection::class,
-        Illuminate\Support\Collection::class,
-        App\Models\Product::class,
-        App\Models\Category::class,
+        Collection::class,
+        Product::class,
+        Category::class,
     ],
 
 ];

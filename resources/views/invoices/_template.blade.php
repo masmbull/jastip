@@ -10,7 +10,12 @@
 
   Variabel: $doc (array) dari InvoiceController::buildDoc() / sampleInvoice().
 --}}
-<div class="invoice-doc" style="font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 12px; background: #FFFFFF; width: 100%;">
+<div class="invoice-doc" style="position:relative; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 12px; background: #FFFFFF; width: 100%;">
+
+    {{-- Stempel PAID kalau invoice sudah lunas. --}}
+    @if($doc['paid'] ?? false)
+        <div style="position:absolute; top:110px; right:40px; transform:rotate(-16deg); border:4px solid #15803D; color:#15803D; padding:6px 18px; font-size:26px; font-weight:bold; letter-spacing:6px; opacity:.85;" aria-label="Sudah dibayar">PAID</div>
+    @endif
 
     {{-- Kop --}}
     <table style="width:100%; border-collapse:collapse;">
@@ -103,9 +108,51 @@
         </tr>
     </table>
 
-    {{-- Pembayaran --}}
+    {{-- Pembayaran: QRIS + rekening.
+         QRIS hanya muncul kalau diizinkan untuk nominal ini (<= batas);
+         di atas batas, hanya rekening. --}}
     <div style="border-top:1px solid #E2E8F0; margin:18px 0 10px;"></div>
-    <div style="color:#475569;">{{ $doc['payment_text'] }}</div>
+    <div style="font-size:10px; font-weight:bold; color:#475569; margin-bottom:8px;">CARA PEMBAYARAN</div>
+
+    @php($qris = $doc['qris'] ?? null)
+    @php($bank = $doc['bank'] ?? null)
+
+    @if($doc['paid'] ?? false)
+        <div style="font-size:12px; color:#15803D; font-weight:bold;">
+            Pembayaran sudah diterima{{ !empty($doc['paid_at']) ? ' pada '.$doc['paid_at'] : '' }}. Terima kasih.
+        </div>
+    @elseif($qris || ($bank && !empty($bank['lines'])))
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                @if($qris)
+                    <td style="vertical-align:top; text-align:center; width:50%; border:1px solid #E2E8F0; padding:12px;">
+                        <div style="font-weight:bold; font-size:11px; margin-bottom:6px;">QRIS</div>
+                        @if(!empty($qris['image']))
+                            <img src="{{ $qris['image'] }}" alt="QRIS" style="width:150px; height:auto;">
+                        @endif
+                        @if(!empty($qris['merchant']))
+                            <div style="color:#475569; font-size:10px; margin-top:4px;">{{ $qris['merchant'] }}</div>
+                        @endif
+                    </td>
+                @endif
+
+                @if($bank && !empty($bank['lines']))
+                    <td style="vertical-align:top; {{ $qris ? 'padding-left:12px;' : '' }} border:1px solid #E2E8F0; padding:12px;">
+                        <div style="font-weight:bold; font-size:11px; margin-bottom:6px;">TRANSFER REKENING</div>
+                        @foreach($bank['lines'] as $line)
+                            <div style="font-size:12px; {{ $loop->first ? 'font-weight:bold;' : 'color:#475569;' }}">{{ $line }}</div>
+                        @endforeach
+                    </td>
+                @endif
+            </tr>
+        </table>
+
+        <div style="margin-top:8px; font-size:10px; color:#B45309; font-weight:bold;">
+            TRANSFER HANYA KE REKENING / QRIS DI ATAS. SELAIN ITU DI LUAR TANGGUNG JAWAB KAMI.
+        </div>
+    @else
+        <div style="color:#475569;">{{ $doc['payment_text'] }}</div>
+    @endif
 
     <div style="border-top:1px solid #E2E8F0; margin:14px 0 8px;"></div>
     <div style="text-align:center; color:#475569;">{{ $doc['footer'] }}</div>

@@ -40,6 +40,7 @@ class ManualOrderStoreRequest extends FormRequest
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.product_price' => ['required', 'integer', 'min:0'],
             'items.*.weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
+            'items.*.deposit' => ['nullable', 'integer', 'min:0'],
             'items.*.status' => ['nullable', Rule::in([OrderItem::STATUS_READY, OrderItem::STATUS_PO])],
         ];
     }
@@ -47,7 +48,12 @@ class ManualOrderStoreRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            $dp = (int) $this->input('down_payment', 0);
+            // Deposit total = jumlah deposit per barang (kalau ada); kalau
+            // tidak, pakai input manual `down_payment` (kompat order lama).
+            $itemDeposit = (int) collect($this->input('items', []))
+                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0));
+
+            $dp = $itemDeposit > 0 ? $itemDeposit : (int) $this->input('down_payment', 0);
 
             // Mode deposit = invoice untuk menagih DP, jadi DP-nya wajib ada.
             // Mode lunas / tanpa mode (API lama) bebas.

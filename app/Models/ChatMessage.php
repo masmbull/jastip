@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ChatMessage extends Model
 {
     public const SENDER_CUSTOMER = 'customer';
+
     public const SENDER_ADMIN = 'admin';
 
     protected $fillable = ['user_id', 'sender', 'body', 'read_at'];

@@ -33,7 +33,7 @@ class CartController extends Controller
         }
 
         try {
-            if (!$product->isInStock()) {
+            if (! $product->isInStock()) {
                 return $this->cartResponse($request, false, 'Produk ini sedang tidak tersedia.', 422);
             }
 

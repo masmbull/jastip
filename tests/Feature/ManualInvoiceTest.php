@@ -193,10 +193,36 @@ class ManualInvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('Deposit Masuk')
-            ->assertSee('Sisa Bayar')
+            ->assertSee('TOTAL BAYAR')
+            ->assertSee('Sisa')
             ->assertSee('Rp 147.500')
             ->assertSee('PO');
+    }
+
+    public function test_down_payment_is_summed_from_per_item_deposits(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan Deposit Item',
+            'customer_whatsapp' => '081200007778',
+            'customer_address' => 'Jl. Deposit',
+            'shipping_cost' => 0,
+            'mode' => 'deposit',
+            // down_payment sengaja TIDAK dikirim: harus dihitung dari item.
+            'items' => [
+                ['product_name' => 'A', 'unit' => 'pcs', 'quantity' => 1, 'product_price' => 100000, 'deposit' => 30000],
+                ['product_name' => 'B', 'unit' => 'pcs', 'quantity' => 2, 'product_price' => 50000, 'deposit' => 20000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007778')->firstOrFail();
+
+        // Deposit total = 30.000 + 20.000 = 50.000 (otomatis dari per barang).
+        $this->assertSame(50_000, $order->down_payment);
+        $this->assertSame(30_000, (int) $order->items()->where('product_name', 'A')->value('deposit'));
+        $this->assertSame(20_000, (int) $order->items()->where('product_name', 'B')->value('deposit'));
+        $this->assertSame(200_000 - 50_000, $order->remaining);
     }
 
     public function test_store_rejects_down_payment_above_total(): void

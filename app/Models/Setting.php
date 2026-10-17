@@ -28,7 +28,7 @@ class Setting extends Model
     public static function get(string $key, mixed $default = null): mixed
     {
         // Try cache first for performance
-        $cacheKey = 'setting_' . $key;
+        $cacheKey = 'setting_'.$key;
 
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey, $default);
@@ -58,7 +58,7 @@ class Setting extends Model
             ]
         );
 
-        Cache::forget('setting_' . $key);
+        Cache::forget('setting_'.$key);
     }
 
     /**
@@ -81,7 +81,7 @@ class Setting extends Model
     {
         $keys = self::pluck('key')->toArray();
         foreach ($keys as $key) {
-            Cache::forget('setting_' . $key);
+            Cache::forget('setting_'.$key);
         }
     }
 }

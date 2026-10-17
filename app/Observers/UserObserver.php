@@ -10,7 +10,7 @@ class UserObserver
     public function created(User $user): void
     {
         // Create user profile when user is created
-        if (!$user->profile) {
+        if (! $user->profile) {
             UserProfile::create([
                 'user_id' => $user->id,
             ]);

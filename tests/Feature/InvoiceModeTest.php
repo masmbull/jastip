@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -107,13 +106,13 @@ class InvoiceModeTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $deposit))
             ->assertOk()
-            ->assertSee('TAGIHAN DP');
+            ->assertSee('TAGIHAN');
 
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $lunas))
             ->assertOk()
             ->assertSee('INVOICE')
-            ->assertDontSee('TAGIHAN DP');
+            ->assertDontSee('TAGIHAN');
     }
 
     public function test_rekapan_offers_both_invoice_modes(): void

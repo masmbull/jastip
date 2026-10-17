@@ -12,8 +12,20 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="{{ setting('brand_name', 'NITIP DI END') }}">
+    @php
+        // Ikon/favicon dari Pengaturan kalau ada, kalau tidak pakai yang bawaan.
+        // Tambah ?v=<mtime> supaya browser tidak memakai cache lama setelah
+        // admin mengganti favicon.
+        $favSetting = setting('brand_favicon');
+        $favPath = $favSetting ? public_path('storage/'.$favSetting) : null;
+        $faviconUrl = $favSetting
+            ? asset('storage/'.$favSetting).($favPath && is_file($favPath) ? '?v='.filemtime($favPath) : '')
+            : asset('images/icons/favicon-32.png');
+        $appleUrl = setting('brand_favicon') ? $faviconUrl : asset('images/icons/apple-touch-icon.png');
+    @endphp
+    <link rel="icon" href="{{ $faviconUrl }}">
     <link rel="manifest" href="{{ asset('manifest-admin.webmanifest') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ $appleUrl }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')

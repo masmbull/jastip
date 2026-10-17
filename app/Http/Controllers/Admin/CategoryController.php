@@ -16,7 +16,7 @@ class CategoryController extends Controller
         $query = Category::query();
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->input('search') . '%');
+            $query->where('name', 'like', '%'.$request->input('search').'%');
         }
 
         if ($request->filled('status') && $request->input('status') !== 'all') {
@@ -77,7 +77,7 @@ class CategoryController extends Controller
 
         if ($productCount > 0) {
             return redirect()->route('admin.categories.index')
-                ->with('error', 'Kategori tidak dapat dihapus karena masih memiliki ' . $productCount . ' produk!');
+                ->with('error', 'Kategori tidak dapat dihapus karena masih memiliki '.$productCount.' produk!');
         }
 
         $category->delete();

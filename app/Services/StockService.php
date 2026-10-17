@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 /**
  * Stok pesanan: tahan (reserve) saat checkout, kunci (commit) saat lunas,
@@ -15,7 +16,7 @@ class StockService
     /**
      * Tahan stok untuk item pesanan. Lempar exception bila tersedia kurang.
      *
-     * @param  \App\Models\OrderItem[]|\Illuminate\Support\Collection  $items
+     * @param  OrderItem[]|Collection  $items
      */
     public function reserve(Order $order): void
     {

@@ -2,7 +2,7 @@
     $cartCount = app(\App\Services\CartService::class)->count();
     $cartSubtotal = app(\App\Services\CartService::class)->subtotal();
     $brandName = setting('brand_name', 'NITIP DI END');
-    $brandLogo = setting('brand_logo') ? asset('storage/' . setting('brand_logo')) : null;
+    $brandLogo = media_url(setting('brand_logo'));
     $brandOwner = setting('brand_owner', 'Nabila Adriyana');
 @endphp
 

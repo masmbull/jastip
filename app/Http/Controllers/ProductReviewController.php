@@ -14,7 +14,7 @@ class ProductReviewController extends Controller
      */
     public function store(Request $request, Product $product)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json(['message' => 'Login diperlukan'], 401);
         }
 
@@ -84,7 +84,7 @@ class ProductReviewController extends Controller
      */
     public function toggleHelpful(Review $review)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json(['message' => 'Login diperlukan'], 401);
         }
 

@@ -34,14 +34,14 @@ class WishlistController extends Controller
             ->where('product_id', $product->id)
             ->delete();
 
-        if (!$removed) {
+        if (! $removed) {
             Wishlist::firstOrCreate([
                 'user_id' => $userId,
                 'product_id' => $product->id,
             ]);
         }
 
-        $added = (bool) !$removed;
+        $added = (bool) ! $removed;
 
         return response()->json([
             'success' => true,

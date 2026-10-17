@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class ShippingController extends Controller
 {
-    public function __construct(private readonly ShippingService $shippingService)
-    {
-    }
+    public function __construct(private readonly ShippingService $shippingService) {}
 
     /**
      * Show shipping/ongkir settings page

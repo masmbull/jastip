@@ -16,16 +16,27 @@ class WebPushTest extends TestCase
     use RefreshDatabase;
 
     private const AS_PUBLIC = 'BP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A8';
+
     private const AS_PRIVATE = 'yfWPiYE-n46HLnH0KqZOF1fJJU3MYrct3AELtAQ-oRw';
+
     private const UA_PUBLIC = 'BCVxsr7N_eNgVRqvHtD0zTZsEc6-VV-JvLexhqUzORcxaOzi6-AYWXvTBHm4bjyPjs7Vd8pZGH6SRpkNtoIAiw4';
+
     private const AUTH = 'BTBZMqHH6r4Tts7J_aSIgg';
+
     private const SALT = 'DGv6ra1nlYgDCS1FRnbzlw';
+
     private const PLAINTEXT = 'V2hlbiBJIGdyb3cgdXAsIEkgd2FudCB0byBiZSBhIHdhdGVybWVsb24';
+
     private const EXP_ECDH = 'kyrL1jIIOHEzg3sM2ZWRHDRB62YACZhhSlknJ672kSs';
+
     private const EXP_PRK_KEY = 'Snr3JMxaHVDXHWJn5wdC52WjpCtd2EIEGBykDcZW32k';
+
     private const EXP_IKM = 'S4lYMb_L0FxCeq0WhDx813KgSYqU26kOyzWUdsXYyrg';
+
     private const EXP_CEK = 'oIhVW04MRdy2XN9CiKLxTg';
+
     private const EXP_NONCE = '4h_95klXJ5E_qnoN';
+
     private const EXP_CIPHER = '8pfeW0KbunFT06SuDKoJH9Ql87S1QUrdirN6GcG7sFz1y1sqLgVi1VhjVkHsUoEsbI_0LpXMuGvnzQ';
 
     private function service(): WebPushService
@@ -63,7 +74,7 @@ class WebPushTest extends TestCase
         $prkKey = $this->invoke($svc, 'hkdfExtract', [$auth, $ecdh]);
         $this->assertSame(self::EXP_PRK_KEY, $svc->urlsafeEncode($prkKey));
 
-        $ikm = $this->invoke($svc, 'hkdfExpand', [$prkKey, "WebPush: info\x00" . $uaPub . $asPub, 32]);
+        $ikm = $this->invoke($svc, 'hkdfExpand', [$prkKey, "WebPush: info\x00".$uaPub.$asPub, 32]);
         $this->assertSame(self::EXP_IKM, $svc->urlsafeEncode($ikm));
 
         // CEK + nonce
@@ -76,7 +87,7 @@ class WebPushTest extends TestCase
         // AES-128-GCM over the 0x02-padded plaintext
         $tag = '';
         $cipher = openssl_encrypt(
-            $svc->urlsafeDecode(self::PLAINTEXT) . "\x02",
+            $svc->urlsafeDecode(self::PLAINTEXT)."\x02",
             'aes-128-gcm',
             $cek,
             OPENSSL_RAW_DATA,
@@ -85,7 +96,7 @@ class WebPushTest extends TestCase
             '',
             16
         );
-        $this->assertSame(self::EXP_CIPHER, $svc->urlsafeEncode($cipher . $tag));
+        $this->assertSame(self::EXP_CIPHER, $svc->urlsafeEncode($cipher.$tag));
     }
 
     public function test_generated_vapid_keys_sign_verifiable_es256_jwt(): void
@@ -110,7 +121,7 @@ class WebPushTest extends TestCase
         $this->assertSame(64, strlen($raw));
         $pubRaw = $svc->urlsafeDecode($keys['public']);
         $pubPem = $this->invoke($svc, 'spkiPem', [substr($pubRaw, 1, 32), substr($pubRaw, 33, 32)]);
-        $ok = openssl_verify($h . '.' . $p, $this->rawToDer($raw), openssl_pkey_get_public($pubPem), OPENSSL_ALGO_SHA256);
+        $ok = openssl_verify($h.'.'.$p, $this->rawToDer($raw), openssl_pkey_get_public($pubPem), OPENSSL_ALGO_SHA256);
         $this->assertSame(1, $ok);
     }
 
@@ -143,13 +154,13 @@ class WebPushTest extends TestCase
         $encode = function (string $v): string {
             $v = ltrim($v, "\x00");
             if ($v === '' || (ord($v[0]) & 0x80)) {
-                $v = "\x00" . $v;
+                $v = "\x00".$v;
             }
 
-            return "\x02" . chr(strlen($v)) . $v;
+            return "\x02".chr(strlen($v)).$v;
         };
-        $seq = $encode(substr($raw, 0, 32)) . $encode(substr($raw, 32, 32));
+        $seq = $encode(substr($raw, 0, 32)).$encode(substr($raw, 32, 32));
 
-        return "\x30" . chr(strlen($seq)) . $seq;
+        return "\x30".chr(strlen($seq)).$seq;
     }
 }

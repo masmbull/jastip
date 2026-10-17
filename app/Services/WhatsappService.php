@@ -30,37 +30,37 @@ class WhatsappService
             $message .= "{$item['name']} x{$item['quantity']}\n";
         }
 
-        $message .= "\nTotal barang: " . format_price($orderData['subtotal']) . "\n";
+        $message .= "\nTotal barang: ".format_price($orderData['subtotal'])."\n";
 
         if (($orderData['shipping_cost'] ?? 0) > 0) {
-            $message .= "Ongkir: " . format_price($orderData['shipping_cost']) . "\n";
+            $message .= 'Ongkir: '.format_price($orderData['shipping_cost'])."\n";
         }
 
         if (($orderData['fee'] ?? 0) > 0) {
-            $message .= "Biaya Fee: " . format_price($orderData['fee']) . "\n";
+            $message .= 'Biaya Fee: '.format_price($orderData['fee'])."\n";
         }
 
         if (($orderData['discount'] ?? 0) > 0) {
-            $message .= "Diskon"
-                . (!empty($orderData['coupon_code']) ? " ({$orderData['coupon_code']})" : '')
-                . ": -" . format_price($orderData['discount']) . "\n";
+            $message .= 'Diskon'
+                .(! empty($orderData['coupon_code']) ? " ({$orderData['coupon_code']})" : '')
+                .': -'.format_price($orderData['discount'])."\n";
         }
 
-        $message .= "Total: " . format_price($orderData['total']) . "\n\n";
+        $message .= 'Total: '.format_price($orderData['total'])."\n\n";
 
         $message .= "Nama:\n{$orderData['name']}\n\n";
         $message .= "WhatsApp:\n{$orderData['whatsapp']}\n\n";
         $message .= "Alamat:\n{$orderData['address']}\n\n";
 
-        if (!empty($orderData['notes'])) {
+        if (! empty($orderData['notes'])) {
             $message .= "Catatan:\n{$orderData['notes']}\n\n";
         }
 
-        if (!empty($orderData['shipping_method'])) {
+        if (! empty($orderData['shipping_method'])) {
             $message .= "Metode pengiriman:\n{$orderData['shipping_method']}\n\n";
         }
 
-        $message .= "Terima kasih 🙏";
+        $message .= 'Terima kasih 🙏';
 
         return $message;
     }
@@ -77,15 +77,15 @@ class WhatsappService
             $message .= "Pembayaran untuk pesanan {$orderNumber} telah berhasil diverifikasi! ✓\n\n";
             $message .= "Pesanan kamu sudah dikonfirmasi dan akan segera diproses.\n\n";
             $message .= "Cek status pesananmu di sini:\n";
-            $message .= "🔗 " . route('order.show', $orderNumber) . "\n\n";
-            $message .= "Terima kasih 🙏";
+            $message .= '🔗 '.route('order.show', $orderNumber)."\n\n";
+            $message .= 'Terima kasih 🙏';
         } elseif ($status === 'rejected') {
             $message = "Halo 👋\n\n";
             $message .= "Sayangnya bukti pembayaran untuk pesanan {$orderNumber} tidak dapat diterima.\n\n";
             $message .= "Alasan: {$reason}\n\n";
             $message .= "Silakan unggah bukti pembayaran yang benar melalui:\n";
-            $message .= "🔗 " . route('payment.waiting', $orderNumber) . "\n\n";
-            $message .= "Jika ada pertanyaan, hubungi kami ya. Terima kasih 🙏";
+            $message .= '🔗 '.route('payment.waiting', $orderNumber)."\n\n";
+            $message .= 'Jika ada pertanyaan, hubungi kami ya. Terima kasih 🙏';
         }
 
         return whatsapp_url($phone, $message);
@@ -105,8 +105,8 @@ class WhatsappService
         }
 
         $message .= "Cek status pesananmu di sini:\n";
-        $message .= "🔗 " . route('order.show', $orderNumber) . "\n\n";
-        $message .= "Terima kasih 🙏";
+        $message .= '🔗 '.route('order.show', $orderNumber)."\n\n";
+        $message .= 'Terima kasih 🙏';
 
         return whatsapp_url($phone, $message);
     }
@@ -117,6 +117,7 @@ class WhatsappService
     public static function contactUrl(string $message): string
     {
         $phone = setting('whatsapp', '6285123456789');
+
         return whatsapp_url($phone, $message);
     }
 }

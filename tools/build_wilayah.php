@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Contracts\Console\Kernel;
+
 /**
  * One-off: generate database/data/wilayah.json dari dump Kepmendagri
  * (cahyadsn/wilayah, db/wilayah.sql) — difilter hanya kota di config/ekspedisi.php.
@@ -9,7 +11,7 @@
 
 require __DIR__.'/../vendor/autoload.php';
 $app = require_once __DIR__.'/../bootstrap/app.php';
-$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$app->make(Kernel::class)->bootstrap();
 
 $sqlFile = $argv[1] ?? (sys_get_temp_dir().'/wilayah.sql');
 if (! is_file($sqlFile)) {
@@ -85,6 +87,7 @@ foreach ($configCities as $city) {
 
     if (! $targets) {
         $unmatched[] = $city;
+
         continue;
     }
 
@@ -117,7 +120,7 @@ file_put_contents($dest, json_encode($out, JSON_UNESCAPED_UNICODE | JSON_UNESCAP
 $sizeKb = round(filesize($dest) / 1024);
 $kec = array_sum(array_map('count', $out));
 $kel = array_sum(array_map(fn ($m) => array_sum(array_map('count', $m)), $out));
-echo "Kota: ".count($out).' | Kecamatan: '.$kec.' | Kelurahan: '.$kel." | {$sizeKb} KB\n";
+echo 'Kota: '.count($out).' | Kecamatan: '.$kec.' | Kelurahan: '.$kel." | {$sizeKb} KB\n";
 if ($unmatched) {
     echo 'TIDAK COCOK: '.implode(', ', $unmatched)."\n";
 }

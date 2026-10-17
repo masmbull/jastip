@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Setting;
 use App\Services\ShippingEstimator;
 use App\Services\ShippingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -133,7 +134,7 @@ class ShippingTest extends TestCase
         Cache::flush();
 
         Cache::put('shipping_prices_cache', ['jne' => 9999], 3600);
-        \App\Models\Setting::set('courier_per_kg_jne', '7000', 'integer', 'shipping', true);
+        Setting::set('courier_per_kg_jne', '7000', 'integer', 'shipping', true);
 
         $jne = collect(app(ShippingService::class)->enabledCouriers())
             ->firstWhere('code', 'jne');
@@ -155,8 +156,8 @@ class ShippingTest extends TestCase
             ], 200),
         ]);
 
-        \App\Models\Setting::set('shipping_api_provider', 'api.co.id', 'string', 'shipping', true);
-        \App\Models\Setting::set('shipping_api_key', 'secret', 'string', 'shipping', true);
+        Setting::set('shipping_api_provider', 'api.co.id', 'string', 'shipping', true);
+        Setting::set('shipping_api_key', 'secret', 'string', 'shipping', true);
 
         $result = app(ShippingService::class)->updateLivePrices();
 
@@ -170,7 +171,7 @@ class ShippingTest extends TestCase
     {
         Cache::flush();
 
-        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+        Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
 
         $rows = $this->getJson(route('shipping.check', ['city' => 'Bandung', 'weight' => 1]))
             ->assertOk()
@@ -184,7 +185,7 @@ class ShippingTest extends TestCase
         Cache::flush();
 
         // Nama tampilan JNE (lihat config/ekspedisi.php) hilang dari <optgroup>.
-        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+        Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
 
         $this->get(route('shipping.index', ['city' => 'Bandung']))
             ->assertOk()
@@ -196,8 +197,8 @@ class ShippingTest extends TestCase
         Cache::flush();
 
         // Tarif manual admin jauh di atas default JNE (9.000/kg) => terbukti dipakai.
-        \App\Models\Setting::set('courier_per_kg_jne', '50000', 'integer', 'shipping', true);
-        \App\Models\Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
+        Setting::set('courier_per_kg_jne', '50000', 'integer', 'shipping', true);
+        Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
 
         $rows = collect($this->getJson(route('shipping.check', ['city' => 'Jakarta', 'weight' => 1]))
             ->assertOk()

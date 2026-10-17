@@ -12,12 +12,12 @@ class Service extends Model
         'status',
         'last_checked',
         'response_time',
-        'error_message'
+        'error_message',
     ];
 
     protected $casts = [
         'last_checked' => 'datetime',
-        'response_time' => 'float'
+        'response_time' => 'float',
     ];
 
     public function isOnline(): bool

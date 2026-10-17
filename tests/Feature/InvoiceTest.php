@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -52,9 +53,9 @@ class InvoiceTest extends TestCase
             ->assertSee('JNE Reguler')
             ->assertSee('Tas Kulit')
             ->assertSee('Rp 117.500')
-            ->assertSee('Belum bayar')
-            ->assertSee('Bayar via QRIS') // unpaid => payment branch
-            ->assertSee('img/invoice/rekening.webp'); // rekening image wired
+            ->assertSee('BELUM BAYAR')
+            ->assertSee('CARA PEMBAYARAN') // unpaid => blok pembayaran
+            ->assertSee('TRANSFER HANYA KE REKENING / QRIS DI ATAS');
     }
 
     public function test_paid_invoice_shows_received_banner(): void
@@ -76,10 +77,62 @@ class InvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('Lunas')
-            ->assertSee('Pembayaran diterima')
-            ->assertSee('img/invoice/payment-diterima.jpeg')
-            ->assertDontSee('Bayar via QRIS');
+            ->assertSee('LUNAS')
+            ->assertSee('Pembayaran sudah diterima')
+            ->assertDontSee('TRANSFER HANYA KE REKENING / QRIS DI ATAS');
+    }
+
+    public function test_qris_hidden_when_total_above_limit(): void
+    {
+        Setting::set('qris_enabled', true, 'boolean', 'qris', true);
+        Setting::set('qris_max_amount', 500000, 'integer', 'qris', true);
+        Setting::set('bank_name', 'BCA', 'string', 'rekening', true);
+        Setting::set('bank_account_number', '1234567890', 'string', 'rekening', true);
+        Setting::set('bank_account_name', 'Nabila', 'string', 'rekening', true);
+
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $order = Order::create([
+            'order_number' => 'NDTEST-QRIS-BIG',
+            'customer_name' => 'Besar',
+            'customer_whatsapp' => '081200000009',
+            'customer_address' => 'Jl. Besar',
+            'subtotal' => 600000,
+            'shipping_cost' => 0,
+            'total' => 600000,
+            'status' => Order::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertDontSee('>QRIS<', false)
+            ->assertSee('TRANSFER REKENING')
+            ->assertSee('BCA')
+            ->assertSee('1234567890')
+            ->assertSee('Nabila');
+    }
+
+    public function test_qris_shown_when_total_within_limit(): void
+    {
+        Setting::set('qris_enabled', true, 'boolean', 'qris', true);
+        Setting::set('qris_max_amount', 500000, 'integer', 'qris', true);
+
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $order = Order::create([
+            'order_number' => 'NDTEST-QRIS-SMALL',
+            'customer_name' => 'Kecil',
+            'customer_whatsapp' => '081200000010',
+            'customer_address' => 'Jl. Kecil',
+            'subtotal' => 100000,
+            'shipping_cost' => 0,
+            'total' => 100000,
+            'status' => Order::STATUS_PENDING,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('>QRIS<', false);
     }
 
     public function test_non_admin_cannot_view_invoice(): void

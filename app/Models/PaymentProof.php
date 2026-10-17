@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\OrderStatusChanged;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -51,13 +52,13 @@ class PaymentProof extends Model
         $this->save();
 
         // Update order status to confirmed
-        $this->order->update(['status' => \App\Models\Order::STATUS_CONFIRMED]);
+        $this->order->update(['status' => Order::STATUS_CONFIRMED]);
 
         // Dispatch event for notifications
-        \App\Events\OrderStatusChanged::dispatch(
+        OrderStatusChanged::dispatch(
             $this->order->fresh(),
             $previousStatus,
-            \App\Models\Order::STATUS_CONFIRMED
+            Order::STATUS_CONFIRMED
         );
     }
 
@@ -68,13 +69,13 @@ class PaymentProof extends Model
         $this->save();
 
         // Update order status back to awaiting payment
-        $this->order->update(['status' => \App\Models\Order::STATUS_AWAITING_PAYMENT]);
+        $this->order->update(['status' => Order::STATUS_AWAITING_PAYMENT]);
 
         // Dispatch event for notifications
-        \App\Events\OrderStatusChanged::dispatch(
+        OrderStatusChanged::dispatch(
             $this->order->fresh(),
-            \App\Models\Order::STATUS_AWAITING_PAYMENT,
-            \App\Models\Order::STATUS_AWAITING_PAYMENT
+            Order::STATUS_AWAITING_PAYMENT,
+            Order::STATUS_AWAITING_PAYMENT
         );
     }
 }

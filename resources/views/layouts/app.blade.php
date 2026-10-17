@@ -19,7 +19,7 @@
 
     <!-- Favicon -->
     @php
-        $faviconUrl = setting('brand_favicon') ? asset('storage/' . setting('brand_favicon')) : asset('images/icons/favicon-16.png');
+        $faviconUrl = media_url(setting('brand_favicon')) ?? asset('images/icons/favicon-16.png');
     @endphp
     <link rel="icon" href="{{ $faviconUrl }}" type="image/png" sizes="16x16">
     <link rel="icon" href="{{ asset('images/icons/favicon-32.png') }}" type="image/png" sizes="32x32">

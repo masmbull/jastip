@@ -4,10 +4,15 @@ namespace Tests\Feature;
 
 use App\Mail\OrderConfirmation;
 use App\Mail\OrderShipped;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\User;
+use App\Services\ShippingEstimator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -72,7 +77,7 @@ class CheckoutFlowTest extends TestCase
 
         // Admin area is guarded (log out the customer first — a logged-in
         // non-admin now hits 403, not the login redirect).
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
         $this->get(route('admin.orders.index'))->assertRedirect(route('admin.login'));
 
         $this->post(route('admin.login.post'), [
@@ -106,7 +111,7 @@ class CheckoutFlowTest extends TestCase
         $product = Product::firstOrFail();
         $product->update(['setbiaya_fee' => 0]);
 
-        $coupon = \App\Models\Coupon::create([
+        $coupon = Coupon::create([
             'code' => 'HEMAT10',
             'type' => 'percentage',
             'value' => 10,
@@ -173,7 +178,7 @@ class CheckoutFlowTest extends TestCase
         $this->assertSame(10, $product->fresh()->stock);
 
         $order = Order::latest('id')->firstOrFail();
-        $admin = \App\Models\User::query()->where('role', 'admin')->firstOrFail();
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
 
         // Admin menandai lunas -> commit: stock & reserved sama-sama turun.
         $this->actingAs($admin)->put(route('admin.orders.status', $order), [
@@ -292,7 +297,7 @@ class CheckoutFlowTest extends TestCase
         $order = Order::latest('id')->firstOrFail();
 
         // 10 kg billable must cost more than the 0.5 kg/item default floor (=1 kg billed).
-        $floor = (new \App\Services\ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
+        $floor = (new ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
         $this->assertGreaterThan($floor, $order->shipping_cost);
     }
 
@@ -317,7 +322,7 @@ class CheckoutFlowTest extends TestCase
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();
-        $admin = \App\Models\User::query()->where('role', 'admin')->firstOrFail();
+        $admin = User::query()->where('role', 'admin')->firstOrFail();
 
         $this->actingAs($admin)->put(route('admin.orders.status', $order), [
             'status' => Order::STATUS_SHIPPED,
@@ -325,13 +330,14 @@ class CheckoutFlowTest extends TestCase
 
         Mail::assertSent(OrderShipped::class, fn ($mail) => $mail->hasTo('shipped@example.com'));
     }
-public function test_admin_courier_rate_flows_into_checkout_shipping_cost(): void
+
+    public function test_admin_courier_rate_flows_into_checkout_shipping_cost(): void
     {
-        \Illuminate\Support\Facades\Cache::flush();
+        Cache::flush();
 
         // Tarif manual admin jauh di atas default => shipping_cost order harus naik.
-        \App\Models\Setting::set('courier_per_kg_jne', '80000', 'integer', 'shipping', true);
-        \App\Models\Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
+        Setting::set('courier_per_kg_jne', '80000', 'integer', 'shipping', true);
+        Setting::set('courier_enabled_jne', 'true', 'string', 'shipping', true);
 
         $customer = User::factory()->create(['role' => 'customer']);
         $this->actingAs($customer);
@@ -350,16 +356,16 @@ public function test_admin_courier_rate_flows_into_checkout_shipping_cost(): voi
         ])->assertRedirect(route('checkout.confirmation'));
 
         $order = Order::latest('id')->firstOrFail();
-        $defaultFloor = (new \App\Services\ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
+        $defaultFloor = (new ShippingEstimator)->estimate('jne', 'Jakarta', 1)['price'];
 
         $this->assertGreaterThan($defaultFloor, $order->shipping_cost);
     }
 
     public function test_disabled_courier_rejected_at_checkout(): void
     {
-        \Illuminate\Support\Facades\Cache::flush();
+        Cache::flush();
 
-        \App\Models\Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
+        Setting::set('courier_enabled_jne', 'false', 'string', 'shipping', true);
 
         $customer = User::factory()->create(['role' => 'customer']);
         $this->actingAs($customer);

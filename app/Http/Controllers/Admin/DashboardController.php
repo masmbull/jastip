@@ -12,12 +12,12 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = [
-            'products_count'   => Product::count(),
-            'active_products'  => Product::where('is_active', true)->count(),
+            'products_count' => Product::count(),
+            'active_products' => Product::where('is_active', true)->count(),
             'categories_count' => Category::count(),
-            'orders_count'     => Order::count(),
-            'orders_pending'   => Order::count(),
-            'revenue'          => 0,
+            'orders_count' => Order::count(),
+            'orders_pending' => Order::count(),
+            'revenue' => 0,
         ];
 
         $paymentStats = [

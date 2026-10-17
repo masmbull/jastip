@@ -16,6 +16,7 @@ class OrderItem extends Model
         'quantity',
         'status',
         'subtotal',
+        'deposit',
     ];
 
     public const STATUS_READY = 'ready';
@@ -47,11 +48,11 @@ class OrderItem extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->product_price, 0, ',', '.');
+        return 'Rp '.number_format($this->product_price, 0, ',', '.');
     }
 
     public function getFormattedSubtotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->subtotal, 0, ',', '.');
+        return 'Rp '.number_format($this->subtotal, 0, ',', '.');
     }
 }

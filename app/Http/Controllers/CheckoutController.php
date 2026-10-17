@@ -7,11 +7,14 @@ use App\Mail\OrderConfirmation;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Services\CartService;
 use App\Services\ShippingService;
 use App\Services\StockService;
 use App\Services\WhatsappService;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -37,7 +40,7 @@ class CheckoutController extends Controller
 
         if ($minOrder > 0 && $subtotal < $minOrder) {
             return redirect()->route('cart.index')
-                ->with('error', 'Minimal titip ' . format_price($minOrder) . '. Subtotal kamu masih ' . format_price($subtotal) . '.');
+                ->with('error', 'Minimal titip '.format_price($minOrder).'. Subtotal kamu masih '.format_price($subtotal).'.');
         }
 
         return view('frontend.checkout.index', [
@@ -58,12 +61,12 @@ class CheckoutController extends Controller
 
         // Rate limiting
         $executed = RateLimiter::attempt(
-            'checkout:' . $request->ip(),
+            'checkout:'.$request->ip(),
             $perMinute = 5,
-            fn() => true
+            fn () => true
         );
 
-        if (!$executed) {
+        if (! $executed) {
             return back()->withInput()
                 ->with('error', 'Terlalu banyak permintaan. Silakan coba lagi nanti.');
         }
@@ -74,7 +77,7 @@ class CheckoutController extends Controller
 
         if ($minOrder > 0 && $subtotal < $minOrder) {
             return redirect()->route('cart.index')
-                ->with('error', 'Minimal titip ' . format_price($minOrder) . '. Subtotal kamu masih ' . format_price($subtotal) . '.');
+                ->with('error', 'Minimal titip '.format_price($minOrder).'. Subtotal kamu masih '.format_price($subtotal).'.');
         }
 
         $fee = $this->cart->fee();
@@ -85,11 +88,11 @@ class CheckoutController extends Controller
         $estimate = $this->shipping->estimate((string) $request->input('courier'), (string) $request->input('city'), $weight);
         if (! ($estimate['ok'] ?? false)) {
             return back()->withInput()
-                ->with('error', 'Ekspedisi ' . $request->input('courier') . ' tidak melayani rute ke ' . $request->input('city') . '. Pilih kurir lain.');
+                ->with('error', 'Ekspedisi '.$request->input('courier').' tidak melayani rute ke '.$request->input('city').'. Pilih kurir lain.');
         }
         $shippingCost = (int) $estimate['price'];
         $courierName = $estimate['courier']['name'] ?? $request->input('courier');
-        $shippingMethod = $courierName . ' → ' . $request->input('city') . ' (est. ' . ($estimate['etd'] ?? '-') . ')';
+        $shippingMethod = $courierName.' → '.$request->input('city').' (est. '.($estimate['etd'] ?? '-').')';
 
         // Resolve optional coupon. Applied here (not in session) so a code typed
         // on the checkout form takes effect on submit.
@@ -162,7 +165,7 @@ class CheckoutController extends Controller
             });
         } catch (\Exception $e) {
             return redirect()->route('cart.index')
-                ->with('error', 'Maaf, ' . $e->getMessage() . ' Silakan perbarui titipanmu.');
+                ->with('error', 'Maaf, '.$e->getMessage().' Silakan perbarui titipanmu.');
         }
 
         // Kirim email konfirmasi bila ada alamat tujuan (guest pakai email yang diisi).
@@ -176,7 +179,7 @@ class CheckoutController extends Controller
             'notes' => $request->input('notes'),
             'shipping_method' => $shippingMethod,
             'city' => $request->input('city'),
-            'items' => $cartItems->map(fn($item) => [
+            'items' => $cartItems->map(fn ($item) => [
                 'name' => $item['name'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
@@ -209,7 +212,7 @@ class CheckoutController extends Controller
     {
         $orderData = session('order_data');
 
-        if (!$orderData) {
+        if (! $orderData) {
             return redirect()->route('home');
         }
 
@@ -228,7 +231,7 @@ class CheckoutController extends Controller
      */
     private function estimateWeight($cartItems): float
     {
-        $weights = \App\Models\Product::whereIn('id', $cartItems->pluck('product_id'))
+        $weights = Product::whereIn('id', $cartItems->pluck('product_id'))
             ->pluck('weight', 'id');
 
         $total = $cartItems->sum(function ($item) use ($weights) {
@@ -248,7 +251,7 @@ class CheckoutController extends Controller
      * kegagalan SMTP tidak membatalkan order yang sudah tersimpan.
      * Hormati opt-out untuk user login; guest dikirimi bila mengisi email.
      */
-    private function sendOrderEmail(\Illuminate\Mail\Mailable $mail, Order $order): void
+    private function sendOrderEmail(Mailable $mail, Order $order): void
     {
         if (! $order->customer_email) {
             return;
@@ -261,7 +264,7 @@ class CheckoutController extends Controller
         try {
             Mail::to($order->customer_email)->send($mail);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send order email', [
+            Log::error('Failed to send order email', [
                 'order_number' => $order->order_number,
                 'error' => $e->getMessage(),
             ]);

@@ -53,7 +53,7 @@ class OrderPaymentTest extends TestCase
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
             ->assertSee('Rp 45.000')
-            ->assertSee('Sisa Bayar');
+            ->assertSee('Sisa');
     }
 
     public function test_store_payment_rejects_overpay(): void

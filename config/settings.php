@@ -57,6 +57,15 @@ return [
                 'qris_enabled' => ['type' => 'boolean', 'label' => 'Aktifkan Pembayaran QRIS'],
                 'qris_merchant_name' => ['type' => 'text', 'label' => 'Nama Merchant QRIS'],
                 'qris_image' => ['type' => 'image', 'label' => 'Gambar QRIS Statis (PNG/JPG, upload dari e-wallet kamu)'],
+                'qris_max_amount' => ['type' => 'number', 'label' => 'Batas Nominal QRIS (Rp)'],
+            ],
+        ],
+        'rekening' => [
+            'label' => 'Rekening Pembayaran',
+            'settings' => [
+                'bank_name' => ['type' => 'text', 'label' => 'Nama Bank (mis. BCA, Mandiri, BRI)'],
+                'bank_account_number' => ['type' => 'text', 'label' => 'Nomor Rekening'],
+                'bank_account_name' => ['type' => 'text', 'label' => 'Atas Nama'],
             ],
         ],
     ],

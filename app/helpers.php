@@ -13,6 +13,27 @@ if (! function_exists('setting')) {
     }
 }
 
+if (! function_exists('media_url')) {
+    /**
+     * URL publik untuk file yang diunggah ke disk `public` (logo, favicon,
+     * QRIS, dll), lengkap dengan cache-buster (?v=<mtime>).
+     *
+     * Tanpa cache-buster, browser bisa tetap menampilkan gambar lama setelah
+     * admin menggantinya di Pengaturan.
+     */
+    function media_url(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        $url = asset('storage/'.ltrim($path, '/'));
+        $full = public_path('storage/'.ltrim($path, '/'));
+
+        return is_file($full) ? $url.'?v='.filemtime($full) : $url;
+    }
+}
+
 if (! function_exists('qris_enabled')) {
     /**
      * Status saklar QRIS di Pengaturan -> Pembayaran QRIS.
@@ -20,6 +41,66 @@ if (! function_exists('qris_enabled')) {
     function qris_enabled(): bool
     {
         return (bool) setting('qris_enabled', true);
+    }
+}
+
+if (! function_exists('qris_limit')) {
+    /**
+     * Batas nominal untuk QRIS. Di atas angka ini QRIS tidak ditampilkan lagi
+     * di invoice (hanya rekening), supaya tidak ada transfer besar lewat QRIS.
+     */
+    function qris_limit(): int
+    {
+        return (int) setting('qris_max_amount', 500000);
+    }
+}
+
+if (! function_exists('qris_allowed_for')) {
+    /**
+     * Apakah QRIS boleh ditampilkan untuk invoice dengan total tertentu.
+     * Rule: QRIS aktif DAN total <= batas (di atas batas -> rekening saja).
+     */
+    function qris_allowed_for(int $total): bool
+    {
+        return qris_enabled() && $total <= qris_limit() && qris_url() !== null;
+    }
+}
+
+if (! function_exists('bank_account_lines')) {
+    /**
+     * Baris rekening pembayaran untuk ditampilkan di invoice.
+     * Kosong kalau admin belum mengisi di Pengaturan.
+     *
+     * @return array<int, string>
+     */
+    function bank_account_lines(): array
+    {
+        $lines = array_filter([
+            (string) setting('bank_name', ''),
+            (string) setting('bank_account_number', ''),
+            (string) setting('bank_account_name', ''),
+        ], fn ($v) => trim($v) !== '');
+
+        return array_values($lines);
+    }
+}
+
+if (! function_exists('bank_account_text')) {
+    /**
+     * Rekening dalam satu baris: "BCA 1234567890 a/n Budi".
+     */
+    function bank_account_text(): string
+    {
+        $bank = trim((string) setting('bank_name', ''));
+        $number = trim((string) setting('bank_account_number', ''));
+        $name = trim((string) setting('bank_account_name', ''));
+
+        $text = trim($bank.' '.$number);
+        if ($name !== '') {
+            $text = trim($text.' a/n '.$name);
+        }
+
+        return $text;
     }
 }
 
@@ -38,7 +119,7 @@ if (! function_exists('qris_url')) {
         // jadi URL HARUS diambil dari disk itu. Memakai Storage::url() polos
         // mengikuti disk default (di .env: `local`), sehingga URL-nya salah dan
         // gambar QRIS tidak muncul di halaman pembayaran.
-        return qris_enabled() && $path ? Storage::disk('public')->url($path) : null;
+        return qris_enabled() && $path ? media_url($path) : null;
     }
 }
 

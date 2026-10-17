@@ -208,8 +208,20 @@
                                 </div>
                             </div>
                             <div x-show="mode === 'deposit'" x-cloak>
-                                <label class="block text-sm font-bold mb-1" for="mi-dp">Deposit</label>
-                                <input id="mi-dp" type="number" min="0" name="down_payment" x-model.number="dpAmt" :disabled="paidNow" value="{{ old('down_payment', 0) }}"
+                                <label class="block text-sm font-bold mb-1" for="mi-dp">
+                                    Deposit
+                                    <span class="text-[11px] font-medium text-[#475569]" x-text="itemDeposit() > 0 ? '(otomatis dari deposit per barang)' : ''"></span>
+                                </label>
+
+                                {{-- Nilai yang dikirim ke server: jumlah deposit per barang. --}}
+                                <input type="hidden" name="down_payment" :value="dpAmt">
+
+                                {{-- Kalau sudah ada deposit per barang -> tampilkan otomatis (read-only). --}}
+                                <div x-show="itemDeposit() > 0" class="nb-input w-full px-3 py-2 text-sm num bg-[#F1F5F9] dark:bg-[#2e323b]"
+                                     x-text="formatRp(dpAmt)"></div>
+
+                                {{-- Belum ada deposit per barang -> isi manual (order lama). --}}
+                                <input x-show="itemDeposit() === 0" id="mi-dp" type="number" min="0" x-model.number="manualDp" :disabled="paidNow"
                                        placeholder="0 = tanpa deposit"
                                        class="nb-input w-full px-3 py-2 text-sm num disabled:opacity-50">
                                 @error('down_payment')<p class="text-xs font-bold text-[#991B1B] mt-1">{{ $message }}</p>@enderror
@@ -249,7 +261,7 @@
                     <div class="space-y-3">
                         <template x-for="(item, idx) in items" :key="item.key">
                             <div class="grid grid-cols-12 gap-2 items-start border-2 border-[#141414]/15 dark:border-[#FAF6EF]/15 rounded-[10px] p-2.5">
-                                <div class="col-span-12 sm:col-span-4 relative">
+                                <div class="col-span-12 sm:col-span-3 relative">
                                     <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Produk *</span>
                                     <input type="text" :name="`items[${idx}][product_name]`" x-model="item.name"
                                            @input.debounce.400ms="searchProduct(idx)" @click.away="item.open = false"
@@ -275,7 +287,7 @@
                                     <input type="text" :name="`items[${idx}][unit]`" x-model="item.unit" placeholder="pcs"
                                            class="nb-input w-full px-3 py-2 text-sm">
                                 </div>
-                                <div class="col-span-8 sm:col-span-2">
+                                <div class="col-span-8 sm:col-span-1">
                                     <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Status</span>
                                     <select :name="`items[${idx}][status]`" x-model="item.status"
                                             class="nb-input w-full px-2 py-2 text-sm font-bold">
@@ -291,6 +303,12 @@
                                 <div class="col-span-8 sm:col-span-2">
                                     <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Harga *</span>
                                     <input type="number" min="0" :name="`items[${idx}][product_price]`" x-model.number="item.price" required
+                                           class="nb-input w-full px-3 py-2 text-sm text-right num">
+                                </div>
+                                <div class="col-span-4 sm:col-span-2">
+                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Deposit</span>
+                                    <input type="number" min="0" :name="`items[${idx}][deposit]`" x-model.number="item.deposit"
+                                           placeholder="DP" title="Deposit untuk barang ini (total dijumlahkan otomatis)"
                                            class="nb-input w-full px-3 py-2 text-sm text-right num">
                                 </div>
                                 <div class="col-span-10 sm:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>

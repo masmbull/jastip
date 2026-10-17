@@ -24,7 +24,7 @@ class CartService
     {
         $product = Product::findOrFail($productId);
 
-        if (!$product->isInStock()) {
+        if (! $product->isInStock()) {
             throw new \Exception('Produk tidak tersedia');
         }
 
@@ -49,18 +49,19 @@ class CartService
                     $item['setbiaya_fee'] = $unitFee;
                     $item['subtotal'] = $item['price'] * $newQuantity;
                 }
+
                 return $item;
             });
         } else {
             $cart->push([
-                'product_id'   => $productId,
-                'name'         => $product->name,
-                'price'        => $product->price,
+                'product_id' => $productId,
+                'name' => $product->name,
+                'price' => $product->price,
                 'setbiaya_fee' => $unitFee,
-                'quantity'     => $quantity,
-                'image'        => $product->image_url,
-                'unit'         => $product->unit,
-                'subtotal'     => $product->price * $quantity,
+                'quantity' => $quantity,
+                'image' => $product->image_url,
+                'unit' => $product->unit,
+                'subtotal' => $product->price * $quantity,
             ]);
         }
 
@@ -90,6 +91,7 @@ class CartService
                 $item['setbiaya_fee'] = $product->effectiveFee();
                 $item['subtotal'] = $item['price'] * $quantity;
             }
+
             return $item;
         });
 

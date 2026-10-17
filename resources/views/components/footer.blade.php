@@ -2,7 +2,7 @@
     $brandName = setting('brand_name', 'NITIP DI END');
     $brandTagline = setting('brand_tagline', 'EH, NITIP DONG!');
     $brandOwner = setting('brand_owner', 'Nabila Adriyana');
-    $brandLogo = setting('brand_logo') ? asset('storage/' . setting('brand_logo')) : null;
+    $brandLogo = media_url(setting('brand_logo'));
     $whatsapp = setting('whatsapp', '6285123456789');
     $instagram = setting('instagram', 'nitipdiend');
     $tiktok = setting('tiktok', 'nitipdiend');

@@ -22,6 +22,7 @@ class QrisPlaceholderGenerator
             file_put_contents($path, base64_decode(
                 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
             ));
+
             return;
         }
 
@@ -31,17 +32,16 @@ class QrisPlaceholderGenerator
         $merchant = $merchant ?: 'NITIP DI END';
 
         $img = imagecreatetruecolor(640, 800);
-        $cream    = imagecolorallocate($img, 245, 240, 232); // #f5f0e8
+        $cream = imagecolorallocate($img, 245, 240, 232); // #f5f0e8
         $charcoal = imagecolorallocate($img, 26, 26, 26);    // #1a1a1a
-        $amber    = imagecolorallocate($img, 245, 166, 35);  // #F5A623
-
+        $amber = imagecolorallocate($img, 245, 166, 35);  // #F5A623
 
         imagefilledrectangle($img, 0, 0, 640, 800, $cream);
 
         // Header band
         imagefilledrectangle($img, 0, 0, 640, 90, $charcoal);
         imagefilledrectangle($img, 0, 0, 8, 90, $amber);  // left accent stripe
-        imagestring($img, 5, 32, 32, 'QRIS - ' . $merchant, $cream);
+        imagestring($img, 5, 32, 32, 'QRIS - '.$merchant, $cream);
         imagefilledrectangle($img, 0, 84, 640, 90, $amber); // bottom header accent
 
         // Label kecil: placeholder
@@ -49,7 +49,9 @@ class QrisPlaceholderGenerator
         imagestring($img, 3, 32, 62, 'PLACEHOLDER DEMO', $smallGrey);
 
         // 25x25 module grid
-        $startX = 70; $startY = 130; $cell = 20;
+        $startX = 70;
+        $startY = 130;
+        $cell = 20;
         $size = 25;
         mt_srand(20250921); // deterministic
         for ($y = 0; $y < $size; $y++) {
@@ -82,15 +84,15 @@ class QrisPlaceholderGenerator
         $qrCenterX = $startX + ($size * $cell) / 2;
         $qrCenterY = $startY + ($size * $cell) / 2;
         // Rotate text 90deg and place as subtle watermark
-        imagestring($img, 5, (int)($qrCenterX - ($textW / 2)), (int)($qrCenterY - ($fontHeight / 2)), $text, $semiWhite);
+        imagestring($img, 5, (int) ($qrCenterX - ($textW / 2)), (int) ($qrCenterY - ($fontHeight / 2)), $text, $semiWhite);
 
         // Finder patterns (3 corners) overlay — drawn AFTER modules so they stand out
-        $finderPositions = [[0,0],[20,0],[0,20]];
+        $finderPositions = [[0, 0], [20, 0], [0, 20]];
         foreach ($finderPositions as [$fy, $fx]) {
-            imagefilledrectangle($img, $startX + $fx*$cell, $startY + $fy*$cell, $startX + $fx*$cell + 7*$cell, $startY + $fy*$cell + 7*$cell, $cream);
-            imagefilledrectangle($img, $startX + $fx*$cell + $cell, $startY + $fy*$cell + $cell, $startX + $fx*$cell + 6*$cell, $startY + $fy*$cell + 6*$cell, $charcoal);
-            imagefilledrectangle($img, $startX + $fx*$cell + 2*$cell, $startY + $fy*$cell + 2*$cell, $startX + $fx*$cell + 5*$cell, $startY + $fy*$cell + 5*$cell, $cream);
-            imagefilledrectangle($img, $startX + $fx*$cell + 3*$cell, $startY + $fy*$cell + 3*$cell, $startX + $fx*$cell + 4*$cell, $startY + $fy*$cell + 4*$cell, $charcoal);
+            imagefilledrectangle($img, $startX + $fx * $cell, $startY + $fy * $cell, $startX + $fx * $cell + 7 * $cell, $startY + $fy * $cell + 7 * $cell, $cream);
+            imagefilledrectangle($img, $startX + $fx * $cell + $cell, $startY + $fy * $cell + $cell, $startX + $fx * $cell + 6 * $cell, $startY + $fy * $cell + 6 * $cell, $charcoal);
+            imagefilledrectangle($img, $startX + $fx * $cell + 2 * $cell, $startY + $fy * $cell + 2 * $cell, $startX + $fx * $cell + 5 * $cell, $startY + $fy * $cell + 5 * $cell, $cream);
+            imagefilledrectangle($img, $startX + $fx * $cell + 3 * $cell, $startY + $fy * $cell + 3 * $cell, $startX + $fx * $cell + 4 * $cell, $startY + $fy * $cell + 4 * $cell, $charcoal);
         }
 
         // Footer banner
@@ -100,7 +102,7 @@ class QrisPlaceholderGenerator
 
         // Decorative corner dots
         $dotColor = $cream;
-        foreach ([[0,0],[639,0],[0,799],[639,799]] as [$dx, $dy]) {
+        foreach ([[0, 0], [639, 0], [0, 799], [639, 799]] as [$dx, $dy]) {
             imagefilledellipse($img, $dx, $dy, 10, 10, $dotColor);
             imagefilledellipse($img, $dx, $dy, 6, 6, $amber);
         }

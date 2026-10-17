@@ -8,7 +8,11 @@
             mode: {{ Js::from(collect(['deposit', 'lunas'])->contains(old('mode', request('mode', 'deposit'))) ? old('mode', request('mode', 'deposit')) : 'deposit') }},
             feeAmt: {{ (int) old('fee', 0) }},
             showFee: {{ ((int) old('fee', 0)) > 0 ? 'true' : 'false' }},
-            dpAmt: {{ (int) old('down_payment', 0) }},
+            manualDp: {{ (int) old('down_payment', 0) }},
+            // Deposit = jumlah deposit tiap barang. Kalau tidak ada deposit
+            // per barang (order lama), pakai nilai manual yang tersimpan.
+            get dpAmt() { return this.itemDeposit() > 0 ? this.itemDeposit() : this.manualDp; },
+            itemDeposit() { return this.items.reduce((s, i) => s + (Number(i.deposit) || 0), 0); },
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
             district: {{ Js::from(old('shipping_district', '')) }},
@@ -25,9 +29,9 @@
             items: oldItems.length ? oldItems.map((o, i) => ({
                 key: i + 1, name: o.product_name || '', unit: o.unit || 'pcs',
                 status: o.status || 'ready', qty: Number(o.quantity) || 1,
-                price: Number(o.product_price) || 0, weight: Number(o.weight) || 0,
+                price: Number(o.product_price) || 0, weight: Number(o.weight) || 0, deposit: Number(o.deposit) || 0,
                 open: false, loading: false, suggestions: [], _abort: null,
-            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, open: false, loading: false, suggestions: [], _abort: null }],
+            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, open: false, loading: false, suggestions: [], _abort: null }],
             seq: oldItems.length || 1,
             saving: false,
 
@@ -144,7 +148,7 @@
 
             addItem() {
                 this.seq++;
-                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, open: false, loading: false, suggestions: [], _abort: null });
+                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, open: false, loading: false, suggestions: [], _abort: null });
             },
             removeItem(idx) {
                 if (this.items[idx]?._abort) this.items[idx]._abort.abort();

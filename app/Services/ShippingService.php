@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Http;
 class ShippingService
 {
     private const CACHE_KEY_COURIERS = 'shipping_couriers_enabled';
+
     private const CACHE_KEY_PRICES = 'shipping_prices_cache';
+
     private const CACHE_TTL = 3600; // 1 hour
 
     public function __construct(
@@ -38,8 +40,8 @@ class ShippingService
 
         foreach ($couriers as $courier) {
             $code = $courier['code'];
-            $isEnabled = Setting::get('courier_enabled_' . $code, true) === true || 
-                         Setting::get('courier_enabled_' . $code) === 'true';
+            $isEnabled = Setting::get('courier_enabled_'.$code, true) === true ||
+                         Setting::get('courier_enabled_'.$code) === 'true';
 
             if ($isEnabled) {
                 // Urutan prioritas: API live < pengaturan manual admin.
@@ -47,8 +49,8 @@ class ShippingService
                     $courier['per_kg'] = (int) $livePrices[$code];
                 }
 
-                $customPrice = Setting::get('courier_per_kg_' . $code);
-                $customMinCharge = Setting::get('courier_min_charge_' . $code);
+                $customPrice = Setting::get('courier_per_kg_'.$code);
+                $customMinCharge = Setting::get('courier_min_charge_'.$code);
 
                 if ($customPrice !== null) {
                     $courier['per_kg'] = (int) $customPrice;
@@ -120,10 +122,10 @@ class ShippingService
                 'code' => $code,
                 'name' => $courier['name'],
                 'type' => $courier['type'],
-                'enabled' => Setting::get('courier_enabled_' . $code, true) === true || 
-                            Setting::get('courier_enabled_' . $code) === 'true',
-                'per_kg' => (int) Setting::get('courier_per_kg_' . $code, $courier['per_kg'] ?? 0),
-                'min_charge' => (int) Setting::get('courier_min_charge_' . $code, $courier['min_charge'] ?? 0),
+                'enabled' => Setting::get('courier_enabled_'.$code, true) === true ||
+                            Setting::get('courier_enabled_'.$code) === 'true',
+                'per_kg' => (int) Setting::get('courier_per_kg_'.$code, $courier['per_kg'] ?? 0),
+                'min_charge' => (int) Setting::get('courier_min_charge_'.$code, $courier['min_charge'] ?? 0),
                 'default_per_kg' => (int) ($courier['per_kg'] ?? 0),
                 'default_min_charge' => (int) ($courier['min_charge'] ?? 0),
             ];
@@ -137,7 +139,7 @@ class ShippingService
      */
     public function toggleCourier(string $code, bool $enabled): void
     {
-        Setting::set('courier_enabled_' . $code, $enabled ? 'true' : 'false', 'string', 'shipping', true);
+        Setting::set('courier_enabled_'.$code, $enabled ? 'true' : 'false', 'string', 'shipping', true);
         Cache::forget(self::CACHE_KEY_COURIERS);
     }
 
@@ -146,8 +148,8 @@ class ShippingService
      */
     public function updateCourierPricing(string $code, int $perKg, int $minCharge): void
     {
-        Setting::set('courier_per_kg_' . $code, (string) $perKg, 'integer', 'shipping', true);
-        Setting::set('courier_min_charge_' . $code, (string) $minCharge, 'integer', 'shipping', true);
+        Setting::set('courier_per_kg_'.$code, (string) $perKg, 'integer', 'shipping', true);
+        Setting::set('courier_min_charge_'.$code, (string) $minCharge, 'integer', 'shipping', true);
         Cache::forget(self::CACHE_KEY_COURIERS);
     }
 
@@ -170,6 +172,7 @@ class ShippingService
             if ($a['ok'] !== $b['ok']) {
                 return $a['ok'] ? -1 : 1;
             }
+
             return ($a['price'] ?? PHP_INT_MAX) <=> ($b['price'] ?? PHP_INT_MAX);
         });
 
@@ -183,7 +186,7 @@ class ShippingService
     {
         $cities = $this->estimator->cities();
 
-        if (!isset($cities[$city])) {
+        if (! isset($cities[$city])) {
             return null;
         }
 
@@ -197,16 +200,16 @@ class ShippingService
             'city' => $city,
             'province' => $cities[$city]['province'],
             'zone' => $zone,
-            'zone_label' => $this->estimator->zoneLabels()[$zone] ?? ('Zona ' . $zone),
+            'zone_label' => $this->estimator->zoneLabels()[$zone] ?? ('Zona '.$zone),
             'weight' => $weightKg,
             'min_weight_kg' => $minWeight,
             'tracking' => (bool) ($courier['tracking'] ?? false),
         ];
 
-        if (!empty($courier['available_zones']) && !in_array($zone, $courier['available_zones'], true)) {
+        if (! empty($courier['available_zones']) && ! in_array($zone, $courier['available_zones'], true)) {
             return array_merge($base, [
                 'ok' => false,
-                'message' => $courier['name'] . ' belum melayani pengiriman ke ' . $city . '.',
+                'message' => $courier['name'].' belum melayani pengiriman ke '.$city.'.',
             ]);
         }
 
@@ -223,8 +226,8 @@ class ShippingService
             'ok' => true,
             'billable_weight' => $billable,
             'price' => $price,
-            'price_formatted' => 'Rp ' . number_format($price, 0, ',', '.'),
-            'per_kg_formatted' => 'Rp ' . number_format((int) $courier['per_kg'], 0, ',', '.') . '/kg',
+            'price_formatted' => 'Rp '.number_format($price, 0, ',', '.'),
+            'per_kg_formatted' => 'Rp '.number_format((int) $courier['per_kg'], 0, ',', '.').'/kg',
             'etd' => $courier['etd'] ?? 'N/A',
             'tracking_links' => $this->estimator->trackingLinks($courier),
             'message' => null,
@@ -241,7 +244,7 @@ class ShippingService
         $apiProvider = Setting::get('shipping_api_provider');
         $apiKey = Setting::get('shipping_api_key');
 
-        if (!$apiProvider || !$apiKey) {
+        if (! $apiProvider || ! $apiKey) {
             return ['success' => false, 'message' => 'API not configured'];
         }
 
@@ -258,8 +261,9 @@ class ShippingService
 
             return $result;
         } catch (\Exception $e) {
-            \Log::error('Shipping price update failed: ' . $e->getMessage());
-            return ['success' => false, 'message' => 'API request failed: ' . $e->getMessage()];
+            \Log::error('Shipping price update failed: '.$e->getMessage());
+
+            return ['success' => false, 'message' => 'API request failed: '.$e->getMessage()];
         }
     }
 
@@ -275,8 +279,8 @@ class ShippingService
             'weight' => '1000',
         ]);
 
-        if (!$response->successful()) {
-            return ['success' => false, 'message' => 'API returned error: ' . $response->status()];
+        if (! $response->successful()) {
+            return ['success' => false, 'message' => 'API returned error: '.$response->status()];
         }
 
         $prices = [];
@@ -295,7 +299,7 @@ class ShippingService
         $apiProvider = Setting::get('shipping_api_provider');
         $apiKey = Setting::get('shipping_api_key');
 
-        if (!$apiProvider || !$apiKey) {
+        if (! $apiProvider || ! $apiKey) {
             return [
                 'provider' => $apiProvider ?? 'none',
                 'status' => 'not_configured',
@@ -309,10 +313,10 @@ class ShippingService
         try {
             $response = Http::timeout(5)->head('https://api.co.id/ongkir/check');
             $status = $response->successful() ? 'online' : 'offline';
-            $message = $response->successful() ? 'API is reachable' : 'API returned error: ' . $response->status();
+            $message = $response->successful() ? 'API is reachable' : 'API returned error: '.$response->status();
         } catch (\Exception $e) {
             $status = 'offline';
-            $message = 'Connection error: ' . $e->getMessage();
+            $message = 'Connection error: '.$e->getMessage();
         }
 
         return [

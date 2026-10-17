@@ -178,29 +178,33 @@ class InvoiceController extends Controller
     /**
      * Halaman invoice siap-cetak untuk satu pesanan.
      *
-     * Tanpa dependency PDF: pakai cetak bawaan browser (Ctrl+P -> Save as PDF).
+     * Memakai TEMPLATE YANG SAMA dengan pratinjau (invoices/_template), jadi
+     * halaman cetak, pratinjau, dan PDF/PNG yang dikirim ke WhatsApp identik.
      */
     public function invoice(Request $request, Order $order)
     {
         Gate::authorize('view', $order);
 
-        $order->load('items');
-
-        // Gambar invoice disimpan di public/ (lihat config/invoice.php),
-        // jadi pakai asset() bukan disk storage.
-        $publicUrl = fn (?string $path) => $path && is_file(public_path($path)) ? asset($path) : null;
-
-        $qrisImage = qris_url();
-
         return view('admin.orders.invoice', [
+            'doc' => $this->docFromOrder($order),
             'order' => $order,
             'autoPrint' => $request->boolean('print'),
             'embed' => $request->boolean('embed'),
-            'qrisImage' => $qrisImage,
-            'qrisMerchant' => setting('qris_merchant_name', setting('brand_name', 'NITIP DI END')),
-            'rekeningImage' => $publicUrl(config('invoice.rekening_image')),
-            'paidImage' => $publicUrl(config('invoice.paid_image')),
         ]);
+    }
+
+    /**
+     * Versi HTML (bukan PDF) dari invoice publik.
+     *
+     * Dipakai tombol WhatsApp: dokumen ini dimuat ke <iframe> lalu dirender
+     * jadi PNG (html2canvas) supaya yang terkirim ke pelanggan adalah GAMBAR
+     * invoice dengan tampilan yang sama persis seperti pratinjau.
+     */
+    public function invoiceHtml(string $token)
+    {
+        $order = Order::where('public_token', $token)->firstOrFail();
+
+        return view('invoices.html', ['doc' => $this->docFromOrder($order)]);
     }
 
     /**
@@ -261,7 +265,10 @@ class InvoiceController extends Controller
     {
         $order->loadMissing('items');
 
-        $paid = (int) $order->down_payment + (int) $order->payments_sum;
+        // Pakai accessor totalPaid (deposit + semua pelunasan tercatat).
+        // Sebelumnya memakai `payments_sum` yang hanya diisi di halaman index
+        // (withSum), jadi di halaman invoice nilainya salah dan "Sisa" keliru.
+        $paid = (int) $order->totalPaid;
         $left = max(0, (int) $order->total - $paid);
         $storeWa = setting('whatsapp');
 
@@ -310,6 +317,13 @@ class InvoiceController extends Controller
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],
             'left' => $left > 0 ? ['label' => 'Sisa', 'value' => format_price($left)] : null,
             'payment_text' => $payment,
+            // QRIS hanya untuk nominal <= batas; di atasnya rekening saja.
+            'qris' => qris_allowed_for((int) $order->total)
+                ? ['image' => qris_url(), 'merchant' => setting('qris_merchant_name')]
+                : null,
+            'bank' => ['lines' => bank_account_lines(), 'text' => bank_account_text()],
+            'paid' => (bool) $order->is_paid,
+            'paid_at' => optional($order->paid_at)->format('d M Y, H:i'),
             'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
         ];
     }
@@ -373,6 +387,10 @@ class InvoiceController extends Controller
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($subtotal + $ongkir + $fee)],
             'left' => ['label' => 'Sisa', 'value' => format_price($subtotal + $ongkir + $fee)],
             'payment_text' => 'Silakan transfer, lalu kirim bukti via WhatsApp dengan menyebut nomor invoice #INV-SAMPLE-2026.',
+            'qris' => qris_allowed_for($subtotal + $ongkir + $fee)
+                ? ['image' => qris_url(), 'merchant' => setting('qris_merchant_name')]
+                : null,
+            'bank' => ['lines' => bank_account_lines(), 'text' => bank_account_text()],
             'footer' => 'Terima kasih telah berbelanja jastip bersama Jastip Imoby By Damesha.',
         ];
     }

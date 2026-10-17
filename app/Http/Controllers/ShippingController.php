@@ -12,8 +12,7 @@ class ShippingController extends Controller
     public function __construct(
         private readonly ShippingEstimator $estimator,
         private readonly ShippingService $shipping
-    ) {
-    }
+    ) {}
 
     /**
      * Halaman "Cek Ongkir": kalkulator + tabel referensi 15 ekspedisi
@@ -26,7 +25,7 @@ class ShippingController extends Controller
         $selected = $request->input('courier');
 
         $cities = $this->estimator->cities();
-        if (!isset($cities[$city])) {
+        if (! isset($cities[$city])) {
             $city = 'Jakarta';
         }
 

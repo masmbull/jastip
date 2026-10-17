@@ -23,7 +23,7 @@ class NotificationObserver
             'title' => $notification->title,
             'body' => $notification->message,
             'url' => '/profile/notifications',
-            'tag' => 'notification-' . $notification->id,
+            'tag' => 'notification-'.$notification->id,
         ];
 
         foreach ($notification->user->pushSubscriptions as $subscription) {

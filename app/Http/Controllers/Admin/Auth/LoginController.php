@@ -15,6 +15,7 @@ class LoginController extends Controller
      * Limit the rate of login attempts to 5 per minute per IP address
      */
     private const MAX_ATTEMPTS = 5;
+
     private const RATE_LIMIT_MINUTES = 1;
 
     public function showLoginForm()
@@ -33,7 +34,7 @@ class LoginController extends Controller
 
         $request->authenticate();
 
-        if (!auth()->user()->isAdmin()) {
+        if (! auth()->user()->isAdmin()) {
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -64,11 +65,11 @@ class LoginController extends Controller
     /**
      * Ensure the login request is not rate limited.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function ensureIsNotRateLimited(Request $request): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), self::MAX_ATTEMPTS)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), self::MAX_ATTEMPTS)) {
             return;
         }
 
@@ -87,6 +88,6 @@ class LoginController extends Controller
      */
     protected function throttleKey(Request $request): string
     {
-        return strtolower($request->input('username', '') ?? '') . '|' . $request->ip();
+        return strtolower($request->input('username', '') ?? '').'|'.$request->ip();
     }
 }

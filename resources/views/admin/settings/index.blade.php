@@ -52,7 +52,7 @@
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan ukuran 200×60px, format PNG transparan.</p>
                     @if(setting('brand_logo'))
                         <div class="mt-2 flex items-center gap-3">
-                            <img src="{{ asset('storage/' . setting('brand_logo')) }}" class="h-12 w-auto rounded" alt="Logo saat ini">
+                            <img src="{{ media_url(setting('brand_logo')) }}" class="h-12 w-auto rounded" alt="Logo saat ini">
                             <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Logo saat ini</p>
                         </div>
                     @endif
@@ -64,7 +64,7 @@
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan 32×32px atau 16×16px, format PNG.</p>
                     @if(setting('brand_favicon'))
                         <div class="mt-2 flex items-center gap-3">
-                            <img src="{{ asset('storage/' . setting('brand_favicon')) }}" class="h-6 w-auto rounded" alt="Favicon saat ini">
+                            <img src="{{ media_url(setting('brand_favicon')) }}" class="h-6 w-auto rounded" alt="Favicon saat ini">
                             <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Favicon saat ini</p>
                         </div>
                     @endif
@@ -241,7 +241,7 @@
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Upload QRIS statis dari e-wallet atau bank kamu. Akan ditampilkan saat customer checkout.</p>
                     @if(setting('qris_image'))
                         <div class="mt-2 flex items-center gap-3">
-                            <img src="{{ asset('storage/' . setting('qris_image')) }}" class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="QRIS saat ini">
+                            <img src="{{ media_url(setting('qris_image')) }}" class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="QRIS saat ini">
                             <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">QRIS saat ini</p>
                         </div>
                     @endif
@@ -254,6 +254,43 @@
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Teks merchant yang ditampilkan di bawah QRIS.</p>
                 </div>
             </div>
+        </x-card>
+
+        {{-- Rekening Pembayaran --}}
+        <x-card class="animate-fade-up" style="animation-delay: 280ms">
+            <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
+                <x-icon name="banknotes" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Rekening Pembayaran
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_name">Nama Bank</label>
+                    <input id="bank_name" type="text" name="bank_name" value="{{ old('bank_name', setting('bank_name')) }}"
+                           placeholder="BCA / Mandiri / BRI"
+                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_account_number">Nomor Rekening</label>
+                    <input id="bank_account_number" type="text" name="bank_account_number" inputmode="numeric"
+                           value="{{ old('bank_account_number', setting('bank_account_number')) }}" placeholder="1234567890"
+                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 num">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="bank_account_name">Atas Nama</label>
+                    <input id="bank_account_name" type="text" name="bank_account_name" value="{{ old('bank_account_name', setting('bank_account_name')) }}"
+                           placeholder="Nama pemilik rekening"
+                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="qris_max_amount">Batas Nominal QRIS (Rp)</label>
+                    <input id="qris_max_amount" type="number" min="0" step="1000" name="qris_max_amount"
+                           value="{{ old('qris_max_amount', setting('qris_max_amount', 500000)) }}"
+                           class="w-full px-4 py-3 bg-[#F1F5F9] dark:bg-[#2e323b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 num">
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Invoice dengan total DI ATAS angka ini hanya menampilkan rekening (QRIS disembunyikan). Default Rp 500.000.</p>
+                </div>
+            </div>
+            <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-3">
+                Rekening ini muncul di invoice (cetak &amp; gambar yang dikirim ke WhatsApp) bersama QRIS.
+            </p>
         </x-card>
 
         <div class="flex justify-end pt-4">

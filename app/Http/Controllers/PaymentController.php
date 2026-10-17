@@ -41,6 +41,7 @@ class PaymentController extends Controller
 
         if ($isExpired) {
             $order->update(['status' => Order::STATUS_CANCELLED]);
+
             return redirect()->route('home')
                 ->with('error', 'Waktu pembayaran telah berakhir. Silakan buat pesanan baru.');
         }
@@ -69,7 +70,7 @@ class PaymentController extends Controller
         if ($order->status !== Order::STATUS_AWAITING_PAYMENT) {
             return response()->json([
                 'success' => false,
-                'message' => 'Pesanan tidak dalam status menunggu pembayaran.'
+                'message' => 'Pesanan tidak dalam status menunggu pembayaran.',
             ], 422);
         }
 
@@ -110,10 +111,11 @@ class PaymentController extends Controller
                 'proof_id' => $proof->id,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Payment proof upload failed: ' . $e->getMessage());
+            \Log::error('Payment proof upload failed: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengunggah bukti pembayaran. Silakan coba lagi.'
+                'message' => 'Gagal mengunggah bukti pembayaran. Silakan coba lagi.',
             ], 500);
         }
     }
@@ -136,14 +138,14 @@ class PaymentController extends Controller
         }
 
         $qrisPath = setting('qris_image');
-        if (!$qrisPath || !Storage::disk('public')->exists($qrisPath)) {
+        if (! $qrisPath || ! Storage::disk('public')->exists($qrisPath)) {
             return redirect()->back()
                 ->with('error', 'QRIS tidak tersedia.');
         }
 
         return Storage::disk('public')->download(
             $qrisPath,
-            'QRIS-' . $order->order_number . '.png'
+            'QRIS-'.$order->order_number.'.png'
         );
     }
 

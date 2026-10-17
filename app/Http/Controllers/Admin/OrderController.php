@@ -72,16 +72,19 @@ class OrderController extends Controller
             'status' => $item['status'] ?? OrderItem::STATUS_READY,
             'product_price' => (int) $item['product_price'],
             'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
+            'deposit' => max(0, (int) ($item['deposit'] ?? 0)),
         ]);
 
         $subtotal = (int) $items->sum('subtotal');
         $shippingCost = (int) $request->input('shipping_cost', 0);
         $fee = (int) $request->input('fee', 0);
         $paid = $request->boolean('mark_paid');
+        // Deposit = jumlah deposit PER BARANG (otomatis, tidak dihitung manual).
+        $itemDeposit = (int) $items->sum('deposit');
         // Mode lunas tidak menyimpan deposit apa pun.
         $downPayment = ($paid || $request->input('mode') === 'lunas')
             ? 0
-            : (int) $request->input('down_payment', 0);
+            : ($itemDeposit > 0 ? $itemDeposit : (int) $request->input('down_payment', 0));
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
         // Harga & fee hanya dari input admin (invoice manual, bukan dari produk).
@@ -176,13 +179,16 @@ class OrderController extends Controller
             'status' => $item['status'] ?? OrderItem::STATUS_READY,
             'product_price' => (int) $item['product_price'],
             'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
+            'deposit' => max(0, (int) ($item['deposit'] ?? 0)),
         ]);
 
         $subtotal = (int) $items->sum('subtotal');
         $shippingCost = (int) $request->input('shipping_cost', 0);
         $fee = (int) $request->input('fee', 0);
+        // Deposit per barang -> total otomatis (fallback ke input manual lama).
+        $itemDeposit = (int) $items->sum('deposit');
 
-        DB::transaction(function () use ($request, $order, $items, $subtotal, $shippingCost, $fee) {
+        DB::transaction(function () use ($request, $order, $items, $subtotal, $shippingCost, $fee, $itemDeposit) {
             $order->update([
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
@@ -197,7 +203,7 @@ class OrderController extends Controller
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'fee' => $fee,
-                'down_payment' => (int) $request->input('down_payment', 0),
+                'down_payment' => $itemDeposit > 0 ? $itemDeposit : (int) $request->input('down_payment', 0),
                 'total' => $subtotal + $shippingCost + $fee,
             ]);
 

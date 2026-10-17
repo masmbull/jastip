@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Coupon extends Model
 {
@@ -21,7 +20,7 @@ class Coupon extends Model
         'valid_to',
         'is_active',
     ];
-    
+
     protected $casts = [
         'value' => 'decimal:2',
         'minimum_purchase' => 'decimal:2',
@@ -30,23 +29,31 @@ class Coupon extends Model
         'valid_from' => 'datetime',
         'valid_to' => 'datetime',
     ];
-    
+
     /**
      * Check if coupon is valid
      */
     public function isValid($total = 0, $userId = null): bool
     {
-        if (!$this->is_active) return false;
-        
-        if (now() < $this->valid_from || now() > $this->valid_to) return false;
-        
-        if ($this->minimum_purchase && $total < $this->minimum_purchase) return false;
-        
-        if ($this->usage_limit && $this->usage_count >= $this->usage_limit) return false;
-        
+        if (! $this->is_active) {
+            return false;
+        }
+
+        if (now() < $this->valid_from || now() > $this->valid_to) {
+            return false;
+        }
+
+        if ($this->minimum_purchase && $total < $this->minimum_purchase) {
+            return false;
+        }
+
+        if ($this->usage_limit && $this->usage_count >= $this->usage_limit) {
+            return false;
+        }
+
         return true;
     }
-    
+
     /**
      * Calculate discount amount
      */
@@ -57,11 +64,11 @@ class Coupon extends Model
         } else {
             $discount = $this->value;
         }
-        
+
         if ($this->maximum_discount) {
             $discount = min($discount, $this->maximum_discount);
         }
-        
+
         return min($discount, $total);
     }
 }

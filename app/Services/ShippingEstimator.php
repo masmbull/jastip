@@ -142,9 +142,9 @@ class ShippingEstimator
         $links = [];
         $awb = $awb ? trim($awb) : null;
 
-        if (!empty($courier['tracking_query']) && $awb) {
+        if (! empty($courier['tracking_query']) && $awb) {
             $links[] = [
-                'label' => 'Lacak di situs ' . $courier['name'],
+                'label' => 'Lacak di situs '.$courier['name'],
                 'url' => sprintf($courier['tracking_query'], urlencode($awb)),
             ];
         }
@@ -152,14 +152,14 @@ class ShippingEstimator
         if ($awb) {
             $aggregator = $this->trackingAggregator();
             $links[] = [
-                'label' => 'Cek resi via ' . $aggregator['name'] . ' (' . $courier['name'] . ')',
+                'label' => 'Cek resi via '.$aggregator['name'].' ('.$courier['name'].')',
                 'url' => sprintf($aggregator['url'], urlencode($awb)),
             ];
         }
 
-        if (!empty($courier['tracking_page'])) {
+        if (! empty($courier['tracking_page'])) {
             $links[] = [
-                'label' => 'Halaman resmi ' . $courier['name'],
+                'label' => 'Halaman resmi '.$courier['name'],
                 'url' => $courier['tracking_page'],
             ];
         }
@@ -175,11 +175,11 @@ class ShippingEstimator
         $courier = $this->courier($courierCode);
         $cities = $this->cities();
 
-        if (!$courier) {
+        if (! $courier) {
             return ['ok' => false, 'message' => 'Ekspedisi tidak dikenal.'];
         }
 
-        if (!isset($cities[$city])) {
+        if (! isset($cities[$city])) {
             return ['ok' => false, 'message' => 'Kota tujuan belum terdaftar. Pilih dari daftar yang tersedia.'];
         }
 
@@ -193,18 +193,18 @@ class ShippingEstimator
             'city' => $city,
             'province' => $cities[$city]['province'],
             'zone' => $zone,
-            'zone_label' => $this->zoneLabels()[$zone] ?? ('Zona ' . $zone),
+            'zone_label' => $this->zoneLabels()[$zone] ?? ('Zona '.$zone),
             'weight' => $weightKg,
             'min_weight_kg' => $minWeight,
             'tracking' => (bool) ($courier['tracking'] ?? false),
         ];
 
         // Ekspedisi instant hanya melayani zona tertentu (dalam kota/kota besar).
-        if (!empty($courier['available_zones']) && !in_array($zone, $courier['available_zones'], true)) {
+        if (! empty($courier['available_zones']) && ! in_array($zone, $courier['available_zones'], true)) {
             return array_merge($base, [
                 'ok' => false,
-                'message' => $courier['name'] . ' belum melayani pengiriman ke ' . $city
-                    . ' dari ' . $this->origin()['city'] . '.',
+                'message' => $courier['name'].' belum melayani pengiriman ke '.$city
+                    .' dari '.$this->origin()['city'].'.',
             ]);
         }
 
@@ -222,8 +222,8 @@ class ShippingEstimator
             'ok' => true,
             'billable_weight' => $billable,
             'price' => $price,
-            'price_formatted' => 'Rp ' . number_format($price, 0, ',', '.'),
-            'per_kg_formatted' => 'Rp ' . number_format((int) $courier['per_kg'], 0, ',', '.') . '/kg',
+            'price_formatted' => 'Rp '.number_format($price, 0, ',', '.'),
+            'per_kg_formatted' => 'Rp '.number_format((int) $courier['per_kg'], 0, ',', '.').'/kg',
             'etd' => $courier['etd'],
             'tracking_links' => $this->trackingLinks($courier),
             'message' => null,
@@ -279,4 +279,3 @@ class ShippingEstimator
         return ['cheapest' => $cheapest, 'fastest' => $fastest];
     }
 }
-

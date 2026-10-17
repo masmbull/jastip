@@ -16,7 +16,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $profile = $user->profile ?? new UserProfile();
+        $profile = $user->profile ?? new UserProfile;
         $orders = $user->orders()->latest()->paginate(10);
         $reviews = $user->reviews()->latest()->paginate(10);
 
@@ -29,7 +29,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        $profile = $user->profile ?? new UserProfile();
+        $profile = $user->profile ?? new UserProfile;
 
         return view('frontend.profile.edit', compact('user', 'profile'));
     }
@@ -44,7 +44,7 @@ class ProfileController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'phone' => 'nullable|string|max:15',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
@@ -169,7 +169,7 @@ class ProfileController extends Controller
     public function loyalty()
     {
         $user = Auth::user();
-        $profile = $user->profile ?? new UserProfile();
+        $profile = $user->profile ?? new UserProfile;
 
         $history = []; // Can add points transaction history later
 

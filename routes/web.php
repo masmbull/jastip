@@ -170,6 +170,11 @@ Route::get('/i/{token}', [InvoiceController::class, 'invoicePdf'])
     ->where('token', '[A-Za-z0-9]{16,32}')
     ->name('invoice.public');
 
+// Versi HTML-nya: jadi target render PNG di tombol WhatsApp (bukan PDF).
+Route::get('/i/{token}/gambar', [InvoiceController::class, 'invoiceHtml'])
+    ->where('token', '[A-Za-z0-9]{16,32}')
+    ->name('invoice.html');
+
 // =============================================================================
 // Admin Routes
 // =============================================================================

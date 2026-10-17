@@ -271,6 +271,75 @@ window.Alpine = Alpine;
         };
     };
 
+    /* ---- Kirim invoice sebagai GAMBAR (PNG) ke WhatsApp ----
+       Invoice dirender server (template yang sama dengan pratinjau). Dokumen
+       HTML-nya dimuat ke iframe tersembunyi lalu diubah jadi PNG lewat
+       html2canvas, dan dibagikan lewat Web Share API sehingga Android
+       menampilkan Share Sheet DENGAN gambar terlampir. Fallback (browser tanpa
+       file sharing): unduh PNG + buka chat WhatsApp. Tidak mengklaim terkirim. */
+    window.jdShareInvoiceImage = async function (btn, opts) {
+        const { url, filename, text, waUrl } = opts;
+        if (btn && btn.dataset.busy === '1') return;
+        if (btn) { btn.dataset.busy = '1'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
+
+        let frame = null;
+        try {
+            const { default: html2canvas } = await import('html2canvas');
+
+            const html = await fetch(url, { credentials: 'same-origin' })
+                .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))));
+
+            frame = document.createElement('iframe');
+            frame.setAttribute('aria-hidden', 'true');
+            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:760px;height:1400px;border:0;';
+            document.body.appendChild(frame);
+
+            await new Promise((resolve) => { frame.onload = resolve; frame.srcdoc = html; });
+
+            // Tunggu gambar (QRIS/logo) selesai dimuat sebelum render.
+            await Promise.all(
+                [...frame.contentDocument.images].map((img) =>
+                    img.complete ? Promise.resolve() : new Promise((res) => { img.onload = img.onerror = res; })
+                )
+            );
+
+            const canvas = await html2canvas(frame.contentDocument.body, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, logging: false });
+            const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+            if (!blob) throw new Error('render gagal');
+
+            const file = new File([blob], filename || 'invoice.png', { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file], title: filename || 'Invoice', text: text || '' });
+                } catch (err) {
+                    if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
+                        window.toast('Gagal membagikan invoice. Coba lagi.', 'error');
+                    }
+                }
+            } else {
+                const objUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objUrl;
+                a.download = filename || 'invoice.png';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(objUrl), 4000);
+                if (waUrl) window.open(waUrl, '_blank', 'noopener');
+                if (typeof window.toast === 'function') {
+                    window.toast('Browser ini belum bisa lampirkan file. Gambar diunduh, chat WhatsApp dibuka: lampirkan gambarnya manual.', 'info');
+                }
+            }
+        } catch (e) {
+            console.error('[jdShareInvoiceImage]', e);
+            if (typeof window.toast === 'function') window.toast('Gagal menyiapkan gambar invoice. Coba lagi.', 'error');
+        } finally {
+            if (frame && frame.parentNode) frame.parentNode.removeChild(frame);
+            if (btn) { btn.dataset.busy = ''; btn.disabled = false; btn.removeAttribute('aria-busy'); }
+        }
+    };
+
     /* ---- Kirim invoice PDF sebagai FILE ke WhatsApp (Web Share) ----
        Link wa.me TIDAK bisa melampirkan file, itu sebabnya sebelumnya cuma
        terkirim link. Di sini PDF asli (dirender server, dompdf) diambil sebagai

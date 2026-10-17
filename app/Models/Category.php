@@ -46,8 +46,8 @@ class Category extends Model
             return $this->icon;
         }
 
-        if ($this->icon && !filter_var($this->icon, FILTER_VALIDATE_URL)) {
-            return asset('storage/' . $this->icon);
+        if ($this->icon && ! filter_var($this->icon, FILTER_VALIDATE_URL)) {
+            return asset('storage/'.$this->icon);
         }
 
         return null;

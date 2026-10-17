@@ -11,6 +11,7 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::latest()->paginate(15);
+
         return view('admin.coupons.index', compact('coupons'));
     }
 
@@ -34,6 +35,7 @@ class CouponController extends Controller
         ]);
 
         Coupon::create($validated);
+
         return redirect()->route('admin.coupons.index')->with('success', 'Kupon berhasil dibuat');
     }
 
@@ -45,7 +47,7 @@ class CouponController extends Controller
     public function update(Request $request, Coupon $coupon)
     {
         $validated = $request->validate([
-            'code' => 'required|string|unique:coupons,code,' . $coupon->id,
+            'code' => 'required|string|unique:coupons,code,'.$coupon->id,
             'type' => 'required|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
             'minimum_purchase' => 'nullable|numeric|min:0',
@@ -58,12 +60,14 @@ class CouponController extends Controller
         ]);
 
         $coupon->update($validated);
+
         return redirect()->route('admin.coupons.index')->with('success', 'Kupon berhasil diperbarui');
     }
 
     public function destroy(Coupon $coupon)
     {
         $coupon->delete();
+
         return redirect()->back()->with('success', 'Kupon berhasil dihapus');
     }
 }

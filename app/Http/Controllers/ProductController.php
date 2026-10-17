@@ -24,7 +24,7 @@ class ProductController extends Controller
 
         // Search by name
         if ($request->filled('search') && $request->input('search') !== '') {
-            $query->where('name', 'like', '%' . $request->input('search') . '%');
+            $query->where('name', 'like', '%'.$request->input('search').'%');
         }
 
         // Filter by stock
@@ -52,7 +52,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        if (!$product->is_active) {
+        if (! $product->is_active) {
             return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan.');
         }
 
@@ -95,7 +95,7 @@ class ProductController extends Controller
         $totalViral = Cache::remember('products.viral_count', 3600, function () {
             return Product::viral()->count();
         });
-        
+
         $totalSold = Cache::remember('products.viral_sold', 3600, function () {
             return (int) Product::viral()->sum('sold_count');
         });

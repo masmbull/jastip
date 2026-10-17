@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class SystemStatusController extends Controller
 {
-    public function __construct(private readonly ShippingService $shippingService)
-    {
-    }
+    public function __construct(private readonly ShippingService $shippingService) {}
 
     /**
      * Show system status and API services monitoring
@@ -49,7 +47,7 @@ class SystemStatusController extends Controller
         $shippingStatus = $this->shippingService->getApiStatus();
         if ($shippingStatus['status'] !== 'not_configured') {
             $services[] = [
-                'name' => 'Shipping API (' . ucfirst($shippingStatus['provider']) . ')',
+                'name' => 'Shipping API ('.ucfirst($shippingStatus['provider']).')',
                 'status' => $shippingStatus['status'],
                 'message' => $shippingStatus['message'],
                 'icon' => '🚚',
@@ -106,6 +104,7 @@ class SystemStatusController extends Controller
     {
         try {
             \DB::connection()->getPdo();
+
             return 'online';
         } catch (\Exception $e) {
             return 'offline';
@@ -118,9 +117,10 @@ class SystemStatusController extends Controller
     private function checkFileStorage(): string
     {
         try {
-            $testFile = storage_path('app/health-check-' . time() . '.tmp');
+            $testFile = storage_path('app/health-check-'.time().'.tmp');
             file_put_contents($testFile, 'test');
             @unlink($testFile);
+
             return 'online';
         } catch (\Exception $e) {
             return 'offline';
@@ -133,10 +133,11 @@ class SystemStatusController extends Controller
     private function checkCache(): string
     {
         try {
-            $testKey = 'health-check-' . time();
+            $testKey = 'health-check-'.time();
             \Cache::put($testKey, 'test', 1);
             $value = \Cache::get($testKey);
             \Cache::forget($testKey);
+
             return $value === 'test' ? 'online' : 'offline';
         } catch (\Exception $e) {
             return 'offline';
@@ -149,10 +150,11 @@ class SystemStatusController extends Controller
     private function checkSession(): string
     {
         try {
-            $testKey = 'health-check-' . time();
+            $testKey = 'health-check-'.time();
             \Session::put($testKey, 'test');
             $value = \Session::get($testKey);
             \Session::forget($testKey);
+
             return $value === 'test' ? 'online' : 'offline';
         } catch (\Exception $e) {
             return 'offline';
@@ -166,6 +168,7 @@ class SystemStatusController extends Controller
     {
         try {
             $response = Http::timeout(5)->head('https://api.whatsapp.com');
+
             return $response->successful() ? 'online' : 'offline';
         } catch (\Exception $e) {
             return 'offline';
@@ -183,7 +186,7 @@ class SystemStatusController extends Controller
         $pow = min($pow, count($units) - 1);
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, 2) . ' ' . $units[$pow];
+        return round($bytes, 2).' '.$units[$pow];
     }
 
     /**

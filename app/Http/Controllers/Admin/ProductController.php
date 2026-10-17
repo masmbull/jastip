@@ -8,8 +8,8 @@ use App\Http\Requests\ProductUpdateRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -18,7 +18,7 @@ class ProductController extends Controller
         $query = Product::with('category');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->input('search') . '%');
+            $query->where('name', 'like', '%'.$request->input('search').'%');
         }
 
         if ($request->filled('category_id') && $request->input('category_id') !== 'all') {
@@ -41,6 +41,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::active()->get();
+
         return view('admin.products.create', compact('categories'));
     }
 
@@ -82,6 +83,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::active()->get();
+
         return view('admin.products.edit', compact('product', 'categories'));
     }
 

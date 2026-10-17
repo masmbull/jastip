@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -41,7 +42,7 @@ class CustomerAuthTest extends TestCase
             ->assertRedirect(route('home'));
         $this->assertAuthenticatedAs($user);
 
-        \Illuminate\Support\Facades\Auth::logout();
+        Auth::logout();
 
         // by email
         $this->post(route('login.post'), ['login' => 'budi@example.com', 'password' => 'secret123'])

@@ -16,8 +16,8 @@ class WebPushVapidCommand extends Command
         $keys = WebPushService::generateVapidKeys();
 
         $this->info('VAPID key pair generated.');
-        $this->line('VAPID_PUBLIC_KEY=' . $keys['public']);
-        $this->line('VAPID_PRIVATE_KEY=' . $keys['private']);
+        $this->line('VAPID_PUBLIC_KEY='.$keys['public']);
+        $this->line('VAPID_PRIVATE_KEY='.$keys['private']);
 
         if ($this->option('write')) {
             $env = base_path('.env');
@@ -26,10 +26,10 @@ class WebPushVapidCommand extends Command
 
             // Replace existing keys if present, otherwise append.
             if (preg_match('/^VAPID_PUBLIC_KEY=/m', $content)) {
-                $content = preg_replace('/^VAPID_PUBLIC_KEY=.*$/m', 'VAPID_PUBLIC_KEY=' . $keys['public'], $content);
-                $content = preg_replace('/^VAPID_PRIVATE_KEY=.*$/m', 'VAPID_PRIVATE_KEY=' . $keys['private'], $content);
+                $content = preg_replace('/^VAPID_PUBLIC_KEY=.*$/m', 'VAPID_PUBLIC_KEY='.$keys['public'], $content);
+                $content = preg_replace('/^VAPID_PRIVATE_KEY=.*$/m', 'VAPID_PRIVATE_KEY='.$keys['private'], $content);
             } else {
-                $content = rtrim($content) . "\n\n" . $lines;
+                $content = rtrim($content)."\n\n".$lines;
             }
 
             file_put_contents($env, $content);

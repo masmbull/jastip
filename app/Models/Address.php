@@ -19,16 +19,16 @@ class Address extends Model
         'notes',
         'is_default',
     ];
-    
+
     protected $casts = [
         'is_default' => 'boolean',
     ];
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    
+
     /**
      * Set this address as default for user
      */
@@ -37,7 +37,7 @@ class Address extends Model
         Address::where('user_id', $this->user_id)
             ->where('id', '!=', $this->id)
             ->update(['is_default' => false]);
-        
+
         $this->update(['is_default' => true]);
     }
 }

@@ -13,14 +13,12 @@ class OrderShipped extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pesanan Anda Telah Dikirim #' . $this->order->order_number,
+            subject: 'Pesanan Anda Telah Dikirim #'.$this->order->order_number,
         );
     }
 

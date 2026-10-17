@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-        protected $fillable = [
+    protected $fillable = [
         'category_id',
         'name',
         'brand',
@@ -47,10 +47,10 @@ class Product extends Model
             'sold_count' => 'integer',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
-'is_viral' => 'boolean',
-        'viral_rank' => 'integer',
-        'is_po' => 'boolean',
-        'ready_date' => 'date',
+            'is_viral' => 'boolean',
+            'viral_rank' => 'integer',
+            'is_po' => 'boolean',
+            'ready_date' => 'date',
         ];
     }
 
@@ -107,21 +107,21 @@ class Product extends Model
         }
 
         // Path lokal di public/ (contoh: images/viral/nama-produk.jpg)
-        if ($this->image && !filter_var($this->image, FILTER_VALIDATE_URL)) {
+        if ($this->image && ! filter_var($this->image, FILTER_VALIDATE_URL)) {
             if (Str::startsWith($this->image, ['images/', 'build/', 'img/'])) {
                 return asset($this->image);
             }
 
-            return asset('storage/' . $this->image);
+            return asset('storage/'.$this->image);
         }
 
         // Placeholder image (palet cream/orange, konsisten dengan tema)
-        return 'https://placehold.co/600x600/FFF7ED/EA580C?text=' . urlencode($this->name);
+        return 'https://placehold.co/600x600/FFF7ED/EA580C?text='.urlencode($this->name);
     }
 
-        public function getFormattedPriceAttribute(): string
+    public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp '.number_format($this->price, 0, ',', '.');
     }
 
     /**
@@ -130,7 +130,7 @@ class Product extends Model
      */
     public function getFormattedSetbiayaFeeAttribute(): string
     {
-        return 'Rp ' . number_format($this->effectiveFee(), 0, ',', '.');
+        return 'Rp '.number_format($this->effectiveFee(), 0, ',', '.');
     }
 
     /**
@@ -152,8 +152,8 @@ class Product extends Model
     public function getFormattedPriceRangeAttribute(): string
     {
         if ($this->price_max && $this->price_max > $this->price) {
-            return 'Rp ' . number_format($this->price, 0, ',', '.')
-                . ' – Rp ' . number_format($this->price_max, 0, ',', '.');
+            return 'Rp '.number_format($this->price, 0, ',', '.')
+                .' – Rp '.number_format($this->price_max, 0, ',', '.');
         }
 
         return $this->formatted_price;
@@ -174,10 +174,10 @@ class Product extends Model
         }
 
         if ($this->sold_count >= 1000) {
-            return number_format($this->sold_count / 1000, 1, ',', '.') . ' rb+ terjual';
+            return number_format($this->sold_count / 1000, 1, ',', '.').' rb+ terjual';
         }
 
-        return $this->sold_count . '+ terjual';
+        return $this->sold_count.'+ terjual';
     }
 
     public function getAvailabilityBadgeAttribute(): array
@@ -189,10 +189,10 @@ class Product extends Model
         }
 
         if ($available <= 5) {
-            return ['text' => 'Stok Terbatas (' . $available . ')', 'class' => 'bg-amber-100 text-amber-700'];
+            return ['text' => 'Stok Terbatas ('.$available.')', 'class' => 'bg-amber-100 text-amber-700'];
         }
 
-        return ['text' => 'Tersedia (' . $available . ')', 'class' => 'bg-green-100 text-green-700'];
+        return ['text' => 'Tersedia ('.$available.')', 'class' => 'bg-green-100 text-green-700'];
     }
 
     public function isInStock(): bool

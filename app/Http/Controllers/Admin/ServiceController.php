@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Service;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ServiceController
 {
@@ -62,7 +61,7 @@ class ServiceController
     public function checkAll()
     {
         $services = Service::all();
-        
+
         foreach ($services as $service) {
             try {
                 match ($service->name) {
@@ -72,7 +71,7 @@ class ServiceController
                     'Email' => $this->checkEmailStatus(),
                     'Storage' => $this->checkStorageStatus(),
                 };
-                
+
                 $service->update([
                     'status' => 'online',
                     'last_checked' => now(),
@@ -98,7 +97,7 @@ class ServiceController
 
     private function checkCacheStatus()
     {
-        Cache::put('health_check_' . time(), 'ok', 1);
+        Cache::put('health_check_'.time(), 'ok', 1);
     }
 
     private function checkApiStatus()
@@ -107,7 +106,7 @@ class ServiceController
         $routes = collect(\Route::getRoutes())->filter(function ($route) {
             return in_array('GET', $route->methods) && strpos($route->uri, 'api/') === 0;
         });
-        
+
         if ($routes->isEmpty()) {
             throw new \Exception('No API routes found');
         }
@@ -125,7 +124,7 @@ class ServiceController
     private function checkStorageStatus()
     {
         $path = storage_path('app');
-        if (!is_writable($path)) {
+        if (! is_writable($path)) {
             throw new \Exception('Storage path not writable');
         }
     }

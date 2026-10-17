@@ -18,18 +18,18 @@ class UserProfile extends Model
         'membership_tier',
         'last_login',
     ];
-    
+
     protected $casts = [
         'date_of_birth' => 'date',
         'last_login' => 'datetime',
         'loyalty_points' => 'integer',
     ];
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    
+
     /**
      * Add loyalty points
      */
@@ -38,14 +38,14 @@ class UserProfile extends Model
         $this->increment('loyalty_points', $points);
         $this->updateMembershipTier();
     }
-    
+
     /**
      * Update membership tier based on loyalty points
      */
     public function updateMembershipTier()
     {
         $points = $this->loyalty_points;
-        
+
         if ($points >= 10000) {
             $tier = 'platinum';
         } elseif ($points >= 5000) {
@@ -55,7 +55,7 @@ class UserProfile extends Model
         } else {
             $tier = 'bronze';
         }
-        
+
         $this->update(['membership_tier' => $tier]);
     }
 }

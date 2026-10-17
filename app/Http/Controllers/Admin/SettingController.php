@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingUpdateRequest;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class SettingController extends Controller
 {
@@ -54,12 +55,12 @@ class SettingController extends Controller
             $path = $request->file($key)->store('settings', 'public');
             Setting::set($key, $path, 'string', $group, true);
         } catch (\Exception $e) {
-            \Log::error('Failed to upload setting image: ' . $key, [
+            \Log::error('Failed to upload setting image: '.$key, [
                 'error' => $e->getMessage(),
                 'key' => $key,
             ]);
 
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 $key => ['Gagal mengunggah file gambar. Silakan coba lagi.'],
             ]);
         }

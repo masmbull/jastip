@@ -51,7 +51,7 @@ class QrisSettingTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('Bayar via QRIS');
+            ->assertSee('CARA PEMBAYARAN')->assertSee('>QRIS<', false);
     }
 
     public function test_invoice_hides_qris_block_when_disabled(): void

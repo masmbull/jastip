@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\PaymentProof;
 use App\Services\StockService;
+use App\Services\WhatsappService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentProofController extends Controller
@@ -65,7 +66,7 @@ class PaymentProofController extends Controller
 
         if ($paymentProof->status !== 'pending') {
             return redirect()->back()
-                ->with('error', 'Bukti pembayaran ini sudah ' . $paymentProof->status . '.');
+                ->with('error', 'Bukti pembayaran ini sudah '.$paymentProof->status.'.');
         }
 
         try {
@@ -80,7 +81,8 @@ class PaymentProofController extends Controller
             return redirect()->route('admin.payment-proofs.show', $paymentProof)
                 ->with('success', 'Bukti pembayaran berhasil diverifikasi. Pesanan dikonfirmasi.');
         } catch (\Exception $e) {
-            \Log::error('Payment proof verification failed: ' . $e->getMessage());
+            \Log::error('Payment proof verification failed: '.$e->getMessage());
+
             return redirect()->back()
                 ->with('error', 'Gagal memverifikasi bukti pembayaran.');
         }
@@ -100,7 +102,7 @@ class PaymentProofController extends Controller
 
         if ($paymentProof->status !== 'pending') {
             return redirect()->back()
-                ->with('error', 'Bukti pembayaran ini sudah ' . $paymentProof->status . '.');
+                ->with('error', 'Bukti pembayaran ini sudah '.$paymentProof->status.'.');
         }
 
         try {
@@ -112,7 +114,8 @@ class PaymentProofController extends Controller
             return redirect()->route('admin.payment-proofs.show', $paymentProof)
                 ->with('success', 'Bukti pembayaran ditolak. Pelanggan diminta mengunggah ulang.');
         } catch (\Exception $e) {
-            \Log::error('Payment proof rejection failed: ' . $e->getMessage());
+            \Log::error('Payment proof rejection failed: '.$e->getMessage());
+
             return redirect()->back()
                 ->with('error', 'Gagal menolak bukti pembayaran.');
         }
@@ -123,7 +126,7 @@ class PaymentProofController extends Controller
      */
     public function download(PaymentProof $paymentProof)
     {
-        if (!Storage::disk('public')->exists($paymentProof->file_path)) {
+        if (! Storage::disk('public')->exists($paymentProof->file_path)) {
             return redirect()->back()
                 ->with('error', 'File tidak ditemukan.');
         }
@@ -139,21 +142,21 @@ class PaymentProofController extends Controller
      */
     private function notifyCustomer(Order $order, string $status, ?string $reason = null): void
     {
-        if (!$order->customer_whatsapp) {
+        if (! $order->customer_whatsapp) {
             return;
         }
 
         try {
             if ($status === 'verified') {
                 // Create WhatsApp link for verified status
-                $whatsappUrl = \App\Services\WhatsappService::sendPaymentNotification(
+                $whatsappUrl = WhatsappService::sendPaymentNotification(
                     $order->customer_whatsapp,
                     $order->order_number,
                     'verified'
                 );
             } elseif ($status === 'rejected') {
                 // Create WhatsApp link for rejected status with reason
-                $whatsappUrl = \App\Services\WhatsappService::sendPaymentNotification(
+                $whatsappUrl = WhatsappService::sendPaymentNotification(
                     $order->customer_whatsapp,
                     $order->order_number,
                     'rejected',
@@ -166,7 +169,7 @@ class PaymentProofController extends Controller
                 \Log::info("Payment notification sent to {$order->customer_whatsapp} for order {$order->order_number}");
             }
         } catch (\Exception $e) {
-            \Log::error("Failed to send payment notification: " . $e->getMessage());
+            \Log::error('Failed to send payment notification: '.$e->getMessage());
         }
     }
 }

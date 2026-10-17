@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 class WebPushService
 {
     public const CURVE_OID = "\x2A\x86\x48\xCE\x3D\x03\x01\x07"; // prime256v1
+
     public const EC_PUBLIC_OID = "\x2A\x86\x48\xCE\x3D\x02\x01";  // id-ecPublicKey
 
     public function __construct(private array $config) {}
@@ -50,7 +51,7 @@ class WebPushService
         $ecdh = $this->ecdh($asPrivObj, $uaPub);
         $ikm = $this->hkdfExpand(
             $this->hkdfExtract($auth, $ecdh),
-            "WebPush: info\x00" . $uaPub . $asPub,
+            "WebPush: info\x00".$uaPub.$asPub,
             32
         );
 
@@ -63,7 +64,7 @@ class WebPushService
 
         // Single record: padding delimiter 0x02 appended to the plaintext.
         $tag = '';
-        $cipher = openssl_encrypt($body . "\x02", 'aes-128-gcm', $cek, OPENSSL_RAW_DATA, $nonce, $tag, '', 16);
+        $cipher = openssl_encrypt($body."\x02", 'aes-128-gcm', $cek, OPENSSL_RAW_DATA, $nonce, $tag, '', 16);
         if ($cipher === false) {
             Log::error('WebPush encrypt failed', ['endpoint' => $subscription->endpoint]);
 
@@ -71,8 +72,8 @@ class WebPushService
         }
 
         // Header: salt(16) | rs(4, 4096) | idlen(1) | keyid(65, uncompressed as_public)
-        $header = $salt . pack('N', 4096) . chr(strlen($asPub)) . $asPub;
-        $encrypted = $header . $cipher . $tag;
+        $header = $salt.pack('N', 4096).chr(strlen($asPub)).$asPub;
+        $encrypted = $header.$cipher.$tag;
 
         return $this->deliver($subscription->endpoint, $encrypted);
     }
@@ -94,9 +95,9 @@ class WebPushService
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/octet-stream',
                 'Content-Encoding: aes128gcm',
-                'TTL: ' . (int) ($this->config['ttl'] ?? 2419200),
-                'Authorization: vapid t=' . $jwt . ', k=' . $this->config['public_key'],
-                'Crypto-Key: p256ecdsa=' . $this->config['public_key'],
+                'TTL: '.(int) ($this->config['ttl'] ?? 2419200),
+                'Authorization: vapid t='.$jwt.', k='.$this->config['public_key'],
+                'Crypto-Key: p256ecdsa='.$this->config['public_key'],
             ],
         ]);
         curl_exec($ch);
@@ -122,13 +123,13 @@ class WebPushService
             'exp' => time() + 12 * 3600,
             'sub' => (string) ($this->config['subject'] ?? 'mailto:admin@example.com'),
         ]));
-        $signingInput = $header . '.' . $claims;
+        $signingInput = $header.'.'.$claims;
 
         [$asPub, $asPrivObj] = $this->serverKeys();
         openssl_sign($signingInput, $derSig, $asPrivObj, OPENSSL_ALGO_SHA256);
         $raw = $this->derToRawSignature($derSig);
 
-        return $signingInput . '.' . $this->urlsafeEncode($raw);
+        return $signingInput.'.'.$this->urlsafeEncode($raw);
     }
 
     /**
@@ -190,7 +191,7 @@ class WebPushService
         $t = '';
         $okm = '';
         for ($i = 1; strlen($okm) < $length; $i++) {
-            $t = hash_hmac('sha256', $t . $info . chr($i), $prk, true);
+            $t = hash_hmac('sha256', $t.$info.chr($i), $prk, true);
             $okm .= $t;
         }
 
@@ -208,41 +209,41 @@ class WebPushService
         }
         $b = '';
         while ($n > 0) {
-            $b = chr($n & 0xFF) . $b;
+            $b = chr($n & 0xFF).$b;
             $n >>= 8;
         }
 
-        return chr(0x80 | strlen($b)) . $b;
+        return chr(0x80 | strlen($b)).$b;
     }
 
     protected function der(string $tag, string $content): string
     {
-        return $tag . $this->derLen(strlen($content)) . $content;
+        return $tag.$this->derLen(strlen($content)).$content;
     }
 
     /** SEC1 EC PRIVATE KEY PEM with the public point embedded. */
     protected function sec1Pem(string $d, string $x, string $y): string
     {
         $body = $this->der("\x02", "\x01")
-            . $this->der("\x04", $d)
-            . $this->der("\xA0", $this->der("\x06", self::CURVE_OID))
-            . $this->der("\xA1", $this->der("\x03", "\x00" . chr(4) . $x . $y));
+            .$this->der("\x04", $d)
+            .$this->der("\xA0", $this->der("\x06", self::CURVE_OID))
+            .$this->der("\xA1", $this->der("\x03", "\x00".chr(4).$x.$y));
         $der = $this->der("\x30", $body);
 
         return "-----BEGIN EC PRIVATE KEY-----\n"
-            . chunk_split(base64_encode($der), 64, "\n")
-            . "-----END EC PRIVATE KEY-----\n";
+            .chunk_split(base64_encode($der), 64, "\n")
+            ."-----END EC PRIVATE KEY-----\n";
     }
 
     /** SubjectPublicKeyInfo PEM for an uncompressed EC point. */
     protected function spkiPem(string $x, string $y): string
     {
-        $alg = $this->der("\x30", $this->der("\x06", self::EC_PUBLIC_OID) . $this->der("\x06", self::CURVE_OID));
-        $spki = $this->der("\x30", $alg . $this->der("\x03", "\x00" . chr(4) . $x . $y));
+        $alg = $this->der("\x30", $this->der("\x06", self::EC_PUBLIC_OID).$this->der("\x06", self::CURVE_OID));
+        $spki = $this->der("\x30", $alg.$this->der("\x03", "\x00".chr(4).$x.$y));
 
         return "-----BEGIN PUBLIC KEY-----\n"
-            . chunk_split(base64_encode($spki), 64, "\n")
-            . "-----END PUBLIC KEY-----\n";
+            .chunk_split(base64_encode($spki), 64, "\n")
+            ."-----END PUBLIC KEY-----\n";
     }
 
     /**
@@ -265,18 +266,18 @@ class WebPushService
             return str_pad($val, 32, "\x00", STR_PAD_LEFT);
         };
 
-        return $readInt($offset) . $readInt($offset);
+        return $readInt($offset).$readInt($offset);
     }
 
     protected function audience(string $endpoint): string
     {
         $parts = parse_url($endpoint);
 
-        return ($parts['scheme'] ?? 'https') . '://' . ($parts['host'] ?? '');
+        return ($parts['scheme'] ?? 'https').'://'.($parts['host'] ?? '');
     }
 
     /* ------------------------------------------------------------------ */
-    /* base64url helpers                                                   */
+    /* base64url helpers */
     /* ------------------------------------------------------------------ */
 
     public function urlsafeEncode(string $bin): string
@@ -286,11 +287,11 @@ class WebPushService
 
     public function urlsafeDecode(string $b64): string
     {
-        return base64_decode(strtr($b64, '-_', '+/') . str_repeat('=', (4 - strlen($b64) % 4) % 4));
+        return base64_decode(strtr($b64, '-_', '+/').str_repeat('=', (4 - strlen($b64) % 4) % 4));
     }
 
     /* ------------------------------------------------------------------ */
-    /* VAPID key generation (used by `php artisan webpush:vapid`)          */
+    /* VAPID key generation (used by `php artisan webpush:vapid`) */
     /* ------------------------------------------------------------------ */
 
     /**
@@ -306,14 +307,14 @@ class WebPushService
             'config' => self::opensslConfig(),
         ]);
         if ($key === false) {
-            throw new \RuntimeException('EC key generation failed: ' . openssl_error_string());
+            throw new \RuntimeException('EC key generation failed: '.openssl_error_string());
         }
 
         $ec = openssl_pkey_get_details($key)['ec'];
         $svc = new self([]);
 
         return [
-            'public' => $svc->urlsafeEncode(chr(4) . $ec['x'] . $ec['y']),
+            'public' => $svc->urlsafeEncode(chr(4).$ec['x'].$ec['y']),
             'private' => $svc->urlsafeEncode($ec['d']),
         ];
     }
@@ -324,7 +325,7 @@ class WebPushService
      */
     public static function opensslConfig(): ?string
     {
-        $binary = PHP_BINARY ? dirname(PHP_BINARY) . DIRECTORY_SEPARATOR . 'extras' . DIRECTORY_SEPARATOR . 'ssl' . DIRECTORY_SEPARATOR . 'openssl.cnf' : null;
+        $binary = PHP_BINARY ? dirname(PHP_BINARY).DIRECTORY_SEPARATOR.'extras'.DIRECTORY_SEPARATOR.'ssl'.DIRECTORY_SEPARATOR.'openssl.cnf' : null;
         $candidates = [
             getenv('OPENSSL_CONF') ?: null,
             $binary,

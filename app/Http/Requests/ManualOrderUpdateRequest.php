@@ -24,15 +24,17 @@ class ManualOrderUpdateRequest extends ManualOrderStoreRequest
                 return;
             }
 
-            $deposit = (int) $this->input('down_payment', 0);
+            $itemDeposit = (int) collect($this->input('items', []))
+                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0));
+            $deposit = $itemDeposit > 0 ? $itemDeposit : (int) $this->input('down_payment', 0);
             $subtotal = collect($this->input('items', []))
                 ->sum(fn ($item) => (int) ($item['quantity'] ?? 0) * (int) ($item['product_price'] ?? 0));
             $total = $subtotal + (int) $this->input('shipping_cost', 0) + (int) $this->input('fee', 0);
 
             if ($total < $deposit + $recorded) {
-                $validator->errors()->add('items', 'Total baru ' . format_price($total)
-                    . ' lebih kecil dari pembayaran yang sudah tercatat ' . format_price($deposit + $recorded)
-                    . '. Tambah item atau naikkan harga dulu sebelum mengecilkan tagihan.');
+                $validator->errors()->add('items', 'Total baru '.format_price($total)
+                    .' lebih kecil dari pembayaran yang sudah tercatat '.format_price($deposit + $recorded)
+                    .'. Tambah item atau naikkan harga dulu sebelum mengecilkan tagihan.');
             }
         });
     }
