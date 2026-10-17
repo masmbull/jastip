@@ -153,6 +153,23 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   (cyan dipaksa kuning + remap ~500 hex) di-revert; perbaikan ulang dilakukan
   bertahap per-halaman dengan verifikasi screenshot + axe, bukan remap global.
 
+## Status Sistem (rombak)
+
+- [x] **Nav "Daftar Layanan" dihapus.** Ternyata masih ada di sidebar padahal
+  `ServiceController@index` sudah redirect ke Status Sistem — jadi duplikat.
+  Route `/admin/services` tetap ada (redirect) supaya bookmark lama tidak 404,
+  dan route `services.check`/`services.checkAll` tetap dipakai halaman status.
+- [x] **Halaman Status Sistem dirombak** (sebelumnya jelek + ada bug):
+  - bug: controller mengirim `$monitorServices` tapi view **mengabaikannya**,
+    jadi fungsi "Daftar Layanan" (tabel cek layanan) hilang sama sekali.
+  - UI baru neo-brutalist: ringkasan "X/Y layanan normal", kartu per layanan
+    dengan ikon `<x-icon>` (bukan emoji), bar **disk** + rincian **memori**,
+    tabel **Layanan Terpantau** (status, respons ms, terakhir dicek, galat,
+    tombol Cek) + tombol **Cek Semua**, dan info sistem ringkas.
+  - Link "Buka Pemantauan" di dashboard diarahkan ke `admin.system.status`.
+  - Diverifikasi browser: nav bersih, halaman lengkap, `/admin/services`
+    redirect, axe-core 0 pelanggaran.
+
 ## Sudah kelar
 
 - [x] Warna brand di Pengaturan → CSS variable (`--nb-brand-*`), sweep kontras 4.096 warna lulus.

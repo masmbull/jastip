@@ -21,7 +21,7 @@
             <x-icon name="bell" class="w-5 h-5" /> Pemantauan Layanan
         </h2>
         <p class="text-sm font-medium text-[#475569] dark:text-[#D6D3D1] mb-3">Cek kesehatan sistem dan layanan yang terhubung.</p>
-        <x-btn as="a" :href="route('admin.services.index')" icon="arrow-right">Buka Pemantauan</x-btn>
+        <x-btn as="a" :href="route('admin.system.status')" icon="arrow-right">Buka Pemantauan</x-btn>
     </div>
 </div>
 @endsection
