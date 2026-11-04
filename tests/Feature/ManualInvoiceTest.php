@@ -363,6 +363,34 @@ class ManualInvoiceTest extends TestCase
             ->assertDontSee('-Rp 225.000');
     }
 
+    public function test_invoice_shows_aggregated_item_deposit_only_in_totals_and_corrects_legacy_amount(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Legacy',
+            'customer_whatsapp' => '081200007782',
+            'customer_address' => 'Jl. Deposit Legacy',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 2, 'product_price' => 100000, 'deposit' => 25000],
+                ['product_name' => 'Barang B', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 25000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007782')->firstOrFail();
+        $order->update(['down_payment' => 50000]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Deposit masuk')
+            ->assertSee('-Rp 125.000')
+            ->assertSee('Rp 375.000')
+            ->assertDontSee('-Rp 50.000')
+            ->assertDontSee('DP/unit')
+            ->assertDontSee('Total DP');
+    }
+
     public function test_per_unit_deposit_cannot_exceed_invoice_total_after_quantity_is_applied(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
