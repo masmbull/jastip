@@ -10,7 +10,6 @@
 /.fim
 
 # Laravel build artifacts
-
 /public/hot
 /public/storage
 
@@ -19,6 +18,7 @@
 /.vscode
 /.nova
 /.zed
+/.cline
 *.swp
 .DS_Store
 Thumbs.db
@@ -31,7 +31,23 @@ auth.json
 composer.lock
 package-lock.json
 yarn.lock
+skills-lock.json
 
+# Logs
 serve.log
 server.log
 server_err.log
+
+# Temporary files / uploads
+*.jpg
+*.jpeg
+*.png
+*.gif
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.png
+!public/**/*.gif
+!storage/app/public/**/*.jpg
+!storage/app/public/**/*.jpeg
+!storage/app/public/**/*.png
+!storage/app/public/**/*.gif
