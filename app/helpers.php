@@ -69,35 +69,48 @@ if (! function_exists('qris_allowed_for')) {
 if (! function_exists('bank_account_lines')) {
     /**
      * Baris rekening pembayaran untuk ditampilkan di invoice.
-     * Kosong kalau admin belum mengisi di Pengaturan.
+     * Diambil dari config('invoice.accounts') yang berisi array bank dan nomor.
      *
      * @return array<int, string>
      */
     function bank_account_lines(): array
     {
-        $lines = array_filter([
-            (string) setting('bank_name', ''),
-            (string) setting('bank_account_number', ''),
-            (string) setting('bank_account_name', ''),
-        ], fn ($v) => trim($v) !== '');
+        $accounts = config('invoice.accounts', []);
+        if (empty($accounts)) {
+            return [];
+        }
 
-        return array_values($lines);
+        $lines = [];
+        foreach ($accounts as $account) {
+            $line = trim(($account['bank'] ?? '').' '.($account['number'] ?? ''));
+            if (!empty($account['name'])) {
+                $line = trim($line.' a/n '.($account['name'] ?? ''));
+            }
+            if (trim($line) !== '') {
+                $lines[] = $line;
+            }
+        }
+
+        return $lines;
     }
 }
 
 if (! function_exists('bank_account_text')) {
     /**
-     * Rekening dalam satu baris: "BCA 1234567890 a/n Budi".
+     * Rekening dalam satu baris (untuk text WhatsApp, email, dll).
+     * Ambil dari config('invoice.accounts') — gunakan rekening pertama.
      */
     function bank_account_text(): string
     {
-        $bank = trim((string) setting('bank_name', ''));
-        $number = trim((string) setting('bank_account_number', ''));
-        $name = trim((string) setting('bank_account_name', ''));
+        $accounts = config('invoice.accounts', []);
+        if (empty($accounts)) {
+            return '';
+        }
 
-        $text = trim($bank.' '.$number);
-        if ($name !== '') {
-            $text = trim($text.' a/n '.$name);
+        $account = reset($accounts);
+        $text = trim(($account['bank'] ?? '').' '.($account['number'] ?? ''));
+        if (!empty($account['name'])) {
+            $text = trim($text.' a/n '.($account['name'] ?? ''));
         }
 
         return $text;
@@ -166,6 +179,27 @@ if (! function_exists('wa_phone')) {
         }
 
         return $digits;
+    }
+}
+
+if (! function_exists('wa_chat_id')) {
+    /**
+     * Chat ID WhatsApp yang dipakai gateway (OpenWA dan sejenis):
+     * "62812xxxx@c.us". Kosong kalau nomornya tidak valid.
+     *
+     * Nomor dinormalisasi lewat wa_phone() supaya "0812…" dan "+62 812…"
+     * menghasilkan chat ID yang sama.
+     */
+    function wa_chat_id(?string $phone): string
+    {
+        $digits = wa_phone($phone);
+
+        // Nomor Indonesia yang wajar: 62 + 8.. + minimal 7 digit lagi.
+        if ($digits === '' || ! str_starts_with($digits, '62') || strlen($digits) < 10) {
+            return '';
+        }
+
+        return $digits.'@c.us';
     }
 }
 
