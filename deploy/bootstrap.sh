@@ -73,9 +73,16 @@ mysql -e "CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB
 mysql -e "ALTER USER '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASS}';"
 mysql -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'localhost'; FLUSH PRIVILEGES;"
 
-# --- code (deploy.ps1 handles deps, .env, migrations, caches) ---
-mkdir -p "$(dirname "$APP_PATH")"
-if [ ! -d "$APP_PATH/.git" ]; then
+# --- code (the GitHub Actions deploy handles releases, .env, and caches) ---
+if [ -d "$APP_PATH/.git" ]; then
+  :
+elif [ -f "$APP_PATH/artisan" ] && [ -d "$APP_PATH/public" ]; then
+  echo "Using existing application directory: $APP_PATH"
+elif [ -e "$APP_PATH" ]; then
+  echo "ERROR: $APP_PATH exists but is not a Git checkout or Laravel application. Refusing to modify it." >&2
+  exit 1
+else
+  mkdir -p "$(dirname "$APP_PATH")"
   git clone --branch "$REPO_BRANCH" "$REPO_URL" "$APP_PATH"
 fi
 chown -R "${RUN_USER}:${WEB_USER}" "$APP_PATH"
