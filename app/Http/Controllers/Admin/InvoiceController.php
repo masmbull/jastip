@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
+use App\Models\User;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Request;
@@ -64,7 +65,36 @@ class InvoiceController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.invoices.index', compact('invoices', 'summary'));
+        $customers = User::query()
+            ->where('role', 'customer')
+            ->with([
+                'profile:id,user_id,phone',
+                'addresses' => fn ($query) => $query
+                    ->where('is_default', true)
+                    ->select('id', 'user_id', 'phone', 'street_address', 'city', 'province', 'postal_code'),
+            ])
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(function (User $customer) {
+                $address = $customer->addresses->first();
+                $addressText = collect([
+                    $address?->street_address,
+                    $address?->city,
+                    $address?->province,
+                    $address?->postal_code,
+                ])->filter()->implode(', ');
+
+                return [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                    'phone' => $customer->profile?->phone ?: $address?->phone,
+                    'address' => $addressText,
+                    'city' => $address?->city,
+                ];
+            });
+
+        return view('admin.invoices.index', compact('invoices', 'summary', 'customers'));
     }
 
     /**

@@ -8,7 +8,7 @@
     $payTones = ['belum' => 'neutral', 'dp' => 'warning', 'lunas' => 'success'];
     $payLabels = ['belum' => 'Belum Bayar', 'dp' => 'Deposit', 'lunas' => 'Lunas'];
 @endphp
-<div class="space-y-5" x-data="{ open: false, sampleOpen: false, sampleLoaded: false, sampleError: false }"
+<div class="space-y-5" x-data="{ open: {{ $errors->any() ? 'true' : 'false' }}, sampleOpen: false, sampleLoaded: false, sampleError: false }"
      @close-manual-invoice.window="open = false"
      @keydown.escape.window="open = false; sampleOpen = false">
     <x-page-header title="Rekapan Pesanan" subtitle="Ledger harian: Deposit, pelunasan, dan sisa dihitung otomatis dari data asli.">

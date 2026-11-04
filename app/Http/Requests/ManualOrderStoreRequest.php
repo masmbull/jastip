@@ -21,6 +21,7 @@ class ManualOrderStoreRequest extends FormRequest
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_whatsapp' => ['required', 'string', 'max:30'],
             'customer_email' => ['nullable', 'email', 'max:255'],
+            'customer_user_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('role', 'customer')],
             'customer_address' => ['required', 'string', 'max:2000'],
             'customer_notes' => ['nullable', 'string'],
             'admin_notes' => ['nullable', 'string'],
