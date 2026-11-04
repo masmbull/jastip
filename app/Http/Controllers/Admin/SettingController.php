@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingUpdateRequest;
 use App\Models\Setting;
+use App\Services\WhatsappGatewayService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -12,7 +13,22 @@ class SettingController extends Controller
 {
     public function index()
     {
-        return view('admin.settings.index');
+        // Status gateway dipakai untuk menampilkan badge "Terhubung / Tidak siap".
+        // Dibungkus try/catch: gateway yang mati tidak boleh membuat halaman
+        // Pengaturan ikut error.
+        try {
+            $waGatewayStatus = WhatsappGatewayService::fromSettings()->status();
+        } catch (\Throwable $e) {
+            $waGatewayStatus = [
+                'configured' => false,
+                'connected' => false,
+                'status' => 'error',
+                'phone' => null,
+                'error' => 'Gagal memeriksa gateway: '.$e->getMessage(),
+            ];
+        }
+
+        return view('admin.settings.index', compact('waGatewayStatus'));
     }
 
     public function update(SettingUpdateRequest $request)
@@ -27,6 +43,13 @@ class SettingController extends Controller
                     continue;
                 }
 
+                // API key sengaja tidak pernah ditampilkan ulang di form.
+                // Kosong = "jangan diubah", jadi kredensial lama tidak terhapus
+                // hanya karena admin menyimpan halaman Pengaturan.
+                if ($type === 'password' && ! $request->filled($key)) {
+                    continue;
+                }
+
                 if ($request->has($key)) {
                     // Tipe disimpan sama seperti SettingSeeder supaya cara baca
                     // nilainya tidak berubah setelah admin mengedit satu field.
@@ -36,13 +59,24 @@ class SettingController extends Controller
                         default => 'string',
                     };
 
-                    Setting::set($key, $request->input($key), $storageType, $group, true);
+                    // Kredensial gateway tidak boleh publik: is_public = false.
+                    $isPublic = $this->isSensitive($key) ? false : true;
+
+                    Setting::set($key, $request->input($key), $storageType, $group, $isPublic);
                 }
             }
         }
 
         return redirect()->route('admin.settings.index')
             ->with('success', 'Pengaturan berhasil diperbarui!');
+    }
+
+    /**
+     * Kunci yang menyimpan rahasia: jangan dijadikan setting publik.
+     */
+    private function isSensitive(string $key): bool
+    {
+        return in_array($key, ['wa_gateway_key'], true);
     }
 
     private function storeImage(Request $request, string $key, string $group): void

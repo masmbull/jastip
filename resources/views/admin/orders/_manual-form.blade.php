@@ -250,12 +250,14 @@
                     </div>
 
                     <div class="hidden sm:grid grid-cols-12 gap-2 px-1 text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-wider">
-                        <div class="col-span-4">Produk</div>
+                        <div class="col-span-3">Produk</div>
                         <div class="col-span-1">Satuan</div>
-                        <div class="col-span-2">Status</div>
+                        <div class="col-span-1">Status</div>
                         <div class="col-span-1 text-center">Qty</div>
                         <div class="col-span-2 text-right">Harga</div>
-                        <div class="col-span-2 text-right">Subtotal</div>
+                        <div class="col-span-2 text-right">DP/unit</div>
+                        <div class="col-span-1 text-right">DP Total</div>
+                        <div class="col-span-1 text-right">Subtotal</div>
                     </div>
 
                     <div class="space-y-3">
@@ -305,13 +307,24 @@
                                     <input type="number" min="0" :name="`items[${idx}][product_price]`" x-model.number="item.price" required
                                            class="nb-input w-full px-3 py-2 text-sm text-right num">
                                 </div>
-                                <div class="col-span-4 sm:col-span-2">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Deposit</span>
+                                {{-- Deposit per unit — dikalikan qty otomatis. Label mobile menjelaskan ini. --}}
+                                <div class="col-span-6 sm:col-span-2">
+                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">DP/unit</span>
                                     <input type="number" min="0" :name="`items[${idx}][deposit]`" x-model.number="item.deposit"
-                                           placeholder="DP" title="Deposit untuk barang ini (total dijumlahkan otomatis)"
+                                           placeholder="0"
+                                           title="Deposit per unit — dikalikan qty otomatis"
                                            class="nb-input w-full px-3 py-2 text-sm text-right num">
+                                    {{-- Tampilkan total deposit item = DP/unit × qty, jelas tanpa kalkulator --}}
+                                    <div x-show="item.deposit > 0"
+                                         class="mt-0.5 text-[10px] font-bold text-[#166534] text-right num"
+                                         x-text="formatRp(item.deposit * item.qty) + ' total DP'"></div>
                                 </div>
-                                <div class="col-span-10 sm:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>
+                                {{-- DP total per baris (read-only info) --}}
+                                <div class="col-span-6 sm:col-span-1 text-[11px] font-bold text-right py-2.5 text-[#166534] num"
+                                     x-show="item.deposit > 0"
+                                     x-text="formatRp(item.deposit * item.qty)"></div>
+                                <div class="col-span-6 sm:col-span-1 py-2.5" x-show="!item.deposit || item.deposit <= 0"></div>
+                                <div class="col-span-4 sm:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>
                                 <div class="col-span-2 sm:col-span-1 text-right">
                                     <button type="button" @click="removeItem(idx)" x-show="items.length > 1"
                                             class="inline-flex items-center justify-center w-11 h-11 text-[#991B1B]" aria-label="Hapus item" title="Hapus item">
@@ -329,7 +342,21 @@
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Subtotal</span><span class="font-black num" x-text="formatRp(subtotal())"></span></div>
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Ongkir</span><span class="font-black num" x-text="formatRp(shipping)"></span></div>
                             <div class="flex justify-between" x-show="showFee"><span class="font-bold text-[#475569]">Fee Jastip</span><span class="font-black num" x-text="formatRp(feeAmt)"></span></div>
-                            <div class="flex justify-between" x-show="dpAmt > 0 && !paidNow" x-cloak><span class="font-bold text-[#475569]">Deposit Masuk</span><span class="font-black text-[#166534] num" x-text="'-' + formatRp(paidNow ? 0 : dpAmt)"></span></div>
+                            <div class="flex justify-between" x-show="itemDeposit() > 0 && !paidNow" x-cloak>
+                                <span class="font-bold text-[#475569]">
+                                    Deposit
+                                    <span class="text-[10px] font-medium">(dari item)</span>
+                                </span>
+                                <span class="font-black text-[#166534] num" x-text="formatRp(itemDeposit())"></span>
+                            </div>
+                            <div class="flex justify-between" x-show="manualDp > 0 && itemDeposit() === 0 && !paidNow" x-cloak>
+                                <span class="font-bold text-[#475569]">Deposit</span>
+                                <span class="font-black text-[#166534] num" x-text="formatRp(manualDp)"></span>
+                            </div>
+                            <div class="flex justify-between border-t border-[#E2E8F0] pt-1.5 mt-1" x-show="dpAmt > 0 && !paidNow" x-cloak>
+                                <span class="font-bold text-[#475569]">Sisa setelah deposit</span>
+                                <span class="font-black text-[#92400E] num" x-text="formatRp(remaining())"></span>
+                            </div>
                         </div>
                         <div class="nb-money-strip px-4 py-3 space-y-1">
                             <div class="flex items-center justify-between">

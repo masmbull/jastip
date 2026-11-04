@@ -22,6 +22,7 @@ class SettingUpdateRequest extends FormRequest
                     'email' => ['nullable', 'email'],
                     'number' => ['nullable', 'numeric'],
                     'boolean' => ['nullable', 'boolean'],
+                    'password' => ['nullable', 'string', 'max:255'],
                     'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
                     default => ['nullable', 'string'],
                 };
