@@ -17,6 +17,7 @@ class OrderItem extends Model
         'status',
         'subtotal',
         'deposit',
+        'fee',
     ];
 
     public const STATUS_READY = 'ready';
@@ -38,6 +39,7 @@ class OrderItem extends Model
             'product_price' => 'integer',
             'quantity' => 'integer',
             'subtotal' => 'integer',
+            'fee' => 'integer',
         ];
     }
 

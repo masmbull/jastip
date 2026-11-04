@@ -25,11 +25,11 @@ class ManualOrderUpdateRequest extends ManualOrderStoreRequest
             }
 
             $itemDeposit = (int) collect($this->input('items', []))
-                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0));
+                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0) * (int) ($item['quantity'] ?? 0));
             $deposit = $itemDeposit > 0 ? $itemDeposit : (int) $this->input('down_payment', 0);
             $subtotal = collect($this->input('items', []))
                 ->sum(fn ($item) => (int) ($item['quantity'] ?? 0) * (int) ($item['product_price'] ?? 0));
-            $total = $subtotal + (int) $this->input('shipping_cost', 0) + (int) $this->input('fee', 0);
+            $total = $subtotal + (int) $this->input('shipping_cost', 0) + $this->feeTotal();
 
             if ($total < $deposit + $recorded) {
                 $validator->errors()->add('items', 'Total baru '.format_price($total)

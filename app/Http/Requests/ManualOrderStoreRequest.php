@@ -32,6 +32,8 @@ class ManualOrderStoreRequest extends FormRequest
             'shipping_cost' => ['nullable', 'integer', 'min:0'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'fee' => ['nullable', 'integer', 'min:0'],
+            'legacy_fee' => ['nullable', 'integer', 'min:0'],
+            'show_fee' => ['nullable', 'boolean'],
             'mode' => ['nullable', Rule::in(['deposit', 'lunas'])],
             'down_payment' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', Rule::in(array_keys(Order::statuses()))],
@@ -42,17 +44,37 @@ class ManualOrderStoreRequest extends FormRequest
             'items.*.product_price' => ['required', 'integer', 'min:0'],
             'items.*.weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'items.*.deposit' => ['nullable', 'integer', 'min:0'],
+            'items.*.fee' => ['nullable', 'integer', 'min:0'],
             'items.*.status' => ['nullable', Rule::in([OrderItem::STATUS_READY, OrderItem::STATUS_PO])],
         ];
+    }
+
+    public function feeTotal(): int
+    {
+        $itemFee = (int) collect($this->input('items', []))
+            ->sum(fn ($item) => (int) ($item['fee'] ?? 0));
+        $order = $this->route('order');
+
+        if ($this->exists('legacy_fee')) {
+            $legacyFee = (int) $this->input('legacy_fee', 0);
+        } elseif ($order instanceof Order && $this->exists('fee')) {
+            $legacyFee = (int) $this->input('fee', 0);
+        } elseif ($order instanceof Order) {
+            $legacyFee = max(0, (int) $order->fee - (int) $order->items()->sum('fee'));
+        } else {
+            $legacyFee = $itemFee === 0 ? (int) $this->input('fee', 0) : 0;
+        }
+
+        return $itemFee + max(0, $legacyFee);
     }
 
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            // Deposit total = jumlah deposit per barang (kalau ada); kalau
-            // tidak, pakai input manual `down_payment` (kompat order lama).
+            // Deposit is entered per unit, so the order deposit is the sum
+            // of each item's unit deposit multiplied by its quantity.
             $itemDeposit = (int) collect($this->input('items', []))
-                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0));
+                ->sum(fn ($item) => (int) ($item['deposit'] ?? 0) * (int) ($item['quantity'] ?? 0));
 
             $dp = $itemDeposit > 0 ? $itemDeposit : (int) $this->input('down_payment', 0);
 
@@ -67,7 +89,7 @@ class ManualOrderStoreRequest extends FormRequest
             }
             $subtotal = collect($this->input('items', []))
                 ->sum(fn ($item) => (int) ($item['quantity'] ?? 0) * (int) ($item['product_price'] ?? 0));
-            $total = $subtotal + (int) $this->input('shipping_cost', 0) + (int) $this->input('fee', 0);
+            $total = $subtotal + (int) $this->input('shipping_cost', 0) + $this->feeTotal();
             if ($dp > $total) {
                 $validator->errors()->add('down_payment', 'Deposit tidak boleh lebih besar dari total tagihan.');
             }

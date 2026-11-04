@@ -293,40 +293,35 @@ class InvoiceController extends Controller
      */
     public function docFromOrder(Order $order): array
     {
-        $order->loadMissing('items');
+        $order->loadMissing(['items', 'payments']);
 
-        // Pakai accessor totalPaid (deposit + semua pelunasan tercatat).
-        $paid = (int) $order->totalPaid;
+        $itemDeposit = (int) $order->items
+            ->sum(fn ($item) => (int) $item->deposit * (int) $item->quantity);
+        $depositIn = $itemDeposit > 0 ? $itemDeposit : (int) $order->down_payment;
+        $extraPaid = (int) $order->payments->sum('amount');
+        $paid = $depositIn + $extraPaid;
         $left = max(0, (int) $order->total - $paid);
         $storeWa = setting('whatsapp');
 
-        // Deposit per item — ditampilkan di tabel item supaya pelanggan bisa
-        // verifikasi: "Rp 25.000 × 4 = Rp 100.000" tanpa buka kalkulator.
-        $itemHasDeposit = $order->items->contains(fn ($i) => (int) $i->deposit > 0);
+        $itemHasFee = $order->show_fee && $order->items->contains(fn ($i) => (int) $i->fee > 0);
 
         $totals = [
             ['label' => 'Subtotal', 'value' => format_price($order->subtotal)],
             ['label' => 'Ongkir', 'value' => format_price($order->shipping_cost)],
         ];
 
-        // Fee jastip — hanya tampilkan kalau nilainya > 0.
-        if ((int) ($order->fee ?? 0) > 0) {
-            $totals[] = ['label' => 'Fee Jastip', 'value' => format_price($order->fee)];
+        if ($order->show_fee && (int) ($order->fee ?? 0) > 0) {
+            $totals[] = ['label' => 'Total Fee Jastip', 'value' => format_price($order->fee)];
         }
 
         if ((int) ($order->discount ?? 0) > 0) {
             $totals[] = ['label' => 'Diskon', 'value' => '-'.format_price($order->discount), 'muted' => true];
         }
 
-        // Deposit masuk — pisahkan ke baris sendiri agar pelanggan tahu
-        // sudah berapa yang masuk dan berapa sisa yang harus dibayar.
-        $depositIn = (int) $order->down_payment;
         if ($depositIn > 0) {
             $totals[] = ['label' => 'Deposit masuk', 'value' => '-'.format_price($depositIn), 'muted' => true, 'green' => true];
         }
 
-        // Pelunasan tambahan (OrderPayment) — dipisah dari deposit awal.
-        $extraPaid = $paid - $depositIn;
         if ($extraPaid > 0) {
             $totals[] = ['label' => 'Pelunasan masuk', 'value' => '-'.format_price($extraPaid), 'muted' => true, 'green' => true];
         }
@@ -355,17 +350,14 @@ class InvoiceController extends Controller
                 $order->resi ? ['label' => 'Resi', 'value' => $order->resi] : null,
                 ['label' => 'Jumlah item', 'value' => $order->items->sum('quantity').' pcs'],
             ])),
-            // Sertakan deposit per item di tabel — ditampilkan di template
-            // hanya kalau ada item yang punya deposit > 0.
-            'item_has_deposit' => $itemHasDeposit,
+            'item_has_fee' => $itemHasFee,
             'items' => $order->items->map(fn ($i) => [
                 'name' => $i->product_name,
                 'unit' => $i->unit,
                 'qty' => $i->quantity,
                 'price' => format_price($i->product_price),
                 'subtotal' => format_price($i->subtotal),
-                'deposit_per_unit' => (int) $i->deposit > 0 ? format_price($i->deposit) : null,
-                'deposit_total' => (int) $i->deposit > 0 ? format_price((int) $i->deposit * (int) $i->quantity) : null,
+                'fee' => $order->show_fee && (int) $i->fee > 0 ? format_price($i->fee) : null,
             ])->all(),
             'totals' => $totals,
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],

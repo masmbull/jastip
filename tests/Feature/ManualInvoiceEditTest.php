@@ -99,6 +99,18 @@ class ManualInvoiceEditTest extends TestCase
         $this->assertSame(Order::STATUS_AWAITING_PAYMENT, $order->status);
     }
 
+    public function test_update_preserves_legacy_fee_from_edit_form(): void
+    {
+        $order = $this->makeOrder();
+
+        $this->actingAs($this->admin())
+            ->put(route('admin.orders.update', $order), $this->payload(['legacy_fee' => 2_500]))
+            ->assertRedirect(route('admin.orders.show', $order));
+
+        $this->assertSame(2_500, $order->refresh()->fee);
+        $this->assertSame(32_500, $order->total);
+    }
+
     public function test_update_rejects_total_below_recorded_payments(): void
     {
         $order = $this->makeOrder();

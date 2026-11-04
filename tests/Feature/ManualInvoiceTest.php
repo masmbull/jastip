@@ -108,6 +108,12 @@ class ManualInvoiceTest extends TestCase
         $this->assertSame(Order::STATUS_AWAITING_PAYMENT, $order->status);
         $this->assertSame('manual', $order->payment_method);
         $this->assertSame(2, $order->items()->count());
+        $this->assertTrue($order->show_fee);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Fee Jastip');
     }
 
     public function test_mark_paid_sets_paid_and_confirmed_status(): void
@@ -138,6 +144,95 @@ class ManualInvoiceTest extends TestCase
             'customer_whatsapp' => '081200007777',
             'items' => [],
         ])->assertSessionHasErrors('items');
+    }
+
+    public function test_hidden_fee_stays_in_total_but_is_omitted_from_customer_invoice(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan Fee Internal',
+            'customer_whatsapp' => '081200009991',
+            'customer_address' => 'Jl. Fee 1',
+            'fee' => 19000,
+            'show_fee' => '0',
+            'items' => [
+                ['product_name' => 'Barang Fee', 'quantity' => 1, 'product_price' => 100000],
+            ],
+        ])->assertRedirect(route('admin.invoices.index'))
+            ->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200009991')->firstOrFail();
+        $this->assertSame(119000, $order->total);
+        $this->assertSame(19000, $order->fee);
+        $this->assertFalse($order->show_fee);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertDontSee('Fee Jastip');
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.show', $order))
+            ->assertOk()
+            ->assertSee('Fee Jastip (internal)')
+            ->assertSee('Rp 19.000');
+    }
+
+    public function test_item_fees_are_added_once_per_line_and_shown_in_customer_invoice(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan Fee per Item',
+            'customer_whatsapp' => '081200009992',
+            'customer_address' => 'Jl. Fee Item',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 3, 'product_price' => 65000, 'fee' => 19000],
+                ['product_name' => 'Barang B', 'quantity' => 2, 'product_price' => 50000, 'fee' => 5000],
+            ],
+        ])->assertRedirect(route('admin.invoices.index'))
+            ->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200009992')->firstOrFail();
+        $this->assertSame(24000, $order->fee);
+        $this->assertSame(319000, $order->total);
+        $this->assertSame(
+            [19000, 5000],
+            $order->items->sortBy('id')->map(fn ($item) => (int) $item->fee)->values()->all()
+        );
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Fee item')
+            ->assertSee('Rp 19.000')
+            ->assertSee('Rp 5.000')
+            ->assertSee('Total Fee Jastip');
+
+        $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+            'customer_name' => $order->customer_name,
+            'customer_whatsapp' => $order->customer_whatsapp,
+            'customer_address' => $order->customer_address,
+            'show_fee' => '0',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 3, 'product_price' => 65000, 'fee' => 19000],
+                ['product_name' => 'Barang B', 'quantity' => 2, 'product_price' => 50000, 'fee' => 5000],
+            ],
+        ])->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHasNoErrors();
+
+        $order->refresh();
+        $this->assertSame(24000, $order->fee);
+        $this->assertSame(319000, $order->total);
+        $this->assertTrue($order->isPaymentValid());
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertDontSee('Fee item')
+            ->assertDontSee('Rp 19.000')
+            ->assertDontSee('Total Fee Jastip');
     }
 
     public function test_non_admin_cannot_create_invoice(): void
@@ -273,11 +368,98 @@ class ManualInvoiceTest extends TestCase
 
         $order = Order::where('customer_whatsapp', '081200007778')->firstOrFail();
 
-        // Deposit total = 30.000 + 20.000 = 50.000 (otomatis dari per barang).
-        $this->assertSame(50_000, $order->down_payment);
+        // Deposit total = (30.000 × 1) + (20.000 × 2) = 70.000.
+        $this->assertSame(70_000, $order->down_payment);
         $this->assertSame(30_000, (int) $order->items()->where('product_name', 'A')->value('deposit'));
         $this->assertSame(20_000, (int) $order->items()->where('product_name', 'B')->value('deposit'));
-        $this->assertSame(200_000 - 50_000, $order->remaining);
+        $this->assertSame(200_000 - 70_000, $order->remaining);
+    }
+
+    public function test_per_unit_deposit_is_multiplied_by_quantity_for_invoice_total(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Per Unit',
+            'customer_whatsapp' => '081200007779',
+            'customer_address' => 'Jl. Deposit Per Unit',
+            'items' => [
+                ['product_name' => 'Barang DP', 'unit' => 'pcs', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 75000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007779')->firstOrFail();
+        $this->assertSame(225000, $order->down_payment);
+        $this->assertSame(75000, (int) $order->items()->value('deposit'));
+        $this->assertSame(75000, $order->remaining);
+    }
+
+    public function test_25k_per_unit_with_quantity_three_is_75k_everywhere(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Tiga Unit',
+            'customer_whatsapp' => '081200007781',
+            'customer_address' => 'Jl. Deposit Tiga Unit',
+            'items' => [
+                ['product_name' => 'Barang DP', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 25000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007781')->firstOrFail();
+        $this->assertSame(75000, $order->down_payment);
+        $this->assertSame(225000, $order->remaining);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('-Rp 75.000')
+            ->assertDontSee('-Rp 225.000');
+    }
+
+    public function test_invoice_shows_aggregated_item_deposit_only_in_totals_and_corrects_legacy_amount(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Legacy',
+            'customer_whatsapp' => '081200007782',
+            'customer_address' => 'Jl. Deposit Legacy',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 2, 'product_price' => 100000, 'deposit' => 25000],
+                ['product_name' => 'Barang B', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 25000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007782')->firstOrFail();
+        $order->update(['down_payment' => 50000]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Deposit masuk')
+            ->assertSee('-Rp 125.000')
+            ->assertSee('Rp 375.000')
+            ->assertDontSee('-Rp 50.000')
+            ->assertDontSee('DP/unit')
+            ->assertDontSee('Total DP');
+    }
+
+    public function test_per_unit_deposit_cannot_exceed_invoice_total_after_quantity_is_applied(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Melebihi Total',
+            'customer_whatsapp' => '081200007780',
+            'customer_address' => 'Jl. Deposit Melebihi Total',
+            'items' => [
+                ['product_name' => 'Barang DP', 'quantity' => 3, 'product_price' => 65000, 'deposit' => 75000],
+            ],
+        ])->assertSessionHasErrors('down_payment');
+
+        $this->assertDatabaseMissing('orders', ['customer_whatsapp' => '081200007780']);
     }
 
     public function test_store_rejects_down_payment_above_total(): void

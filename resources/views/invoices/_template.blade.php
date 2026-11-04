@@ -71,9 +71,8 @@
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px;">Satuan</td>
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:center;">Qty</td>
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Harga</td>
-            @if(!empty($doc['item_has_deposit']))
-                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">DP/unit</td>
-                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Total DP</td>
+            @if(!empty($doc['item_has_fee']))
+                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Fee item</td>
             @endif
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Subtotal</td>
         </tr>
@@ -83,12 +82,9 @@
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; color:#475569;">{{ $item['unit'] }}</td>
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:center;">{{ $item['qty'] }}</td>
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right;">{{ $item['price'] }}</td>
-                @if(!empty($doc['item_has_deposit']))
-                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#166534;">
-                        {{ $item['deposit_per_unit'] ?? '-' }}
-                    </td>
-                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#166534; font-weight:bold;">
-                        {{ $item['deposit_total'] ?? '-' }}
+                @if(!empty($doc['item_has_fee']))
+                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#92400E;">
+                        {{ $item['fee'] ?? '-' }}
                     </td>
                 @endif
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; font-weight:bold;">{{ $item['subtotal'] }}</td>

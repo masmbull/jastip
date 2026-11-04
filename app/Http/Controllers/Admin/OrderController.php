@@ -81,22 +81,23 @@ class OrderController extends Controller
             'product_price' => (int) $item['product_price'],
             'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
             'deposit' => max(0, (int) ($item['deposit'] ?? 0)),
+            'fee' => max(0, (int) ($item['fee'] ?? 0)),
         ]);
 
         $subtotal = (int) $items->sum('subtotal');
         $shippingCost = (int) $request->input('shipping_cost', 0);
-        $fee = (int) $request->input('fee', 0);
+        $fee = $request->feeTotal();
+        $showFee = $request->has('show_fee') ? $request->boolean('show_fee') : true;
         $paid = $request->boolean('mark_paid');
-        // Deposit = jumlah deposit PER BARANG (otomatis, tidak dihitung manual).
-        $itemDeposit = (int) $items->sum('deposit');
+        // Deposit is entered per unit and multiplied by item quantity.
+        $itemDeposit = (int) $items->sum(fn ($item) => $item['deposit'] * $item['quantity']);
         // Mode lunas tidak menyimpan deposit apa pun.
         $downPayment = ($paid || $request->input('mode') === 'lunas')
             ? 0
             : ($itemDeposit > 0 ? $itemDeposit : (int) $request->input('down_payment', 0));
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
-        // Harga & fee hanya dari input admin (invoice manual, bukan dari produk).
-        $order = DB::transaction(function () use ($request, $customer, $items, $subtotal, $shippingCost, $fee, $downPayment, $status, $paid) {
+        $order = DB::transaction(function () use ($request, $customer, $items, $subtotal, $shippingCost, $fee, $showFee, $downPayment, $status, $paid) {
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
                 'user_id' => $customer?->id,
@@ -113,6 +114,7 @@ class OrderController extends Controller
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'fee' => $fee,
+                'show_fee' => $showFee,
                 'down_payment' => $downPayment,
                 'total' => $subtotal + $shippingCost + $fee,
                 'status' => $status,
@@ -190,6 +192,8 @@ class OrderController extends Controller
             'shipping_method' => $order->shipping_method,
             'shipping_cost' => $order->shipping_cost,
             'fee' => $order->fee,
+            'legacy_fee' => max(0, (int) $order->fee - (int) $order->items->sum('fee')),
+            'show_fee' => $order->show_fee,
             'down_payment' => $order->down_payment,
             'items' => $order->items->map(fn ($item) => [
                 'product_name' => $item->product_name,
@@ -197,6 +201,8 @@ class OrderController extends Controller
                 'status' => $item->status,
                 'quantity' => $item->quantity,
                 'product_price' => $item->product_price,
+                'deposit' => $item->deposit,
+                'fee' => $item->fee,
             ])->values()->all(),
         ]);
 
@@ -221,15 +227,17 @@ class OrderController extends Controller
             'product_price' => (int) $item['product_price'],
             'subtotal' => (int) $item['quantity'] * (int) $item['product_price'],
             'deposit' => max(0, (int) ($item['deposit'] ?? 0)),
+            'fee' => max(0, (int) ($item['fee'] ?? 0)),
         ]);
 
         $subtotal = (int) $items->sum('subtotal');
         $shippingCost = (int) $request->input('shipping_cost', 0);
-        $fee = (int) $request->input('fee', 0);
-        // Deposit per barang -> total otomatis (fallback ke input manual lama).
-        $itemDeposit = (int) $items->sum('deposit');
+        $fee = $request->feeTotal();
+        $showFee = $request->has('show_fee') ? $request->boolean('show_fee') : $order->show_fee;
+        // Deposit per unit -> total otomatis (fallback ke input manual lama).
+        $itemDeposit = (int) $items->sum(fn ($item) => $item['deposit'] * $item['quantity']);
 
-        DB::transaction(function () use ($request, $order, $items, $subtotal, $shippingCost, $fee, $itemDeposit) {
+        DB::transaction(function () use ($request, $order, $items, $subtotal, $shippingCost, $fee, $showFee, $itemDeposit) {
             $order->update([
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
@@ -244,9 +252,13 @@ class OrderController extends Controller
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
                 'fee' => $fee,
+                'show_fee' => $showFee,
                 'down_payment' => $itemDeposit > 0 ? $itemDeposit : (int) $request->input('down_payment', 0),
                 'total' => $subtotal + $shippingCost + $fee,
             ]);
+
+            $order->payment_hash = $order->generatePaymentHash();
+            $order->save();
 
             $order->items()->delete();
             foreach ($items as $item) {
