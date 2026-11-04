@@ -194,9 +194,15 @@ git commit -m "chore: update composer.lock"
 ```
 
 ### Issue: PHP version or FPM service not found
-The application requires PHP 8.5. On an existing server, rerun provisioning with
-`-Bootstrap` to install PHP 8.5-FPM and update Nginx to its socket, then deploy
-again. Confirm before deploying:
+The application requires PHP 8.5 for both CLI and FPM. On an existing server,
+run the bootstrap once to install PHP 8.5, set it as the default CLI, and update
+Nginx to its FPM socket. The deploy script continues with a deployment after
+bootstrap:
+```powershell
+.\deploy\deploy.ps1 -Server <EC2_HOST> -Bootstrap
+```
+
+Confirm both CLI and FPM before rerunning a failed GitHub Actions deployment:
 ```bash
 php -v
 sudo systemctl status php8.5-fpm

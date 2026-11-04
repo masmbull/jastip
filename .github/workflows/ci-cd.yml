@@ -185,6 +185,7 @@ jobs:
           test -d "$APP_DIR/bootstrap/cache"
           test -w "$APP_DIR"
           test -s "$ARCHIVE"
+          php -r 'if (PHP_VERSION_ID < 80500) { fwrite(STDERR, "ERROR: PHP 8.5+ is required on EC2; run deploy/bootstrap.sh before deploying. Current CLI: ".PHP_VERSION.PHP_EOL); exit(1); }'
           command -v rsync >/dev/null 2>&1 || {
             echo "ERROR: rsync is missing. Install it on EC2 with: sudo apt-get update && sudo apt-get install -y rsync"
             exit 1
