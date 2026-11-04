@@ -18,7 +18,7 @@ class SettingUpdateRequest extends FormRequest
         foreach (config('settings.groups', []) as $meta) {
             foreach ($meta['settings'] ?? [] as $key => $definition) {
                 $rules[$key] = match ($definition['type'] ?? 'text') {
-                    'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif,webp,ico', 'max:2048'],
+                    'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,svg,gif,webp,ico', 'max:10240'],
                     'email' => ['nullable', 'email'],
                     'number' => ['nullable', 'numeric'],
                     'boolean' => ['nullable', 'boolean'],
@@ -30,5 +30,14 @@ class SettingUpdateRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'brand_logo.max' => 'Ukuran logo maksimal 10 MB.',
+            'brand_favicon.max' => 'Ukuran favicon maksimal 10 MB.',
+            'qris_image.max' => 'Ukuran gambar QRIS maksimal 10 MB.',
+        ];
     }
 }

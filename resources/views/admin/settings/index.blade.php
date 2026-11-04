@@ -49,7 +49,10 @@
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Logo</label>
                     <input type="file" name="brand_logo" aria-label="Logo"
                            class="nb-input w-full">
-                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan ukuran 200×60px, format PNG transparan.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan ukuran 200×60px, format PNG transparan. Maksimal 10 MB.</p>
+                    @error('brand_logo')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('brand_logo'))
                         @if($mediaStatus['brand_logo']['public'] ?? false)
                             <div class="mt-2 flex items-center gap-3">
@@ -72,6 +75,10 @@
                     <input type="file" name="brand_favicon" accept="image/png,image/svg+xml" aria-label="Favicon"
                            class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan 32×32px atau 16×16px, format PNG.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Maksimal 10 MB.</p>
+                    @error('brand_favicon')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('brand_favicon'))
                         <div class="mt-2 flex items-center gap-3">
                             <img src="{{ media_url(setting('brand_favicon')) }}" class="h-6 w-auto rounded" alt="Favicon saat ini">
@@ -248,7 +255,10 @@
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Gambar QRIS (Static QR)</label>
                     <input type="file" name="qris_image" accept="image/*" aria-label="Gambar QRIS (Static QR)"
                            class="nb-input w-full">
-                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Upload QRIS statis dari e-wallet atau bank kamu. Akan ditampilkan saat customer checkout.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Upload QRIS statis dari e-wallet atau bank kamu. Akan ditampilkan saat customer checkout. Maksimal 10 MB.</p>
+                    @error('qris_image')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('qris_image'))
                         @if($mediaStatus['qris_image']['public'] ?? false)
                             <div class="mt-2 flex items-center gap-3">

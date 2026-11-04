@@ -54,6 +54,30 @@ class SettingUploadTest extends TestCase
         Storage::disk('public')->assertExists($path);
     }
 
+    public function test_uploading_setting_image_accepts_files_up_to_ten_megabytes(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.settings.update'), [
+            'brand_logo' => UploadedFile::fake()->image('logo.png')->size(10240),
+        ])->assertSessionHasNoErrors();
+
+        Storage::disk('public')->assertExists(Setting::get('brand_logo'));
+    }
+
+    public function test_uploading_setting_image_rejects_files_over_ten_megabytes_with_a_message(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.settings.update'), [
+            'brand_logo' => UploadedFile::fake()->image('logo.png')->size(10241),
+        ])->assertSessionHasErrors([
+            'brand_logo' => 'Ukuran logo maksimal 10 MB.',
+        ]);
+    }
+
     public function test_query_string_cache_buster_not_needed_but_value_readable(): void
     {
         Storage::fake('public');
