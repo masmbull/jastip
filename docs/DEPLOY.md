@@ -193,6 +193,15 @@ git add composer.lock
 git commit -m "chore: update composer.lock"
 ```
 
+### Issue: PHP version or FPM service not found
+The application requires PHP 8.5. On an existing server, rerun provisioning with
+`-Bootstrap` to install PHP 8.5-FPM and update Nginx to its socket, then deploy
+again. Confirm before deploying:
+```bash
+php -v
+sudo systemctl status php8.5-fpm
+```
+
 ### Issue: Permission denied errors
 ```bash
 # Fix storage permissions

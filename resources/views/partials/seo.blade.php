@@ -56,5 +56,3 @@
 @if($twitterSite)
     <meta name="twitter:site" content="{{ $twitterSite }}">
 @endif
-
-@stack('seo')
