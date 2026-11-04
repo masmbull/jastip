@@ -28,6 +28,7 @@ class InvoiceSampleTest extends TestCase
         $res->assertSee('INV-SAMPLE-2026');
         $res->assertSee('28-09-2026 00:00');
         $res->assertSee('BELUM BAYAR');
+        $this->assertSame(1, substr_count($res->getContent(), 'class="invoice-totals-box"'));
 
         // Pelanggan.
         $res->assertSee('Nabila Putri (Sampel Pelanggan)');

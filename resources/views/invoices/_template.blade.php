@@ -96,22 +96,22 @@
     <table style="width:100%; border-collapse:collapse; margin-top:14px;">
         <tr>
             <td style="width:55%;"></td>
-            <td>
+            <td class="invoice-totals-box" style="border:2px solid #141414; padding:8px;">
                 <table style="width:100%; border-collapse:collapse;">
                     @foreach($doc['totals'] as $row)
                         <tr>
-                            <td style="color:#475569; padding:2px 0;">{{ $row['label'] }}</td>
-                            <td style="text-align:right; padding:2px 0; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
+                            <td style="color:#475569; padding:5px 2px;">{{ $row['label'] }}</td>
+                            <td style="text-align:right; padding:5px 2px; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px;">{{ $doc['total']['label'] }}</td>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px; text-align:right; font-size:14px;">{{ $doc['total']['value'] }}</td>
+                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px; border-top:2px solid #141414;">{{ $doc['total']['label'] }}</td>
+                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px; text-align:right; font-size:14px; border-top:2px solid #141414;">{{ $doc['total']['value'] }}</td>
                     </tr>
                     @if($doc['left'])
                         <tr>
-                            <td style="color:#B45309; font-weight:bold; padding-top:6px;">{{ $doc['left']['label'] }}</td>
-                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:14px; padding-top:6px;">{{ $doc['left']['value'] }}</td>
+                            <td style="color:#B45309; font-weight:bold; padding:7px 2px 4px;">{{ $doc['left']['label'] }}</td>
+                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:14px; padding:7px 2px 4px;">{{ $doc['left']['value'] }}</td>
                         </tr>
                     @endif
                 </table>

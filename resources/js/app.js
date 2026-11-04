@@ -271,22 +271,12 @@ window.Alpine = Alpine;
         };
     };
 
-    /* ---- Kirim invoice sebagai GAMBAR (PNG) ke WhatsApp ----
-       Invoice dirender server (template yang sama dengan pratinjau). Dokumen
-       HTML-nya dimuat ke iframe tersembunyi lalu diubah jadi PNG lewat
-       html2canvas, dan dibagikan lewat Web Share API sehingga Android
-       menampilkan Share Sheet DENGAN gambar terlampir. Fallback (browser tanpa
-       file sharing): unduh PNG + buka chat WhatsApp. Tidak mengklaim terkirim. */
+    /* Invoice HTML is rendered to PNG and shared with its caption, without a
+       wa.me URL. The fallback downloads the image and opens the prepared chat. */
     window.jdShareInvoiceImage = async function (btn, opts) {
         const { url, filename, text, waUrl } = opts;
         if (btn && btn.dataset.busy === '1') return;
         if (btn) { btn.dataset.busy = '1'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
-
-        /* waUrl = https://wa.me/<nomor>. Dikirim sebagai `url` pada
-           navigator.share supaya sebagian browser/OS langsung menawarkan
-           WhatsApp dan mengisi nomor pelanggan, bukan share sheet generik.
-           Kalau platform mengabaikannya, pengguna tetap memilih kontak. */
-        const waTarget = typeof waUrl === 'string' && waUrl.startsWith('https://wa.me/') ? waUrl : '';
 
         let frame = null;
         try {
@@ -297,7 +287,7 @@ window.Alpine = Alpine;
 
             frame = document.createElement('iframe');
             frame.setAttribute('aria-hidden', 'true');
-            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:760px;height:1400px;border:0;';
+            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:960px;height:2000px;border:0;';
             document.body.appendChild(frame);
 
             await new Promise((resolve) => { frame.onload = resolve; frame.srcdoc = html; });
@@ -309,7 +299,7 @@ window.Alpine = Alpine;
                 )
             );
 
-            const canvas = await html2canvas(frame.contentDocument.body, { backgroundColor: '#FFFFFF', scale: 2, useCORS: true, logging: false });
+            const canvas = await html2canvas(frame.contentDocument.body, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true, logging: false });
             const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
             if (!blob) throw new Error('render gagal');
 
@@ -321,7 +311,6 @@ window.Alpine = Alpine;
                         files: [file],
                         title: filename || 'Invoice',
                         text: text || '',
-                        ...(waTarget ? { url: waTarget } : {}),
                     });
                 } catch (err) {
                     if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
@@ -518,7 +507,7 @@ window.Alpine = Alpine;
                 node = buildNode(doc);
                 document.body.appendChild(node);
 
-                const canvas = await html2canvas(node, { backgroundColor: '#FFFFFF', scale: 2, logging: false });
+                const canvas = await html2canvas(node, { backgroundColor: '#FFFFFF', scale: 3, logging: false });
                 const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
                 if (!blob) throw new Error('render gagal');
 
@@ -528,7 +517,7 @@ window.Alpine = Alpine;
 
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
-                        await navigator.share({ files: [file], text: shareText, url: waTarget });
+                        await navigator.share({ files: [file], text: shareText });
                     } catch (err) {
                         // Pengguna membatalkan sheet = bukan kegagalan.
                         if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
@@ -680,4 +669,3 @@ window.Alpine = Alpine;
 /* Kick off Alpine after all page scripts (including @push('scripts') blocks
    like manualInvoice()) have registered. */
 Alpine.start();
-
