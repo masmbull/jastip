@@ -12,6 +12,10 @@
     .\deploy\deploy.ps1 -Server 1.2.3.4 -Domain jastip.example.com -Bootstrap `
         -CertPem .\deploy\origin.pem -CertKey .\deploy\origin.key
 
+  Provisioning saja untuk server yang deployment-nya dikelola GitHub Actions:
+    .\deploy\deploy.ps1 -Server 1.2.3.4 -Domain jastip.example.com -Bootstrap `
+        -BootstrapOnly -CertPem .\deploy\origin.pem -CertKey .\deploy\origin.key
+
   Deploy rutin (kode sudah di-push ke GitHub):
     .\deploy\deploy.ps1 -Server 1.2.3.4
 #>
@@ -31,6 +35,7 @@ param(
   [string]$CertPem,
   [string]$CertKey,
   [switch]$Bootstrap,
+  [switch]$BootstrapOnly,
   [switch]$SkipBuild
 )
 
@@ -43,7 +48,7 @@ $sshArgs = @('-i', $Key, '-o', 'StrictHostKeyChecking=accept-new', '-o', 'Connec
 function Invoke-Remote {
   param([Parameter(Mandatory = $true)][string]$Command)
   & ssh @sshArgs $target $Command
-  if ($LASTEXITCODE -ne 0) { throw "remote command failed (exit $LASTEXITCODE): $Command" }
+  if ($LASTEXITCODE -ne 0) { throw "remote command failed (exit $LASTEXITCODE). Command omitted to avoid exposing credentials." }
 }
 
 function Send-File {
@@ -58,6 +63,7 @@ function Send-File {
 
 if (-not (Test-Path $Key))     { throw "ssh key not found: $Key" }
 if (-not (Test-Path $envFile)) { throw "missing $envFile (copy .env.production.example, fill it in)" }
+if ($BootstrapOnly -and -not $Bootstrap) { throw "-BootstrapOnly requires -Bootstrap" }
 
 # DB creds diambil dari deploy/.env.production supaya MySQL di server & .env tidak mismatch
 $prodVars = @{}
@@ -87,6 +93,12 @@ if ($Bootstrap) {
   if ($CertKey) { Invoke-Remote "sudo install -m 600 -o root -g root /tmp/origin.key /etc/nginx/ssl/origin.key" }
   Invoke-Remote ("sudo env APP_PATH='$AppPath' APP_DOMAIN='$Domain' REPO_URL='$RepoUrl' REPO_BRANCH='$Branch' " +
     "DB_NAME='$DbName' DB_USER='$DbUser' DB_PASS='$DbPass' PHP_VER='$PhpVer' RUN_USER='$SshUser' bash /tmp/jastip-bootstrap.sh")
+  if ($BootstrapOnly) {
+    Send-File -LocalPath $envFile -RemotePath '/tmp/nitipdiend-production.env'
+    Invoke-Remote "sudo install -o '$SshUser' -g www-data -m 640 /tmp/nitipdiend-production.env '$AppPath/.env' && sudo rm -f /tmp/nitipdiend-production.env && php -r 'exit(PHP_VERSION_ID >= 80500 ? 0 : 1);' && sudo systemctl is-active --quiet php$PhpVer-fpm && sudo nginx -t"
+    Write-Host "bootstrap OK -> $Domain ($Server); deploy the application from GitHub Actions"
+    return
+  }
 }
 
 # 1. assets - public/build gitignored, jadi di-build lokal lalu di-upload
