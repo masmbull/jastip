@@ -307,6 +307,7 @@ class InvoiceController extends Controller
 
         return [
             'brand' => setting('brand_name', 'NITIP DI END'),
+            'logo' => media_url(setting('brand_logo')),
             'owner' => setting('brand_owner'),
             'store_wa' => $storeWa,
             'title' => $paid > 0 && ! $order->is_paid ? 'TAGIHAN' : 'INVOICE',
@@ -385,6 +386,7 @@ class InvoiceController extends Controller
 
         return [
             'brand' => setting('brand_name', 'JASTIP IMOBY BANDUNG BY DANESHA'),
+            'logo' => media_url(setting('brand_logo')),
             'owner' => setting('brand_owner'),
             'store_wa' => setting('whatsapp'),
             'title' => 'INVOICE',

@@ -116,6 +116,8 @@ class InvoiceTest extends TestCase
     {
         Setting::set('qris_enabled', true, 'boolean', 'qris', true);
         Setting::set('qris_max_amount', 500000, 'integer', 'qris', true);
+        Setting::set('qris_image', 'settings/invoice-qris.png', 'string', 'qris', true);
+        Setting::set('brand_logo', 'settings/invoice-logo.png', 'string', 'branding', true);
 
         $admin = User::where('role', 'admin')->firstOrFail();
         $order = Order::create([
@@ -132,7 +134,9 @@ class InvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('>QRIS<', false);
+            ->assertSee('>QRIS<', false)
+            ->assertSee('/storage/settings/invoice-qris.png')
+            ->assertSee('/storage/settings/invoice-logo.png');
     }
 
     public function test_non_admin_cannot_view_invoice(): void

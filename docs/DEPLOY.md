@@ -241,7 +241,7 @@ ls -la public/build/
 # Verify storage symlink
 ls -la public/storage  # should point to ../storage/app/public
 
-# Recreate if needed
+# Recreate if missing; deployments now create this link automatically
 php artisan storage:link
 ```
 

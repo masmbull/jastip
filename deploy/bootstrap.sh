@@ -85,6 +85,22 @@ else
   mkdir -p "$(dirname "$APP_PATH")"
   git clone --branch "$REPO_BRANCH" "$REPO_URL" "$APP_PATH"
 fi
+
+PUBLIC_STORAGE="$APP_PATH/public/storage"
+APP_STORAGE_PUBLIC="$APP_PATH/storage/app/public"
+mkdir -p "$APP_STORAGE_PUBLIC"
+if [ -L "$PUBLIC_STORAGE" ]; then
+  if [ "$(readlink -f "$PUBLIC_STORAGE")" != "$(readlink -f "$APP_STORAGE_PUBLIC")" ]; then
+    echo "ERROR: $PUBLIC_STORAGE points to an unexpected location. Refusing to replace it." >&2
+    exit 1
+  fi
+elif [ -e "$PUBLIC_STORAGE" ]; then
+  echo "ERROR: $PUBLIC_STORAGE exists but is not the expected symlink. Refusing to replace it." >&2
+  exit 1
+else
+  ln -s "$APP_STORAGE_PUBLIC" "$PUBLIC_STORAGE"
+fi
+
 chown -R "${RUN_USER}:${WEB_USER}" "$APP_PATH"
 
 # --- Hardening (defense in depth) ---
