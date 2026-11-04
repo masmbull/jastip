@@ -53,6 +53,34 @@
                                         class="px-3 py-1.5 text-[11px] font-black uppercase tracking-wider border-l-2 border-[#141414] dark:border-[#FAF6EF]">Lunas</button>
                             </div>
                         </div>
+                        @isset($customers)
+                            <div>
+                                <label class="block text-sm font-bold mb-1" for="mi-customer">Pilih pelanggan terdaftar</label>
+                                <select id="mi-customer" name="customer_user_id" @change="fillCustomer($event.target)"
+                                        class="nb-input w-full px-3 py-2 text-sm">
+                                    <option value="">Isi data pelanggan manual</option>
+                                    @foreach($customers as $customer)
+                                        <option value="{{ $customer['id'] }}"
+                                                data-name="{{ $customer['name'] }}"
+                                                data-phone="{{ $customer['phone'] }}"
+                                                data-email="{{ $customer['email'] }}"
+                                                data-address="{{ $customer['address'] }}"
+                                                data-city="{{ $customer['city'] }}"
+                                                @selected((string) old('customer_user_id', '') === (string) $customer['id'])>
+                                            {{ $customer['name'] }}{{ $customer['phone'] ? ' · '.$customer['phone'] : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @if($customers->isEmpty())
+                                    <p class="mt-1 text-xs font-medium text-[#475569] dark:text-[#D6D3D1]">
+                                        Belum ada pelanggan terdaftar.
+                                        <a href="{{ route('admin.users.index') }}" class="font-bold underline">Tambah pelanggan</a>
+                                    </p>
+                                @else
+                                    <p class="mt-1 text-xs font-medium text-[#475569] dark:text-[#D6D3D1]">Pilih nama untuk mengisi WhatsApp, email, dan alamat default. Data invoice tetap bisa disesuaikan.</p>
+                                @endif
+                            </div>
+                        @endisset
                         <div>
                             <label class="block text-sm font-bold mb-1" for="mi-name">Nama Pelanggan *</label>
                             <input id="mi-name" type="text" name="customer_name" required value="{{ old('customer_name') }}"

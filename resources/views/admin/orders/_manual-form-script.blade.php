@@ -99,6 +99,30 @@
                     this.dpAmt = 0;
                 }
             },
+            fillCustomer(select) {
+                const option = select.selectedOptions[0];
+                if (!option?.value) return;
+
+                const form = select.closest('form');
+                if (option.dataset.city) {
+                    this.city = option.dataset.city;
+                    this.onCityChange();
+                }
+                const fields = {
+                    customer_name: option.dataset.name || '',
+                    customer_whatsapp: option.dataset.phone || '',
+                    customer_email: option.dataset.email || '',
+                    customer_address: option.dataset.address || '',
+                };
+
+                Object.entries(fields).forEach(([name, value]) => {
+                    const field = form.querySelector(`[name="${name}"]`);
+                    if (!field) return;
+                    field.value = value;
+                    field.dispatchEvent(new Event('input', { bubbles: true }));
+                    field.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            },
 
             // Berat efektif: kalau admin belum menimpa manual, dihitung dari
             // total berat produk (berat produk x qty). Ini yang dipakai untuk

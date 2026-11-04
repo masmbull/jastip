@@ -26,27 +26,28 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'string', 'max:30'],
             'tier' => ['nullable', 'in:bronze,silver,gold,platinum'],
             'points' => ['nullable', 'integer', 'min:0'],
         ], [
             'name.required' => 'Nama pelanggan wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah terdaftar.',
+            'phone.required' => 'Nomor WhatsApp pelanggan wajib diisi.',
             'points.integer' => 'Poin harus berupa angka.',
         ]);
 
         $password = Str::password(10);
+        $email = $validated['email'] ?? null;
 
         $user = User::create([
             'name' => $validated['name'],
-            'email' => $validated['email'],
-            'username' => $this->uniqueUsername($validated['email']),
+            'email' => $email,
+            'username' => $this->uniqueUsername($email, $validated['name']),
             'password' => $password, // di-hash otomatis oleh cast 'hashed'
             'role' => 'customer',
-            'email_verified_at' => now(),
+            'email_verified_at' => $email ? now() : null,
         ]);
 
         // Profil sudah otomatis dibuat oleh UserObserver saat user dibuat,
@@ -65,11 +66,12 @@ class UserController extends Controller
     }
 
     /**
-     * Username unik dari bagian depan email.
+     * Username unik dari email jika tersedia, atau nama pelanggan.
      */
-    private function uniqueUsername(string $email): string
+    private function uniqueUsername(?string $email, string $name): string
     {
-        $base = Str::slug(Str::before($email, '@'), '.') ?: 'pelanggan';
+        $source = $email ? Str::before($email, '@') : $name;
+        $base = Str::slug($source, '.') ?: 'pelanggan';
         $username = $base;
         $i = 2;
 

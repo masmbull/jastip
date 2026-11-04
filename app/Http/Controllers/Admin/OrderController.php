@@ -10,6 +10,7 @@ use App\Mail\OrderShipped;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\User;
 use App\Services\ShippingEstimator;
 use App\Services\ShippingService;
 use App\Services\StockService;
@@ -59,12 +60,18 @@ class OrderController extends Controller
     {
         Gate::authorize('create', Order::class);
 
-        return view('admin.orders.create');
+        $customers = $this->invoiceCustomers();
+
+        return view('admin.orders.create', compact('customers'));
     }
 
     public function store(ManualOrderStoreRequest $request)
     {
         Gate::authorize('create', Order::class);
+
+        $customer = $request->filled('customer_user_id')
+            ? User::where('role', 'customer')->findOrFail($request->validated('customer_user_id'))
+            : null;
 
         $items = collect($request->validated('items'))->map(fn ($item) => [
             'product_name' => $item['product_name'],
@@ -89,9 +96,10 @@ class OrderController extends Controller
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
         // Harga & fee hanya dari input admin (invoice manual, bukan dari produk).
-        $order = DB::transaction(function () use ($request, $items, $subtotal, $shippingCost, $fee, $downPayment, $status, $paid) {
+        $order = DB::transaction(function () use ($request, $customer, $items, $subtotal, $shippingCost, $fee, $downPayment, $status, $paid) {
             $order = Order::create([
                 'order_number' => Order::generateOrderNumber(),
+                'user_id' => $customer?->id,
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
                 'customer_email' => $request->input('customer_email'),
@@ -124,6 +132,38 @@ class OrderController extends Controller
 
         return redirect()->route('admin.invoices.index')
             ->with('success', 'Invoice '.$order->order_number.' berhasil dibuat.');
+    }
+
+    private function invoiceCustomers()
+    {
+        return User::query()
+            ->where('role', 'customer')
+            ->with([
+                'profile:id,user_id,phone',
+                'addresses' => fn ($query) => $query
+                    ->where('is_default', true)
+                    ->select('id', 'user_id', 'phone', 'street_address', 'city', 'province', 'postal_code'),
+            ])
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(function (User $customer) {
+                $address = $customer->addresses->first();
+                $addressText = collect([
+                    $address?->street_address,
+                    $address?->city,
+                    $address?->province,
+                    $address?->postal_code,
+                ])->filter()->implode(', ');
+
+                return [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                    'phone' => $customer->profile?->phone ?: $address?->phone,
+                    'address' => $addressText,
+                    'city' => $address?->city,
+                ];
+            });
     }
 
     /**
