@@ -34,7 +34,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: "8.5"
           extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, hash, intl, mbstring, openssl, pdo, pdo_mysql, pdo_sqlite, session, sqlite3, tokenizer, xml, zip
           coverage: none
           tools: composer:v2
@@ -46,9 +46,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: vendor
-          key: ${{ runner.os }}-php83-${{ hashFiles('composer.lock') }}
+          key: ${{ runner.os }}-php85-${{ hashFiles('composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-php83-
+            ${{ runner.os }}-php85-
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress

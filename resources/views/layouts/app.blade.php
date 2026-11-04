@@ -53,8 +53,9 @@
         <x-navbar />
 
         {{-- MAIN CONTENT --}}
-                <main id="main-content" class="flex-1 pb-20 lg:pb-0">
+        <main id="main-content" class="flex-1 pb-20 lg:pb-0">
             @yield('content')
+            @stack('seo')
         </main>
 
         {{-- FOOTER --}}
