@@ -207,6 +207,19 @@ jobs:
 
           cd "$APP_DIR"
 
+          if [ -L public/storage ]; then
+            test "$(readlink -f public/storage)" = "$(readlink -f storage/app/public)" || {
+              echo "ERROR: public/storage points to an unexpected location."
+              exit 1
+            }
+          elif [ -e public/storage ]; then
+            echo "ERROR: public/storage exists but is not a symlink."
+            exit 1
+          else
+            mkdir -p storage/app/public
+            ln -s "$APP_DIR/storage/app/public" public/storage
+          fi
+
           php artisan package:discover --ansi
           php artisan config:clear
           php artisan view:clear

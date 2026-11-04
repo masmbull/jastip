@@ -65,4 +65,19 @@ class SettingUploadTest extends TestCase
 
         $this->assertNotNull(Setting::get('brand_favicon'));
     }
+
+    public function test_settings_page_reports_uploaded_media_without_public_storage_link(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $path = 'settings/test-only-logo.png';
+
+        Storage::disk('public')->put($path, 'image-data');
+        Setting::set('brand_logo', $path, 'string', 'branding', true);
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.index'))
+            ->assertOk()
+            ->assertSee('File logo ada, tetapi belum bisa diakses publik.');
+    }
 }

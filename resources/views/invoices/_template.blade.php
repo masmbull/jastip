@@ -21,6 +21,9 @@
     <table style="width:100%; border-collapse:collapse;">
         <tr>
             <td style="vertical-align:top;">
+                @if(!empty($doc['logo']))
+                    <img src="{{ $doc['logo'] }}" alt="{{ $doc['brand'] }}" style="display:block; max-width:180px; max-height:52px; object-fit:contain; margin-bottom:6px;">
+                @endif
                 <div style="font-size:20px; font-weight:bold;">{{ $doc['brand'] }}</div>
                 @if($doc['owner'])<div style="color:#475569;">{{ $doc['owner'] }}</div>@endif
                 @if($doc['store_wa'])<div style="color:#475569;">WA: {{ $doc['store_wa'] }}</div>@endif

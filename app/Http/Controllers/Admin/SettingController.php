@@ -7,12 +7,26 @@ use App\Http\Requests\SettingUpdateRequest;
 use App\Models\Setting;
 use App\Services\WhatsappGatewayService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class SettingController extends Controller
 {
     public function index()
     {
+        $mediaStatus = [];
+        foreach (['brand_logo', 'qris_image'] as $key) {
+            $path = ltrim((string) Setting::get($key, ''), '/');
+            if ($path === '') {
+                continue;
+            }
+
+            $mediaStatus[$key] = [
+                'stored' => Storage::disk('public')->exists($path),
+                'public' => is_file(public_path('storage/'.$path)),
+            ];
+        }
+
         // Status gateway dipakai untuk menampilkan badge "Terhubung / Tidak siap".
         // Dibungkus try/catch: gateway yang mati tidak boleh membuat halaman
         // Pengaturan ikut error.
@@ -28,7 +42,7 @@ class SettingController extends Controller
             ];
         }
 
-        return view('admin.settings.index', compact('waGatewayStatus'));
+        return view('admin.settings.index', compact('waGatewayStatus', 'mediaStatus'));
     }
 
     public function update(SettingUpdateRequest $request)
