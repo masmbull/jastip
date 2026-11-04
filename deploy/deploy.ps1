@@ -24,7 +24,7 @@ param(
   [string]$Branch = 'main',
   [string]$RepoUrl = 'https://github.com/masmbull/jastip.git',
   [string]$Domain = '_',
-  [string]$PhpVer = '8.3',
+  [string]$PhpVer = '8.5',
   [string]$DbName,
   [string]$DbUser,
   [string]$DbPass,

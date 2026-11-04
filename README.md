@@ -8,11 +8,11 @@ categories, orders, and settings.
 - **Data:** single `admin`/`customer` role column on `User` (no second auth table).
 - **State:** session cart (guests allowed), no payments (status workflow in admin).
 - **Notifications:** WhatsApp link-gen + email (order confirmation/shipped) + in-app feed.
-- **Stack:** Laravel 13 · PHP 8.3+ · MySQL/SQLite · Vite + TailwindCSS v4.
+- **Stack:** Laravel 13 · PHP 8.5+ · MySQL/SQLite · Vite + TailwindCSS v4.
 
 ## Requirements
 
-- PHP **8.3+** (`php -v`)
+- PHP **8.5+** (`php -v`)
 - Composer ≥ 2
 - Node.js ≥ 20 / npm
 - MySQL 8+ (or SQLite for local dev)

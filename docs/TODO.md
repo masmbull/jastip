@@ -1,6 +1,9 @@
 # TODO JASTIP
 Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dihapus.
 
+- [x] **CI/CD merah di semua workflow** — lock Composer disinkronkan dengan
+  syarat PHP 8.5; workflow CI/deploy, provisioning, dan panduan disamakan
+  ke PHP 8.5. JSON-LD produk dipindah setelah konten agar ikut dirender.
 - [x] **Judul halaman dobel** — 12 halaman profil memakai
   `@section('title', 'X | NITIP DI END')` padahal `layouts/app` sudah
   menambahkan brand, jadi hasilnya "X | NITIP DI END | NITIP DI END".
@@ -324,7 +327,7 @@ Catatan alur: verifikasi visual pakai Playwright (chromium) di server lokal
   php artisan migrate --force
   php artisan optimize:clear
   php artisan optimize
-  sudo systemctl reload php8.3-fpm
+  sudo systemctl reload php8.5-fpm
   ```
   Jangan `npm run build` di server (aset `public/build` sudah di-commit);
   kalau memang perlu: `npm ci && npm run build`.
