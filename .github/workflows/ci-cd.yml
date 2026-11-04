@@ -104,10 +104,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
-    # Configure required reviewers for this environment in GitHub:
-    # Settings > Environments > production > Required reviewers.
+    # Configure secrets and optional reviewers in GitHub:
+    # Settings > Environments > nitipdiend.
     environment:
-      name: production
+      name: nitipdiend
       url: https://nitipdiend.web.id
 
     concurrency:
