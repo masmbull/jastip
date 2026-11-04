@@ -42,8 +42,24 @@ class ManualOrderStoreRequest extends FormRequest
             'items.*.product_price' => ['required', 'integer', 'min:0'],
             'items.*.weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'items.*.deposit' => ['nullable', 'integer', 'min:0'],
+            'items.*.fee' => ['nullable', 'integer', 'min:0'],
             'items.*.status' => ['nullable', Rule::in([OrderItem::STATUS_READY, OrderItem::STATUS_PO])],
         ];
+    }
+
+    public function feeTotal(): int
+    {
+        $itemFee = (int) collect($this->input('items', []))
+            ->sum(fn ($item) => (int) ($item['fee'] ?? 0));
+
+        $order = $this->route('order');
+        if ($order instanceof Order) {
+            $legacyFee = max(0, (int) $order->fee - (int) $order->items()->sum('fee'));
+        } else {
+            $legacyFee = $itemFee === 0 ? (int) $this->input('fee', 0) : 0;
+        }
+
+        return $itemFee + $legacyFee;
     }
 
     public function withValidator(Validator $validator): void
@@ -67,7 +83,7 @@ class ManualOrderStoreRequest extends FormRequest
             }
             $subtotal = collect($this->input('items', []))
                 ->sum(fn ($item) => (int) ($item['quantity'] ?? 0) * (int) ($item['product_price'] ?? 0));
-            $total = $subtotal + (int) $this->input('shipping_cost', 0) + (int) $this->input('fee', 0);
+            $total = $subtotal + (int) $this->input('shipping_cost', 0) + $this->feeTotal();
             if ($dp > $total) {
                 $validator->errors()->add('down_payment', 'Deposit tidak boleh lebih besar dari total tagihan.');
             }

@@ -68,11 +68,12 @@
         <h2 class="text-sm font-semibold text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wide">Item Pesanan</h2>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full min-w-[560px]">
+        <table class="w-full min-w-[640px]">
             <thead>
                 <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
                     <th class="px-4 py-2">Produk</th>
                     <th class="px-4 py-2 text-center">Jumlah</th>
+                    <th class="px-4 py-2 text-right">Fee item</th>
                     <th class="px-4 py-2 text-right">Subtotal</th>
                 </tr>
             </thead>
@@ -90,6 +91,7 @@
                             </div>
                         </td>
                         <td class="px-4 py-3 text-center text-sm text-[#1E293B] dark:text-[#f1f5f9] num">x{{ $item->quantity }}</td>
+                        <td class="px-4 py-3 text-right text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($item->fee ?? 0) }}</td>
                         <td class="px-4 py-3 text-right text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($item->subtotal) }}</td>
                     </tr>
                 @endforeach

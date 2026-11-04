@@ -124,6 +124,62 @@ class ManualInvoiceTest extends TestCase
             ->assertSee('Rp 19.000');
     }
 
+    public function test_item_fees_are_added_once_per_line_and_shown_in_customer_invoice(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan Fee per Item',
+            'customer_whatsapp' => '081200009992',
+            'customer_address' => 'Jl. Fee Item',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 3, 'product_price' => 65000, 'fee' => 19000],
+                ['product_name' => 'Barang B', 'quantity' => 2, 'product_price' => 50000, 'fee' => 5000],
+            ],
+        ])->assertRedirect(route('admin.invoices.index'))
+            ->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200009992')->firstOrFail();
+        $this->assertSame(24000, $order->fee);
+        $this->assertSame(319000, $order->total);
+        $this->assertSame(
+            [19000, 5000],
+            $order->items->sortBy('id')->map(fn ($item) => (int) $item->fee)->values()->all()
+        );
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Fee item')
+            ->assertSee('Rp 19.000')
+            ->assertSee('Rp 5.000')
+            ->assertSee('Total Fee Jastip');
+
+        $this->actingAs($admin)->put(route('admin.orders.update', $order), [
+            'customer_name' => $order->customer_name,
+            'customer_whatsapp' => $order->customer_whatsapp,
+            'customer_address' => $order->customer_address,
+            'show_fee' => '0',
+            'items' => [
+                ['product_name' => 'Barang A', 'quantity' => 3, 'product_price' => 65000, 'fee' => 19000],
+                ['product_name' => 'Barang B', 'quantity' => 2, 'product_price' => 50000, 'fee' => 5000],
+            ],
+        ])->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHasNoErrors();
+
+        $order->refresh();
+        $this->assertSame(24000, $order->fee);
+        $this->assertSame(319000, $order->total);
+        $this->assertTrue($order->isPaymentValid());
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertDontSee('Fee item')
+            ->assertDontSee('Rp 19.000')
+            ->assertDontSee('Total Fee Jastip');
+    }
+
     public function test_non_admin_cannot_create_invoice(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
@@ -281,6 +337,30 @@ class ManualInvoiceTest extends TestCase
         $this->assertSame(225000, $order->down_payment);
         $this->assertSame(75000, (int) $order->items()->value('deposit'));
         $this->assertSame(75000, $order->remaining);
+    }
+
+    public function test_25k_per_unit_with_quantity_three_is_75k_everywhere(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Tiga Unit',
+            'customer_whatsapp' => '081200007781',
+            'customer_address' => 'Jl. Deposit Tiga Unit',
+            'items' => [
+                ['product_name' => 'Barang DP', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 25000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007781')->firstOrFail();
+        $this->assertSame(75000, $order->down_payment);
+        $this->assertSame(225000, $order->remaining);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('-Rp 75.000')
+            ->assertDontSee('-Rp 225.000');
     }
 
     public function test_per_unit_deposit_cannot_exceed_invoice_total_after_quantity_is_applied(): void

@@ -6,12 +6,14 @@
             shipping: {{ (int) old('shipping_cost', 0) }},
             shipMethod: {{ Js::from(old('shipping_method', '')) }},
             mode: {{ Js::from(collect(['deposit', 'lunas'])->contains(old('mode', request('mode', 'deposit'))) ? old('mode', request('mode', 'deposit')) : 'deposit') }},
-            feeAmt: {{ (int) old('fee', 0) }},
             showFeeToCustomer: {{ old('show_fee', true) ? 'true' : 'false' }},
+            legacyFee: {{ (int) old('legacy_fee', isset($order) ? max(0, (int) $order->fee - (int) $order->items->sum('fee')) : 0) }},
             manualDp: {{ (int) old('down_payment', 0) }},
             // Deposit input is per unit; the order total multiplies by quantity.
             get dpAmt() { return this.itemDeposit() > 0 ? this.itemDeposit() : this.manualDp; },
             itemDeposit() { return this.items.reduce((s, i) => s + (Number(i.deposit) || 0) * (Number(i.qty) || 0), 0); },
+            itemFee() { return this.items.reduce((s, i) => s + (Number(i.fee) || 0), 0); },
+            feeTotal() { return this.itemFee() + (Number(this.legacyFee) || 0); },
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
             district: {{ Js::from(old('shipping_district', '')) }},
@@ -29,8 +31,9 @@
                 key: i + 1, name: o.product_name || '', unit: o.unit || 'pcs',
                 status: o.status || 'ready', qty: Number(o.quantity) || 1,
                 price: Number(o.product_price) || 0, weight: Number(o.weight) || 0, deposit: Number(o.deposit) || 0,
+                fee: Number(o.fee) || 0,
                 open: false, loading: false, suggestions: [], _abort: null,
-            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, open: false, loading: false, suggestions: [], _abort: null }],
+            })) : [{ key: 1, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, fee: 0, open: false, loading: false, suggestions: [], _abort: null }],
             seq: oldItems.length || 1,
             saving: false,
 
@@ -147,7 +150,7 @@
 
             addItem() {
                 this.seq++;
-                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, open: false, loading: false, suggestions: [], _abort: null });
+                this.items.push({ key: this.seq, name: '', unit: 'pcs', status: 'ready', qty: 1, price: 0, weight: 0, deposit: 0, fee: 0, open: false, loading: false, suggestions: [], _abort: null });
             },
             removeItem(idx) {
                 if (this.items[idx]?._abort) this.items[idx]._abort.abort();
@@ -156,7 +159,7 @@
             },
             lineTotal(item) { return (Number(item.qty) || 0) * (Number(item.price) || 0); },
             subtotal() { return this.items.reduce((sum, i) => sum + this.lineTotal(i), 0); },
-            total() { return this.subtotal() + (Number(this.shipping) || 0) + (Number(this.feeAmt) || 0); },
+            total() { return this.subtotal() + (Number(this.shipping) || 0) + this.feeTotal(); },
             dp() { return this.paidNow ? 0 : (Number(this.dpAmt) || 0); },
             remaining() { return Math.max(0, this.total() - this.dp()); },
             formatRp(n) { return 'Rp ' + (Number(n) || 0).toLocaleString('id-ID'); },

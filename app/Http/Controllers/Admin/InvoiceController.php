@@ -273,6 +273,7 @@ class InvoiceController extends Controller
         // DP/unit ditampilkan bersama total DP tiap baris agar pelanggan bisa
         // memeriksa hasil perkalian dengan kuantitas.
         $itemHasDeposit = $order->items->contains(fn ($i) => (int) $i->deposit > 0);
+        $itemHasFee = $order->show_fee && $order->items->contains(fn ($i) => (int) $i->fee > 0);
 
         $totals = [
             ['label' => 'Subtotal', 'value' => format_price($order->subtotal)],
@@ -280,7 +281,7 @@ class InvoiceController extends Controller
         ];
 
         if ($order->show_fee && (int) ($order->fee ?? 0) > 0) {
-            $totals[] = ['label' => 'Fee Jastip', 'value' => format_price($order->fee)];
+            $totals[] = ['label' => 'Total Fee Jastip', 'value' => format_price($order->fee)];
         }
 
         if ((int) ($order->discount ?? 0) > 0) {
@@ -327,6 +328,7 @@ class InvoiceController extends Controller
             // Sertakan DP/unit dan total per item di tabel — ditampilkan di template
             // hanya kalau ada item yang punya deposit > 0.
             'item_has_deposit' => $itemHasDeposit,
+            'item_has_fee' => $itemHasFee,
             'items' => $order->items->map(fn ($i) => [
                 'name' => $i->product_name,
                 'unit' => $i->unit,
@@ -335,6 +337,7 @@ class InvoiceController extends Controller
                 'subtotal' => format_price($i->subtotal),
                 'deposit_per_unit' => (int) $i->deposit > 0 ? format_price($i->deposit) : null,
                 'deposit_total' => (int) $i->deposit > 0 ? format_price((int) $i->deposit * (int) $i->quantity) : null,
+                'fee' => $order->show_fee && (int) $i->fee > 0 ? format_price($i->fee) : null,
             ])->all(),
             'totals' => $totals,
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],

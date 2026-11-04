@@ -194,7 +194,7 @@
                             </div>
                             <div x-show="mode === 'deposit'" x-cloak>
                                 <label class="block text-sm font-bold mb-1" for="mi-dp">
-                                    Deposit
+                                    Total DP
                                     <span class="text-[11px] font-medium text-[#475569]" x-text="itemDeposit() > 0 ? '(DP/unit × Qty)' : ''"></span>
                                 </label>
 
@@ -234,22 +234,23 @@
                         </button>
                     </div>
 
-                    <div class="hidden sm:grid grid-cols-12 gap-2 px-1 text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-wider">
-                        <div class="col-span-3">Produk</div>
+                    <div class="hidden lg:grid grid-cols-12 gap-2 px-1 text-[11px] font-black text-[#475569] dark:text-[#D6D3D1] uppercase tracking-wider">
+                        <div class="col-span-2">Produk</div>
                         <div class="col-span-1">Satuan</div>
                         <div class="col-span-1">Status</div>
                         <div class="col-span-1 text-center">Qty</div>
                         <div class="col-span-2 text-right">Harga</div>
                         <div class="col-span-2 text-right">DP/unit</div>
-                        <div class="col-span-1 text-right">DP Total</div>
+                        <div class="col-span-1 text-right">Fee</div>
                         <div class="col-span-1 text-right">Subtotal</div>
+                        <div class="col-span-1"></div>
                     </div>
 
                     <div class="space-y-3">
                         <template x-for="(item, idx) in items" :key="item.key">
                             <div class="grid grid-cols-12 gap-2 items-start border-2 border-[#141414]/15 dark:border-[#FAF6EF]/15 rounded-[10px] p-2.5">
-                                <div class="col-span-12 sm:col-span-3 relative">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Produk *</span>
+                                <div class="col-span-12 sm:col-span-6 lg:col-span-2 relative">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Produk *</span>
                                     <input type="text" :name="`items[${idx}][product_name]`" x-model="item.name"
                                            @input.debounce.400ms="searchProduct(idx)" @click.away="item.open = false"
                                            @focus="item.suggestions.length && (item.open = true)"
@@ -269,32 +270,32 @@
                                         </template>
                                     </div>
                                 </div>
-                                <div class="col-span-4 sm:col-span-1">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Satuan</span>
+                                <div class="col-span-4 sm:col-span-2 lg:col-span-1">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Satuan</span>
                                     <input type="text" :name="`items[${idx}][unit]`" x-model="item.unit" placeholder="pcs"
                                            class="nb-input w-full px-3 py-2 text-sm">
                                 </div>
-                                <div class="col-span-8 sm:col-span-1">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Status</span>
+                                <div class="col-span-8 sm:col-span-4 lg:col-span-1">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Status</span>
                                     <select :name="`items[${idx}][status]`" x-model="item.status"
                                             class="nb-input w-full px-2 py-2 text-sm font-bold">
                                         <option value="ready">Ready</option>
                                         <option value="po">PO</option>
                                     </select>
                                 </div>
-                                <div class="col-span-4 sm:col-span-1">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Qty *</span>
+                                <div class="col-span-4 sm:col-span-2 lg:col-span-1">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Qty *</span>
                                     <input type="number" min="1" :name="`items[${idx}][quantity]`" x-model.number="item.qty" @input="recalcShipping()" required
                                            class="nb-input w-full px-2 py-2 text-sm text-center num">
                                 </div>
-                                <div class="col-span-8 sm:col-span-2">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">Harga *</span>
+                                <div class="col-span-8 sm:col-span-4 lg:col-span-2">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Harga *</span>
                                     <input type="number" min="0" :name="`items[${idx}][product_price]`" x-model.number="item.price" required
                                            class="nb-input w-full px-3 py-2 text-sm text-right num">
                                 </div>
                                 {{-- Deposit per unit — dikalikan qty otomatis. Label mobile menjelaskan ini. --}}
-                                <div class="col-span-6 sm:col-span-2">
-                                    <span class="sm:hidden text-[11px] font-black uppercase text-[#475569]">DP/unit</span>
+                                <div class="col-span-6 sm:col-span-4 lg:col-span-2">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">DP/unit</span>
                                     <input type="number" min="0" :name="`items[${idx}][deposit]`" x-model.number="item.deposit"
                                            placeholder="0"
                                            title="Deposit per unit — dikalikan qty otomatis"
@@ -304,13 +305,14 @@
                                          class="mt-0.5 text-[10px] font-bold text-[#166534] text-right num"
                                              x-text="formatRp(item.deposit) + ' × ' + item.qty + ' = ' + formatRp(item.deposit * item.qty) + ' total DP'"></div>
                                 </div>
-                                {{-- DP total per baris (read-only info) --}}
-                                <div class="col-span-6 sm:col-span-1 text-[11px] font-bold text-right py-2.5 text-[#166534] num"
-                                     x-show="item.deposit > 0"
-                                     x-text="formatRp(item.deposit * item.qty)"></div>
-                                <div class="col-span-6 sm:col-span-1 py-2.5" x-show="!item.deposit || item.deposit <= 0"></div>
-                                <div class="col-span-4 sm:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>
-                                <div class="col-span-2 sm:col-span-1 text-right">
+                                <div class="col-span-6 sm:col-span-2 lg:col-span-1">
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Fee item</span>
+                                    <input type="number" min="0" :name="`items[${idx}][fee]`" x-model.number="item.fee"
+                                           placeholder="0" title="Fee untuk baris item ini"
+                                           class="nb-input w-full px-2 py-2 text-sm text-right num">
+                                </div>
+                                <div class="col-span-4 sm:col-span-2 lg:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>
+                                <div class="col-span-2 sm:col-span-1 lg:col-span-1 text-right">
                                     <button type="button" @click="removeItem(idx)" x-show="items.length > 1"
                                             class="inline-flex items-center justify-center w-11 h-11 text-[#991B1B]" aria-label="Hapus item" title="Hapus item">
                                         <x-icon name="trash" class="w-4 h-4" />
@@ -333,21 +335,22 @@
                                            x-model="showFeeToCustomer" class="mt-1 w-4 h-4 accent-[#EAB308]">
                                     <span class="text-xs font-bold text-[#475569] dark:text-[#D6D3D1]">Tampilkan fee di invoice pelanggan</span>
                                 </label>
-                                <label class="block text-sm font-bold mb-1" for="mi-fee">Fee Jastip (tetap masuk total)</label>
-                                <input id="mi-fee" type="number" min="0" name="fee" x-model.number="feeAmt" value="{{ old('fee', 0) }}"
-                                       class="nb-input w-full px-3 py-2 text-sm num">
                             </div>
-                            <div class="flex justify-between" x-show="feeAmt > 0">
+                            <div class="flex justify-between" x-show="legacyFee > 0">
+                                <span class="font-bold text-[#475569]">Fee lama (belum dialokasikan ke item)</span>
+                                <span class="font-black num" x-text="formatRp(legacyFee)"></span>
+                            </div>
+                            <div class="flex justify-between" x-show="feeTotal() > 0">
                                 <span class="font-bold text-[#475569]">
-                                    Fee Jastip
+                                    Total Fee Jastip
                                     <span class="text-[10px] font-medium" x-show="!showFeeToCustomer">(internal)</span>
                                 </span>
-                                <span class="font-black num" x-text="formatRp(feeAmt)"></span>
+                                <span class="font-black num" x-text="formatRp(feeTotal())"></span>
                             </div>
                             <div class="flex justify-between" x-show="itemDeposit() > 0 && !paidNow" x-cloak>
                                 <span class="font-bold text-[#475569]">
-                                    Deposit
-                                    <span class="text-[10px] font-medium">(dari item)</span>
+                                    Total DP
+                                    <span class="text-[10px] font-medium">(DP/unit × Qty)</span>
                                 </span>
                                 <span class="font-black text-[#166534] num" x-text="formatRp(itemDeposit())"></span>
                             </div>

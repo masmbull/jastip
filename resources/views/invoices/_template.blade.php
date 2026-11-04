@@ -75,6 +75,9 @@
                 <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">DP/unit</td>
                 <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Total DP</td>
             @endif
+            @if(!empty($doc['item_has_fee']))
+                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Fee item</td>
+            @endif
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Subtotal</td>
         </tr>
         @foreach($doc['items'] as $item)
@@ -89,6 +92,11 @@
                     </td>
                     <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#166534; font-weight:bold;">
                         {{ $item['deposit_total'] ?? '-' }}
+                    </td>
+                @endif
+                @if(!empty($doc['item_has_fee']))
+                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#92400E;">
+                        {{ $item['fee'] ?? '-' }}
                     </td>
                 @endif
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; font-weight:bold;">{{ $item['subtotal'] }}</td>
