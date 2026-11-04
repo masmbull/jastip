@@ -220,6 +220,14 @@ jobs:
             ln -s "$APP_DIR/storage/app/public" public/storage
           fi
 
+          sudo chown -R "$(id -un):www-data" "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
+          sudo find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type d -exec chmod 2775 {} +
+          sudo find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type f -exec chmod 664 {} +
+          sudo -u www-data test -w "$APP_DIR/storage/app/public" || {
+            echo "ERROR: PHP-FPM cannot write to storage/app/public."
+            exit 1
+          }
+
           php artisan package:discover --ansi
           php artisan config:clear
           php artisan view:clear
