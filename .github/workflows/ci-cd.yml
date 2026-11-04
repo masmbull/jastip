@@ -1,0 +1,226 @@
+name: NITIP DI END - CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI - Test and Build
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: testing
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: bcmath, ctype, curl, dom, fileinfo, filter, hash, intl, mbstring, openssl, pdo, pdo_sqlite, session, sqlite3, tokenizer, xml, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer files
+        run: composer validate --no-check-publish
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php83-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php83-
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Run Laravel tests
+        run: php artisan test
+
+      - name: Install production-only PHP dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Verify production PHP requirements
+        run: composer check-platform-reqs --no-dev
+
+      - name: Package production release
+        run: |
+          tar -czf release.tar.gz \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            --exclude='./.env' \
+            --exclude='./storage' \
+            --exclude='./public/storage' \
+            --exclude='./node_modules' \
+            --exclude='./tests' \
+            --exclude='./.phpunit.cache' \
+            --exclude='./phpunit.xml' \
+            --exclude='./bootstrap/cache' \
+            .
+
+      - name: Upload production release
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nitipdiend-release
+          path: release.tar.gz
+          if-no-files-found: error
+          retention-days: 3
+
+  deploy:
+    name: CD - Deploy to AWS EC2
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    # Configure required reviewers for this environment in GitHub:
+    # Settings > Environments > production > Required reviewers.
+    environment:
+      name: production
+      url: https://nitipdiend.web.id
+
+    concurrency:
+      group: nitipdiend-production-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Download production release
+        uses: actions/download-artifact@v4
+        with:
+          name: nitipdiend-release
+
+      - name: Configure SSH
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$EC2_SSH_KEY"
+          test -n "$EC2_KNOWN_HOSTS"
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload release to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          set -euo pipefail
+          test -n "$EC2_HOST"
+          test -n "$EC2_USER"
+
+          scp \
+            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            release.tar.gz \
+            "$EC2_USER@$EC2_HOST:/tmp/nitipdiend-${GITHUB_SHA}.tar.gz"
+
+      - name: Deploy application
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh \
+            -i ~/.ssh/id_ed25519 \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$EC2_USER@$EC2_HOST" \
+            "RELEASE_SHA='$GITHUB_SHA' bash -s" <<'REMOTE'
+          set -Eeuo pipefail
+
+          APP_DIR="/var/www/jastip"
+          ARCHIVE="/tmp/nitipdiend-${RELEASE_SHA}.tar.gz"
+          STAGE="$(mktemp -d /tmp/nitipdiend-stage.XXXXXX)"
+
+          cleanup() {
+            rm -rf "$STAGE"
+            rm -f "$ARCHIVE"
+          }
+          trap cleanup EXIT
+
+          # Refuse to deploy if the existing production environment is not present.
+          test -f "$APP_DIR/.env"
+          test -d "$APP_DIR/storage"
+          test -d "$APP_DIR/bootstrap/cache"
+          test -w "$APP_DIR"
+          test -s "$ARCHIVE"
+          command -v rsync >/dev/null 2>&1 || {
+            echo "ERROR: rsync is missing. Install it on EC2 with: sudo apt-get update && sudo apt-get install -y rsync"
+            exit 1
+          }
+
+          tar -xzf "$ARCHIVE" -C "$STAGE"
+          test -f "$STAGE/artisan"
+          test -f "$STAGE/vendor/autoload.php"
+          test -d "$STAGE/public/build"
+
+          # Preserve production-only data and configuration.
+          # No .env, storage uploads, public/storage symlink, or bootstrap cache is replaced.
+          rsync -a --delete \
+            --exclude='.env' \
+            --exclude='storage/' \
+            --exclude='public/storage' \
+            --exclude='bootstrap/cache/' \
+            "$STAGE/" "$APP_DIR/"
+
+          cd "$APP_DIR"
+
+          php artisan package:discover --ansi
+          php artisan config:clear
+          php artisan view:clear
+          php artisan config:cache
+          php artisan view:cache
+
+          echo "Deployment completed for commit ${RELEASE_SHA}"
+          REMOTE
+
+      - name: Production health check
+        run: |
+          curl --fail --silent --show-error \
+            --retry 10 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            --max-time 20 \
+            https://nitipdiend.web.id/up
+          echo "Production health check passed."
