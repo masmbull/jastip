@@ -18,7 +18,7 @@
         $pageDescription = $metaDescription ?? setting('meta_description', 'Temukan berbagai produk impian harga terbaik, gratis ongkir di atas Rp150.000, COD, dan garansi autentik 100%.');
     @endphp
 
-    @include('partials.seo')
+    @include('layouts.partials.seo')
 
     <!-- Favicon -->
     @php
@@ -53,8 +53,9 @@
         <x-navbar />
 
         {{-- MAIN CONTENT --}}
-                <main id="main-content" class="flex-1 pb-20 lg:pb-0">
+        <main id="main-content" class="flex-1 pb-20 lg:pb-0">
             @yield('content')
+            @stack('seo')
         </main>
 
         {{-- FOOTER --}}
