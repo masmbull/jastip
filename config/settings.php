@@ -68,5 +68,13 @@ return [
                 'bank_account_name' => ['type' => 'text', 'label' => 'Atas Nama'],
             ],
         ],
+        'whatsapp_gateway' => [
+            'label' => 'Gateway WhatsApp',
+            'settings' => [
+                'wa_gateway_url' => ['type' => 'text', 'label' => 'URL Gateway (mis. http://62.62.62.62:2785)'],
+                'wa_gateway_key' => ['type' => 'password', 'label' => 'API Key Gateway'],
+                'wa_gateway_session' => ['type' => 'text', 'label' => 'Session ID Gateway'],
+            ],
+        ],
     ],
 ];

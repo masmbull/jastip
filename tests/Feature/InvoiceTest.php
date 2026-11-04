@@ -108,8 +108,8 @@ class InvoiceTest extends TestCase
             ->assertDontSee('>QRIS<', false)
             ->assertSee('TRANSFER REKENING')
             ->assertSee('BCA')
-            ->assertSee('1234567890')
-            ->assertSee('Nabila');
+            ->assertSee('2700398369')
+            ->assertSee('Nabila Adriyana');
     }
 
     public function test_qris_shown_when_total_within_limit(): void

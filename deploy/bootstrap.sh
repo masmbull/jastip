@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 # Provision Ubuntu 24.04 EC2 for JASTIP (Laravel 13). One time only.
+# Ubuntu 24.04 ships an older PHP than Laravel 13 + this app wants, so we use
+# the ondrej/php PPA to get a current, maintained patch release. Verify the
+# release you land on against the official PHP security advisories list
+# (https://www.php.net/security/) before flying this into production.
 # Normally invoked by deploy.ps1 -Bootstrap; manual use:
 #   sudo env DB_PASS='secret' APP_DOMAIN='jastip.example.com' bash bootstrap.sh
 set -euo pipefail
@@ -22,10 +26,30 @@ SSL_KEY="${SSL_KEY:-/etc/nginx/ssl/origin.key}"
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
+apt-get install -y --no-install-recommends software-properties-common ca-certificates
+add-apt-repository -y ppa:ondrej/php
+apt-get update -y
 apt-get install -y --no-install-recommends nginx git unzip curl ca-certificates mysql-server \
   "php${PHP_VER}-fpm" "php${PHP_VER}-cli" "php${PHP_VER}-mysql" "php${PHP_VER}-mbstring" \
   "php${PHP_VER}-xml" "php${PHP_VER}-curl" "php${PHP_VER}-zip" "php${PHP_VER}-gd" \
   "php${PHP_VER}-bcmath"
+
+# Minimum PHP patch level per minor branch. Keep in sync with the newest
+# security release for each branch (https://www.php.net/security/).
+INSTALLED="$(php${PHP_VER} -r 'echo PHP_VERSION;')"
+MIN_PHP=""
+case "$PHP_VER" in
+  8.2) MIN_PHP="8.2.35" ;;
+  8.3) MIN_PHP="8.3.36" ;;
+  8.4) MIN_PHP="8.4.27" ;;
+  8.5) MIN_PHP="8.5.12" ;;
+esac
+if [ -n "$MIN_PHP" ]; then
+  # sort -V -C: sukses kalau input SUDAH terurut versi, yaitu $MIN_PHP <= $INSTALLED.
+  if ! printf '%s\n%s\n' "$MIN_PHP" "$INSTALLED" | sort -V -C; then
+    echo "ERROR: installed PHP $INSTALLED < minimum $MIN_PHP. Aborting." >&2; exit 1
+  fi
+fi
 
 if ! command -v composer >/dev/null 2>&1; then
   curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -47,6 +71,33 @@ if [ ! -d "$APP_PATH/.git" ]; then
   git clone --branch "$REPO_BRANCH" "$REPO_URL" "$APP_PATH"
 fi
 chown -R "${RUN_USER}:${WEB_USER}" "$APP_PATH"
+
+# --- Hardening (defense in depth) ---
+# Ditulis ke conf.d sebagai DROP-IN, bukan mengedit php.ini milik paket:
+# apt akan menimpa php.ini saat upgrade, sedangkan conf.d ikut terbaca FPM.
+PHP_CONFD="/etc/php/${PHP_VER}/fpm/conf.d"
+if [ -d "$PHP_CONFD" ]; then
+  cat > "$PHP_CONFD/99-jastip-hardening.ini" <<'INI'
+; Dikelola oleh deploy/bootstrap.sh
+session.upload_progress.enabled = 0
+INI
+fi
+FPM_POOL="/etc/php/${PHP_VER}/fpm/pool.d/www.conf"
+if [ -f "$FPM_POOL" ]; then
+  # Recycle workers periodically (bounds the blast radius of a leaked worker)
+  # without paying a process respawn on literally every request.
+  # Sed hanya menimpa baris yang ADA; kalau belum ada, ditambahkan sekali.
+  sed -i -E 's|^[;[:space:]]*pm\.max_requests[[:space:]]*=.*|pm.max_requests = 500|' "$FPM_POOL"
+  grep -qE '^pm\.max_requests[[:space:]]*=' "$FPM_POOL" || echo 'pm.max_requests = 500' >> "$FPM_POOL"
+fi
+
+# Gagal di sini (config rusak) jauh lebih baik daripada meninggalkan FPM
+# yang tidak bisa start setelah nginx di-reload di bawah.
+if command -v "php-fpm${PHP_VER}" >/dev/null 2>&1; then
+  "php-fpm${PHP_VER}" -t
+else
+  echo "WARN: php-fpm${PHP_VER} tidak ditemukan, tes config FPM dilewati." >&2
+fi
 
 # --- nginx vhost (Cloudflare Origin Certificate -> Full (strict)) ---
 mkdir -p /etc/nginx/ssl
@@ -88,5 +139,6 @@ ln -sf /etc/nginx/sites-available/jastip /etc/nginx/sites-enabled/jastip
 rm -f /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
+systemctl reload "php${PHP_VER}-fpm"
 
 echo "bootstrap OK. Next: .\\deploy\\deploy.ps1 -Server <ip>"

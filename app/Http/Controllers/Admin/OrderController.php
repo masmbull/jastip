@@ -29,7 +29,8 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $query = Order::withCount('items');
+        $query = Order::withCount('items')
+            ->withSum('payments as payments_sum', 'amount');
 
         if ($request->filled('status') && $request->input('status') !== 'all') {
             $query->where('status', $request->input('status'));

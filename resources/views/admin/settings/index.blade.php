@@ -293,6 +293,58 @@
             </p>
         </x-card>
 
+        {{-- Gateway WhatsApp (kirim invoice sebagai gambar) --}}
+        <x-card class="animate-fade-up" style="animation-delay: 320ms">
+            <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1 flex items-center gap-2">
+                <x-icon name="chat" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Gateway WhatsApp
+            </h2>
+            <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mb-4">
+                Untuk mengirim invoice sebagai gambar langsung ke WhatsApp pelanggan.
+                Membutuhkan gateway self-hosted (OpenWA). Lihat
+                <code class="font-mono">docs/WHATSAPP-GATEWAY.md</code> untuk cara pasang.
+            </p>
+
+            @php
+                $waStatus = $waGatewayStatus ?? null;
+            @endphp
+            <div class="mb-4 border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[8px] px-3 py-2 text-sm">
+                @if (! $waStatus || ! $waStatus['configured'])
+                    <span class="font-bold text-[#92400E]">Belum diatur.</span>
+                    <span class="text-[#475569] dark:text-[#cbd5e1]">Isi URL, API key, dan Session ID di bawah.</span>
+                @elseif ($waStatus['connected'])
+                    <span class="font-bold text-[#166534]">Terhubung</span>
+                    <span class="text-[#475569] dark:text-[#cbd5e1]">— sesi siap, nomor {{ $waStatus['phone'] ?: '(tidak diketahui)' }}.</span>
+                @else
+                    <span class="font-bold text-[#991B1B]">Tidak siap.</span>
+                    <span class="text-[#475569] dark:text-[#cbd5e1]">{{ $waStatus['error'] }}</span>
+                @endif
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="wa_gateway_url">URL Gateway</label>
+                    <input id="wa_gateway_url" type="url" name="wa_gateway_url"
+                           value="{{ old('wa_gateway_url', setting('wa_gateway_url')) }}"
+                           placeholder="http://IP-VPS:2785"
+                           class="nb-input w-full">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="wa_gateway_key">API Key</label>
+                    <input id="wa_gateway_key" type="password" name="wa_gateway_key" autocomplete="new-password"
+                           placeholder="{{ setting('wa_gateway_key') ? 'Tersimpan — kosongkan bila tidak diubah' : 'API key dari gateway' }}"
+                           class="nb-input w-full">
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Kosongkan kalau tidak ingin mengubah key yang sudah tersimpan.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="wa_gateway_session">Session ID</label>
+                    <input id="wa_gateway_session" type="text" name="wa_gateway_session"
+                           value="{{ old('wa_gateway_session', setting('wa_gateway_session')) }}"
+                           placeholder="UUID sesi WhatsApp"
+                           class="nb-input w-full">
+                </div>
+            </div>
+        </x-card>
+
         <div class="flex justify-end pt-4">
             <x-btn type="submit" icon="check">Simpan Semua Pengaturan</x-btn>
         </div>

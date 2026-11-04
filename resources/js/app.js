@@ -282,6 +282,12 @@ window.Alpine = Alpine;
         if (btn && btn.dataset.busy === '1') return;
         if (btn) { btn.dataset.busy = '1'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
 
+        /* waUrl = https://wa.me/<nomor>. Dikirim sebagai `url` pada
+           navigator.share supaya sebagian browser/OS langsung menawarkan
+           WhatsApp dan mengisi nomor pelanggan, bukan share sheet generik.
+           Kalau platform mengabaikannya, pengguna tetap memilih kontak. */
+        const waTarget = typeof waUrl === 'string' && waUrl.startsWith('https://wa.me/') ? waUrl : '';
+
         let frame = null;
         try {
             const { default: html2canvas } = await import('html2canvas');
@@ -311,7 +317,12 @@ window.Alpine = Alpine;
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
-                    await navigator.share({ files: [file], title: filename || 'Invoice', text: text || '' });
+                    await navigator.share({
+                        files: [file],
+                        title: filename || 'Invoice',
+                        text: text || '',
+                        ...(waTarget ? { url: waTarget } : {}),
+                    });
                 } catch (err) {
                     if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
                         window.toast('Gagal membagikan invoice. Coba lagi.', 'error');
@@ -513,10 +524,11 @@ window.Alpine = Alpine;
 
                 const file = new File([blob], `invoice-rekap-${doc.row}.png`, { type: 'image/png' });
                 const shareText = `Halo ${doc.customer_name}, ini invoice #${doc.row} (${doc.number}). Total ${doc.total}, deposit ${doc.dp}, sisa ${doc.sisa}. Terima kasih.`;
+                const waTarget = `https://wa.me/${wa}`;
 
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
-                        await navigator.share({ files: [file], text: shareText });
+                        await navigator.share({ files: [file], text: shareText, url: waTarget });
                     } catch (err) {
                         // Pengguna membatalkan sheet = bukan kegagalan.
                         if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
@@ -533,7 +545,7 @@ window.Alpine = Alpine;
                     a.click();
                     a.remove();
                     setTimeout(() => URL.revokeObjectURL(url), 4000);
-                    window.open(`https://wa.me/${wa}?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+                    window.open(`${waTarget}?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
                     if (typeof window.toast === 'function') {
                         window.toast('Browser ini belum bisa lampirkan file. Gambar diunduh, chat WhatsApp dibuka: lampirkan gambarnya manual.', 'info');
                     }

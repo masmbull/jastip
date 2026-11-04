@@ -1,6 +1,58 @@
 # TODO JASTIP
 Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dihapus.
 
+- [x] **Judul halaman dobel** — 12 halaman profil memakai
+  `@section('title', 'X | NITIP DI END')` padahal `layouts/app` sudah
+  menambahkan brand, jadi hasilnya "X | NITIP DI END | NITIP DI END".
+  `layouts/admin` + `layouts/auth` memakai `@yield` polos (tidak menambah),
+  jadi halaman admin sengaja dibiarkan. Brand kini hanya ditambahkan sekali.
+- [x] **`&` jadi `&amp;amp;` di `<title>`** — `getSection('title')`
+  mengembalikan isi section yang SUDAH di-escape, lalu `{{ }}` di
+  `partials/seo` meng-escape lagi. Layout sekarang `html_entity_decode()`
+  sekali sebelum menyusun `$fullTitle`.
+- [x] **N+1 di daftar Pesanan** — `Order::totalPaid` lazy-load relation
+  `payments` per baris. Aksesor kini memakai `payments_sum` dari `withSum`
+  (fallback ke koleksi/agregat), dan `OrderController@index` menambahkan
+  `withSum('payments as payments_sum', 'amount')`.
+- [x] **`payment_status_label` bisa error** — lookup array tanpa fallback;
+  status tak terduga melempar "undefined array key". Ditambah `??`.
+- [x] **`public_token` bentrok** — kolomnya UNIQUE tapi generator tidak
+  retry. Ditambah `Order::newPublicToken()` yang mengulang saat tabrakan.
+- [x] **`deploy/bootstrap.sh` berbahaya** (patch belum commit): `memory_limit = -1`
+  mematikan batas memori PHP dan `pm.max_requests = 1` me-respawn worker
+  tiap request. Dihapus/diubah ke `500`; guard versi PHP ditulis ulang
+  pakai `sort -V -C` (yang lama rapuh, bergantung perilaku `sort`).
+
+## Antrean baru (28 Okt)
+
+- [ ] **Invoice terkirim langsung ke WA nomor pelanggan sebagai GAMBAR.**
+  Kondisi sekarang: tombol WhatsApp di daftar Invoice sudah merender PNG
+  (html2canvas) DAN `navigator.share({files})` memasang nomor pelanggan pada
+  `text` — tapi Android tetap menampilkan share sheet generik, jadi admin
+  masih harus memilih aplikasi WhatsApp dan kontaknya sendiri. Nomor tujuan
+  belum dijangkau otomatis.
+  Sisa kerja:
+  - [ ] Pakai `navigator.share({ files, text, url })` dengan deeplink
+        `https://wa.me/<nomor>?text=...` supaya beberapa browser/OS langsung
+        menawarkan WhatsApp dengan kontak terisi.
+  - [ ] Opsi "kirim langsung" hanya bisa penuh lewat **WhatsApp Cloud API**
+        (akun Meta Business + nomor + token) — kirim gambar via
+        `POST /{phone-number-id}/messages` type `image`. Butuh keputusan biaya
+        dan kredensial, jadi jangan diklaim otomatis sampai itu tersedia.
+  - [ ] Fallback desktop (tanpa file sharing): unduh PNG + buka
+        `wa.me/<nomor>` — sudah ada, rapikan pesannya.
+- [x] **Kirim invoice sebagai gambar, LANGSUNG (tanpa pilih kontak)** —
+  gateway WhatsApp self-hosted (OpenWA) + render PNG di server.
+  Kode: `WhatsappGatewayService`, `InvoiceImageRenderer`,
+  `InvoiceSendController`, tombol **Kirim WA** di daftar Invoice,
+  kredensial di **Pengaturan → Gateway WhatsApp**.
+  Setup: `docs/WHATSAPP-GATEWAY.md`.
+  Catatan: jalur ini membajak WhatsApp Web (bukan API resmi Meta), jadi
+  RISIKO NOMOR DIBLOKIR tetap ada dan pesan pertama ke kontak baru bisa
+  tidak sampai. Butuh Chromium headless di server. Sudah diuji end-to-end
+  dengan gateway tiruan (PNG 140 KB + caption sampai dengan benar) dan
+  terhadap Edge headless asli di mesin dev.
+
 ## Batch 17 Okt (deposit, rekening, invoice PNG, PWA/favicon)
 
 - [x] **Tombol Hapus Invoice** di daftar Invoice (kolom Aksi). Hapus memakai

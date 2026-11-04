@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\InvoiceSendController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\PaymentProofController;
@@ -232,6 +233,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Daftar invoice manual (buat via form manual, bukan checkout).
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::get('/invoice/export', [InvoiceController::class, 'export'])->name('invoices.export');
+
+        // Kirim invoice sebagai gambar ke WhatsApp pelanggan (gateway self-hosted).
+        Route::post('/invoice/{order}/kirim-wa', [InvoiceSendController::class, 'send'])->name('invoices.send-wa');
 
         // Dokumen pratinjau cetak sampel invoice (struk thermal, preset COMPACT).
         Route::get('/invoice/sampel', [InvoiceController::class, 'sample'])->name('invoices.sample');

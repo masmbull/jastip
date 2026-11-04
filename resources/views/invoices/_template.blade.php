@@ -68,6 +68,10 @@
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px;">Satuan</td>
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:center;">Qty</td>
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Harga</td>
+            @if(!empty($doc['item_has_deposit']))
+                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">DP/unit</td>
+                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Total DP</td>
+            @endif
             <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Subtotal</td>
         </tr>
         @foreach($doc['items'] as $item)
@@ -76,6 +80,14 @@
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; color:#475569;">{{ $item['unit'] }}</td>
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:center;">{{ $item['qty'] }}</td>
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right;">{{ $item['price'] }}</td>
+                @if(!empty($doc['item_has_deposit']))
+                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#166534;">
+                        {{ $item['deposit_per_unit'] ?? '-' }}
+                    </td>
+                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#166534; font-weight:bold;">
+                        {{ $item['deposit_total'] ?? '-' }}
+                    </td>
+                @endif
                 <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; font-weight:bold;">{{ $item['subtotal'] }}</td>
             </tr>
         @endforeach
@@ -90,7 +102,7 @@
                     @foreach($doc['totals'] as $row)
                         <tr>
                             <td style="color:#475569; padding:2px 0;">{{ $row['label'] }}</td>
-                            <td style="text-align:right; padding:2px 0; @if(!empty($row['muted'])) color:#15803D; @endif">{{ $row['value'] }}</td>
+                            <td style="text-align:right; padding:2px 0; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
                         </tr>
                     @endforeach
                     <tr>
@@ -100,7 +112,7 @@
                     @if($doc['left'])
                         <tr>
                             <td style="color:#B45309; font-weight:bold; padding-top:6px;">{{ $doc['left']['label'] }}</td>
-                            <td style="text-align:right; color:#B45309; font-weight:bold; padding-top:6px;">{{ $doc['left']['value'] }}</td>
+                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:14px; padding-top:6px;">{{ $doc['left']['value'] }}</td>
                         </tr>
                     @endif
                 </table>

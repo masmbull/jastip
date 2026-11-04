@@ -36,6 +36,8 @@ class Order extends Model
         'paid_at',
         'payment_hash',
         'admin_notes',
+        'wa_invoice_sent_at',
+        'wa_invoice_error',
     ];
 
     protected function casts(): array
@@ -50,6 +52,7 @@ class Order extends Model
             'total' => 'integer',
             'paid_at' => 'datetime',
             'shipped_at' => 'datetime',
+            'wa_invoice_sent_at' => 'datetime',
         ];
     }
 
@@ -121,9 +124,22 @@ class Order extends Model
     {
         static::creating(function (self $order) {
             if (empty($order->public_token)) {
-                $order->public_token = Str::random(16);
+                $order->public_token = self::newPublicToken();
             }
         });
+    }
+
+    /**
+     * Token publik 16 karakter (kolom UNIQUE, dipakai link /i/{token}).
+     *
+     * Sengaja TANPA query cek-ketersediaan: setiap order (termasuk checkout
+     * yang tidak pernah memakai link ini) akan membayar satu SELECT ekstra.
+     * Dengan 62^16 kemungkinan, benturan praktis mustahil — dan index UNIQUE
+     * tetap jadi jaring pengaman terakhir.
+     */
+    public static function newPublicToken(): string
+    {
+        return Str::random(16);
     }
 
     /**
@@ -180,7 +196,18 @@ class Order extends Model
 
     public function getTotalPaidAttribute(): int
     {
-        return (int) $this->down_payment + (int) $this->payments->sum('amount');
+        // Urutan prioritas: sum yang di-eager-load (withSum "payments_sum"),
+        // lalu koleksi yang sudah dimuat, terakhir query agregat. Menjaga
+        // daftar pesanan tetap satu query, bukan satu query per baris.
+        if (array_key_exists('payments_sum', $this->attributes)) {
+            $payments = (int) $this->attributes['payments_sum'];
+        } elseif ($this->relationLoaded('payments')) {
+            $payments = (int) $this->payments->sum('amount');
+        } else {
+            $payments = (int) $this->payments()->sum('amount');
+        }
+
+        return (int) $this->down_payment + $payments;
     }
 
     public function getPaymentStatusAttribute(): string
@@ -201,7 +228,7 @@ class Order extends Model
             'belum' => 'Belum Bayar',
             'dp' => 'Deposit',
             'lunas' => 'Lunas',
-        ][$this->payment_status];
+        ][$this->payment_status] ?? ucfirst($this->payment_status);
     }
 
     public function getFormattedTotalAttribute(): string
