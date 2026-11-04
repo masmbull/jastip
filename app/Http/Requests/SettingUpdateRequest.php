@@ -59,6 +59,8 @@ class SettingUpdateRequest extends FormRequest
                 $label = $definition['label'] ?? $key;
 
                 switch ($definition['type'] ?? 'text') {
+                    case 'image':
+                        break;
                     case 'number':
                         $messages[$key.'.integer'] = $label.' harus berupa angka bulat.';
                         $messages[$key.'.min'] = $label.' tidak boleh kurang dari 0.';
