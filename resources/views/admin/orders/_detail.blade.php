@@ -24,7 +24,7 @@
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Subtotal:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->subtotal) }}</span></div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Ongkir:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->shipping_cost) }}</span></div>
             @if(($order->fee ?? 0) > 0)
-                <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Biaya Fee:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->fee) }}</span></div>
+                <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Fee Jastip{{ $order->show_fee ? '' : ' (internal)' }}:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->fee) }}</span></div>
             @endif
             <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-2 mt-2 flex justify-between font-bold">
                 <span class="text-[#1E293B] dark:text-[#f1f5f9]">Total</span><span class="text-orange-600 dark:text-orange-400 num">{{ format_price($order->total) }}</span>

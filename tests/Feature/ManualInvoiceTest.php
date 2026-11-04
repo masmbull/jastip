@@ -53,6 +53,12 @@ class ManualInvoiceTest extends TestCase
         $this->assertSame(Order::STATUS_AWAITING_PAYMENT, $order->status);
         $this->assertSame('manual', $order->payment_method);
         $this->assertSame(2, $order->items()->count());
+        $this->assertTrue($order->show_fee);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Fee Jastip');
     }
 
     public function test_mark_paid_sets_paid_and_confirmed_status(): void
@@ -83,6 +89,39 @@ class ManualInvoiceTest extends TestCase
             'customer_whatsapp' => '081200007777',
             'items' => [],
         ])->assertSessionHasErrors('items');
+    }
+
+    public function test_hidden_fee_stays_in_total_but_is_omitted_from_customer_invoice(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan Fee Internal',
+            'customer_whatsapp' => '081200009991',
+            'customer_address' => 'Jl. Fee 1',
+            'fee' => 19000,
+            'show_fee' => '0',
+            'items' => [
+                ['product_name' => 'Barang Fee', 'quantity' => 1, 'product_price' => 100000],
+            ],
+        ])->assertRedirect(route('admin.invoices.index'))
+            ->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200009991')->firstOrFail();
+        $this->assertSame(119000, $order->total);
+        $this->assertSame(19000, $order->fee);
+        $this->assertFalse($order->show_fee);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertDontSee('Fee Jastip');
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.show', $order))
+            ->assertOk()
+            ->assertSee('Fee Jastip (internal)')
+            ->assertSee('Rp 19.000');
     }
 
     public function test_non_admin_cannot_create_invoice(): void
@@ -218,11 +257,46 @@ class ManualInvoiceTest extends TestCase
 
         $order = Order::where('customer_whatsapp', '081200007778')->firstOrFail();
 
-        // Deposit total = 30.000 + 20.000 = 50.000 (otomatis dari per barang).
-        $this->assertSame(50_000, $order->down_payment);
+        // Deposit total = (30.000 × 1) + (20.000 × 2) = 70.000.
+        $this->assertSame(70_000, $order->down_payment);
         $this->assertSame(30_000, (int) $order->items()->where('product_name', 'A')->value('deposit'));
         $this->assertSame(20_000, (int) $order->items()->where('product_name', 'B')->value('deposit'));
-        $this->assertSame(200_000 - 50_000, $order->remaining);
+        $this->assertSame(200_000 - 70_000, $order->remaining);
+    }
+
+    public function test_per_unit_deposit_is_multiplied_by_quantity_for_invoice_total(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Per Unit',
+            'customer_whatsapp' => '081200007779',
+            'customer_address' => 'Jl. Deposit Per Unit',
+            'items' => [
+                ['product_name' => 'Barang DP', 'unit' => 'pcs', 'quantity' => 3, 'product_price' => 100000, 'deposit' => 75000],
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '081200007779')->firstOrFail();
+        $this->assertSame(225000, $order->down_payment);
+        $this->assertSame(75000, (int) $order->items()->value('deposit'));
+        $this->assertSame(75000, $order->remaining);
+    }
+
+    public function test_per_unit_deposit_cannot_exceed_invoice_total_after_quantity_is_applied(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_name' => 'Pelanggan DP Melebihi Total',
+            'customer_whatsapp' => '081200007780',
+            'customer_address' => 'Jl. Deposit Melebihi Total',
+            'items' => [
+                ['product_name' => 'Barang DP', 'quantity' => 3, 'product_price' => 65000, 'deposit' => 75000],
+            ],
+        ])->assertSessionHasErrors('down_payment');
+
+        $this->assertDatabaseMissing('orders', ['customer_whatsapp' => '081200007780']);
     }
 
     public function test_store_rejects_down_payment_above_total(): void

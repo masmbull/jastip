@@ -7,12 +7,11 @@
             shipMethod: {{ Js::from(old('shipping_method', '')) }},
             mode: {{ Js::from(collect(['deposit', 'lunas'])->contains(old('mode', request('mode', 'deposit'))) ? old('mode', request('mode', 'deposit')) : 'deposit') }},
             feeAmt: {{ (int) old('fee', 0) }},
-            showFee: {{ ((int) old('fee', 0)) > 0 ? 'true' : 'false' }},
+            showFeeToCustomer: {{ old('show_fee', true) ? 'true' : 'false' }},
             manualDp: {{ (int) old('down_payment', 0) }},
-            // Deposit = jumlah deposit tiap barang. Kalau tidak ada deposit
-            // per barang (order lama), pakai nilai manual yang tersimpan.
+            // Deposit input is per unit; the order total multiplies by quantity.
             get dpAmt() { return this.itemDeposit() > 0 ? this.itemDeposit() : this.manualDp; },
-            itemDeposit() { return this.items.reduce((s, i) => s + (Number(i.deposit) || 0), 0); },
+            itemDeposit() { return this.items.reduce((s, i) => s + (Number(i.deposit) || 0) * (Number(i.qty) || 0), 0); },
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
             district: {{ Js::from(old('shipping_district', '')) }},
@@ -159,11 +158,6 @@
             subtotal() { return this.items.reduce((sum, i) => sum + this.lineTotal(i), 0); },
             total() { return this.subtotal() + (Number(this.shipping) || 0) + (Number(this.feeAmt) || 0); },
             dp() { return this.paidNow ? 0 : (Number(this.dpAmt) || 0); },
-            toggleFee(on) {
-                this.showFee = on;
-                // Fee disembunyikan = fee ikut hilang dari total, jangan nyisa di belakang.
-                if (!on) this.feeAmt = 0;
-            },
             remaining() { return Math.max(0, this.total() - this.dp()); },
             formatRp(n) { return 'Rp ' + (Number(n) || 0).toLocaleString('id-ID'); },
 

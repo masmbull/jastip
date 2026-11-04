@@ -86,7 +86,7 @@
                     @endif
                 @endif
                 @if(($order->fee ?? 0) > 0)
-                    <div class="flex justify-between"><span class="text-[#475569] font-bold">Fee Jastip:</span> <span class="font-extrabold num">{{ format_price($order->fee) }}</span></div>
+                    <div class="flex justify-between"><span class="text-[#475569] font-bold">Fee Jastip{{ $order->show_fee ? '' : ' (internal)' }}:</span> <span class="font-extrabold num">{{ format_price($order->fee) }}</span></div>
                 @endif
                 @if(($order->discount ?? 0) > 0)
                     <div class="flex justify-between"><span class="text-[#475569] font-bold">Diskon{{ $order->coupon ? ' (' . $order->coupon->code . ')' : '' }}:</span> <span class="font-extrabold text-[#166534] num">-{{ format_price($order->discount) }}</span></div>

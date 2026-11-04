@@ -192,35 +192,20 @@
                                 <input id="mi-cost" type="number" min="0" name="shipping_cost" x-model.number="shipping" value="{{ old('shipping_cost', 0) }}"
                                        class="nb-input w-full px-3 py-2 text-sm num">
                             </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="flex items-center gap-2 cursor-pointer select-none" for="mi-show-fee">
-                                    <input id="mi-show-fee" type="checkbox" :checked="showFee"
-                                           @change="toggleFee($event.target.checked)"
-                                           class="w-4 h-4 accent-[#EAB308]">
-                                    <span class="text-xs font-black uppercase tracking-wider text-[#475569] dark:text-[#D6D3D1]">Munculkan Fee</span>
-                                </label>
-                                <div x-show="showFee" x-cloak class="mt-2">
-                                    <label class="block text-sm font-bold mb-1" for="mi-fee">Fee Jastip</label>
-                                    <input id="mi-fee" type="number" min="0" name="fee" x-model.number="feeAmt" value="{{ old('fee', 0) }}"
-                                           class="nb-input w-full px-3 py-2 text-sm num">
-                                </div>
-                            </div>
                             <div x-show="mode === 'deposit'" x-cloak>
                                 <label class="block text-sm font-bold mb-1" for="mi-dp">
                                     Deposit
-                                    <span class="text-[11px] font-medium text-[#475569]" x-text="itemDeposit() > 0 ? '(otomatis dari deposit per barang)' : ''"></span>
+                                    <span class="text-[11px] font-medium text-[#475569]" x-text="itemDeposit() > 0 ? '(DP/unit × Qty)' : ''"></span>
                                 </label>
 
-                                {{-- Nilai yang dikirim ke server: jumlah deposit per barang. --}}
+                                {{-- Nilai yang dikirim ke server: total DP semua unit. --}}
                                 <input type="hidden" name="down_payment" :value="dpAmt">
 
-                                {{-- Kalau sudah ada deposit per barang -> tampilkan otomatis (read-only). --}}
+                                {{-- Kalau ada DP/unit -> tampilkan total otomatis (read-only). --}}
                                 <div x-show="itemDeposit() > 0" class="nb-input w-full px-3 py-2 text-sm num bg-[#F1F5F9] dark:bg-[#2e323b]"
                                      x-text="formatRp(dpAmt)"></div>
 
-                                {{-- Belum ada deposit per barang -> isi manual (order lama). --}}
+                                {{-- Fallback manual untuk invoice tanpa DP/unit. --}}
                                 <input x-show="itemDeposit() === 0" id="mi-dp" type="number" min="0" x-model.number="manualDp" :disabled="paidNow"
                                        placeholder="0 = tanpa deposit"
                                        class="nb-input w-full px-3 py-2 text-sm num disabled:opacity-50">
@@ -314,10 +299,10 @@
                                            placeholder="0"
                                            title="Deposit per unit — dikalikan qty otomatis"
                                            class="nb-input w-full px-3 py-2 text-sm text-right num">
-                                    {{-- Tampilkan total deposit item = DP/unit × qty, jelas tanpa kalkulator --}}
+                                    {{-- Tampilkan perhitungan DP/unit × qty supaya total per item jelas. --}}
                                     <div x-show="item.deposit > 0"
                                          class="mt-0.5 text-[10px] font-bold text-[#166534] text-right num"
-                                         x-text="formatRp(item.deposit * item.qty) + ' total DP'"></div>
+                                             x-text="formatRp(item.deposit) + ' × ' + item.qty + ' = ' + formatRp(item.deposit * item.qty) + ' total DP'"></div>
                                 </div>
                                 {{-- DP total per baris (read-only info) --}}
                                 <div class="col-span-6 sm:col-span-1 text-[11px] font-bold text-right py-2.5 text-[#166534] num"
@@ -341,7 +326,24 @@
                         <div class="p-4 space-y-1.5">
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Subtotal</span><span class="font-black num" x-text="formatRp(subtotal())"></span></div>
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Ongkir</span><span class="font-black num" x-text="formatRp(shipping)"></span></div>
-                            <div class="flex justify-between" x-show="showFee"><span class="font-bold text-[#475569]">Fee Jastip</span><span class="font-black num" x-text="formatRp(feeAmt)"></span></div>
+                            <div class="mt-3 border-t border-[#E2E8F0] pt-3">
+                                <input type="hidden" name="show_fee" value="0">
+                                <label class="flex items-start gap-2 cursor-pointer min-h-[44px]" for="mi-show-fee">
+                                    <input id="mi-show-fee" type="checkbox" name="show_fee" value="1"
+                                           x-model="showFeeToCustomer" class="mt-1 w-4 h-4 accent-[#EAB308]">
+                                    <span class="text-xs font-bold text-[#475569] dark:text-[#D6D3D1]">Tampilkan fee di invoice pelanggan</span>
+                                </label>
+                                <label class="block text-sm font-bold mb-1" for="mi-fee">Fee Jastip (tetap masuk total)</label>
+                                <input id="mi-fee" type="number" min="0" name="fee" x-model.number="feeAmt" value="{{ old('fee', 0) }}"
+                                       class="nb-input w-full px-3 py-2 text-sm num">
+                            </div>
+                            <div class="flex justify-between" x-show="feeAmt > 0">
+                                <span class="font-bold text-[#475569]">
+                                    Fee Jastip
+                                    <span class="text-[10px] font-medium" x-show="!showFeeToCustomer">(internal)</span>
+                                </span>
+                                <span class="font-black num" x-text="formatRp(feeAmt)"></span>
+                            </div>
                             <div class="flex justify-between" x-show="itemDeposit() > 0 && !paidNow" x-cloak>
                                 <span class="font-bold text-[#475569]">
                                     Deposit

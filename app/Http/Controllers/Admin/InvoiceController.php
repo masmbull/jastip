@@ -270,8 +270,8 @@ class InvoiceController extends Controller
         $left = max(0, (int) $order->total - $paid);
         $storeWa = setting('whatsapp');
 
-        // Deposit per item — ditampilkan di tabel item supaya pelanggan bisa
-        // verifikasi: "Rp 25.000 × 4 = Rp 100.000" tanpa buka kalkulator.
+        // DP/unit ditampilkan bersama total DP tiap baris agar pelanggan bisa
+        // memeriksa hasil perkalian dengan kuantitas.
         $itemHasDeposit = $order->items->contains(fn ($i) => (int) $i->deposit > 0);
 
         $totals = [
@@ -279,8 +279,7 @@ class InvoiceController extends Controller
             ['label' => 'Ongkir', 'value' => format_price($order->shipping_cost)],
         ];
 
-        // Fee jastip — hanya tampilkan kalau nilainya > 0.
-        if ((int) ($order->fee ?? 0) > 0) {
+        if ($order->show_fee && (int) ($order->fee ?? 0) > 0) {
             $totals[] = ['label' => 'Fee Jastip', 'value' => format_price($order->fee)];
         }
 
@@ -325,7 +324,7 @@ class InvoiceController extends Controller
                 $order->resi ? ['label' => 'Resi', 'value' => $order->resi] : null,
                 ['label' => 'Jumlah item', 'value' => $order->items->sum('quantity').' pcs'],
             ])),
-            // Sertakan deposit per item di tabel — ditampilkan di template
+            // Sertakan DP/unit dan total per item di tabel — ditampilkan di template
             // hanya kalau ada item yang punya deposit > 0.
             'item_has_deposit' => $itemHasDeposit,
             'items' => $order->items->map(fn ($i) => [
