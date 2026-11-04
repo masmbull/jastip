@@ -102,6 +102,8 @@ else
 fi
 
 chown -R "${RUN_USER}:${WEB_USER}" "$APP_PATH"
+find "$APP_PATH/storage" "$APP_PATH/bootstrap/cache" -type d -exec chmod 2775 {} +
+find "$APP_PATH/storage" "$APP_PATH/bootstrap/cache" -type f -exec chmod 664 {} +
 
 # --- Hardening (defense in depth) ---
 # Ditulis ke conf.d sebagai DROP-IN, bukan mengedit php.ini milik paket:

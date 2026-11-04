@@ -14,6 +14,16 @@
             </button>
         </div>
         <div class="p-4 sm:p-5 bg-[#FAF6EF] dark:bg-[#121212]">
+            @if($errors->any())
+                <div role="alert" class="mb-4 border-2 border-[#991B1B] bg-[#FEE2E2] text-[#7F1D1D] text-sm font-medium rounded-[8px] p-3">
+                    <p class="font-black mb-1">Periksa kembali isian invoice:</p>
+                    <ul class="list-disc list-inside space-y-0.5">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @include('admin.orders._manual-form', ['cancel' => 'modal'])
         </div>
     </div>

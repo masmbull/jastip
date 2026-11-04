@@ -40,7 +40,7 @@
                                     <p class="text-xs font-mono text-[#475569] dark:text-[#94A3B8]">{{ $user->username }}</p>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-sm font-medium text-[#334155] dark:text-[#CBD5E1] break-all">{{ $user->email }}</td>
+                            <td class="px-4 py-3 text-sm font-medium text-[#334155] dark:text-[#CBD5E1] break-all">{{ $user->email ?: '-' }}</td>
                             <td class="px-4 py-3 text-sm font-medium text-[#334155] dark:text-[#CBD5E1] num">{{ $user->profile->phone ?? '-' }}</td>
                             <td class="px-4 py-3">
                                 <x-badge :tone="$tierTones[$user->profile->membership_tier ?? 'bronze'] ?? 'neutral'" class="capitalize">
@@ -124,15 +124,15 @@
                 </div>
 
                 <div>
-                    <label for="customer-email" class="block text-sm font-bold text-[#141414] dark:text-[#FAF6EF] mb-1.5">Email <span class="text-[#B91C1C]">*</span></label>
-                    <input id="customer-email" name="email" type="email" required maxlength="255"
+                    <label for="customer-email" class="block text-sm font-bold text-[#141414] dark:text-[#FAF6EF] mb-1.5">Email <span class="font-medium text-[#475569] dark:text-[#94A3B8]">(opsional)</span></label>
+                    <input id="customer-email" name="email" type="email" maxlength="255"
                            value="{{ old('email') }}" placeholder="nama@email.com" autocomplete="email"
                            class="nb-input w-full px-3 py-2.5 bg-white dark:bg-[#121212] text-[#141414] dark:text-[#FAF6EF]">
                 </div>
 
                 <div>
-                    <label for="customer-phone" class="block text-sm font-bold text-[#141414] dark:text-[#FAF6EF] mb-1.5">No. WhatsApp / Telepon</label>
-                    <input id="customer-phone" name="phone" type="tel" maxlength="30"
+                    <label for="customer-phone" class="block text-sm font-bold text-[#141414] dark:text-[#FAF6EF] mb-1.5">No. WhatsApp <span class="text-[#B91C1C]">*</span></label>
+                    <input id="customer-phone" name="phone" type="tel" required maxlength="30"
                            value="{{ old('phone') }}" placeholder="08123456789" autocomplete="tel"
                            class="nb-input w-full px-3 py-2.5 bg-white dark:bg-[#121212] text-[#141414] dark:text-[#FAF6EF]">
                 </div>
@@ -156,7 +156,7 @@
                 </div>
 
                 <p class="text-xs font-medium text-[#475569] dark:text-[#94A3B8]">
-                    Password akun dibuat otomatis dan ditampilkan sekali setelah disimpan. Pelanggan bisa menggantinya lewat "Lupa Password".
+                    Password akun dibuat otomatis dan ditampilkan sekali setelah disimpan. Reset password mandiri membutuhkan email terdaftar.
                 </p>
 
                 <div class="flex items-center justify-end gap-2 pt-2 border-t-2 border-[#141414]/15 dark:border-[#FAF6EF]/15">

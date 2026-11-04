@@ -47,10 +47,35 @@ class CustomerCreateTest extends TestCase
         User::create(['name' => 'X', 'email' => 'dup@example.com', 'username' => 'dup', 'password' => 'secret', 'role' => 'customer']);
 
         $this->actingAs($admin)->post(route('admin.users.store'), [
-            'name' => 'Y', 'email' => 'dup2@example.com',
+            'name' => 'Y', 'email' => 'dup2@example.com', 'phone' => '08123456789',
         ])->assertSessionHasNoErrors();
 
         $this->assertSame('dup2', User::where('email', 'dup2@example.com')->value('username'));
+    }
+
+    public function test_email_is_optional_when_creating_customer_with_whatsapp(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => 'Pelanggan Tanpa Email',
+            'phone' => '08123456789',
+        ])->assertRedirect(route('admin.users.index'))
+            ->assertSessionHasNoErrors();
+
+        $user = User::where('username', 'pelanggan.tanpa.email')->firstOrFail();
+        $this->assertNull($user->email);
+        $this->assertNull($user->email_verified_at);
+        $this->assertSame('08123456789', $user->profile->phone);
+    }
+
+    public function test_whatsapp_is_required_when_creating_customer(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => 'Tanpa WhatsApp',
+        ])->assertSessionHasErrors('phone');
     }
 
     public function test_email_must_be_unique_and_valid(): void

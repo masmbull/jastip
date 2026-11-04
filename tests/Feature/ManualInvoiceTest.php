@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Address;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +25,61 @@ class ManualInvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.create'))
             ->assertOk()
-            ->assertSee('Buat Invoice');
+            ->assertSee('Buat Invoice')
+            ->assertSee('name="customer_user_id"', false);
+    }
+
+    public function test_invoice_can_select_and_link_an_existing_customer(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $customer = User::factory()->create([
+            'name' => 'Pelanggan Terdaftar',
+            'email' => 'terdaftar@example.com',
+            'role' => 'customer',
+        ]);
+        $customer->profile()->updateOrCreate(
+            ['user_id' => $customer->id],
+            ['phone' => '08123456789'],
+        );
+        Address::create([
+            'user_id' => $customer->id,
+            'full_name' => $customer->name,
+            'phone' => '08123456789',
+            'street_address' => 'Jl. Contoh 10',
+            'city' => 'Jakarta',
+            'province' => 'DKI Jakarta',
+            'postal_code' => '12345',
+            'is_default' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.create'))
+            ->assertOk()
+            ->assertSee('value="'.$customer->id.'"', false)
+            ->assertSee('data-name="Pelanggan Terdaftar"', false)
+            ->assertSee('data-city="Jakarta"', false)
+            ->assertSee('data-address="Jl. Contoh 10, Jakarta, DKI Jakarta, 12345"', false);
+
+        $this->actingAs($admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertSee('value="'.$customer->id.'"', false);
+
+        $this->actingAs($admin)->post(route('admin.orders.store'), [
+            'customer_user_id' => $customer->id,
+            'customer_name' => $customer->name,
+            'customer_whatsapp' => '08123456789',
+            'customer_email' => $customer->email,
+            'customer_address' => 'Jl. Contoh 10, Jakarta, DKI Jakarta, 12345',
+            'items' => [
+                ['product_name' => 'Barang Pilihan', 'quantity' => 1, 'product_price' => 50000],
+            ],
+        ])->assertRedirect(route('admin.invoices.index'))
+            ->assertSessionHasNoErrors();
+
+        $order = Order::where('customer_whatsapp', '08123456789')->firstOrFail();
+        $this->assertSame($customer->id, $order->user_id);
+        $this->assertSame($customer->name, $order->customer_name);
     }
 
     public function test_store_creates_order_with_items_and_redirects_to_list(): void
