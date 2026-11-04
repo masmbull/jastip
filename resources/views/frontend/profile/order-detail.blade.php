@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Pesanan #' . $order->order_number . ' | NITIP DI END')
+@section('title', 'Detail Pesanan #' . $order->order_number)
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-[#ecfeff] to-[#e0f2fe] dark:from-[#1a1a1a] dark:to-[#23252b] py-8">

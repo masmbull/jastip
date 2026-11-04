@@ -10,8 +10,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
         $brandName = setting('brand_name', 'NITIP DI END');
-        $sectionTitle = app('view')->getSection('title');
-        $fullTitle = $sectionTitle ? ($sectionTitle . ' | ' . $brandName) : ($brandName . ': Titipan Spesial');
+        // getSection() mengembalikan isi section yang SUDAH di-escape Blade.
+        // Tanpa html_entity_decode, `&` di judul jadi `&amp;amp;` saat
+        // di-escape lagi oleh {{ }} di partials.seo.
+        $sectionTitle = html_entity_decode((string) app('view')->getSection('title'), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $fullTitle = $sectionTitle !== '' ? ($sectionTitle . ' | ' . $brandName) : ($brandName . ': Titipan Spesial');
         $pageDescription = $metaDescription ?? setting('meta_description', 'Temukan berbagai produk impian harga terbaik, gratis ongkir di atas Rp150.000, COD, dan garansi autentik 100%.');
     @endphp
 
