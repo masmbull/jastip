@@ -356,6 +356,7 @@
                         <div class="p-4 space-y-1.5">
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Subtotal</span><span class="font-black num" x-text="formatRp(subtotal())"></span></div>
                             <div class="flex justify-between"><span class="font-bold text-[#475569]">Ongkir</span><span class="font-black num" x-text="formatRp(shipping)"></span></div>
+                            <input type="hidden" name="legacy_fee" :value="legacyFee">
                             <div class="mt-3 border-t border-[#E2E8F0] pt-3">
                                 <input type="hidden" name="show_fee" value="0">
                                 <label class="flex items-start gap-2 cursor-pointer min-h-[44px]" for="mi-show-fee">

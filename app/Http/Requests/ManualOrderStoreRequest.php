@@ -32,6 +32,7 @@ class ManualOrderStoreRequest extends FormRequest
             'shipping_cost' => ['nullable', 'integer', 'min:0'],
             'weight' => ['nullable', 'numeric', 'min:0', 'max:1000'],
             'fee' => ['nullable', 'integer', 'min:0'],
+            'legacy_fee' => ['nullable', 'integer', 'min:0'],
             'show_fee' => ['nullable', 'boolean'],
             'mode' => ['nullable', Rule::in(['deposit', 'lunas'])],
             'down_payment' => ['nullable', 'integer', 'min:0'],
@@ -52,15 +53,19 @@ class ManualOrderStoreRequest extends FormRequest
     {
         $itemFee = (int) collect($this->input('items', []))
             ->sum(fn ($item) => (int) ($item['fee'] ?? 0));
-
         $order = $this->route('order');
-        if ($order instanceof Order) {
+
+        if ($this->exists('legacy_fee')) {
+            $legacyFee = (int) $this->input('legacy_fee', 0);
+        } elseif ($order instanceof Order && $this->exists('fee')) {
+            $legacyFee = (int) $this->input('fee', 0);
+        } elseif ($order instanceof Order) {
             $legacyFee = max(0, (int) $order->fee - (int) $order->items()->sum('fee'));
         } else {
             $legacyFee = $itemFee === 0 ? (int) $this->input('fee', 0) : 0;
         }
 
-        return $itemFee + $legacyFee;
+        return $itemFee + max(0, $legacyFee);
     }
 
     public function withValidator(Validator $validator): void
