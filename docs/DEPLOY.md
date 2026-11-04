@@ -62,6 +62,10 @@ chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 ```
 
+Logo, favicon, and QRIS uploads in Admin Settings accept files up to 10 MB.
+The deployment includes `public/.user.ini` to set PHP upload limits, while Nginx
+allows up to 12 MB for the full multipart form request.
+
 ### 5. Cache & Optimization
 ```bash
 # Clear old cache

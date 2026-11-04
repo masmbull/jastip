@@ -7,75 +7,141 @@
         <x-btn as="a" :href="route('home')" target="_blank" variant="outline" icon="external-link">Lihat di halaman depan</x-btn>
     </x-page-header>
 
-    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
+    @if($errors->any())
+        <div id="settings-errors" role="alert" tabindex="-1"
+             class="rounded-[8px] border-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900 dark:bg-red-950 dark:text-red-100">
+            <p class="font-bold">Pengaturan belum disimpan. Periksa pesan berikut:</p>
+            <ul class="mt-2 list-inside list-disc space-y-1">
+                @foreach($errors->all() as $message)
+                    <li>{{ $message }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <nav aria-label="Bagian pengaturan" class="sticky top-0 z-20 -mx-4 overflow-x-auto border-y-2 border-[#141414] bg-[#FAF6EF] px-4 py-2 dark:border-[#FAF6EF] dark:bg-[#121212] sm:mx-0 sm:rounded-[8px] sm:border-2">
+        <div class="flex w-max min-w-full gap-2">
+            @foreach([
+                ['branding', 'Brand'],
+                ['media', 'Logo & favicon'],
+                ['colors', 'Warna'],
+                ['contact', 'Kontak'],
+                ['site', 'Situs'],
+                ['seo', 'SEO'],
+                ['business', 'Bisnis'],
+                ['payment', 'QRIS'],
+                ['bank', 'Rekening'],
+                ['whatsapp', 'WhatsApp'],
+            ] as [$id, $label])
+                <a href="#settings-{{ $id }}"
+                   class="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-[6px] border-2 border-[#141414] bg-white px-3 text-sm font-bold text-[#141414] hover:bg-[#FFC800] focus:outline-none focus:ring-2 focus:ring-[#141414] dark:border-[#FAF6EF] dark:bg-[#1E1E1E] dark:text-[#FAF6EF] dark:focus:ring-[#FFC800]">
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
+    </nav>
+
+    <form id="settings-form" data-settings-form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
-        <x-card class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-fade-up" style="animation-delay: 80ms">
-            <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Semua perubahan akan langsung diterapkan ke situs Anda.</p>
-            <x-btn type="submit" icon="check">Simpan Pengaturan</x-btn>
+        <x-card class="sticky top-[60px] z-10 flex flex-col gap-3 border-2 border-[#141414] bg-white sm:flex-row sm:items-center sm:justify-between dark:border-[#FAF6EF] dark:bg-[#1E1E1E]">
+            <p id="settings-save-status" role="status" aria-live="polite" class="text-sm font-medium text-[#475569] dark:text-[#cbd5e1]">
+                Semua perubahan sudah disimpan.
+            </p>
+            <x-btn type="submit" class="settings-submit min-h-[44px]" icon="check">
+                <span data-submit-label>Simpan Pengaturan</span>
+            </x-btn>
         </x-card>
 
         {{-- Branding --}}
-        <x-card class="animate-fade-up" style="animation-delay: 120ms">
+        <x-card id="settings-branding" class="scroll-mt-32 animate-fade-up" style="animation-delay: 120ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="sparkles" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Branding
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Brand</label>
-                    <input type="text" name="brand_name" value="{{ old('brand_name', setting('brand_name')) }}" aria-label="Nama Brand"
+                    <label for="setting-brand-name" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Brand</label>
+                    <input id="setting-brand-name" type="text" name="brand_name" value="{{ old('brand_name', setting('brand_name')) }}"
                            class="nb-input w-full">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Tagline</label>
-                    <input type="text" name="brand_tagline" value="{{ old('brand_tagline', setting('brand_tagline')) }}" aria-label="Tagline"
+                    <label for="setting-brand-tagline" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Tagline</label>
+                    <input id="setting-brand-tagline" type="text" name="brand_tagline" value="{{ old('brand_tagline', setting('brand_tagline')) }}"
                            class="nb-input w-full">
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Pemilik Brand</label>
-                    <input type="text" name="brand_owner" value="{{ old('brand_owner', setting('brand_owner')) }}" aria-label="Pemilik Brand"
+                    <label for="setting-brand-owner" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Pemilik Brand</label>
+                    <input id="setting-brand-owner" type="text" name="brand_owner" value="{{ old('brand_owner', setting('brand_owner')) }}"
                            class="nb-input w-full">
                 </div>
             </div>
         </x-card>
 
         {{-- Logo & Identities --}}
-        <x-card class="animate-fade-up" style="animation-delay: 140ms">
+        <x-card id="settings-media" class="scroll-mt-32 animate-fade-up" style="animation-delay: 140ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="photo" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Logo &amp; Brand Identities
             </h2>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Logo</label>
-                    <input type="file" name="brand_logo" aria-label="Logo"
+                    <label for="setting-brand-logo" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Logo</label>
+                    <input id="setting-brand-logo" type="file" name="brand_logo" accept="image/png,image/jpeg,image/svg+xml,image/gif,image/webp,image/x-icon"
                            class="nb-input w-full">
-                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan ukuran 200×60px, format PNG transparan.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">PNG, JPG, SVG, GIF, WEBP, atau ICO. Disarankan PNG transparan ukuran 200×60px. Maksimal 10 MB.</p>
+                    @error('brand_logo')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('brand_logo'))
                         @if($mediaStatus['brand_logo']['public'] ?? false)
-                            <div class="mt-2 flex items-center gap-3">
-                                <img src="{{ media_url(setting('brand_logo')) }}" class="h-12 w-auto rounded" alt="Logo saat ini">
-                                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Logo saat ini</p>
+                            <div data-image-preview="brand_logo" class="mt-2 flex items-center gap-3">
+                                <img data-preview-image src="{{ media_url(setting('brand_logo')) }}" class="h-12 w-auto rounded" alt="Pratinjau logo">
+                                <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Logo saat ini</p>
                             </div>
                         @else
-                            <p role="status" class="mt-2 text-sm text-[#991B1B] dark:text-red-300">
+                            <p data-media-warning role="status" class="mt-2 text-sm text-[#991B1B] dark:text-red-300">
                                 @if($mediaStatus['brand_logo']['stored'] ?? false)
                                     File logo ada, tetapi belum bisa diakses publik. Jalankan perbaikan storage melalui deploy terbaru.
                                 @else
                                     File logo tidak ditemukan di server. Upload ulang logo.
                                 @endif
                             </p>
+                            <div data-image-preview="brand_logo" class="mt-2 hidden items-center gap-3">
+                                <img data-preview-image class="h-12 w-auto rounded" alt="Pratinjau logo yang dipilih">
+                                <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
+                            </div>
                         @endif
+                    @else
+                        <div data-image-preview="brand_logo" class="mt-2 hidden items-center gap-3">
+                            <img data-preview-image class="h-12 w-auto rounded" alt="Pratinjau logo yang dipilih">
+                            <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
+                        </div>
                     @endif
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Favicon</label>
-                    <input type="file" name="brand_favicon" accept="image/png,image/svg+xml" aria-label="Favicon"
+                    <label for="setting-brand-favicon" class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Favicon</label>
+                    <input id="setting-brand-favicon" type="file" name="brand_favicon" accept="image/png,image/jpeg,image/svg+xml,image/gif,image/webp,image/x-icon"
                            class="nb-input w-full">
-                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Disarankan 32×32px atau 16×16px, format PNG.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">PNG, JPG, SVG, GIF, WEBP, atau ICO. Disarankan 32×32px atau 16×16px, format PNG. Maksimal 10 MB.</p>
+                    @error('brand_favicon')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('brand_favicon'))
-                        <div class="mt-2 flex items-center gap-3">
-                            <img src="{{ media_url(setting('brand_favicon')) }}" class="h-6 w-auto rounded" alt="Favicon saat ini">
-                            <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Favicon saat ini</p>
+                        @if($mediaStatus['brand_favicon']['public'] ?? false)
+                        <div data-image-preview="brand_favicon" class="mt-2 flex items-center gap-3">
+                            <img data-preview-image src="{{ media_url(setting('brand_favicon')) }}" class="h-6 w-auto rounded" alt="Pratinjau favicon">
+                            <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Favicon saat ini</p>
+                        </div>
+                        @else
+                            <p data-media-warning role="status" class="mt-2 text-sm text-red-700 dark:text-red-300">Favicon tidak dapat diakses dari penyimpanan publik. Unggah file baru.</p>
+                            <div data-image-preview="brand_favicon" class="mt-2 hidden items-center gap-3">
+                                <img data-preview-image class="h-6 w-auto rounded" alt="Pratinjau favicon yang dipilih">
+                                <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
+                            </div>
+                        @endif
+                    @else
+                        <div data-image-preview="brand_favicon" class="mt-2 hidden items-center gap-3">
+                            <img data-preview-image class="h-6 w-auto rounded" alt="Pratinjau favicon yang dipilih">
+                            <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
                         </div>
                     @endif
                 </div>
@@ -83,7 +149,7 @@
         </x-card>
 
         {{-- Colors --}}
-        <x-card class="animate-fade-up" style="animation-delay: 160ms">
+        <x-card id="settings-colors" class="scroll-mt-32 animate-fade-up" style="animation-delay: 160ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="sparkles" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Warna Brand
             </h2>
@@ -126,37 +192,44 @@
         </x-card>
 
         {{-- Contact --}}
-        <x-card class="animate-fade-up" style="animation-delay: 180ms">
+        <x-card id="settings-contact" class="scroll-mt-32 animate-fade-up" style="animation-delay: 180ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="phone" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Kontak
             </h2>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nomor WhatsApp</label>
-                    <input type="text" name="whatsapp" value="{{ old('whatsapp', setting('whatsapp')) }}" aria-label="Nomor WhatsApp"
+                    <label for="setting-whatsapp" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nomor WhatsApp</label>
+                    <input id="setting-whatsapp" type="tel" name="whatsapp" value="{{ old('whatsapp', setting('whatsapp')) }}"
+                           inputmode="tel" autocomplete="tel" maxlength="16"
                            placeholder="Contoh: 628123456789"
                            class="nb-input w-full">
+                    @error('whatsapp')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Format: negara+angka tanpa spasi/dash.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Email</label>
-                    <input type="email" name="email" value="{{ old('email', setting('email')) }}" aria-label="Email"
+                    <label for="setting-email" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Email</label>
+                    <input id="setting-email" type="email" name="email" value="{{ old('email', setting('email')) }}"
                            class="nb-input w-full">
+                    @error('email')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Alamat</label>
-                    <textarea name="address" rows="2" aria-label="Alamat"
+                    <label for="setting-address" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Alamat</label>
+                    <textarea id="setting-address" name="address" rows="2"
                               class="nb-input w-full">{{ old('address', setting('address')) }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username Instagram</label>
-                    <input type="text" name="instagram" value="{{ old('instagram', setting('instagram')) }}" aria-label="Username Instagram"
+                    <label for="setting-instagram" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username Instagram</label>
+                    <input id="setting-instagram" type="text" name="instagram" value="{{ old('instagram', setting('instagram')) }}"
                            placeholder="tanpa @"
                            class="nb-input w-full">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username TikTok</label>
-                    <input type="text" name="tiktok" value="{{ old('tiktok', setting('tiktok')) }}" aria-label="Username TikTok"
+                    <label for="setting-tiktok" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Username TikTok</label>
+                    <input id="setting-tiktok" type="text" name="tiktok" value="{{ old('tiktok', setting('tiktok')) }}"
                            placeholder="username"
                            class="nb-input w-full">
                 </div>
@@ -164,14 +237,14 @@
         </x-card>
 
         {{-- Site Info --}}
-        <x-card class="animate-fade-up" style="animation-delay: 200ms">
+        <x-card id="settings-site" class="scroll-mt-32 animate-fade-up" style="animation-delay: 200ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="chat" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Informasi Situs
             </h2>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Teks Footer</label>
-                    <textarea name="footer_text" rows="2" aria-label="Teks Footer"
+                    <label for="setting-footer-text" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Teks Footer</label>
+                    <textarea id="setting-footer-text" name="footer_text" rows="2"
                               class="nb-input w-full">{{ old('footer_text', setting('footer_text')) }}</textarea>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Teks yang muncul di footer halaman depan.</p>
                 </div>
@@ -179,20 +252,20 @@
         </x-card>
 
         {{-- SEO --}}
-        <x-card class="animate-fade-up" style="animation-delay: 220ms">
+        <x-card id="settings-seo" class="scroll-mt-32 animate-fade-up" style="animation-delay: 220ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="search" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> SEO
             </h2>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Description</label>
-                    <textarea name="meta_description" rows="3" aria-label="Meta Description"
+                    <label for="setting-meta-description" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Description</label>
+                    <textarea id="setting-meta-description" name="meta_description" rows="3"
                               class="nb-input w-full">{{ old('meta_description', setting('meta_description')) }}</textarea>
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Deskripsi untuk meta tag dan sosial media preview.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Keywords</label>
-                    <input type="text" name="meta_keywords" value="{{ old('meta_keywords', setting('meta_keywords')) }}" aria-label="Meta Keywords"
+                    <label for="setting-meta-keywords" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Meta Keywords</label>
+                    <input id="setting-meta-keywords" type="text" name="meta_keywords" value="{{ old('meta_keywords', setting('meta_keywords')) }}"
                            placeholder="jastip, nitip, parfum, tumbler"
                            class="nb-input w-full">
                 </div>
@@ -200,44 +273,53 @@
         </x-card>
 
         {{-- Business --}}
-        <x-card class="animate-fade-up" style="animation-delay: 240ms">
+        <x-card id="settings-business" class="scroll-mt-32 animate-fade-up" style="animation-delay: 240ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="clipboard" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Pengaturan Bisnis
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Biaya Ongkir Default (Rp)</label>
-                    <input type="number" name="shipping_cost" value="{{ old('shipping_cost', setting('shipping_cost', 0)) }}" aria-label="Biaya Ongkir Default (Rp)"
+                    <label for="setting-shipping-cost" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Biaya Ongkir Default (Rp)</label>
+                    <input id="setting-shipping-cost" type="number" name="shipping_cost" value="{{ old('shipping_cost', setting('shipping_cost', 0)) }}"
                            min="0" step="1000"
                            class="nb-input w-full">
+                    @error('shipping_cost')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Ongkir perkiraan di halaman keranjang &amp; produk. Ongkir final dihitung dari ekspedisi yang dipilih saat checkout.</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Minimum Order (Rp)</label>
-                    <input type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}" aria-label="Minimum Order (Rp)"
+                    <label for="setting-minimum-order" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Minimum Order (Rp)</label>
+                    <input id="setting-minimum-order" type="number" name="minimum_order" value="{{ old('minimum_order', setting('minimum_order', 0)) }}"
                            min="0" step="1000"
                            class="nb-input w-full">
+                    @error('minimum_order')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Set Biaya Fee Global (Rp)</label>
-                    <input type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', setting('setbiaya_fee', 0)) }}" aria-label="Set Biaya Fee Global (Rp)"
+                    <label for="setting-global-fee" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Set Biaya Fee Global (Rp)</label>
+                    <input id="setting-global-fee" type="number" name="setbiaya_fee" value="{{ old('setbiaya_fee', setting('setbiaya_fee', 0)) }}"
                            min="0" step="500"
                            class="nb-input w-full">
+                    @error('setbiaya_fee')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Fee layanan global per produk. Dikenakan ke semua order.</p>
                 </div>
             </div>
         </x-card>
 
         {{-- QRIS Payment --}}
-        <x-card class="animate-fade-up" style="animation-delay: 260ms">
+        <x-card id="settings-payment" class="scroll-mt-32 animate-fade-up" style="animation-delay: 260ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="credit-card" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Pembayaran QRIS
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
-                    <label class="flex items-center gap-3 cursor-pointer min-h-[44px] p-2 -m-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b]">
+                    <label for="setting-qris-enabled" class="flex items-center gap-3 cursor-pointer min-h-[44px] p-2 -m-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b]">
                         <input type="hidden" name="qris_enabled" value="0">
-                        <input type="checkbox" name="qris_enabled" value="1"
+                        <input id="setting-qris-enabled" type="checkbox" name="qris_enabled" value="1"
                                @checked((string) old('qris_enabled', setting('qris_enabled', '1')) === '1')
                                class="w-5 h-5 accent-[#EAB308]">
                         <span class="text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9]">Aktifkan Pembayaran QRIS</span>
@@ -245,30 +327,42 @@
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Dimatikan = kode QRIS disembunyikan dari konfirmasi, halaman bayar, dan cetak invoice. Pelanggan tetap bisa pesan, konfirmasinya lewat WhatsApp.</p>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Gambar QRIS (Static QR)</label>
-                    <input type="file" name="qris_image" accept="image/*" aria-label="Gambar QRIS (Static QR)"
+                    <label for="setting-qris-image" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Gambar QRIS (Static QR)</label>
+                    <input id="setting-qris-image" type="file" name="qris_image" accept="image/png,image/jpeg,image/gif,image/webp"
                            class="nb-input w-full">
-                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Upload QRIS statis dari e-wallet atau bank kamu. Akan ditampilkan saat customer checkout.</p>
+                    <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">PNG, JPG, GIF, atau WEBP. QRIS statis akan ditampilkan saat checkout. Maksimal 10 MB.</p>
+                    @error('qris_image')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     @if(setting('qris_image'))
                         @if($mediaStatus['qris_image']['public'] ?? false)
-                            <div class="mt-2 flex items-center gap-3">
-                                <img src="{{ media_url(setting('qris_image')) }}" class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="QRIS saat ini">
-                                <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">QRIS saat ini</p>
+                            <div data-image-preview="qris_image" class="mt-2 flex items-center gap-3">
+                                <img data-preview-image src="{{ media_url(setting('qris_image')) }}" class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="Pratinjau QRIS">
+                                <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]">QRIS saat ini</p>
                             </div>
                         @else
-                            <p role="status" class="mt-2 text-sm text-[#991B1B] dark:text-red-300">
+                            <p data-media-warning role="status" class="mt-2 text-sm text-[#991B1B] dark:text-red-300">
                                 @if($mediaStatus['qris_image']['stored'] ?? false)
                                     File QRIS ada, tetapi belum bisa diakses publik. Jalankan perbaikan storage melalui deploy terbaru.
                                 @else
                                     File QRIS tidak ditemukan di server. Upload ulang gambar QRIS.
                                 @endif
                             </p>
+                            <div data-image-preview="qris_image" class="mt-2 hidden items-center gap-3">
+                                <img data-preview-image class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="Pratinjau QRIS yang dipilih">
+                                <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
+                            </div>
                         @endif
+                    @else
+                        <div data-image-preview="qris_image" class="mt-2 hidden items-center gap-3">
+                            <img data-preview-image class="h-24 w-auto rounded border border-[#E2E8F0] dark:border-[#404854]" alt="Pratinjau QRIS yang dipilih">
+                            <p data-preview-label class="text-xs text-[#64748B] dark:text-[#cbd5e1]"></p>
+                        </div>
                     @endif
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Merchant (opsional)</label>
-                    <input type="text" name="qris_merchant_name" value="{{ old('qris_merchant_name', setting('qris_merchant_name', setting('brand_name'))) }}" aria-label="Nama Merchant (opsional)"
+                    <label for="setting-qris-merchant" class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1">Nama Merchant (opsional)</label>
+                    <input id="setting-qris-merchant" type="text" name="qris_merchant_name" value="{{ old('qris_merchant_name', setting('qris_merchant_name', setting('brand_name'))) }}"
                            placeholder="NITIP DI END"
                            class="nb-input w-full">
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Teks merchant yang ditampilkan di bawah QRIS.</p>
@@ -277,7 +371,7 @@
         </x-card>
 
         {{-- Rekening Pembayaran --}}
-        <x-card class="animate-fade-up" style="animation-delay: 280ms">
+        <x-card id="settings-bank" class="scroll-mt-32 animate-fade-up" style="animation-delay: 280ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
                 <x-icon name="banknotes" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Rekening Pembayaran
             </h2>
@@ -305,6 +399,9 @@
                     <input id="qris_max_amount" type="number" min="0" step="1000" name="qris_max_amount"
                            value="{{ old('qris_max_amount', setting('qris_max_amount', 500000)) }}"
                            class="nb-input w-full">
+                    @error('qris_max_amount')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                     <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mt-1">Invoice dengan total DI ATAS angka ini hanya menampilkan rekening (QRIS disembunyikan). Default Rp 500.000.</p>
                 </div>
             </div>
@@ -314,7 +411,7 @@
         </x-card>
 
         {{-- Gateway WhatsApp (kirim invoice sebagai gambar) --}}
-        <x-card class="animate-fade-up" style="animation-delay: 320ms">
+        <x-card id="settings-whatsapp" class="scroll-mt-32 animate-fade-up" style="animation-delay: 320ms">
             <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1 flex items-center gap-2">
                 <x-icon name="chat" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Kirim Invoice WhatsApp
             </h2>
@@ -347,6 +444,9 @@
                            value="{{ old('wa_gateway_url', setting('wa_gateway_url')) }}"
                            placeholder="http://IP-VPS:2785"
                            class="nb-input w-full">
+                    @error('wa_gateway_url')
+                        <p role="alert" class="mt-1 text-sm text-red-700 dark:text-red-300">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#64748B] dark:text-[#cbd5e1] mb-1" for="wa_gateway_key">Kunci API gateway</label>
@@ -370,8 +470,91 @@
         </x-card>
 
         <div class="flex justify-end pt-4">
-            <x-btn type="submit" icon="check">Simpan Semua Pengaturan</x-btn>
+            <x-btn type="submit" class="settings-submit min-h-[44px]" icon="check">
+                <span data-submit-label>Simpan Semua Pengaturan</span>
+            </x-btn>
         </div>
     </form>
 </div>
+<script>
+    (() => {
+        const form = document.querySelector('[data-settings-form]');
+        if (!form) return;
+
+        const status = document.getElementById('settings-save-status');
+        const submitButtons = form.querySelectorAll('.settings-submit');
+        let dirty = false;
+
+        const markDirty = () => {
+            dirty = true;
+            status.textContent = 'Ada perubahan yang belum disimpan.';
+        };
+
+        form.addEventListener('input', markDirty);
+        form.addEventListener('change', (event) => {
+            markDirty();
+
+            const input = event.target;
+            if (!(input instanceof HTMLInputElement) || input.type !== 'file') return;
+
+            const file = input.files?.[0];
+            input.setCustomValidity('');
+            if (!file) return;
+
+            if (file.size > 10 * 1024 * 1024) {
+                input.setCustomValidity('Ukuran file maksimal 10 MB.');
+                input.reportValidity();
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) return;
+
+            const preview = form.querySelector(`[data-image-preview="${input.name}"]`);
+            const image = preview?.querySelector('[data-preview-image]');
+            if (!preview || !(image instanceof HTMLImageElement)) return;
+
+            if (image.src.startsWith('blob:')) URL.revokeObjectURL(image.src);
+            image.src = URL.createObjectURL(file);
+            image.hidden = false;
+            preview.classList.remove('hidden');
+            preview.classList.add('flex');
+            const label = preview.querySelector('[data-preview-label]');
+            if (label) label.textContent = `File dipilih: ${file.name}`;
+            input.closest('div')?.querySelector('[data-media-warning]')?.setAttribute('hidden', '');
+        });
+
+        form.querySelectorAll('[data-preview-image]').forEach((image) => {
+            image.addEventListener('error', () => {
+                image.hidden = true;
+                const label = image.parentElement?.querySelector('[data-preview-label]');
+                if (label) label.textContent = 'Pratinjau tidak dapat dimuat. Pilih file baru untuk menggantinya.';
+            });
+        });
+
+        form.addEventListener('submit', (event) => {
+            if (!form.reportValidity()) {
+                event.preventDefault();
+                return;
+            }
+
+            dirty = false;
+            status.textContent = 'Menyimpan pengaturan...';
+            submitButtons.forEach((button) => {
+                button.disabled = true;
+                const label = button.querySelector('[data-submit-label]');
+                if (label) label.textContent = 'Menyimpan...';
+            });
+        });
+
+        window.addEventListener('beforeunload', (event) => {
+            if (!dirty) return;
+            event.preventDefault();
+            event.returnValue = '';
+        });
+
+        if (document.getElementById('settings-errors')) {
+            status.textContent = 'Ada kesalahan. Periksa pesan di atas, lalu simpan lagi.';
+        }
+    })();
+</script>
 @endsection
