@@ -19,7 +19,7 @@ return [
     | (lihat App\Services\InvoiceImageRenderer::CANDIDATES).
     */
     'browser_path' => env('INVOICE_BROWSER_PATH'),
-    'image_width' => (int) env('INVOICE_IMAGE_WIDTH', 820),
+    'image_width' => (int) env('INVOICE_IMAGE_WIDTH', 960),
     'image_timeout' => (int) env('INVOICE_IMAGE_TIMEOUT', 45),
 
     /*

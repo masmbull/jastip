@@ -28,6 +28,8 @@ class InvoiceSampleTest extends TestCase
         $res->assertSee('INV-SAMPLE-2026');
         $res->assertSee('28-09-2026 00:00');
         $res->assertSee('BELUM BAYAR');
+        $res->assertSee('background:#FFC800', false);
+        $res->assertSee('font-size:14px', false);
 
         // Pelanggan.
         $res->assertSee('Nabila Putri (Sampel Pelanggan)');

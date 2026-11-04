@@ -39,7 +39,7 @@ class InvoiceImageRenderer
 
     public function __construct(
         private ?string $browserPath = null,
-        private int $width = 820,
+        private int $width = 960,
         private int $timeout = 45,
     ) {}
 
@@ -47,7 +47,7 @@ class InvoiceImageRenderer
     {
         return new self(
             config('invoice.browser_path') ?: null,
-            (int) config('invoice.image_width', 820),
+            (int) config('invoice.image_width', 960),
             (int) config('invoice.image_timeout', 45),
         );
     }
@@ -120,7 +120,7 @@ class InvoiceImageRenderer
                 '--disable-gpu',
                 '--no-sandbox',
                 '--hide-scrollbars',
-                '--force-device-scale-factor=2',
+                '--force-device-scale-factor=3',
                 '--window-size='.$this->width.','.$height,
                 '--virtual-time-budget=3000',
                 '--user-data-dir='.$tmp.DIRECTORY_SEPARATOR.'profile',
