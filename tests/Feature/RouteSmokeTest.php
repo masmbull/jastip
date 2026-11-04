@@ -408,7 +408,7 @@ class RouteSmokeTest extends TestCase
         $this->actingAs($this->admin);
         $this->assertNull(ChatMessage::where('sender', ChatMessage::SENDER_CUSTOMER)->firstOrFail()->read_at);
 
-        $this->get(route('admin.chat.index'))->assertOk()->assertSee($customer->name, false);
+        $this->get(route('admin.chat.index'))->assertOk()->assertSee($customer->name);
         // Opening the thread marks the customer's message read.
         $this->get(route('admin.chat.show', $customer))->assertOk()->assertSee('Kapan barang saya sampai?', false);
         $this->assertNotNull(ChatMessage::where('sender', ChatMessage::SENDER_CUSTOMER)->firstOrFail()->read_at);
