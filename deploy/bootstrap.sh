@@ -51,6 +51,14 @@ if [ -n "$MIN_PHP" ]; then
   fi
 fi
 
+# Keep Composer and Artisan on the same CLI version as the configured FPM service.
+update-alternatives --set php "/usr/bin/php${PHP_VER}"
+CLI_VERSION="$(php -r 'echo PHP_VERSION;')"
+if [ "$CLI_VERSION" != "$INSTALLED" ]; then
+  echo "ERROR: default PHP CLI is $CLI_VERSION, expected $INSTALLED." >&2
+  exit 1
+fi
+
 if ! command -v composer >/dev/null 2>&1; then
   curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
   php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
