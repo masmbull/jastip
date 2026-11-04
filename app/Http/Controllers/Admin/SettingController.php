@@ -15,7 +15,7 @@ class SettingController extends Controller
     public function index()
     {
         $mediaStatus = [];
-        foreach (['brand_logo', 'qris_image'] as $key) {
+        foreach (['brand_logo', 'brand_favicon', 'qris_image'] as $key) {
             $path = ltrim((string) Setting::get($key, ''), '/');
             if ($path === '') {
                 continue;
@@ -47,6 +47,8 @@ class SettingController extends Controller
 
     public function update(SettingUpdateRequest $request)
     {
+        $this->rejectOversizedRequest($request);
+
         foreach (config('settings.groups', []) as $group => $meta) {
             foreach ($meta['settings'] ?? [] as $key => $definition) {
                 $type = $definition['type'] ?? 'text';
@@ -101,6 +103,10 @@ class SettingController extends Controller
 
         try {
             $path = $request->file($key)->store('settings', 'public');
+            if (! is_string($path) || $path === '') {
+                throw new \RuntimeException('Storage did not return a file path.');
+            }
+
             Setting::set($key, $path, 'string', $group, true);
         } catch (\Exception $e) {
             \Log::error('Failed to upload setting image: '.$key, [
@@ -112,5 +118,33 @@ class SettingController extends Controller
                 $key => ['Gagal mengunggah file gambar. Silakan coba lagi.'],
             ]);
         }
+    }
+
+    private function rejectOversizedRequest(Request $request): void
+    {
+        $contentLength = (int) $request->server('CONTENT_LENGTH', 0);
+        $postLimit = $this->iniSizeInBytes((string) ini_get('post_max_size'));
+
+        if ($contentLength > 0 && $postLimit > 0 && $contentLength > $postLimit) {
+            throw ValidationException::withMessages([
+                'settings' => ['Ukuran total formulir melebihi batas server. Gunakan gambar maksimal 10 MB.'],
+            ]);
+        }
+    }
+
+    private function iniSizeInBytes(string $value): int
+    {
+        if (! preg_match('/^\s*(\d+(?:\.\d+)?)\s*([KMG]?)\s*$/i', $value, $matches)) {
+            return 0;
+        }
+
+        $power = match (strtoupper($matches[2])) {
+            'K' => 1,
+            'M' => 2,
+            'G' => 3,
+            default => 0,
+        };
+
+        return (int) ((float) $matches[1] * (1024 ** $power));
     }
 }

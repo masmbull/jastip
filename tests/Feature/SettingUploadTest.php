@@ -104,4 +104,49 @@ class SettingUploadTest extends TestCase
             ->assertOk()
             ->assertSee('File logo ada, tetapi belum bisa diakses publik.');
     }
+
+    public function test_settings_page_navigation_links_match_the_sections(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->get(route('admin.settings.index'))
+            ->assertOk()
+            ->assertSee('href="#settings-branding"', false)
+            ->assertSee('href="#settings-payment"', false)
+            ->assertSee('href="#settings-bank"', false)
+            ->assertSee('id="settings-form"', false);
+    }
+
+    public function test_settings_update_persists_values_and_unchecked_qris_state(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.settings.update'), [
+            'brand_name' => 'Toko Contoh',
+            'qris_enabled' => '0',
+            'shipping_cost' => '0',
+        ])->assertRedirect(route('admin.settings.index'))
+            ->assertSessionHas('success', 'Pengaturan berhasil diperbarui!');
+
+        $this->assertSame('Toko Contoh', Setting::get('brand_name'));
+        $this->assertFalse(Setting::get('qris_enabled'));
+        $this->assertSame(0, Setting::get('shipping_cost'));
+    }
+
+    public function test_invalid_contact_and_gateway_values_do_not_change_settings(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        Setting::set('whatsapp', '6281234567890', 'string', 'contact', true);
+        Setting::set('wa_gateway_url', 'https://gateway.example.test', 'string', 'whatsapp_gateway', true);
+
+        $this->actingAs($admin)->post(route('admin.settings.update'), [
+            'whatsapp' => '0812 3456',
+            'wa_gateway_url' => 'not-a-url',
+            'shipping_cost' => '-100',
+        ])->assertSessionHasErrors(['whatsapp', 'wa_gateway_url', 'shipping_cost']);
+
+        $this->assertSame('6281234567890', Setting::get('whatsapp'));
+        $this->assertSame('https://gateway.example.test', Setting::get('wa_gateway_url'));
+    }
 }
