@@ -15,7 +15,7 @@
             .no-print { display: none !important; }
             body { background: #fff; }
             .sheet-paper { box-shadow: none !important; border: none !important; margin: 0 auto !important; max-width: none !important; padding: 0 !important; }
-            @page { size: A4; margin: 8mm; }
+            @page { size: A4; margin: 5mm; }
         }
     </style>
 </head>
