@@ -241,7 +241,7 @@ $isPaid    = $doc['paid'] ?? false;
                             <img class="qris-invoice-image"
                                  src="{{ $qris['image'] }}"
                                  alt="QRIS JASTIP NITIPDIEND"
-                                 style="display:block; width:52mm; height:52mm; max-width:52mm; max-height:52mm; object-fit:contain; image-rendering:-webkit-optimize-contrast; background:#FFFFFF;">
+                                 style="display:block; width:60mm; height:60mm; max-width:60mm; max-height:60mm; object-fit:contain; image-rendering:-webkit-optimize-contrast; background:#FFFFFF;">
                         </div>
                         @endif
 

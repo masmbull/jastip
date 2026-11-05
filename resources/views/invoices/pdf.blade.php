@@ -65,10 +65,10 @@
 
         /* ── QRIS image: crisp rendering ──────────────────────────────── */
         .qris-invoice-image {
-            width: 52mm !important;
-            height: 52mm !important;
-            max-width: 52mm !important;
-            max-height: 52mm !important;
+            width: 60mm !important;
+            height: 60mm !important;
+            max-width: 60mm !important;
+            max-height: 60mm !important;
             object-fit: contain;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: pixelated;
