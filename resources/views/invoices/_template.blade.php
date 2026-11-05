@@ -144,8 +144,9 @@
                         <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">
                             <span style="display:inline-block; width:18px; height:18px; vertical-align:-4px; margin-right:5px;">
                                 <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="1.5" width="15" height="15" rx="1" fill="none" stroke="#141414" stroke-width="1.5"/><path d="M4 4h3v3H4zm7 0h3v3h-3zM4 11h3v3H4zm7 0h3v3h-3zM9 4v7m0 3v2M9 11H7m2 0h3" fill="none" stroke="#141414" stroke-width="1.2"/></svg>
-                            </span>QRIS
+                            </span>
                         </div>
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">QRIS</div>
                         @if(!empty($qris['image']))
                             <img src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:210px; max-width:100%; height:210px; object-fit:contain; image-rendering:auto; margin:0 auto;">
                         @endif
