@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -46,23 +47,35 @@ class UserController extends Controller
         $email = $emailInput !== '' ? strtolower($emailInput) : null;
 
         $user = DB::transaction(function () use ($validated, $password, $email, $name, $phone) {
-            $user = User::create([
+            $attributes = [
                 'name' => $name,
                 'email' => $email,
-                'username' => $this->uniqueUsername($email, $name),
                 'password' => $password,
                 'role' => 'customer',
-                'email_verified_at' => $email ? now() : null,
-            ]);
+            ];
 
-            $user->profile()->updateOrCreate(
-                ['user_id' => $user->id],
-                [
+            if (Schema::hasColumn('users', 'username')) {
+                $attributes['username'] = $this->uniqueUsername($email, $name);
+            }
+
+            if (Schema::hasColumn('users', 'email_verified_at')) {
+                $attributes['email_verified_at'] = $email ? now() : null;
+            }
+
+            $user = User::create($attributes);
+
+            if (Schema::hasTable('user_profiles')) {
+                $profileAttributes = [
                     'phone' => $phone,
                     'membership_tier' => $validated['tier'] ?? 'bronze',
                     'loyalty_points' => $validated['points'] ?? 0,
-                ],
-            );
+                ];
+
+                $user->profile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    $profileAttributes,
+                );
+            }
 
             return $user;
         });
