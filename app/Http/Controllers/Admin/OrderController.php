@@ -241,7 +241,7 @@ class OrderController extends Controller
             $order->update([
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
-                'customer_email' => $request->input('customer_email'),
+                'customer_email' => filled($request->input('customer_email')) ? $request->input('customer_email') : null,
                 'customer_address' => $request->input('customer_address'),
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),

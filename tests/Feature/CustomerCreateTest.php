@@ -53,6 +53,22 @@ class CustomerCreateTest extends TestCase
         $this->assertSame('dup2', User::where('email', 'dup2@example.com')->value('username'));
     }
 
+    public function test_long_name_produces_username_that_fits_database_limit(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $longName = str_repeat('Pelanggan Panjang ', 6);
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => $longName,
+            'phone' => '08123456789',
+        ])->assertRedirect(route('admin.users.index'))
+            ->assertSessionHasNoErrors();
+
+        $username = User::where('name', $longName)->value('username');
+        $this->assertNotNull($username);
+        $this->assertLessThanOrEqual(50, strlen($username));
+    }
+
     public function test_email_is_optional_when_creating_customer_with_whatsapp(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
