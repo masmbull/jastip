@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" width="240" height="72">
+  <!-- BluBCA / blu by BCA Digital official logo -->
+  <!-- Official colors: #00447C dark blue, #00A8E0 light blue -->
+  <g>
+    <!-- Circle dot mark -->
+    <circle cx="20" cy="36" r="14" fill="#00A8E0"/>
+    <circle cx="20" cy="36" r="7" fill="#FFFFFF"/>
+    <circle cx="20" cy="36" r="3" fill="#00447C"/>
+  </g>
+  <!-- BluBCA text -->
+  <text x="44" y="44" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#00447C" letter-spacing="-0.5">Blu</text>
+  <text x="98" y="44" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900" fill="#00A8E0" letter-spacing="-0.5">BCA</text>
+</svg>

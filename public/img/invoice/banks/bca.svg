@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 72" width="240" height="72">
+  <!-- BCA Official logo: blue diamond/chevron mark + BCA text -->
+  <!-- Official color: #005FAF -->
+  <g>
+    <!-- Chevron/diamond icon -->
+    <path d="M10,36 L26,8 L42,8 L26,36 L42,64 L26,64 Z" fill="#005FAF"/>
+    <path d="M28,36 L44,8 L60,8 L44,36 L60,64 L44,64 Z" fill="#005FAF"/>
+    <!-- BCA text -->
+    <text x="72" y="50" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="34" font-weight="900" fill="#005FAF" letter-spacing="1">BCA</text>
+  </g>
+</svg>
