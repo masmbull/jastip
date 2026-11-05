@@ -69,6 +69,32 @@ class CustomerCreateTest extends TestCase
         $this->assertSame('08123456789', $user->profile->phone);
     }
 
+    public function test_multiple_customers_can_be_created_without_email(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => 'Pelanggan Tanpa Email Satu',
+            'email' => '',
+            'phone' => '08123456780',
+        ])->assertSessionHasNoErrors();
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'name' => 'Pelanggan Tanpa Email Dua',
+            'email' => '',
+            'phone' => '08123456781',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame(2, User::whereIn('name', [
+            'Pelanggan Tanpa Email Satu',
+            'Pelanggan Tanpa Email Dua',
+        ])->count());
+        $this->assertSame(0, User::whereIn('name', [
+            'Pelanggan Tanpa Email Satu',
+            'Pelanggan Tanpa Email Dua',
+        ])->whereNotNull('email')->count());
+    }
+
     public function test_whatsapp_is_required_when_creating_customer(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
