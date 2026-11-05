@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -46,7 +47,7 @@ class UserController extends Controller
         $emailInput = trim((string) ($validated['email'] ?? ''));
         $email = $emailInput !== '' ? strtolower($emailInput) : null;
 
-        $user = DB::transaction(function () use ($validated, $password, $email, $name, $phone) {
+        try {
             $attributes = [
                 'name' => $name,
                 'email' => $email,
@@ -62,23 +63,42 @@ class UserController extends Controller
                 $attributes['email_verified_at'] = $email ? now() : null;
             }
 
-            $user = User::create($attributes);
+            $user = DB::transaction(fn () => User::create($attributes));
+        } catch (\Throwable $exception) {
+            Log::error('Customer creation failed', [
+                'message' => $exception->getMessage(),
+                'name' => $name,
+                'email' => $email,
+            ]);
 
-            if (Schema::hasTable('user_profiles')) {
+            throw $exception;
+        }
+
+        if (Schema::hasTable('user_profiles')) {
+            try {
                 $profileAttributes = [
                     'phone' => $phone,
-                    'membership_tier' => $validated['tier'] ?? 'bronze',
-                    'loyalty_points' => $validated['points'] ?? 0,
                 ];
+
+                if (Schema::hasColumn('user_profiles', 'membership_tier')) {
+                    $profileAttributes['membership_tier'] = $validated['tier'] ?? 'bronze';
+                }
+
+                if (Schema::hasColumn('user_profiles', 'loyalty_points')) {
+                    $profileAttributes['loyalty_points'] = $validated['points'] ?? 0;
+                }
 
                 $user->profile()->updateOrCreate(
                     ['user_id' => $user->id],
                     $profileAttributes,
                 );
+            } catch (\Throwable $exception) {
+                Log::error('Customer profile creation failed', [
+                    'message' => $exception->getMessage(),
+                    'user_id' => $user->id,
+                ]);
             }
-
-            return $user;
-        });
+        }
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pelanggan '.$user->name.' berhasil ditambahkan. Password sementara: '.$password);
