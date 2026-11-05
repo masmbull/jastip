@@ -313,9 +313,13 @@ class WebPushService
         $ec = openssl_pkey_get_details($key)['ec'];
         $svc = new self([]);
 
+        $x = str_pad(substr($ec['x'], -32), 32, "\x00", STR_PAD_LEFT);
+        $y = str_pad(substr($ec['y'], -32), 32, "\x00", STR_PAD_LEFT);
+        $d = str_pad(substr($ec['d'], -32), 32, "\x00", STR_PAD_LEFT);
+
         return [
-            'public' => $svc->urlsafeEncode(chr(4).$ec['x'].$ec['y']),
-            'private' => $svc->urlsafeEncode($ec['d']),
+            'public' => $svc->urlsafeEncode(chr(4).$x.$y),
+            'private' => $svc->urlsafeEncode($d),
         ];
     }
 
