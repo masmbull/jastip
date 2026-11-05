@@ -18,55 +18,55 @@
  */
 
 // ── Bank logos: SVG data URIs ─────────────────────────────────────────────────
-// BCA — official blue shield/flower mark + bold BCA (from provided image)
-$bcaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180">'
-    // Shield outline
-    . '<path d="M8,8 L92,8 Q108,8 108,24 L108,110 Q108,145 74,158 L50,165 Q26,158 2,145 L2,24 Q2,8 18,8 Z" fill="none" stroke="#1A3A8F" stroke-width="5.5"/>'
-    // Flower center bulb
-    . '<circle cx="55" cy="60" r="16" fill="#1A3A8F"/>'
+// BCA — official blue shield/flower mark + bold BCA
+$bcaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 100" width="340" height="100">'
+    // Shield outline (scaled to fit 90px height)
+    . '<path d="M5,5 L75,5 Q88,5 88,18 L88,68 Q88,88 58,96 L40,100 Q22,96 5,88 L5,18 Q5,5 18,5 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="4"/>'
+    // Flower center
+    . '<circle cx="46" cy="38" r="12" fill="#1A3A8F"/>'
     // Side bulbs
-    . '<circle cx="34" cy="78" r="12" fill="#1A3A8F"/>'
-    . '<circle cx="76" cy="78" r="12" fill="#1A3A8F"/>'
+    . '<circle cx="29" cy="50" r="10" fill="#1A3A8F"/>'
+    . '<circle cx="63" cy="50" r="10" fill="#1A3A8F"/>'
     // Trunk
-    . '<rect x="47" y="88" width="16" height="22" rx="3" fill="#1A3A8F"/>'
-    // Base line
-    . '<rect x="22" y="108" width="66" height="8" rx="3" fill="#1A3A8F"/>'
-    // GRUP BCA text
-    . '<text x="55" y="140" font-family="Arial,sans-serif" font-size="10" font-weight="600" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
+    . '<rect x="40" y="57" width="12" height="16" rx="2" fill="#1A3A8F"/>'
+    // Base
+    . '<rect x="24" y="71" width="44" height="6" rx="2" fill="#1A3A8F"/>'
+    // GRUP BCA tiny text
+    . '<text x="46" y="90" font-family="Arial,sans-serif" font-size="8" font-weight="600" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
     // BCA bold wordmark
-    . '<text x="128" y="128" font-family="Arial Black,Arial,sans-serif" font-size="96" font-weight="900" fill="#1A3A8F">BCA</text>'
+    . '<text x="105" y="82" font-family="Arial Black,Arial,sans-serif" font-size="78" font-weight="900" fill="#1A3A8F">BCA</text>'
     . '</svg>';
 $bcaLogo = 'data:image/svg+xml;base64,' . base64_encode($bcaSvg);
 
-// SeaBank — orange circle S + SeaBank text + blue wave (from provided image)
-$seaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 150">'
+// SeaBank — orange circle S + SeaBank text + blue wave
+$seaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="380" height="110">'
     // Orange circle
-    . '<circle cx="68" cy="62" r="58" fill="#FF6200"/>'
+    . '<circle cx="52" cy="52" r="48" fill="#FF6200"/>'
     // White S
-    . '<text x="68" y="88" font-family="Arial Black,Arial,sans-serif" font-size="68" font-weight="900" fill="#FFFFFF" text-anchor="middle">S</text>'
+    . '<text x="52" y="74" font-family="Arial Black,Arial,sans-serif" font-size="56" font-weight="900" fill="#FFFFFF" text-anchor="middle">S</text>'
     // SeaBank orange text
-    . '<text x="145" y="82" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="800" fill="#FF6200">SeaBank</text>'
+    . '<text x="115" y="68" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="800" fill="#FF6200">SeaBank</text>'
     // Blue waves
-    . '<path d="M145,105 Q185,92 225,105 Q265,118 305,105 Q345,92 385,105" fill="none" stroke="#1A6EC8" stroke-width="6" stroke-linecap="round"/>'
-    . '<path d="M145,122 Q185,109 225,122 Q265,135 305,122 Q345,109 385,122" fill="none" stroke="#1A6EC8" stroke-width="4" stroke-linecap="round" opacity="0.5"/>'
+    . '<path d="M115,84 Q150,73 185,84 Q220,95 255,84 Q290,73 325,84 Q350,90 370,84" fill="none" stroke="#1A6EC8" stroke-width="5" stroke-linecap="round"/>'
+    . '<path d="M115,98 Q150,87 185,98 Q220,109 255,98 Q290,87 325,98" fill="none" stroke="#1A6EC8" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>'
     . '</svg>';
 $seaLogo = 'data:image/svg+xml;base64,' . base64_encode($seaSvg);
 
-// blu by BCA Digital — teal "blu" large + small BCA shield + BCAdigital text (from provided image)
-$bluSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 280">'
-    // Large teal blu wordmark
-    . '<text x="190" y="148" font-family="Arial Black,Arial,sans-serif" font-size="148" font-weight="900" fill="#00C8C8" text-anchor="middle">blu</text>'
-    // Small BCA shield
-    . '<path d="M26,202 L26,202 Q18,202 18,210 L18,254 Q18,266 30,271 L40,274 Q50,271 60,266 L60,210 Q60,202 52,202 Z" fill="none" stroke="#1A3A8F" stroke-width="3"/>'
-    . '<circle cx="39" cy="224" r="7" fill="#1A3A8F"/>'
-    . '<circle cx="31" cy="231" r="5.5" fill="#1A3A8F"/>'
-    . '<circle cx="47" cy="231" r="5.5" fill="#1A3A8F"/>'
-    . '<rect x="35" y="236" width="7" height="11" rx="2" fill="#1A3A8F"/>'
-    . '<rect x="26" y="245" width="26" height="5" rx="2" fill="#1A3A8F"/>'
-    . '<text x="39" y="263" font-family="Arial,sans-serif" font-size="6.5" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
+// blu by BCA Digital — teal "blu" large + BCA shield badge + BCAdigital
+$bluSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 200" width="360" height="200">'
+    // Large teal "blu" wordmark
+    . '<text x="180" y="118" font-family="Arial Black,Arial,sans-serif" font-size="112" font-weight="900" fill="#00C8C8" text-anchor="middle">blu</text>'
+    // Small BCA shield (bottom left)
+    . '<path d="M18,132 L52,132 Q60,132 60,140 L60,172 Q60,182 44,187 L35,190 Q26,187 10,182 L10,140 Q10,132 18,132 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="2.5"/>'
+    . '<circle cx="35" cy="150" r="7" fill="#1A3A8F"/>'
+    . '<circle cx="26" cy="158" r="5.5" fill="#1A3A8F"/>'
+    . '<circle cx="44" cy="158" r="5.5" fill="#1A3A8F"/>'
+    . '<rect x="31" y="163" width="8" height="9" rx="1.5" fill="#1A3A8F"/>'
+    . '<rect x="22" y="170" width="26" height="4" rx="2" fill="#1A3A8F"/>'
+    . '<text x="35" y="183" font-family="Arial,sans-serif" font-size="5.5" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
     // BCAdigital text
-    . '<text x="70" y="270" font-family="Arial Black,Arial,sans-serif" font-size="36" font-weight="900" fill="#1A3A8F">BCA</text>'
-    . '<text x="183" y="270" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#00C8C8">digital</text>'
+    . '<text x="68" y="190" font-family="Arial Black,Arial,sans-serif" font-size="34" font-weight="900" fill="#1A3A8F">BCA</text>'
+    . '<text x="178" y="190" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700" fill="#00C8C8">digital</text>'
     . '</svg>';
 $bluLogo = 'data:image/svg+xml;base64,' . base64_encode($bluSvg);
 
@@ -275,18 +275,18 @@ $isPaid    = $doc['paid'] ?? false;
                         @php
                             $bk = strtolower($account['bank'] ?? '');
                             if (str_contains($bk, 'blu')) {
-                                $logo = $bluLogo; $lw = '110px'; $lh = '80px';
+                                $logo = $bluLogo; $lw = '120px'; $lh = '67px';
                             } elseif (str_contains($bk, 'sea')) {
-                                $logo = $seaLogo; $lw = '110px'; $lh = '44px';
+                                $logo = $seaLogo; $lw = '120px'; $lh = '35px';
                             } else {
-                                $logo = $bcaLogo; $lw = '110px'; $lh = '38px';
+                                $logo = $bcaLogo; $lw = '120px'; $lh = '35px';
                             }
                         @endphp
                         <div style="{{ $idx > 0 ? 'border-top: 1px solid #F1F5F9; margin-top: 10px; padding-top: 10px;' : '' }} display: flex; align-items: center; gap: 12px;">
                             <img class="bank-logo"
                                  src="{{ $logo }}"
                                  alt="{{ $account['bank'] }}"
-                                 style="width: {{ $lw }}; height: {{ $lh }}; object-fit: contain; object-position: left center; flex-shrink: 0;">
+                                 style="width: {{ $lw }}; height: {{ $lh }}; object-fit: contain; flex-shrink: 0; display: block;">
                             <div>
                                 <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
                                 <div style="font-size: 11.5px; color: #475569; margin-top: 2px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
