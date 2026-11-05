@@ -23,10 +23,10 @@
             padding-bottom: 2px !important;
         }
         .invoice-doc[data-layout="compact"] img {
-            max-height: 86px !important;
-            max-width: 86px !important;
-            width: 86px !important;
-            height: 86px !important;
+            max-height: 110px !important;
+            max-width: 110px !important;
+            width: 110px !important;
+            height: 110px !important;
         }
         .invoice-doc[data-layout="compact"] > div {
             margin-top: 4px !important;

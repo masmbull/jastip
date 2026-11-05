@@ -46,23 +46,9 @@ class SettingSeeder extends Seeder
             Setting::firstOrCreate(['key' => $setting['key']], $setting);
         }
 
-        $this->seedQrisPlaceholder();
-    }
-
-    private function seedQrisPlaceholder(): void
-    {
-        $rel = 'settings/qris-placeholder.png';
-        $disk = \Illuminate\Support\Facades\Storage::disk('public');
-
-        if (! $disk->exists($rel)) {
-            $disk->makeDirectory('settings');
-            $path = $disk->path($rel);
-            \App\Services\QrisPlaceholderGenerator::generate($path);
-        }
-
         Setting::firstOrCreate(
             ['key' => 'qris_image'],
-            ['value' => $rel, 'type' => 'string', 'group' => 'qris', 'is_public' => true]
+            ['value' => '', 'type' => 'string', 'group' => 'qris', 'is_public' => true]
         );
     }
 }
