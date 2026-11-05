@@ -4,20 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $doc['title'] }} {{ $doc['number'] }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ─────────────────────────────────────────────────────────────────
-         * Dipakai sebagai target render PNG (html2canvas) untuk tombol
-         * berbagi invoice. Sengaja TANPA Tailwind: html2canvas tidak
-         * memahami color(oklch) milik Tailwind v4.
-         * Template yang dirender sama persis dengan pratinjau/PDF
-         * (invoices/_template).
-         * ───────────────────────────────────────────────────────────────── */
+        /*
+         * HTML/PNG version — shared with html2canvas screenshot.
+         * Sengaja TANPA Tailwind: html2canvas tidak memahami color(oklch).
+         */
         * { box-sizing: border-box; }
         body {
             margin: 0;
             padding: 20px;
             background: #FFFFFF;
-            font-family: DejaVu Sans, Arial, Helvetica, sans-serif;
+            /* Override DejaVu with a modern font for browser rendering */
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
+        }
+        /* Apply modern font to all invoice elements */
+        .invoice-doc, .invoice-doc * {
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
         }
         .qris-invoice-image {
             width: 60mm !important;
