@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('setting')) {
     /**
@@ -133,10 +132,6 @@ if (! function_exists('qris_url')) {
 
         $path = ltrim($path, '/');
         if (str_contains($path, 'qris-placeholder') || $path === 'settings/qris.jpg') {
-            return null;
-        }
-
-        if (! Storage::disk('public')->exists($path)) {
             return null;
         }
 
