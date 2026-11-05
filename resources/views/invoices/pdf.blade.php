@@ -11,18 +11,31 @@
         thead { display: table-header-group; }
         tr, td, th { page-break-inside: avoid; }
         .invoice-items thead { display: table-header-group; }
-        .invoice-doc[data-layout="compact"] { font-size: 11px !important; }
+        .invoice-doc[data-layout="compact"] { font-size: 9px !important; line-height: 1.05 !important; }
+        .invoice-doc[data-layout="compact"] td,
+        .invoice-doc[data-layout="compact"] th,
+        .invoice-doc[data-layout="compact"] div,
+        .invoice-doc[data-layout="compact"] span {
+            font-size: 9px !important;
+            line-height: 1.05 !important;
+        }
         .invoice-doc[data-layout="compact"] .invoice-items td {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
+            padding-top: 1px !important;
+            padding-bottom: 1px !important;
+            padding-left: 5px !important;
+            padding-right: 5px !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-items th {
-            padding-top: 6px !important;
-            padding-bottom: 6px !important;
-        }
-        .invoice-doc[data-layout="compact"] .invoice-totals-box td {
             padding-top: 4px !important;
             padding-bottom: 4px !important;
+        }
+        .invoice-doc[data-layout="compact"] .invoice-totals-box td {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+        .invoice-doc[data-layout="compact"] img {
+            max-height: 84px !important;
+            max-width: 84px !important;
         }
     </style>
 </head>

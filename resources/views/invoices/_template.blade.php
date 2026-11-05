@@ -142,7 +142,7 @@
             </tr>
         </table>
         <div style="margin-top:7px; font-size:10px; color:#92400E; font-weight:bold; line-height:1.35;">
-            Peringatan: Transfer hanya dilakukan ke rekening atau QRIS resmi yang tertera di invoice ini.
+            TRANSFER HANYA KE REKENING / QRIS DI ATAS. SELAIN ITU DI LUAR TANGGUNG JAWAB KAMI.
         </div>
     @else
         <div style="font-size:12px; color:#475569; padding:5px 0;">{{ $doc['payment_text'] }}</div>
