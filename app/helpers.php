@@ -61,7 +61,7 @@ if (! function_exists('qris_allowed_for')) {
      */
     function qris_allowed_for(int $total): bool
     {
-        return qris_enabled() && $total <= qris_limit() && qris_url() !== null;
+        return qris_enabled() && $total <= qris_limit();
     }
 }
 
