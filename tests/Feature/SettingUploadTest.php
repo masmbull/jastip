@@ -54,6 +54,19 @@ class SettingUploadTest extends TestCase
         Storage::disk('public')->assertExists($path);
     }
 
+    public function test_qris_upload_rejects_low_resolution_image(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.settings.update'), [
+            'qris_enabled' => '1',
+            'qris_image' => UploadedFile::fake()->image('qris.png', 200, 200),
+        ])->assertSessionHasErrors([
+            'qris_image' => 'Resolusi QRIS minimal 300 x 300 piksel agar tetap tajam saat dicetak.',
+        ]);
+    }
+
     public function test_uploading_setting_image_accepts_files_up_to_ten_megabytes(): void
     {
         Storage::fake('public');

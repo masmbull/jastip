@@ -9,7 +9,7 @@
         <tr>
             <td style="width:58%; vertical-align:top; padding-right:18px;">
                 @if(!empty($doc['logo']))
-                    <img src="{{ $doc['logo'] }}" alt="{{ $doc['brand'] }}" style="display:block; max-width:150px; max-height:52px; object-fit:contain; margin:0 0 7px;">
+                    <img class="invoice-logo" src="{{ $doc['logo'] }}" alt="{{ $doc['brand'] }}" style="display:block; max-width:150px; max-height:52px; object-fit:contain; margin:0 0 7px;">
                 @endif
                 <div style="font-size:21px; font-weight:bold; line-height:1.15;">{{ $doc['brand'] }}</div>
                 @if(!empty($doc['owner']))<div style="font-size:12px; color:#475569; margin-top:4px;">{{ $doc['owner'] }}</div>@endif
@@ -120,10 +120,10 @@
         <table role="presentation" style="width:100%; border-collapse:separate; border-spacing:8px 0; table-layout:fixed; margin-left:-8px;">
             <tr>
                 @if($qris)
-                    <td style="width:42%; vertical-align:top; text-align:center; border:1px solid #CBD5E1; padding:9px;">
+                    <td style="width:40%; vertical-align:top; text-align:center; border:0; padding:5px;">
                         <div style="font-weight:bold; font-size:13px; margin-bottom:7px;">QRIS</div>
                         @if(!empty($qris['image']))
-                            <img src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:142px; height:142px; max-width:100%; object-fit:contain; image-rendering:auto; margin:0 auto;">
+                            <img class="qris-invoice-image" src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:170px; height:170px; max-width:170px; object-fit:contain; image-rendering:auto; background:#FFFFFF; margin:0 auto;">
                         @endif
                         @if(!empty($qris['merchant']))
                             <div style="font-size:11px; color:#475569; margin-top:5px;">{{ $qris['merchant'] }}</div>
@@ -132,7 +132,7 @@
                 @endif
 
                 @if($bank && !empty($bank['lines']))
-                    <td style="{{ $qris ? 'width:58%;' : 'width:100%;' }} vertical-align:top; border:1px solid #CBD5E1; padding:10px;">
+                    <td style="{{ $qris ? 'width:60%;' : 'width:100%;' }} vertical-align:top; border:1px solid #CBD5E1; padding:10px;">
                         <div style="font-weight:bold; font-size:13px; margin-bottom:7px;">TRANSFER REKENING</div>
                         @foreach($bank['lines'] as $line)
                             <div style="font-size:12px; padding:3px 0; {{ $loop->first ? 'font-weight:bold;' : 'color:#475569;' }}">{{ $line }}</div>
