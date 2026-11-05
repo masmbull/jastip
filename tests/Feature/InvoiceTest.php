@@ -38,7 +38,7 @@ class InvoiceTest extends TestCase
             'shipping_cost' => 0,
             'total' => 50000,
             'status' => Order::STATUS_CONFIRMED,
-            'paid_at' => Carbon::create(2026, 11, 5, 1, 30, 0, 'UTC'),
+            'paid_at' => Carbon::create(2026, 11, 5, 8, 30, 0, 'Asia/Jakarta'),
         ]);
 
         $this->actingAs($admin)
