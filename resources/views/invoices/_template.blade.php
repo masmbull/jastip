@@ -224,7 +224,7 @@ $isPaid    = $doc['paid'] ?? false;
                 {{-- QR area --}}
                 <div class="pay-card-body" style="padding: 14px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     @if(!empty($qris['image']))
-                    <div style="display: inline-block; background: #FFFFFF; padding: 8px; border: 1.5px solid #E2E8F0; border-radius: 8px;">
+                    <div style="display: inline-block; background: #FFFFFF; padding: 8px;">
                         <img class="qris-invoice-image"
                              src="{{ $qris['image'] }}"
                              alt="QRIS JASTIP NITIPDIEND"
