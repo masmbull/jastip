@@ -131,7 +131,7 @@ if (! function_exists('qris_url')) {
         }
 
         $path = ltrim($path, '/');
-        if (str_contains($path, 'qris-placeholder') || $path === 'settings/qris.jpg') {
+        if (str_contains($path, 'qris-placeholder')) {
             return null;
         }
 

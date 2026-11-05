@@ -2,86 +2,95 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $doc['title'] }} {{ $doc['number'] }}</title>
+
+    {{--
+        Browsershot renders with real Chrome — we can use:
+        - Google Fonts (Chrome waits for them via waitUntilNetworkIdle)
+        - Emoji
+        - Flexbox / CSS Grid
+        - box-shadow, border-radius, gradients
+        - External images (storage URLs)
+    --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        @page {
-            size: A4 portrait;
-            margin: 10mm 12mm 10mm;
-        }
         * {
-            font-family: DejaVu Sans, Arial, Helvetica, sans-serif;
             box-sizing: border-box;
-        }
-        body {
             margin: 0;
             padding: 0;
-            color: #141414;
-            font-size: 12px;
-            background: #FFFFFF;
-        }
-        table {
-            border-collapse: collapse;
-        }
-        thead {
-            display: table-header-group;
-        }
-        tr, td, th {
-            page-break-inside: avoid;
-        }
-        .invoice-items thead {
-            display: table-header-group;
         }
 
-        /* ── Compact mode: 13+ items ──────────────────────────────────── */
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #141414;
+            background: #FFFFFF;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 11mm 14mm;
+            }
+            body { margin: 0; }
+        }
+
+        /* ── QRIS image ──────────────────────────────────────── */
+        .qris-invoice-image {
+            width: 60mm !important;
+            height: 60mm !important;
+            object-fit: contain;
+            display: block;
+            background: #FFFFFF;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        /* ── Compact mode (13+ items): scale everything down ─── */
         .invoice-doc[data-layout="compact"] {
             font-size: 9px !important;
-            line-height: 1.1 !important;
         }
-        .invoice-doc[data-layout="compact"] td,
-        .invoice-doc[data-layout="compact"] th,
-        .invoice-doc[data-layout="compact"] div,
-        .invoice-doc[data-layout="compact"] span {
+        .invoice-doc[data-layout="compact"] .section-header,
+        .invoice-doc[data-layout="compact"] .section-header * {
             font-size: 9px !important;
-            line-height: 1.1 !important;
         }
-        .invoice-doc[data-layout="compact"] .invoice-items td {
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-            padding-left: 5px !important;
-            padding-right: 5px !important;
+        .invoice-doc[data-layout="compact"] .invoice-title {
+            font-size: 26px !important;
         }
-        .invoice-doc[data-layout="compact"] .invoice-items th {
-            padding-top: 4px !important;
-            padding-bottom: 4px !important;
+        .invoice-doc[data-layout="compact"] .brand-name {
+            font-size: 14px !important;
         }
-        .invoice-doc[data-layout="compact"] .invoice-totals-box td {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
+        .invoice-doc[data-layout="compact"] .info-card {
+            padding: 6px 8px !important;
+        }
+        .invoice-doc[data-layout="compact"] .items-th,
+        .invoice-doc[data-layout="compact"] .items-td {
+            padding: 3px 5px !important;
+            font-size: 8.5px !important;
+        }
+        .invoice-doc[data-layout="compact"] .totals-td {
+            padding: 3px 8px !important;
+            font-size: 8.5px !important;
+        }
+        .invoice-doc[data-layout="compact"] .pay-card-body {
+            padding: 6px 8px !important;
+        }
+        .invoice-doc[data-layout="compact"] .qris-invoice-image {
+            width: 40mm !important;
+            height: 40mm !important;
+        }
+        .invoice-doc[data-layout="compact"] .bank-logo {
+            width: 44px !important;
+            height: 18px !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-logo {
             width: 48px !important;
             height: 48px !important;
-        }
-
-        /* ── QRIS image: crisp rendering ──────────────────────────────── */
-        .qris-invoice-image {
-            width: 60mm !important;
-            height: 60mm !important;
-            max-width: 60mm !important;
-            max-height: 60mm !important;
-            object-fit: contain;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: pixelated;
-            background: #FFFFFF;
-        }
-
-        /* ── Bank logo images ─────────────────────────────────────────── */
-        .bank-logo-img {
-            display: block;
-            width: 48px;
-            height: auto;
-            object-fit: contain;
-            object-position: left center;
         }
     </style>
 </head>

@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $doc['title'] }} {{ $doc['number'] }} | {{ $doc['brand'] }}</title>
     @vite(['resources/css/app.css'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* Halaman cetak memakai TEMPLATE yang sama dengan pratinjau
            (invoices/_template), jadi tidak ada lagi desain kedua. */
         body { background: #E9EEF3; }
         .sheet-paper { background: #fff; }
+        /* Modern font override for browser preview */
+        .invoice-doc, .invoice-doc * {
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
+        }
         @media (max-width: 640px) { .sheet-paper { padding: 18px !important; } }
         @media print {
             .no-print { display: none !important; }
