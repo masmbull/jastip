@@ -231,6 +231,7 @@ jobs:
           php artisan package:discover --ansi
           php artisan config:clear
           php artisan view:clear
+          php artisan migrate --force --no-interaction
           php artisan config:cache
           php artisan view:cache
 
