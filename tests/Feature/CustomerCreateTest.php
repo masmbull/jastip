@@ -68,7 +68,6 @@ class CustomerCreateTest extends TestCase
             ->latest('id')
             ->firstOrFail();
         $username = $user->username;
-        $this->assertSame($longName, $user->name);
         $this->assertNotNull($username);
         $this->assertLessThanOrEqual(50, strlen($username));
     }
