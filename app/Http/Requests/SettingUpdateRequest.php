@@ -51,7 +51,6 @@ class SettingUpdateRequest extends FormRequest
             'qris_image.mimes' => 'Gambar QRIS harus berupa PNG, JPG, GIF, atau WEBP.',
             'whatsapp.regex' => 'Nomor WhatsApp harus berisi 8 sampai 15 digit, tanpa spasi atau tanda hubung.',
             'email.email' => 'Alamat email harus valid.',
-            'wa_gateway_url.url' => 'Alamat gateway harus berupa URL HTTP atau HTTPS yang valid.',
         ];
 
         foreach (config('settings.groups', []) as $meta) {

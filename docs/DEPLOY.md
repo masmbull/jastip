@@ -25,9 +25,6 @@ DB_DATABASE=jastip_db
 DB_USERNAME=jastip_user
 DB_PASSWORD=your_secure_password
 
-# WhatsApp Gateway (optional)
-WHATSAPP_GATEWAY=fonnte
-WHATSAPP_FONNTE_TOKEN=your_token_here
 ```
 
 ### 2. Dependencies Installation
@@ -45,7 +42,7 @@ php artisan key:generate
 
 ### 3. Database Migration
 ```bash
-# Run migrations (safe - hanya ADD COLUMN)
+# Jalankan migrasi aplikasi dan bersihkan kredensial gateway WhatsApp lama
 php artisan migrate --force
 
 # Optional: Seed QRIS & logo settings

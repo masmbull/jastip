@@ -134,19 +134,16 @@ class SettingUploadTest extends TestCase
         $this->assertSame(0, Setting::get('shipping_cost'));
     }
 
-    public function test_invalid_contact_and_gateway_values_do_not_change_settings(): void
+    public function test_invalid_contact_and_business_values_do_not_change_settings(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
         Setting::set('whatsapp', '6281234567890', 'string', 'contact', true);
-        Setting::set('wa_gateway_url', 'https://gateway.example.test', 'string', 'whatsapp_gateway', true);
 
         $this->actingAs($admin)->post(route('admin.settings.update'), [
             'whatsapp' => '0812 3456',
-            'wa_gateway_url' => 'not-a-url',
             'shipping_cost' => '-100',
-        ])->assertSessionHasErrors(['whatsapp', 'wa_gateway_url', 'shipping_cost']);
+        ])->assertSessionHasErrors(['whatsapp', 'shipping_cost']);
 
         $this->assertSame('6281234567890', Setting::get('whatsapp'));
-        $this->assertSame('https://gateway.example.test', Setting::get('wa_gateway_url'));
     }
 }

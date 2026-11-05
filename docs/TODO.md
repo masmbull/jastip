@@ -28,33 +28,11 @@ Daftar kerja aktif. Coret yang sudah kelar dan tinggalkan catatannya, jangan dih
 
 ## Antrean baru (28 Okt)
 
-- [ ] **Invoice terkirim langsung ke WA nomor pelanggan sebagai GAMBAR.**
-  Kondisi sekarang: tombol WhatsApp di daftar Invoice sudah merender PNG
-  (html2canvas) DAN `navigator.share({files})` memasang nomor pelanggan pada
-  `text` — tapi Android tetap menampilkan share sheet generik, jadi admin
-  masih harus memilih aplikasi WhatsApp dan kontaknya sendiri. Nomor tujuan
-  belum dijangkau otomatis.
-  Sisa kerja:
-  - [ ] Pakai `navigator.share({ files, text, url })` dengan deeplink
-        `https://wa.me/<nomor>?text=...` supaya beberapa browser/OS langsung
-        menawarkan WhatsApp dengan kontak terisi.
-  - [ ] Opsi "kirim langsung" hanya bisa penuh lewat **WhatsApp Cloud API**
-        (akun Meta Business + nomor + token) — kirim gambar via
-        `POST /{phone-number-id}/messages` type `image`. Butuh keputusan biaya
-        dan kredensial, jadi jangan diklaim otomatis sampai itu tersedia.
-  - [ ] Fallback desktop (tanpa file sharing): unduh PNG + buka
-        `wa.me/<nomor>` — sudah ada, rapikan pesannya.
-- [x] **Kirim invoice sebagai gambar, LANGSUNG (tanpa pilih kontak)** —
-  gateway WhatsApp self-hosted (OpenWA) + render PNG di server.
-  Kode: `WhatsappGatewayService`, `InvoiceImageRenderer`,
-  `InvoiceSendController`, tombol **Kirim WA** di daftar Invoice,
-  kredensial di **Pengaturan → Gateway WhatsApp**.
-  Setup: `docs/WHATSAPP-GATEWAY.md`.
-  Catatan: jalur ini membajak WhatsApp Web (bukan API resmi Meta), jadi
-  RISIKO NOMOR DIBLOKIR tetap ada dan pesan pertama ke kontak baru bisa
-  tidak sampai. Butuh Chromium headless di server. Sudah diuji end-to-end
-  dengan gateway tiruan (PNG 140 KB + caption sampai dengan benar) dan
-  terhadap Edge headless asli di mesin dev.
+- [x] **Bagikan invoice sebagai gambar tanpa gateway.**
+  Browser merender PNG lalu menawarkan gambar dan caption lewat Web Share API.
+  Admin memilih aplikasi, akun pengirim, dan kontak di perangkatnya. Browser
+  tidak bisa otomatis menentukan nomor pengirim atau customer. Lihat
+  `docs/WHATSAPP-SHARING.md`.
 
 ## Batch 17 Okt (deposit, rekening, invoice PNG, PWA/favicon)
 
