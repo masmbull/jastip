@@ -73,7 +73,8 @@ class InvoiceSendController extends Controller
             'wa_invoice_error' => null,
         ])->save();
 
-        return $back->with('success', 'Invoice #'.$order->no.' terkirim ke WhatsApp '.$order->customer_whatsapp.'.');
+        return redirect()->away(whatsapp_url($phone))
+            ->with('success', 'Invoice #'.$order->no.' terkirim ke WhatsApp '.$order->customer_whatsapp.'.');
     }
 
     /**
