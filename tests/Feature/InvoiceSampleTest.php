@@ -51,7 +51,9 @@ class InvoiceSampleTest extends TestCase
 
         // Pembayaran + footer.
         $res->assertSee('TRANSFER REKENING');
-        $res->assertSee('BCA 2700398369');
+        $res->assertSee('BCA');
+        $res->assertSee('2700398369');
+        $res->assertSee('a/n Nabila Adriyana');
         $res->assertSee('Terima kasih');
     }
 
