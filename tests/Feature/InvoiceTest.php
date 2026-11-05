@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Setting;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,6 +24,26 @@ class InvoiceTest extends TestCase
     {
         $this->assertSame('Asia/Jakarta', config('app.timezone'));
         $this->assertSame('Asia/Jakarta', now()->timezoneName);
+    }
+
+    public function test_paid_invoice_displays_payment_time_in_asia_jakarta(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+        $order = Order::create([
+            'order_number' => 'NDTEST-WIB001',
+            'customer_name' => 'WIB Test',
+            'customer_whatsapp' => '081200000002',
+            'subtotal' => 50000,
+            'shipping_cost' => 0,
+            'total' => 50000,
+            'status' => Order::STATUS_CONFIRMED,
+            'paid_at' => Carbon::create(2026, 11, 5, 1, 30, 0, 'UTC'),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.invoice', $order))
+            ->assertOk()
+            ->assertSee('Pembayaran sudah diterima pada 05 Nov 2026, 08:30');
     }
 
     public function test_invoice_shows_order_fields_and_payment_instructions(): void
