@@ -1,18 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80">
-  <!-- blu by BCA Digital logo -->
-  <!-- Official colors: lowercase "blu" in dark teal #003B5C, "BCA" in cyan #00B8D4 -->
-  <defs>
-    <style>
-      .blu-word { font-family: Arial Black, Arial, sans-serif; font-weight: 900; font-size: 38px; }
-      .blu-dot { }
-    </style>
-  </defs>
-  <!-- Circle mark (the "b" dot from blu logo) -->
-  <circle cx="22" cy="40" r="20" fill="#00B8D4"/>
-  <circle cx="22" cy="40" r="11" fill="#FFFFFF"/>
-  <circle cx="22" cy="40" r="5" fill="#003B5C"/>
-  <!-- "blu" lowercase dark -->
-  <text x="52" y="57" class="blu-word" fill="#003B5C">blu</text>
-  <!-- "BCA" uppercase cyan -->
-  <text x="134" y="57" class="blu-word" fill="#00B8D4">BCA</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- blu by BCA Digital official logo -->
+  <!-- Large teal "blu" wordmark on top -->
+  <text x="200" y="160" font-family="Arial Rounded MT Bold,Arial Black,Arial,sans-serif"
+        font-size="155" font-weight="900" fill="#00C8C8" text-anchor="middle"
+        letter-spacing="-4">blu</text>
+  <!-- BCA shield icon (small, bottom left) -->
+  <path d="M28,218 L28,218 Q20,218 20,226 L20,272 Q20,285 34,290 L44,293 Q54,290 64,285 L64,226 Q64,218 56,218 Z"
+        fill="none" stroke="#1A3A8F" stroke-width="3.5"/>
+  <circle cx="42" cy="242" r="8" fill="#1A3A8F"/>
+  <circle cx="34" cy="250" r="6" fill="#1A3A8F"/>
+  <circle cx="50" cy="250" r="6" fill="#1A3A8F"/>
+  <rect x="38" y="255" width="8" height="12" rx="2" fill="#1A3A8F"/>
+  <rect x="28" y="263" width="28" height="5" rx="2" fill="#1A3A8F"/>
+  <text x="30" y="282" font-family="Arial,sans-serif" font-size="7" fill="#1A3A8F">GRUP BCA</text>
+  <!-- BCAdigital text -->
+  <text x="76" y="286" font-family="Arial Black,Arial,sans-serif" font-size="38" font-weight="900" fill="#1A3A8F">BCA</text>
+  <text x="190" y="286" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#00C8C8">digital</text>
 </svg>
