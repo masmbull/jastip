@@ -10,7 +10,7 @@
 
   Variabel: $doc (array) dari InvoiceController::buildDoc() / sampleInvoice().
 --}}
-<div class="invoice-doc {{ count($doc['items'] ?? []) > 12 ? 'invoice-doc-compact' : '' }}" style="position:relative; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 14px; line-height:1.35; background: #FFFFFF; width: 100%;">
+<div class="invoice-doc" data-layout="{{ count($doc['items'] ?? []) > 12 ? 'compact' : 'normal' }}" style="position:relative; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 14px; line-height:1.35; background: #FFFFFF; width: 100%;">
 
     {{-- Stempel PAID kalau invoice sudah lunas. --}}
     @if($doc['paid'] ?? false)

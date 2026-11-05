@@ -11,11 +11,17 @@
            dengan pratinjau/PDF (invoices/_template). */
         * { box-sizing: border-box; }
         body { margin: 0; padding: 16px; background: #FFFFFF; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; }
-        .invoice-doc.invoice-doc-compact {
+        .invoice-doc[data-layout="compact"] {
             font-size: 11px !important;
             line-height: 1.18 !important;
         }
-        .invoice-doc.invoice-doc-compact td {
+        .invoice-doc[data-layout="compact"] td,
+        .invoice-doc[data-layout="compact"] div,
+        .invoice-doc[data-layout="compact"] span {
+            font-size: 11px !important;
+            line-height: 1.18 !important;
+        }
+        .invoice-doc[data-layout="compact"] td {
             padding-top: 3px !important;
             padding-bottom: 3px !important;
         }

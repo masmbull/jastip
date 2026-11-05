@@ -8,16 +8,29 @@
         * { font-family: DejaVu Sans, Arial, Helvetica, sans-serif; }
         body { margin: 0; color: #141414; font-size: 12px; }
         table { border-collapse: collapse; }
-        .invoice-doc.invoice-doc-compact {
-            font-size: 11px !important;
-            line-height: 1.18 !important;
+        .invoice-doc[data-layout="compact"] {
+            font-size: 10px !important;
+            line-height: 1.08 !important;
         }
-        .invoice-doc.invoice-doc-compact td {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
+        .invoice-doc[data-layout="compact"] td,
+        .invoice-doc[data-layout="compact"] div,
+        .invoice-doc[data-layout="compact"] span {
+            font-size: 10px !important;
+            line-height: 1.08 !important;
         }
-        .invoice-doc.invoice-doc-compact img {
-            max-height: 110px !important;
+        .invoice-doc[data-layout="compact"] td {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+        .invoice-doc[data-layout="compact"] img {
+            max-height: 86px !important;
+            max-width: 86px !important;
+            width: 86px !important;
+            height: 86px !important;
+        }
+        .invoice-doc[data-layout="compact"] > div {
+            margin-top: 4px !important;
+            margin-bottom: 4px !important;
         }
     </style>
 </head>
