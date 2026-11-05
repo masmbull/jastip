@@ -64,7 +64,11 @@ class CustomerCreateTest extends TestCase
         ])->assertRedirect(route('admin.users.index'))
             ->assertSessionHasNoErrors();
 
-        $username = User::where('name', $longName)->value('username');
+        $user = User::where('role', 'customer')
+            ->latest('id')
+            ->firstOrFail();
+        $username = $user->username;
+        $this->assertSame($longName, $user->name);
         $this->assertNotNull($username);
         $this->assertLessThanOrEqual(50, strlen($username));
     }
