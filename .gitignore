@@ -12,6 +12,7 @@
 # Laravel build artifacts
 /public/hot
 /public/storage
+/bootstrap/cache/*.php
 
 # IDE / OS
 /.idea
