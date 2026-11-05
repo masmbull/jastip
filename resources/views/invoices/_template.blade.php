@@ -117,26 +117,34 @@
             Pembayaran sudah diterima{{ !empty($doc['paid_at']) ? ' pada '.$doc['paid_at'] : '' }}. Terima kasih.
         </div>
     @elseif($qris || ($bank && !empty($bank['lines'])))
-        <table role="presentation" style="width:100%; border-collapse:separate; border-spacing:8px 0; table-layout:fixed; margin-left:-8px;">
+        <table role="presentation" style="width:100%; border-collapse:separate; border-spacing:7px 0; table-layout:fixed; margin-left:-7px;">
             <tr>
                 @if($qris)
-                    <td style="width:40%; vertical-align:top; text-align:center; border:0; padding:5px;">
-                        <div style="font-weight:bold; font-size:13px; margin-bottom:7px;">QRIS</div>
+                    <td style="{{ ($bank && !empty($bank['lines'])) ? 'width:58%;' : 'width:100%;' }} vertical-align:top; text-align:center; border:1px solid #CBD5E1; padding:9px 8px 7px;">
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:7px;">PEMBAYARAN QRIS</div>
                         @if(!empty($qris['image']))
-                            <img class="qris-invoice-image" src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:170px; height:170px; max-width:170px; object-fit:contain; image-rendering:auto; background:#FFFFFF; margin:0 auto;">
+                            <img class="qris-invoice-image" src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:60mm; height:60mm; max-width:60mm; max-height:60mm; object-fit:contain; image-rendering:-webkit-optimize-contrast; background:#FFFFFF; margin:0 auto;">
                         @endif
-                        @if(!empty($qris['merchant']))
-                            <div style="font-size:11px; color:#475569; margin-top:5px;">{{ $qris['merchant'] }}</div>
-                        @endif
+                        <div style="font-size:12px; font-weight:bold; color:#141414; margin-top:5px;">JASTIP NITIPDIEND</div>
+                        <div style="font-size:10px; color:#475569; margin-top:2px;">SCAN / UPLOAD QRIS</div>
                     </td>
                 @endif
 
                 @if($bank && !empty($bank['lines']))
-                    <td style="{{ $qris ? 'width:60%;' : 'width:100%;' }} vertical-align:top; border:1px solid #CBD5E1; padding:10px;">
-                        <div style="font-weight:bold; font-size:13px; margin-bottom:7px;">TRANSFER REKENING</div>
-                        @foreach($bank['lines'] as $line)
-                            <div style="font-size:12px; padding:3px 0; {{ $loop->first ? 'font-weight:bold;' : 'color:#475569;' }}">{{ $line }}</div>
-                        @endforeach
+                    <td style="{{ $qris ? 'width:42%;' : 'width:100%;' }} vertical-align:top; border:1px solid #CBD5E1; padding:9px 10px;">
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:6px;">TRANSFER REKENING</div>
+                        @if(!empty($bank['accounts']))
+                            @foreach($bank['accounts'] as $account)
+                                <div style="{{ !$loop->first ? 'border-top:1px solid #E2E8F0; margin-top:6px; padding-top:6px;' : '' }}">
+                                    <div style="font-size:12px; font-weight:bold; margin-bottom:2px;">{{ $account['bank'] }}</div>
+                                    <div style="font-size:12px; font-weight:normal; line-height:1.35;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
+                                </div>
+                            @endforeach
+                        @else
+                            @foreach($bank['lines'] as $line)
+                                <div style="{{ !$loop->first ? 'border-top:1px solid #E2E8F0; margin-top:6px; padding-top:6px;' : '' }} font-size:12px; line-height:1.35;">{{ $line }}</div>
+                            @endforeach
+                        @endif
                     </td>
                 @endif
             </tr>
