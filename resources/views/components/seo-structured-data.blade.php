@@ -1,42 +1,28 @@
-{{-- JSON-LD Structured Data for SEO.
-     PENTING: `@@context` / `@@type` sengaja dobel-@ supaya Blade mencetak
-     karakter `@` literal. Kalau ditulis `@context`, Blade menganggapnya
-     direktif dan hasil compile-nya rusak (ParseError). --}}
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "E-commerce",
-  "name": "{{ setting('brand_name', 'NITIP DI END') }}",
-  "description": "{{ setting('meta_description', 'Titipan spesial dengan harga terbaik') }}",
-  "url": "{{ config('app.url') }}",
-  "logo": "{{ asset('images/icons/icon-512.png') }}",
-  "sameAs": [
-    "{{ setting('social_facebook', '#') }}",
-    "{{ setting('social_instagram', '#') }}",
-    "{{ setting('social_whatsapp', '#') }}"
-  ],
-  "contactPoint": {
-    "@@type": "ContactPoint",
-    "contactType": "Customer Service",
-    "telephone": "{{ setting('whatsapp', '6285123456789') }}",
-    "availableLanguage": ["id", "en"]
-  },
-  "address": {
-    "@@type": "PostalAddress",
-    "addressCountry": "ID"
-  }
-}
-</script>
-
-{{-- Organization Schema --}}
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "Organization",
-  "name": "{{ setting('brand_name', 'NITIP DI END') }}",
-  "url": "{{ config('app.url') }}",
-  "logo": "{{ asset('images/icons/icon-512.png') }}",
-  "description": "{{ setting('meta_description', 'Titipan spesial dengan harga terbaik') }}",
-  "founder": "{{ setting('brand_owner', 'Nabila Adriyana') }}"
-}
-</script>
+@php
+    $brandName = setting('brand_name', 'NITIP DI END');
+    $siteUrl = rtrim(config('app.url') ?: url('/'), '/');
+    $siteDescription = $pageDescription ?? setting('meta_description', '');
+    $schema = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            [
+                '@type' => 'Organization',
+                '@id' => $siteUrl.'/#organization',
+                'name' => $brandName,
+                'url' => $siteUrl,
+                'logo' => asset('images/icons/icon-512.png'),
+                'description' => $siteDescription,
+            ],
+            [
+                '@type' => 'WebSite',
+                '@id' => $siteUrl.'/#website',
+                'url' => $siteUrl,
+                'name' => $brandName,
+                'description' => $siteDescription,
+                'inLanguage' => 'id-ID',
+                'publisher' => ['@id' => $siteUrl.'/#organization'],
+            ],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">@json($schema)</script>

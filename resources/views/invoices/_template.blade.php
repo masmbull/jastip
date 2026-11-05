@@ -39,7 +39,7 @@
         </tr>
     </table>
 
-    <div style="border-top:3px solid #141414; margin:3px 0 6px;"></div>
+    <div style="border-top:3px solid #FFC800; margin:3px 0 6px;"></div>
 
     {{-- Pelanggan & ringkasan --}}
     <table style="width:100%; border-collapse:collapse;">
@@ -93,30 +93,23 @@
     </table>
 
     {{-- Total --}}
-    <table style="width:100%; border-collapse:collapse; margin-top:5px;">
+    <table class="invoice-totals-box" style="width:100%; border:2px solid #141414; border-collapse:collapse; margin-top:5px; padding:3px;">
+        @foreach($doc['totals'] as $row)
+            <tr>
+                <td style="color:#475569; padding:2px;">{{ $row['label'] }}</td>
+                <td style="text-align:right; padding:2px; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
+            </tr>
+        @endforeach
         <tr>
-            <td style="width:55%;"></td>
-            <td class="invoice-totals-box" style="border:2px solid #141414; padding:3px;">
-                <table style="width:100%; border-collapse:collapse;">
-                    @foreach($doc['totals'] as $row)
-                        <tr>
-                            <td style="color:#475569; padding:2px;">{{ $row['label'] }}</td>
-                            <td style="text-align:right; padding:2px; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
-                        </tr>
-                    @endforeach
-                    <tr>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:4px 6px; border-top:2px solid #141414;">{{ $doc['total']['label'] }}</td>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:4px 6px; text-align:right; font-size:12px; border-top:2px solid #141414;">{{ $doc['total']['value'] }}</td>
-                    </tr>
-                    @if($doc['left'])
-                        <tr>
-                            <td style="color:#B45309; font-weight:bold; padding:3px 2px 2px;">{{ $doc['left']['label'] }}</td>
-                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:12px; padding:3px 2px 2px;">{{ $doc['left']['value'] }}</td>
-                        </tr>
-                    @endif
-                </table>
-            </td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:4px 6px; border-top:2px solid #141414;">{{ $doc['total']['label'] }}</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:4px 6px; text-align:right; font-size:12px; border-top:2px solid #141414;">{{ $doc['total']['value'] }}</td>
         </tr>
+        @if($doc['left'])
+            <tr>
+                <td style="color:#B45309; font-weight:bold; padding:3px 2px 2px;">{{ $doc['left']['label'] }}</td>
+                <td style="text-align:right; color:#B45309; font-weight:bold; font-size:12px; padding:3px 2px 2px;">{{ $doc['left']['value'] }}</td>
+            </tr>
+        @endif
     </table>
 
     {{-- Pembayaran: QRIS + rekening.

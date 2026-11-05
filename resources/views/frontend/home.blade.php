@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('title', 'Jastip Lokal Indonesia')
+
+@php
+    $metaDescription = 'Nitip parfum, tumbler, lifestyle, dan produk pilihan melalui katalog NITIPDIEND. Pilih barang yang kamu inginkan dan buat pesanan jastip secara online.';
+    $metaImageAlt = 'NITIPDIEND: Kamu wishlist, kami eksekusi';
+@endphp
+
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

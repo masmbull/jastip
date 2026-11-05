@@ -25,9 +25,32 @@ class SeoTest extends TestCase
         $res->assertSee('name="description"', false);
         $res->assertSee('rel="canonical"', false);
         $res->assertSee('property="og:title"', false);
+        $res->assertSee('property="og:description"', false);
         $res->assertSee('property="og:image"', false);
+        $res->assertSee('property="og:image:secure_url"', false);
         $res->assertSee('twitter:card', false);
+        $res->assertSee('name="twitter:description"', false);
         $res->assertSee('application/ld+json', false);
+        $res->assertSee('Jastip Lokal Indonesia | NITIP DI END', false);
+        $res->assertSee('Nitip parfum, tumbler, lifestyle, dan produk pilihan', false);
+    }
+
+    public function test_home_structured_data_uses_valid_schema_types_and_json(): void
+    {
+        $html = $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '/<script type="application\/ld\+json">(.+?)<\/script>/s',
+            $html
+        );
+        preg_match('/<script type="application\/ld\+json">(.+?)<\/script>/s', $html, $matches);
+        $schema = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR);
+        $types = array_column($schema['@graph'], '@type');
+
+        $this->assertSame('https://schema.org', $schema['@context']);
+        $this->assertContains('Organization', $types);
+        $this->assertContains('WebSite', $types);
+        $this->assertNotContains('E-commerce', $types);
     }
 
     public function test_sitemap_is_xml_and_lists_public_pages(): void
