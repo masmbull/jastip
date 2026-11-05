@@ -131,7 +131,7 @@ class Recap extends Model
             'brand' => setting('brand_name', 'NITIP DI END'),
             'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
             'number' => $this->name,
-            'date' => optional($this->updated_at)->format('d M Y, H:i') ?? now()->format('d M Y, H:i'),
+            'date' => optional($this->updated_at)?->timezone('Asia/Jakarta')->format('d M Y, H:i') ?? now('Asia/Jakarta')->format('d M Y, H:i'),
             'customer_name' => (string) $customer['value'] ?: 'Pelanggan',
             'wa' => (string) $wa['value'],
             'items' => $items,

@@ -19,6 +19,12 @@ class InvoiceTest extends TestCase
         $this->seed();
     }
 
+    public function test_application_timezone_is_asia_jakarta(): void
+    {
+        $this->assertSame('Asia/Jakarta', config('app.timezone'));
+        $this->assertSame('Asia/Jakarta', now()->timezoneName);
+    }
+
     public function test_invoice_shows_order_fields_and_payment_instructions(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
