@@ -33,6 +33,7 @@ class InvoiceTest extends TestCase
             'order_number' => 'NDTEST-WIB001',
             'customer_name' => 'WIB Test',
             'customer_whatsapp' => '081200000002',
+            'customer_address' => 'Jl. WIB Test',
             'subtotal' => 50000,
             'shipping_cost' => 0,
             'total' => 50000,
