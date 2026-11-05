@@ -65,13 +65,33 @@ class UserController extends Controller
 
             $user = DB::transaction(fn () => User::create($attributes));
         } catch (\Throwable $exception) {
-            Log::error('Customer creation failed', [
-                'message' => $exception->getMessage(),
-                'name' => $name,
-                'email' => $email,
-            ]);
+            if ($email === null) {
+                try {
+                    $fallbackEmail = 'pelanggan-'.bin2hex(random_bytes(6)).'@local.invalid';
+                    $attributes['email'] = $fallbackEmail;
 
-            throw $exception;
+                    if (Schema::hasColumn('users', 'email_verified_at')) {
+                        $attributes['email_verified_at'] = null;
+                    }
+
+                    $user = DB::transaction(fn () => User::create($attributes));
+                } catch (\Throwable $fallbackException) {
+                    Log::error('Customer creation failed', [
+                        'message' => $fallbackException->getMessage(),
+                        'name' => $name,
+                    ]);
+
+                    throw $fallbackException;
+                }
+            } else {
+                Log::error('Customer creation failed', [
+                    'message' => $exception->getMessage(),
+                    'name' => $name,
+                    'email' => $email,
+                ]);
+
+                throw $exception;
+            }
         }
 
         if (Schema::hasTable('user_profiles')) {

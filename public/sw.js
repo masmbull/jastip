@@ -1,6 +1,6 @@
 ﻿/* Nitip Di End — PWA service worker (Vanilla, no deps) */
 (function () {
-    var CACHE = 'jastip-pwa-v4';
+    var CACHE = 'jastip-pwa-v5';
     var OFFLINE = '/offline.html';
     var PRECACHE = [
         '/',
@@ -36,7 +36,9 @@
         if (url.pathname.startsWith('/build/') ||
             (res.headers.get('content-type') &&
              res.headers.get('content-type').match(/^(text\/css|application\/javascript|image\/)/))) {
-            caches.open(CACHE).then(function (c) { c.put(req, res.clone()); });
+            return caches.open(CACHE).then(function (c) {
+                return c.put(req, res.clone());
+            }).catch(function () {});
         }
     }
 
@@ -46,12 +48,21 @@
 
         var url = new URL(req.url);
 
+        if (url.pathname.startsWith('/admin') || req.mode === 'navigate' && url.pathname.startsWith('/api')) {
+            e.respondWith(fetch(req));
+            return;
+        }
+
         // Navigation requests (documents) -> network first, cache the real HTML,
         // and only fall back to offline.html once the actual page is unreachable/offline.
         if (req.destination === 'document') {
             e.respondWith(
                 fetch(req).then(function (res) {
-                    caches.open(CACHE).then(function (c) { c.put(req, res.clone()); });
+                    if (!res || res.status !== 200) return res;
+                    var responseCopy = res.clone();
+                    caches.open(CACHE).then(function (c) {
+                        return c.put(req, responseCopy);
+                    }).catch(function () {});
                     return res;
                 }).catch(function () {
                     return caches.match(req).then(function (cached) {
