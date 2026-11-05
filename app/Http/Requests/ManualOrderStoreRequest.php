@@ -15,6 +15,24 @@ class ManualOrderStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'customer_name' => is_string($this->input('customer_name'))
+                ? trim($this->input('customer_name'))
+                : $this->input('customer_name'),
+            'customer_whatsapp' => is_string($this->input('customer_whatsapp'))
+                ? trim($this->input('customer_whatsapp'))
+                : $this->input('customer_whatsapp'),
+            'customer_email' => filled($this->input('customer_email'))
+                ? strtolower(trim((string) $this->input('customer_email')))
+                : null,
+            'customer_address' => is_string($this->input('customer_address'))
+                ? trim($this->input('customer_address'))
+                : $this->input('customer_address'),
+        ]);
+    }
+
     public function rules(): array
     {
         return [

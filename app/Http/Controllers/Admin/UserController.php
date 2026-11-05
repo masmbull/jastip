@@ -40,13 +40,16 @@ class UserController extends Controller
         ]);
 
         $password = Str::password(10);
-        $email = filled($validated['email'] ?? null) ? $validated['email'] : null;
+        $name = trim($validated['name']);
+        $phone = trim($validated['phone']);
+        $emailInput = trim((string) ($validated['email'] ?? ''));
+        $email = $emailInput !== '' ? strtolower($emailInput) : null;
 
-        $user = DB::transaction(function () use ($validated, $password, $email) {
+        $user = DB::transaction(function () use ($validated, $password, $email, $name, $phone) {
             $user = User::create([
-                'name' => $validated['name'],
+                'name' => $name,
                 'email' => $email,
-                'username' => $this->uniqueUsername($email, $validated['name']),
+                'username' => $this->uniqueUsername($email, $name),
                 'password' => $password,
                 'role' => 'customer',
                 'email_verified_at' => $email ? now() : null,
@@ -55,7 +58,7 @@ class UserController extends Controller
             $user->profile()->updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'phone' => $validated['phone'] ?? null,
+                    'phone' => $phone,
                     'membership_tier' => $validated['tier'] ?? 'bronze',
                     'loyalty_points' => $validated['points'] ?? 0,
                 ],
