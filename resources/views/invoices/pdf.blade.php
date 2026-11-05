@@ -43,8 +43,8 @@
 
         /* ── QRIS image ──────────────────────────────────────── */
         .qris-invoice-image {
-            width: 60mm !important;
-            height: 60mm !important;
+            width: 75mm !important;
+            height: 75mm !important;
             object-fit: contain;
             display: block;
             background: #FFFFFF;
@@ -85,8 +85,8 @@
             height: 40mm !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
-            width: 44px !important;
-            height: 18px !important;
+            width: 72px !important;
+            height: 28px !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-logo {
             width: 48px !important;
