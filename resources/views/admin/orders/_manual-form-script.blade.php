@@ -96,14 +96,20 @@
 
             setMode(m) {
                 this.mode = m === 'lunas' ? 'lunas' : 'deposit';
-                if (this.mode === 'lunas') {
-                    // Mode lunas: deposit dipaksa nol, jadi nggak ada sisa tagihan.
-                    this.dpAmt = 0;
-                }
             },
             fillCustomer(select) {
                 const option = select.selectedOptions[0];
-                if (!option?.value) return;
+                if (!option?.value) {
+                    const form = select.closest('form');
+                    ['customer_name', 'customer_whatsapp', 'customer_email', 'customer_address'].forEach((name) => {
+                        const field = form?.querySelector(`[name="${name}"]`);
+                        if (field) field.value = '';
+                    });
+                    this.city = '';
+                    this.district = '';
+                    this.village = '';
+                    return;
+                }
 
                 const form = select.closest('form');
                 if (option.dataset.city) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -39,27 +40,29 @@ class UserController extends Controller
         ]);
 
         $password = Str::password(10);
-        $email = $validated['email'] ?? null;
+        $email = filled($validated['email'] ?? null) ? $validated['email'] : null;
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $email,
-            'username' => $this->uniqueUsername($email, $validated['name']),
-            'password' => $password, // di-hash otomatis oleh cast 'hashed'
-            'role' => 'customer',
-            'email_verified_at' => $email ? now() : null,
-        ]);
+        $user = DB::transaction(function () use ($validated, $password, $email) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $email,
+                'username' => $this->uniqueUsername($email, $validated['name']),
+                'password' => $password,
+                'role' => 'customer',
+                'email_verified_at' => $email ? now() : null,
+            ]);
 
-        // Profil sudah otomatis dibuat oleh UserObserver saat user dibuat,
-        // jadi di sini cukup melengkapi datanya.
-        $user->profile()->updateOrCreate(
-            ['user_id' => $user->id],
-            [
-                'phone' => $validated['phone'] ?? null,
-                'membership_tier' => $validated['tier'] ?? 'bronze',
-                'loyalty_points' => $validated['points'] ?? 0,
-            ],
-        );
+            $user->profile()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'phone' => $validated['phone'] ?? null,
+                    'membership_tier' => $validated['tier'] ?? 'bronze',
+                    'loyalty_points' => $validated['points'] ?? 0,
+                ],
+            );
+
+            return $user;
+        });
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pelanggan '.$user->name.' berhasil ditambahkan. Password sementara: '.$password);

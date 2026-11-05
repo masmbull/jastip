@@ -70,7 +70,7 @@ class OrderController extends Controller
         Gate::authorize('create', Order::class);
 
         $customer = $request->filled('customer_user_id')
-            ? User::where('role', 'customer')->findOrFail($request->validated('customer_user_id'))
+            ? User::where('role', 'customer')->find($request->validated('customer_user_id'))
             : null;
 
         $items = collect($request->validated('items'))->map(fn ($item) => [
@@ -103,7 +103,7 @@ class OrderController extends Controller
                 'user_id' => $customer?->id,
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
-                'customer_email' => $request->input('customer_email'),
+                'customer_email' => filled($request->input('customer_email')) ? $request->input('customer_email') : null,
                 'customer_address' => $request->input('customer_address'),
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),

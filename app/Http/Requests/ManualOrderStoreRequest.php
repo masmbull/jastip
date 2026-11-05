@@ -34,6 +34,7 @@ class ManualOrderStoreRequest extends FormRequest
             'fee' => ['nullable', 'integer', 'min:0'],
             'legacy_fee' => ['nullable', 'integer', 'min:0'],
             'show_fee' => ['nullable', 'boolean'],
+            'mark_paid' => ['nullable', 'boolean'],
             'mode' => ['nullable', Rule::in(['deposit', 'lunas'])],
             'down_payment' => ['nullable', 'integer', 'min:0'],
             'status' => ['nullable', Rule::in(array_keys(Order::statuses()))],
