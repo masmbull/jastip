@@ -390,20 +390,30 @@ window.Alpine = Alpine;
             host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;z-index:-1;';
 
             const page = document.createElement('div');
-            page.style.cssText = 'position:relative;box-sizing:border-box;width:794px;height:1123px;padding:38px 42px 34px;background:#fff;overflow:hidden;';
+            page.style.cssText = 'position:relative;box-sizing:border-box;width:794px;height:1123px;padding:40px 42px;background:#fff;overflow:hidden;';
 
             const accent = document.createElement('div');
             accent.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:12px;background:#FFC800;';
 
             const contentArea = document.createElement('div');
-            contentArea.style.cssText = 'box-sizing:border-box;width:100%;height:100%;padding-top:12px;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;';
+            contentArea.style.cssText = 'box-sizing:border-box;width:100%;height:1043px;overflow:hidden;';
 
             const invoiceCopy = invoice.cloneNode(true);
-            invoiceCopy.style.width = '100%';
-            invoiceCopy.style.margin = '0';
-            invoiceCopy.style.transformOrigin = 'top center';
+            invoiceCopy.style.cssText += 'box-sizing:border-box;width:100%;margin:0;font-size:13px;line-height:1.3;';
+            invoiceCopy.querySelectorAll('table').forEach((table) => {
+                table.style.borderCollapse = 'collapse';
+                table.style.borderSpacing = '0';
+                table.style.maxWidth = '100%';
+            });
+            invoiceCopy.querySelectorAll('td, div, span').forEach((element) => {
+                const fontSize = Number.parseFloat(getComputedStyle(element).fontSize);
+                if (fontSize < 12) element.style.setProperty('font-size', '12px', 'important');
+                element.style.boxSizing = 'border-box';
+            });
             invoiceCopy.querySelectorAll('td').forEach((cell) => {
                 cell.style.overflowWrap = 'anywhere';
+                cell.style.paddingTop = '5px';
+                cell.style.paddingBottom = '5px';
             });
             contentArea.append(invoiceCopy);
             page.append(accent, contentArea);
@@ -422,21 +432,61 @@ window.Alpine = Alpine;
             }));
 
             const availableHeight = contentArea.clientHeight;
+            const availableWidth = contentArea.clientWidth;
             const contentHeight = invoiceCopy.scrollHeight;
-            if (!availableHeight || !contentHeight) throw new Error('Ukuran invoice tidak dapat dihitung');
-
-            const fitScale = Math.min(1, (availableHeight - 20) / contentHeight);
-            invoiceCopy.style.transform = `scale(${fitScale})`;
+            if (!availableHeight || !availableWidth || !contentHeight) {
+                throw new Error('Ukuran invoice tidak dapat dihitung');
+            }
 
             const { default: html2canvas } = await import('html2canvas');
-            const canvas = await html2canvas(page, {
+            const captureOptions = {
                 backgroundColor: '#FFFFFF',
-                scale: 3,
+                scale: 4,
                 windowWidth: 794,
                 windowHeight: 1123,
                 useCORS: true,
                 logging: false,
-            });
+            };
+            let canvas;
+
+            if (contentHeight <= availableHeight) {
+                invoiceCopy.style.display = 'flex';
+                invoiceCopy.style.flexDirection = 'column';
+                invoiceCopy.style.justifyContent = 'space-between';
+                invoiceCopy.style.height = `${availableHeight}px`;
+                invoiceCopy.querySelectorAll(':scope > *').forEach((element) => {
+                    element.style.flexShrink = '0';
+                });
+                canvas = await html2canvas(page, captureOptions);
+            } else {
+                const overflowHost = document.createElement('div');
+                overflowHost.style.cssText = `position:absolute;top:0;left:0;width:${availableWidth}px;`;
+                overflowHost.append(invoiceCopy);
+                host.append(overflowHost);
+
+                const contentCanvas = await html2canvas(invoiceCopy, {
+                    ...captureOptions,
+                    height: contentHeight,
+                });
+                canvas = document.createElement('canvas');
+                canvas.width = 794 * captureOptions.scale;
+                canvas.height = 1123 * captureOptions.scale;
+
+                const context = canvas.getContext('2d');
+                if (!context) throw new Error('Canvas invoice tidak dapat dibuat');
+
+                context.fillStyle = '#FFFFFF';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                const fitScale = Math.min(
+                    (availableWidth * captureOptions.scale) / contentCanvas.width,
+                    (availableHeight * captureOptions.scale) / contentCanvas.height
+                );
+                const drawWidth = contentCanvas.width * fitScale;
+                const drawHeight = contentCanvas.height * fitScale;
+                const offsetX = 42 * captureOptions.scale + ((availableWidth * captureOptions.scale) - drawWidth) / 2;
+                const offsetY = 40 * captureOptions.scale;
+                context.drawImage(contentCanvas, offsetX, offsetY, drawWidth, drawHeight);
+            }
             const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
             if (!blob) throw new Error('Gambar invoice gagal dibuat');
 
