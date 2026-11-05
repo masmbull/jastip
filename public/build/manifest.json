@@ -36,7 +36,7 @@
     "src": "_fonts-BmO20axv.css"
   },
   "node_modules/html2canvas/dist/html2canvas.js": {
-    "file": "assets/html2canvas-B0v77UCJ.js",
+    "file": "assets/html2canvas-LfMGdAl4.js",
     "name": "html2canvas",
     "src": "node_modules/html2canvas/dist/html2canvas.js",
     "isDynamicEntry": true,
@@ -54,7 +54,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DhL6Fs2M.js",
+    "file": "assets/app-B3kGBZQz.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

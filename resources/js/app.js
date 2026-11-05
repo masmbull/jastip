@@ -399,21 +399,17 @@ window.Alpine = Alpine;
             contentArea.style.cssText = 'box-sizing:border-box;width:100%;height:1043px;overflow:hidden;';
 
             const invoiceCopy = invoice.cloneNode(true);
-            invoiceCopy.style.cssText += 'box-sizing:border-box;width:100%;margin:0;font-size:13px;line-height:1.3;';
+            invoiceCopy.style.cssText += 'box-sizing:border-box;width:100%;margin:0;font-size:14px;line-height:1.35;';
             invoiceCopy.querySelectorAll('table').forEach((table) => {
                 table.style.borderCollapse = 'collapse';
                 table.style.borderSpacing = '0';
                 table.style.maxWidth = '100%';
             });
             invoiceCopy.querySelectorAll('td, div, span').forEach((element) => {
-                const fontSize = Number.parseFloat(getComputedStyle(element).fontSize);
-                if (fontSize < 12) element.style.setProperty('font-size', '12px', 'important');
                 element.style.boxSizing = 'border-box';
             });
             invoiceCopy.querySelectorAll('td').forEach((cell) => {
                 cell.style.overflowWrap = 'anywhere';
-                cell.style.paddingTop = '5px';
-                cell.style.paddingBottom = '5px';
             });
             contentArea.append(invoiceCopy);
             page.append(accent, contentArea);
@@ -450,13 +446,6 @@ window.Alpine = Alpine;
             let canvas;
 
             if (contentHeight <= availableHeight) {
-                invoiceCopy.style.display = 'flex';
-                invoiceCopy.style.flexDirection = 'column';
-                invoiceCopy.style.justifyContent = 'space-between';
-                invoiceCopy.style.height = `${availableHeight}px`;
-                invoiceCopy.querySelectorAll(':scope > *').forEach((element) => {
-                    element.style.flexShrink = '0';
-                });
                 canvas = await html2canvas(page, captureOptions);
             } else {
                 const overflowHost = document.createElement('div');
