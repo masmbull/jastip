@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -40,26 +41,41 @@ class UserController extends Controller
         ]);
 
         $password = Str::password(10);
-        $email = filled($validated['email'] ?? null) ? $validated['email'] : null;
+        $name = trim($validated['name']);
+        $phone = trim($validated['phone']);
+        $emailInput = trim((string) ($validated['email'] ?? ''));
+        $email = $emailInput !== '' ? strtolower($emailInput) : null;
 
-        $user = DB::transaction(function () use ($validated, $password, $email) {
-            $user = User::create([
-                'name' => $validated['name'],
+        $user = DB::transaction(function () use ($validated, $password, $email, $name, $phone) {
+            $attributes = [
+                'name' => $name,
                 'email' => $email,
-                'username' => $this->uniqueUsername($email, $validated['name']),
                 'password' => $password,
                 'role' => 'customer',
-                'email_verified_at' => $email ? now() : null,
-            ]);
+            ];
 
-            $user->profile()->updateOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'phone' => $validated['phone'] ?? null,
+            if (Schema::hasColumn('users', 'username')) {
+                $attributes['username'] = $this->uniqueUsername($email, $name);
+            }
+
+            if (Schema::hasColumn('users', 'email_verified_at')) {
+                $attributes['email_verified_at'] = $email ? now() : null;
+            }
+
+            $user = User::create($attributes);
+
+            if (Schema::hasTable('user_profiles')) {
+                $profileAttributes = [
+                    'phone' => $phone,
                     'membership_tier' => $validated['tier'] ?? 'bronze',
                     'loyalty_points' => $validated['points'] ?? 0,
-                ],
-            );
+                ];
+
+                $user->profile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    $profileAttributes,
+                );
+            }
 
             return $user;
         });

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -98,35 +99,62 @@ class OrderController extends Controller
         $status = $request->input('status') ?: ($paid ? Order::STATUS_CONFIRMED : Order::STATUS_AWAITING_PAYMENT);
 
         $order = DB::transaction(function () use ($request, $customer, $items, $subtotal, $shippingCost, $fee, $showFee, $downPayment, $status, $paid) {
-            $order = Order::create([
+            $attributes = [
                 'order_number' => Order::generateOrderNumber(),
-                'user_id' => $customer?->id,
                 'customer_name' => $request->input('customer_name'),
                 'customer_whatsapp' => $request->input('customer_whatsapp'),
-                'customer_email' => filled($request->input('customer_email')) ? $request->input('customer_email') : null,
                 'customer_address' => $request->input('customer_address'),
                 'customer_notes' => $request->input('customer_notes'),
                 'admin_notes' => $request->input('admin_notes'),
-                'city' => $request->input('shipping_city'),
-                'district' => $request->input('shipping_district'),
-                'village' => $request->input('shipping_village'),
                 'shipping_method' => $request->input('shipping_method'),
                 'subtotal' => $subtotal,
                 'shipping_cost' => $shippingCost,
+                'total' => $subtotal + $shippingCost + $fee,
+                'status' => $status,
+            ];
+
+            $optionalColumns = [
+                'user_id' => $customer?->id,
+                'customer_email' => filled($request->input('customer_email')) ? $request->input('customer_email') : null,
+                'city' => $request->input('shipping_city'),
+                'district' => $request->input('shipping_district'),
+                'village' => $request->input('shipping_village'),
                 'fee' => $fee,
                 'show_fee' => $showFee,
                 'down_payment' => $downPayment,
-                'total' => $subtotal + $shippingCost + $fee,
-                'status' => $status,
                 'paid_at' => $paid ? now() : null,
                 'payment_method' => 'manual',
-            ]);
+            ];
 
-            $order->payment_hash = $order->generatePaymentHash();
-            $order->save();
+            foreach ($optionalColumns as $column => $value) {
+                if (Schema::hasColumn('orders', $column)) {
+                    $attributes[$column] = $value;
+                }
+            }
+
+            $order = Order::create($attributes);
+
+            if (Schema::hasColumn('orders', 'payment_hash')) {
+                $order->payment_hash = $order->generatePaymentHash();
+                $order->save();
+            }
 
             foreach ($items as $item) {
-                OrderItem::create($item + ['order_id' => $order->id]);
+                $itemAttributes = [
+                    'order_id' => $order->id,
+                    'product_name' => $item['product_name'],
+                    'quantity' => $item['quantity'],
+                    'product_price' => $item['product_price'],
+                    'subtotal' => $item['subtotal'],
+                ];
+
+                foreach (['unit', 'status', 'deposit', 'fee'] as $column) {
+                    if (Schema::hasColumn('order_items', $column)) {
+                        $itemAttributes[$column] = $item[$column];
+                    }
+                }
+
+                OrderItem::create($itemAttributes);
             }
 
             return $order;
