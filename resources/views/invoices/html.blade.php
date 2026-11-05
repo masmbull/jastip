@@ -10,7 +10,7 @@
            color(oklch) milik Tailwind v4. Template yang dirender sama persis
            dengan pratinjau/PDF (invoices/_template). */
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 24px; background: #FFFFFF; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; }
+        body { margin: 0; padding: 16px; background: #FFFFFF; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; }
     </style>
 </head>
 <body>

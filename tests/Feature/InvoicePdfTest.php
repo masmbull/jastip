@@ -63,6 +63,28 @@ class InvoicePdfTest extends TestCase
         $this->assertStringStartsWith('%PDF', $res->getContent());
     }
 
+    public function test_invoice_with_twenty_items_fits_on_one_page(): void
+    {
+        $order = $this->makeOrder();
+
+        for ($i = 2; $i <= 20; $i++) {
+            $order->items()->create([
+                'product_name' => 'Produk '.$i,
+                'product_price' => 10000,
+                'quantity' => 1,
+                'unit' => 'pcs',
+                'subtotal' => 10000,
+            ]);
+        }
+        $order->forceFill(['subtotal' => 340000, 'total' => 360000])->save();
+
+        $res = $this->get($order->public_pdf_url);
+        $res->assertOk();
+
+        preg_match_all('/\/Type\s*\/Page\b/', $res->getContent(), $pages);
+        $this->assertCount(1, $pages[0]);
+    }
+
     public function test_unknown_token_returns_404(): void
     {
         $this->get(route('invoice.public', ['token' => 'abcdefghijklmnop']))->assertNotFound();

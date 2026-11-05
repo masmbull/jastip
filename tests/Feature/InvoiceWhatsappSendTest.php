@@ -43,6 +43,7 @@ class InvoiceWhatsappSendTest extends TestCase
             'shipping_cost' => 15000,
             'total' => 215000,
             'status' => Order::STATUS_AWAITING_PAYMENT,
+            'payment_method' => 'manual',
         ]);
 
         OrderItem::create([
@@ -97,7 +98,7 @@ class InvoiceWhatsappSendTest extends TestCase
 
         $this->actingAs($this->admin)
             ->post(route('admin.invoices.send-wa', $this->order))
-            ->assertRedirect()
+            ->assertRedirect('https://wa.me/6281234567890')
             ->assertSessionHas('success');
 
         Http::assertSent(function (Request $request) {
@@ -118,6 +119,16 @@ class InvoiceWhatsappSendTest extends TestCase
         $this->order->refresh();
         $this->assertNotNull($this->order->wa_invoice_sent_at);
         $this->assertNull($this->order->wa_invoice_error);
+    }
+
+    public function test_invoice_list_uses_direct_send_button_and_opens_chat_in_new_tab(): void
+    {
+        $this->actingAs($this->admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertSee('target="_blank" rel="noopener"', false)
+            ->assertSee('beserta caption ke WhatsApp 081234567890', false)
+            ->assertDontSee('Bagikan invoice sebagai gambar');
     }
 
     public function test_api_key_is_sent_as_header(): void

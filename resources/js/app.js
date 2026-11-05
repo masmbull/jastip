@@ -139,6 +139,11 @@ window.Alpine = Alpine;
         e.preventDefault();
         e.stopImmediatePropagation();
         const msg = form.dataset.confirm;
+        if (form.target === '_blank' && msg) {
+            // Keep the new-tab submission in the click so browsers do not block it.
+            if (window.confirm(msg)) HTMLFormElement.prototype.submit.call(form);
+            return;
+        }
         if (msg) {
             confirmAction(msg).then((ok) => { if (ok) submitForm(form); });
         } else {
@@ -269,75 +274,6 @@ window.Alpine = Alpine;
                 }
             },
         };
-    };
-
-    /* Invoice HTML is rendered to PNG and shared with its caption, without a
-       wa.me URL. The fallback downloads the image and opens the prepared chat. */
-    window.jdShareInvoiceImage = async function (btn, opts) {
-        const { url, filename, text, waUrl } = opts;
-        if (btn && btn.dataset.busy === '1') return;
-        if (btn) { btn.dataset.busy = '1'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
-
-        let frame = null;
-        try {
-            const { default: html2canvas } = await import('html2canvas');
-
-            const html = await fetch(url, { credentials: 'same-origin' })
-                .then((r) => (r.ok ? r.text() : Promise.reject(new Error('HTTP ' + r.status))));
-
-            frame = document.createElement('iframe');
-            frame.setAttribute('aria-hidden', 'true');
-            frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:960px;height:2000px;border:0;';
-            document.body.appendChild(frame);
-
-            await new Promise((resolve) => { frame.onload = resolve; frame.srcdoc = html; });
-
-            // Tunggu gambar (QRIS/logo) selesai dimuat sebelum render.
-            await Promise.all(
-                [...frame.contentDocument.images].map((img) =>
-                    img.complete ? Promise.resolve() : new Promise((res) => { img.onload = img.onerror = res; })
-                )
-            );
-
-            const canvas = await html2canvas(frame.contentDocument.body, { backgroundColor: '#FFFFFF', scale: 3, useCORS: true, logging: false });
-            const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
-            if (!blob) throw new Error('render gagal');
-
-            const file = new File([blob], filename || 'invoice.png', { type: 'image/png' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: filename || 'Invoice',
-                        text: text || '',
-                    });
-                } catch (err) {
-                    if (err && err.name !== 'AbortError' && typeof window.toast === 'function') {
-                        window.toast('Gagal membagikan invoice. Coba lagi.', 'error');
-                    }
-                }
-            } else {
-                const objUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = objUrl;
-                a.download = filename || 'invoice.png';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(objUrl), 4000);
-                if (waUrl) window.open(waUrl, '_blank', 'noopener');
-                if (typeof window.toast === 'function') {
-                    window.toast('Browser ini belum bisa lampirkan file. Gambar diunduh, chat WhatsApp dibuka: lampirkan gambarnya manual.', 'info');
-                }
-            }
-        } catch (e) {
-            console.error('[jdShareInvoiceImage]', e);
-            if (typeof window.toast === 'function') window.toast('Gagal menyiapkan gambar invoice. Coba lagi.', 'error');
-        } finally {
-            if (frame && frame.parentNode) frame.parentNode.removeChild(frame);
-            if (btn) { btn.dataset.busy = ''; btn.disabled = false; btn.removeAttribute('aria-busy'); }
-        }
     };
 
     /* ---- Kirim invoice PDF sebagai FILE ke WhatsApp (Web Share) ----

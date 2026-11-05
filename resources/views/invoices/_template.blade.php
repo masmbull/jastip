@@ -10,7 +10,7 @@
 
   Variabel: $doc (array) dari InvoiceController::buildDoc() / sampleInvoice().
 --}}
-<div class="invoice-doc" style="position:relative; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 12px; background: #FFFFFF; width: 100%;">
+<div class="invoice-doc" style="position:relative; font-family: DejaVu Sans, Arial, Helvetica, sans-serif; color: #141414; font-size: 11px; background: #FFFFFF; width: 100%;">
 
     {{-- Stempel PAID kalau invoice sudah lunas. --}}
     @if($doc['paid'] ?? false)
@@ -39,7 +39,7 @@
         </tr>
     </table>
 
-    <div style="border-top:3px solid #141414; margin:6px 0 14px;"></div>
+    <div style="border-top:3px solid #141414; margin:4px 0 9px;"></div>
 
     {{-- Pelanggan & ringkasan --}}
     <table style="width:100%; border-collapse:collapse;">
@@ -65,53 +65,53 @@
     </table>
 
     {{-- Item --}}
-    <table style="width:100%; border-collapse:collapse; margin-top:14px;">
+    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
         <tr>
-            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px;">Produk</td>
-            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px;">Satuan</td>
-            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:center;">Qty</td>
-            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Harga</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px;">Produk</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px;">Satuan</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px; text-align:center;">Qty</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px; text-align:right;">Harga</td>
             @if(!empty($doc['item_has_fee']))
-                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Fee item</td>
+                <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px; text-align:right;">Fee item</td>
             @endif
-            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:7px 8px; text-align:right;">Subtotal</td>
+            <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:5px 6px; text-align:right;">Subtotal</td>
         </tr>
         @foreach($doc['items'] as $item)
             <tr>
-                <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px;">{{ $item['name'] }}</td>
-                <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; color:#475569;">{{ $item['unit'] }}</td>
-                <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:center;">{{ $item['qty'] }}</td>
-                <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right;">{{ $item['price'] }}</td>
+                <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px;">{{ $item['name'] }}</td>
+                <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px; color:#475569;">{{ $item['unit'] }}</td>
+                <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px; text-align:center;">{{ $item['qty'] }}</td>
+                <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px; text-align:right;">{{ $item['price'] }}</td>
                 @if(!empty($doc['item_has_fee']))
-                    <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; color:#92400E;">
+                    <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px; text-align:right; color:#92400E;">
                         {{ $item['fee'] ?? '-' }}
                     </td>
                 @endif
-                <td style="border-bottom:1px solid #E2E8F0; padding:7px 8px; text-align:right; font-weight:bold;">{{ $item['subtotal'] }}</td>
+                <td style="border-bottom:1px solid #E2E8F0; padding:5px 6px; text-align:right; font-weight:bold;">{{ $item['subtotal'] }}</td>
             </tr>
         @endforeach
     </table>
 
     {{-- Total --}}
-    <table style="width:100%; border-collapse:collapse; margin-top:14px;">
+    <table style="width:100%; border-collapse:collapse; margin-top:8px;">
         <tr>
             <td style="width:55%;"></td>
-            <td class="invoice-totals-box" style="border:2px solid #141414; padding:8px;">
+            <td class="invoice-totals-box" style="border:2px solid #141414; padding:5px;">
                 <table style="width:100%; border-collapse:collapse;">
                     @foreach($doc['totals'] as $row)
                         <tr>
-                            <td style="color:#475569; padding:5px 2px;">{{ $row['label'] }}</td>
-                            <td style="text-align:right; padding:5px 2px; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
+                            <td style="color:#475569; padding:3px 2px;">{{ $row['label'] }}</td>
+                            <td style="text-align:right; padding:3px 2px; @if(!empty($row['green'])) color:#166534; font-weight:bold; @elseif(!empty($row['muted'])) color:#475569; @endif">{{ $row['value'] }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px; border-top:2px solid #141414;">{{ $doc['total']['label'] }}</td>
-                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:9px 10px; text-align:right; font-size:14px; border-top:2px solid #141414;">{{ $doc['total']['value'] }}</td>
+                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:6px 8px; border-top:2px solid #141414;">{{ $doc['total']['label'] }}</td>
+                        <td style="background:#141414; color:#FFFFFF; font-weight:bold; padding:6px 8px; text-align:right; font-size:14px; border-top:2px solid #141414;">{{ $doc['total']['value'] }}</td>
                     </tr>
                     @if($doc['left'])
                         <tr>
-                            <td style="color:#B45309; font-weight:bold; padding:7px 2px 4px;">{{ $doc['left']['label'] }}</td>
-                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:14px; padding:7px 2px 4px;">{{ $doc['left']['value'] }}</td>
+                            <td style="color:#B45309; font-weight:bold; padding:5px 2px 3px;">{{ $doc['left']['label'] }}</td>
+                            <td style="text-align:right; color:#B45309; font-weight:bold; font-size:14px; padding:5px 2px 3px;">{{ $doc['left']['value'] }}</td>
                         </tr>
                     @endif
                 </table>
@@ -122,8 +122,8 @@
     {{-- Pembayaran: QRIS + rekening.
          QRIS hanya muncul kalau diizinkan untuk nominal ini (<= batas);
          di atas batas, hanya rekening. --}}
-    <div style="border-top:1px solid #E2E8F0; margin:18px 0 10px;"></div>
-    <div style="font-size:10px; font-weight:bold; color:#475569; margin-bottom:8px;">CARA PEMBAYARAN</div>
+    <div style="border-top:1px solid #E2E8F0; margin:10px 0 6px;"></div>
+    <div style="font-size:10px; font-weight:bold; color:#475569; margin-bottom:4px;">CARA PEMBAYARAN</div>
 
     @php($qris = $doc['qris'] ?? null)
     @php($bank = $doc['bank'] ?? null)
@@ -136,10 +136,10 @@
         <table style="width:100%; border-collapse:collapse;">
             <tr>
                 @if($qris)
-                    <td style="vertical-align:top; text-align:center; width:50%; border:1px solid #E2E8F0; padding:12px;">
+                    <td style="vertical-align:top; text-align:center; width:50%; border:1px solid #E2E8F0; padding:7px;">
                         <div style="font-weight:bold; font-size:11px; margin-bottom:6px;">QRIS</div>
                         @if(!empty($qris['image']))
-                            <img src="{{ $qris['image'] }}" alt="QRIS" style="width:150px; height:auto;">
+                            <img src="{{ $qris['image'] }}" alt="QRIS" style="width:120px; height:auto;">
                         @endif
                         @if(!empty($qris['merchant']))
                             <div style="color:#475569; font-size:10px; margin-top:4px;">{{ $qris['merchant'] }}</div>
@@ -148,7 +148,7 @@
                 @endif
 
                 @if($bank && !empty($bank['lines']))
-                    <td style="vertical-align:top; {{ $qris ? 'padding-left:12px;' : '' }} border:1px solid #E2E8F0; padding:12px;">
+                    <td style="vertical-align:top; {{ $qris ? 'padding-left:8px;' : '' }} border:1px solid #E2E8F0; padding:7px;">
                         <div style="font-weight:bold; font-size:11px; margin-bottom:6px;">TRANSFER REKENING</div>
                         @foreach($bank['lines'] as $line)
                             <div style="font-size:12px; {{ $loop->first ? 'font-weight:bold;' : 'color:#475569;' }}">{{ $line }}</div>
@@ -158,14 +158,14 @@
             </tr>
         </table>
 
-        <div style="margin-top:8px; font-size:10px; color:#B45309; font-weight:bold;">
+        <div style="margin-top:6px; font-size:10px; color:#B45309; font-weight:bold;">
             TRANSFER HANYA KE REKENING / QRIS DI ATAS. SELAIN ITU DI LUAR TANGGUNG JAWAB KAMI.
         </div>
     @else
         <div style="color:#475569;">{{ $doc['payment_text'] }}</div>
     @endif
 
-    <div style="border-top:1px solid #E2E8F0; margin:14px 0 8px;"></div>
+    <div style="border-top:1px solid #E2E8F0; margin:8px 0 5px;"></div>
     <div style="text-align:center; color:#475569;">{{ $doc['footer'] }}</div>
 
 </div>
