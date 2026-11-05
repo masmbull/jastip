@@ -9,28 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /*
-         * HTML/PNG version — shared with html2canvas screenshot.
-         * Sengaja TANPA Tailwind: html2canvas tidak memahami color(oklch).
+         * HTML/PNG version for html2canvas screenshot sharing.
+         * html2canvas cannot use color(oklch) from Tailwind v4,
+         * so we explicitly load Plus Jakarta Sans here.
          */
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            margin: 0;
             padding: 20px;
             background: #FFFFFF;
-            /* Override DejaVu with a modern font for browser rendering */
-            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
         }
-        /* Apply modern font to all invoice elements */
         .invoice-doc, .invoice-doc * {
-            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
         }
         .qris-invoice-image {
             width: 60mm !important;
             height: 60mm !important;
-            max-width: 60mm !important;
-            max-height: 60mm !important;
             object-fit: contain;
-            image-rendering: -webkit-optimize-contrast;
             background: #FFFFFF;
         }
     </style>

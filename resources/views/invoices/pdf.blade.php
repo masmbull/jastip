@@ -2,99 +2,95 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $doc['title'] }} {{ $doc['number'] }}</title>
+
+    {{--
+        Browsershot renders with real Chrome — we can use:
+        - Google Fonts (Chrome waits for them via waitUntilNetworkIdle)
+        - Emoji
+        - Flexbox / CSS Grid
+        - box-shadow, border-radius, gradients
+        - External images (storage URLs)
+    --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <style>
-        @page {
-            size: A4 portrait;
-            /* Extra bottom margin prevents footer from being clipped */
-            margin: 10mm 11mm 14mm;
-        }
         * {
-            font-family: DejaVu Sans, Arial, Helvetica, sans-serif;
             box-sizing: border-box;
-        }
-        body {
             margin: 0;
             padding: 0;
-            color: #141414;
-            font-size: 12px;
-            background: #FFFFFF;
         }
-        table { border-collapse: collapse; }
-        thead { display: table-header-group; }
-        /* Prevent rows from splitting across pages */
-        tr, td, th { page-break-inside: avoid; }
-        .invoice-items thead { display: table-header-group; }
 
-        /* ── QRIS image: crisp rendering ─────────────────────────── */
+        body {
+            font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #141414;
+            background: #FFFFFF;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm 11mm 14mm;
+            }
+            body { margin: 0; }
+        }
+
+        /* ── QRIS image ──────────────────────────────────────── */
         .qris-invoice-image {
             width: 60mm !important;
             height: 60mm !important;
-            max-width: 60mm !important;
-            max-height: 60mm !important;
             object-fit: contain;
-            image-rendering: -webkit-optimize-contrast;
+            display: block;
             background: #FFFFFF;
+            image-rendering: -webkit-optimize-contrast;
         }
 
-        /* ── Compact mode: 13+ items ──────────────────────────────── */
-        /* Shrinks the ENTIRE invoice — all sections, not just items table */
+        /* ── Compact mode (13+ items): scale everything down ─── */
         .invoice-doc[data-layout="compact"] {
-            font-size: 8.5px !important;
-            line-height: 1.05 !important;
+            font-size: 9px !important;
         }
-        .invoice-doc[data-layout="compact"] td,
-        .invoice-doc[data-layout="compact"] th,
-        .invoice-doc[data-layout="compact"] div,
-        .invoice-doc[data-layout="compact"] span {
-            font-size: 8.5px !important;
-            line-height: 1.05 !important;
+        .invoice-doc[data-layout="compact"] .section-header,
+        .invoice-doc[data-layout="compact"] .section-header * {
+            font-size: 9px !important;
         }
-        /* Items table — tightest padding */
-        .invoice-doc[data-layout="compact"] .invoice-items td {
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-            padding-left: 4px !important;
-            padding-right: 4px !important;
+        .invoice-doc[data-layout="compact"] .invoice-title {
+            font-size: 26px !important;
         }
-        .invoice-doc[data-layout="compact"] .invoice-items th {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
-            padding-left: 4px !important;
-            padding-right: 4px !important;
+        .invoice-doc[data-layout="compact"] .brand-name {
+            font-size: 14px !important;
         }
-        /* Totals box */
-        .invoice-doc[data-layout="compact"] .invoice-totals-box td {
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-        }
-        /* Logo */
-        .invoice-doc[data-layout="compact"] .invoice-logo {
-            width: 44px !important;
-            height: 44px !important;
-        }
-        /* Header section — tighter */
-        .invoice-doc[data-layout="compact"] .invoice-header-title {
-            font-size: 22px !important;
-        }
-        /* Customer + ringkasan cards — reduce padding */
-        .invoice-doc[data-layout="compact"] .invoice-info-card td {
+        .invoice-doc[data-layout="compact"] .info-card {
             padding: 6px 8px !important;
         }
-        /* Payment section cards — reduce padding */
-        .invoice-doc[data-layout="compact"] .invoice-pay-card td,
-        .invoice-doc[data-layout="compact"] .invoice-pay-card div {
-            padding-top: 3px !important;
-            padding-bottom: 3px !important;
+        .invoice-doc[data-layout="compact"] .items-th,
+        .invoice-doc[data-layout="compact"] .items-td {
+            padding: 3px 5px !important;
+            font-size: 8.5px !important;
         }
-        /* QRIS image — smaller in compact */
+        .invoice-doc[data-layout="compact"] .totals-td {
+            padding: 3px 8px !important;
+            font-size: 8.5px !important;
+        }
+        .invoice-doc[data-layout="compact"] .pay-card-body {
+            padding: 6px 8px !important;
+        }
         .invoice-doc[data-layout="compact"] .qris-invoice-image {
             width: 40mm !important;
             height: 40mm !important;
-            max-width: 40mm !important;
-            max-height: 40mm !important;
+        }
+        .invoice-doc[data-layout="compact"] .bank-logo {
+            width: 44px !important;
+            height: 18px !important;
+        }
+        .invoice-doc[data-layout="compact"] .invoice-logo {
+            width: 48px !important;
+            height: 48px !important;
         }
     </style>
 </head>
