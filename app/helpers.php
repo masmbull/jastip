@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('setting')) {
     /**
@@ -62,7 +61,7 @@ if (! function_exists('qris_allowed_for')) {
      */
     function qris_allowed_for(int $total): bool
     {
-        return qris_enabled() && $total <= qris_limit() && qris_url() !== null;
+        return qris_enabled() && $total <= qris_limit();
     }
 }
 
@@ -127,12 +126,16 @@ if (! function_exists('qris_url')) {
     function qris_url(): ?string
     {
         $path = setting('qris_image');
+        if (! qris_enabled() || ! is_string($path) || $path === '') {
+            return null;
+        }
 
-        // Upload disimpan di disk `public` (lihat SettingController::update),
-        // jadi URL HARUS diambil dari disk itu. Memakai Storage::url() polos
-        // mengikuti disk default (di .env: `local`), sehingga URL-nya salah dan
-        // gambar QRIS tidak muncul di halaman pembayaran.
-        return qris_enabled() && $path ? media_url($path) : null;
+        $path = ltrim($path, '/');
+        if (str_contains($path, 'qris-placeholder') || $path === 'settings/qris.jpg') {
+            return null;
+        }
+
+        return media_url($path);
     }
 }
 

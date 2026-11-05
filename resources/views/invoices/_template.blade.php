@@ -105,13 +105,13 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td style="background:#FFC800; color:#141414; font-weight:bold; font-size:14px; padding:9px 10px; border-top:2px solid #141414;">
+                        <td style="background:#FFC800; color:#141414; font-weight:bold; font-size:16px; padding:9px 10px; border-top:2px solid #141414;">
                             {{ $doc['total']['label'] }}
                             @if($doc['left'])
-                                <div style="margin-top:4px; font-size:14px;">{{ $doc['left']['label'] }}</div>
+                                <div style="margin-top:5px; font-size:16px;">{{ $doc['left']['label'] }}</div>
                             @endif
                         </td>
-                        <td style="background:#FFC800; color:#141414; font-weight:bold; font-size:14px; padding:9px 10px; text-align:right; border-top:2px solid #141414;">
+                        <td style="background:#FFC800; color:#141414; font-weight:bold; font-size:16px; padding:9px 10px; text-align:right; border-top:2px solid #141414;">
                             {{ $doc['total']['value'] }}
                             @if($doc['left'])
                                 <div style="margin-top:4px; font-size:16px;">{{ $doc['left']['value'] }}</div>
@@ -141,9 +141,14 @@
             <tr>
                 @if($qris)
                     <td style="vertical-align:top; text-align:center; width:42%; border:1px solid #CBD5E1; padding:10px;">
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">
+                            <span style="display:inline-block; width:18px; height:18px; vertical-align:-4px; margin-right:5px;">
+                                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="1.5" width="15" height="15" rx="1" fill="none" stroke="#141414" stroke-width="1.5"/><path d="M4 4h3v3H4zm7 0h3v3h-3zM4 11h3v3H4zm7 0h3v3h-3zM9 4v7m0 3v2M9 11H7m2 0h3" fill="none" stroke="#141414" stroke-width="1.2"/></svg>
+                            </span>
+                        </div>
                         <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">QRIS</div>
                         @if(!empty($qris['image']))
-                            <img src="{{ $qris['image'] }}" alt="QRIS" style="display:block; width:170px; max-width:100%; height:170px; object-fit:contain; margin:0 auto;">
+                            <img src="{{ $qris['image'] }}" alt="QRIS pembayaran" style="display:block; width:210px; max-width:100%; height:210px; object-fit:contain; image-rendering:auto; margin:0 auto;">
                         @endif
                         @if(!empty($qris['merchant']))
                             <div style="color:#475569; font-size:12px; margin-top:7px;">{{ $qris['merchant'] }}</div>
@@ -153,7 +158,11 @@
 
                 @if($bank && !empty($bank['lines']))
                     <td style="vertical-align:top; border:1px solid #CBD5E1; padding:12px;">
-                        <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">TRANSFER REKENING</div>
+                        <div style="font-weight:bold; font-size:13px; margin-bottom:8px;">
+                            <span style="display:inline-block; width:18px; height:18px; vertical-align:-4px; margin-right:5px;">
+                                <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect x="1.5" y="4.5" width="15" height="11" rx="1.5" fill="none" stroke="#141414" stroke-width="1.5"/><path d="M1.5 7.5h15M4.5 11.5h4.5M12.5 11.5h1" fill="none" stroke="#141414" stroke-width="1.2"/></svg>
+                            </span>TRANSFER REKENING
+                        </div>
                         @foreach($bank['lines'] as $line)
                             <div style="font-size:13px; padding:4px 0; {{ $loop->first ? 'font-weight:bold;' : 'color:#475569;' }}">{{ $line }}</div>
                         @endforeach

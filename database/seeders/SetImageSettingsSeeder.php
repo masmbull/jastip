@@ -13,9 +13,6 @@ class SetImageSettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Set QRIS image
-        Setting::set('qris_image', 'settings/qris.jpg', 'string', 'invoice', true);
-        
         // Set brand logo
         Setting::set('brand_logo', 'settings/logo.jpg', 'string', 'brand', true);
     }
