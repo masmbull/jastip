@@ -75,12 +75,22 @@ class SettingController extends Controller
         }
 
         try {
-            $path = $request->file($key)->store('settings', 'public');
+            $file = $request->file($key);
+
+            if ($key === 'qris_image') {
+                $this->validateQrisResolution($file);
+            }
+
+            $path = $key === 'qris_image'
+                ? $this->storeQrisAsPng($file)
+                : $file->store('settings', 'public');
             if (! is_string($path) || $path === '') {
                 throw new \RuntimeException('Storage did not return a file path.');
             }
 
             Setting::set($key, $path, 'string', $group, true);
+        } catch (ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
             \Log::error('Failed to upload setting image: '.$key, [
                 'error' => $e->getMessage(),
@@ -91,6 +101,34 @@ class SettingController extends Controller
                 $key => ['Gagal mengunggah file gambar. Silakan coba lagi.'],
             ]);
         }
+    }
+
+    private function validateQrisResolution(\Illuminate\Http\UploadedFile $file): void
+    {
+        $size = @getimagesize($file->getRealPath());
+        if ($size === false || $size[0] < 300 || $size[1] < 300) {
+            throw ValidationException::withMessages([
+                'qris_image' => ['Resolusi QRIS minimal 300 x 300 piksel agar tetap tajam saat dicetak.'],
+            ]);
+        }
+    }
+
+    private function storeQrisAsPng(\Illuminate\Http\UploadedFile $file): string
+    {
+        $source = @imagecreatefromstring(file_get_contents($file->getRealPath()));
+        if ($source === false) {
+            throw new \RuntimeException('Unable to decode QRIS image.');
+        }
+
+        ob_start();
+        imagepng($source, null, 9);
+        imagedestroy($source);
+        $png = ob_get_clean();
+
+        $path = 'settings/qris/'.uniqid('qris-', true).'.png';
+        Storage::disk('public')->put($path, $png);
+
+        return $path;
     }
 
     private function rejectOversizedRequest(Request $request): void

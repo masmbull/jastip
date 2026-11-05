@@ -33,7 +33,7 @@
             padding-top: 2px !important;
             padding-bottom: 2px !important;
         }
-        .invoice-doc[data-layout="compact"] img {
+        .invoice-doc[data-layout="compact"] .invoice-logo {
             max-height: 84px !important;
             max-width: 84px !important;
         }
