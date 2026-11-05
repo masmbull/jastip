@@ -366,7 +366,7 @@ class InvoiceController extends Controller
             'qris' => qris_allowed_for((int) $order->total)
                 ? ['image' => qris_url(), 'merchant' => setting('qris_merchant_name')]
                 : null,
-            'bank' => ['lines' => bank_account_lines(), 'text' => bank_account_text()],
+            'bank' => ['lines' => bank_account_lines(), 'accounts' => config('invoice.accounts', []), 'text' => bank_account_text()],
             'paid' => (bool) $order->is_paid,
             'paid_at' => optional($order->paid_at)->format('d M Y, H:i'),
             'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
@@ -436,7 +436,7 @@ class InvoiceController extends Controller
             'qris' => qris_allowed_for($subtotal + $ongkir + $fee)
                 ? ['image' => qris_url(), 'merchant' => setting('qris_merchant_name')]
                 : null,
-            'bank' => ['lines' => bank_account_lines(), 'text' => bank_account_text()],
+            'bank' => ['lines' => bank_account_lines(), 'accounts' => config('invoice.accounts', []), 'text' => bank_account_text()],
             'footer' => 'Terima kasih telah berbelanja jastip bersama Jastip Imoby By Damesha.',
         ];
     }

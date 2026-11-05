@@ -37,6 +37,14 @@
             max-height: 84px !important;
             max-width: 84px !important;
         }
+        .qris-invoice-image {
+            width: 60mm !important;
+            height: 60mm !important;
+            max-width: 60mm !important;
+            max-height: 60mm !important;
+            object-fit: contain;
+            image-rendering: -webkit-optimize-contrast;
+        }
     </style>
 </head>
 <body>
