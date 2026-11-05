@@ -335,7 +335,97 @@ window.Alpine = Alpine;
         }
     };
 
-    /* ---- Kirim invoice baris Rekapan via WhatsApp (PNG + Web Share) ----
+    window.jdShareInvoiceImage = async function (btn) {
+        if (!btn || btn.dataset.busy === '1') return;
+
+        const { shareUrl, shareFilename, shareText, shareWaUrl } = btn.dataset;
+        let host = null;
+        btn.dataset.busy = '1';
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+
+        const downloadAndOpenChat = (blob) => {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = shareFilename || 'invoice.png';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
+            if (shareWaUrl) window.open(shareWaUrl, '_blank', 'noopener');
+            if (typeof window.toast === 'function') {
+                window.toast('Gambar invoice diunduh. Di WhatsApp, lampirkan gambar lalu periksa dan kirim caption.', 'info');
+            }
+        };
+
+        try {
+            const response = await fetch(shareUrl, {
+                credentials: 'same-origin',
+                headers: { Accept: 'text/html' },
+            });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+
+            const documentHtml = new DOMParser().parseFromString(await response.text(), 'text/html');
+            const invoice = documentHtml.querySelector('.invoice-doc');
+            if (!invoice) throw new Error('Template invoice tidak ditemukan');
+
+            host = document.createElement('div');
+            host.setAttribute('aria-hidden', 'true');
+            host.inert = true;
+            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:960px;padding:16px;background:#fff;z-index:-1;';
+            host.append(invoice.cloneNode(true));
+            document.body.append(host);
+
+            await Promise.all(Array.from(host.querySelectorAll('img')).map((image) => {
+                if (image.complete) {
+                    return image.naturalWidth > 0 ? Promise.resolve() : Promise.reject(new Error('Gambar invoice gagal dimuat'));
+                }
+
+                return new Promise((resolve, reject) => {
+                    image.addEventListener('load', resolve, { once: true });
+                    image.addEventListener('error', () => reject(new Error('Gambar invoice gagal dimuat')), { once: true });
+                });
+            }));
+
+            const { default: html2canvas } = await import('html2canvas');
+            const canvas = await html2canvas(host, {
+                backgroundColor: '#FFFFFF',
+                scale: 3,
+                useCORS: true,
+                logging: false,
+            });
+            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('Gambar invoice gagal dibuat');
+
+            const file = new File([blob], shareFilename || 'invoice.png', { type: 'image/png' });
+            if (navigator.canShare?.({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file], title: shareFilename || 'Invoice', text: shareText || '' });
+                    if (typeof window.toast === 'function') {
+                        window.toast('Menu berbagi dibuka. Pilih WhatsApp, akun pengirim, dan kontak sebelum mengirim.', 'info');
+                    }
+                } catch (error) {
+                    if (error?.name === 'AbortError') return;
+                    downloadAndOpenChat(blob);
+                }
+            } else {
+                downloadAndOpenChat(blob);
+            }
+        } catch (error) {
+            console.error('[jdShareInvoiceImage]', error);
+            if (typeof window.toast === 'function') {
+                window.toast('Gagal menyiapkan gambar invoice. Coba lagi.', 'error');
+            }
+        } finally {
+            host?.remove();
+            btn.dataset.busy = '';
+            btn.disabled = false;
+            btn.removeAttribute('aria-busy');
+        }
+    };
+
+    /* ---- Bagikan invoice baris Rekapan via WhatsApp (PNG + Web Share) ----
        Alur: susun invoice sebagai DOM (warna hex inline supaya html2canvas
        tidak tersandung color(oklch) milik Tailwind v4) -> render ke PNG ->
        bagikan lewat Web Share API (Android: muncul sheet, pilih WhatsApp).
@@ -535,6 +625,11 @@ window.Alpine = Alpine;
             deferredPrompt.userChoice.then(function () { deferredPrompt = null; });
         }
     };
+
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-invoice-share]');
+        if (button) window.jdShareInvoiceImage(button);
+    });
 
     /* ---- Web Push: request permission + register subscription ---- */
     function urlB64ToUint8Array(base64) {

@@ -182,27 +182,6 @@ if (! function_exists('wa_phone')) {
     }
 }
 
-if (! function_exists('wa_chat_id')) {
-    /**
-     * Chat ID WhatsApp yang dipakai gateway (OpenWA dan sejenis):
-     * "62812xxxx@c.us". Kosong kalau nomornya tidak valid.
-     *
-     * Nomor dinormalisasi lewat wa_phone() supaya "0812…" dan "+62 812…"
-     * menghasilkan chat ID yang sama.
-     */
-    function wa_chat_id(?string $phone): string
-    {
-        $digits = wa_phone($phone);
-
-        // Nomor Indonesia yang wajar: 62 + 8.. + minimal 7 digit lagi.
-        if ($digits === '' || ! str_starts_with($digits, '62') || strlen($digits) < 10) {
-            return '';
-        }
-
-        return $digits.'@c.us';
-    }
-}
-
 if (! function_exists('whatsapp_url')) {
     /**
      * Generate a WhatsApp URL with optional pre-filled message.

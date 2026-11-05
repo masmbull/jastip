@@ -14,15 +14,6 @@ return [
     'paid_image' => 'img/invoice/payment-diterima.jpeg',
 
     /*
-    | Render PNG di server (untuk kirim invoice ke WhatsApp sebagai gambar).
-    | Butuh Chrome/Edge headless; kalau kosong, dicari otomatis di lokasi umum
-    | (lihat App\Services\InvoiceImageRenderer::CANDIDATES).
-    */
-    'browser_path' => env('INVOICE_BROWSER_PATH'),
-    'image_width' => (int) env('INVOICE_IMAGE_WIDTH', 960),
-    'image_timeout' => (int) env('INVOICE_IMAGE_TIMEOUT', 45),
-
-    /*
     | Rekening pembayaran (a/n Nabila Adriyana).
     | Ditampilkan di invoice untuk memudahkan transfer.
     */

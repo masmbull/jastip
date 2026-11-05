@@ -209,7 +209,7 @@ class InvoiceController extends Controller
      * Halaman invoice siap-cetak untuk satu pesanan.
      *
      * Memakai TEMPLATE YANG SAMA dengan pratinjau (invoices/_template), jadi
-     * halaman cetak, pratinjau, dan PDF/PNG yang dikirim ke WhatsApp identik.
+     * halaman cetak, pratinjau, dan gambar yang dibagikan lewat WhatsApp identik.
      */
     public function invoice(Request $request, Order $order)
     {
@@ -226,9 +226,8 @@ class InvoiceController extends Controller
     /**
      * Versi HTML (bukan PDF) dari invoice publik.
      *
-     * Dipakai tombol WhatsApp: dokumen ini dimuat ke <iframe> lalu dirender
-     * jadi PNG (html2canvas) supaya yang terkirim ke pelanggan adalah GAMBAR
-     * invoice dengan tampilan yang sama persis seperti pratinjau.
+     * Dipakai tombol berbagi invoice: dokumen ini dimuat di browser lalu
+     * dirender jadi PNG dengan template yang sama seperti pratinjau.
      */
     public function invoiceHtml(string $token)
     {
@@ -238,7 +237,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Versi PDF invoice untuk dikirim lewat WhatsApp.
+     * Versi PDF invoice untuk diunduh atau dibagikan.
      *
      * Route PUBLIK tanpa login, diakses lewat token acak pendek (link /i/{token}).
      * Token tak bisa ditebak, jadi data pelanggan tetap aman.

@@ -7,7 +7,6 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\InvoiceController;
-use App\Http\Controllers\Admin\InvoiceSendController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\PaymentProofController;
@@ -171,7 +170,7 @@ Route::get('/i/{token}', [InvoiceController::class, 'invoicePdf'])
     ->where('token', '[A-Za-z0-9]{16,32}')
     ->name('invoice.public');
 
-// Versi HTML-nya: jadi target render PNG di tombol WhatsApp (bukan PDF).
+// Versi HTML-nya: jadi sumber gambar untuk menu berbagi invoice.
 Route::get('/i/{token}/gambar', [InvoiceController::class, 'invoiceHtml'])
     ->where('token', '[A-Za-z0-9]{16,32}')
     ->name('invoice.html');
@@ -233,9 +232,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Daftar invoice manual (buat via form manual, bukan checkout).
         Route::get('/invoice', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::get('/invoice/export', [InvoiceController::class, 'export'])->name('invoices.export');
-
-        // Kirim invoice sebagai gambar ke WhatsApp pelanggan (gateway self-hosted).
-        Route::post('/invoice/{order}/kirim-wa', [InvoiceSendController::class, 'send'])->name('invoices.send-wa');
 
         // Dokumen pratinjau cetak sampel invoice (struk thermal, preset COMPACT).
         Route::get('/invoice/sampel', [InvoiceController::class, 'sample'])->name('invoices.sample');

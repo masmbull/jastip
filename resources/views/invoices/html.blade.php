@@ -6,7 +6,7 @@
     <title>{{ $doc['title'] }} {{ $doc['number'] }}</title>
     <style>
         /* Dipakai sebagai target render PNG (html2canvas) untuk tombol
-           WhatsApp. Sengaja TANPA Tailwind: html2canvas tidak memahami
+           berbagi invoice. Sengaja TANPA Tailwind: html2canvas tidak memahami
            color(oklch) milik Tailwind v4. Template yang dirender sama persis
            dengan pratinjau/PDF (invoices/_template). */
         * { box-sizing: border-box; }
