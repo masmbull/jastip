@@ -75,11 +75,13 @@ class UserController extends Controller
     {
         $source = $email ? Str::before($email, '@') : $name;
         $base = Str::slug($source, '.') ?: 'pelanggan';
+        $base = substr($base, 0, 50);
         $username = $base;
         $i = 2;
 
         while (User::where('username', $username)->exists()) {
-            $username = $base.$i++;
+            $suffix = (string) $i++;
+            $username = substr($base, 0, 50 - strlen($suffix)).$suffix;
         }
 
         return $username;
