@@ -339,10 +339,24 @@ window.Alpine = Alpine;
         if (!btn || btn.dataset.busy === '1') return;
 
         const { shareUrl, shareFilename, shareText, shareWaUrl } = btn.dataset;
+        const shareIcon = btn.querySelector('[data-share-icon]');
+        const shareSpinner = btn.querySelector('[data-share-spinner]');
+        const originalLabel = btn.getAttribute('aria-label');
         let host = null;
-        btn.dataset.busy = '1';
-        btn.disabled = true;
-        btn.setAttribute('aria-busy', 'true');
+        const setBusy = (busy) => {
+            btn.dataset.busy = busy ? '1' : '';
+            btn.disabled = busy;
+            if (busy) {
+                btn.setAttribute('aria-busy', 'true');
+                btn.setAttribute('aria-label', 'Menyiapkan gambar invoice...');
+            } else {
+                btn.removeAttribute('aria-busy');
+                if (originalLabel) btn.setAttribute('aria-label', originalLabel);
+            }
+            shareIcon?.classList.toggle('hidden', busy);
+            shareSpinner?.classList.toggle('hidden', !busy);
+        };
+        setBusy(true);
 
         const downloadAndOpenChat = (blob) => {
             const objectUrl = URL.createObjectURL(blob);
@@ -373,8 +387,27 @@ window.Alpine = Alpine;
             host = document.createElement('div');
             host.setAttribute('aria-hidden', 'true');
             host.inert = true;
-            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:960px;padding:16px;background:#fff;z-index:-1;';
-            host.append(invoice.cloneNode(true));
+            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;z-index:-1;';
+
+            const page = document.createElement('div');
+            page.style.cssText = 'position:relative;box-sizing:border-box;width:794px;height:1123px;padding:38px 42px 34px;background:#fff;overflow:hidden;';
+
+            const accent = document.createElement('div');
+            accent.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:12px;background:#FFC800;';
+
+            const contentArea = document.createElement('div');
+            contentArea.style.cssText = 'box-sizing:border-box;width:100%;height:100%;padding-top:12px;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;';
+
+            const invoiceCopy = invoice.cloneNode(true);
+            invoiceCopy.style.width = '100%';
+            invoiceCopy.style.margin = '0';
+            invoiceCopy.style.transformOrigin = 'top center';
+            invoiceCopy.querySelectorAll('td').forEach((cell) => {
+                cell.style.overflowWrap = 'anywhere';
+            });
+            contentArea.append(invoiceCopy);
+            page.append(accent, contentArea);
+            host.append(page);
             document.body.append(host);
 
             await Promise.all(Array.from(host.querySelectorAll('img')).map((image) => {
@@ -388,10 +421,19 @@ window.Alpine = Alpine;
                 });
             }));
 
+            const availableHeight = contentArea.clientHeight;
+            const contentHeight = invoiceCopy.scrollHeight;
+            if (!availableHeight || !contentHeight) throw new Error('Ukuran invoice tidak dapat dihitung');
+
+            const fitScale = Math.min(1, (availableHeight - 20) / contentHeight);
+            invoiceCopy.style.transform = `scale(${fitScale})`;
+
             const { default: html2canvas } = await import('html2canvas');
-            const canvas = await html2canvas(host, {
+            const canvas = await html2canvas(page, {
                 backgroundColor: '#FFFFFF',
                 scale: 3,
+                windowWidth: 794,
+                windowHeight: 1123,
                 useCORS: true,
                 logging: false,
             });
@@ -419,9 +461,7 @@ window.Alpine = Alpine;
             }
         } finally {
             host?.remove();
-            btn.dataset.busy = '';
-            btn.disabled = false;
-            btn.removeAttribute('aria-busy');
+            setBusy(false);
         }
     };
 

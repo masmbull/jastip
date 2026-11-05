@@ -55,7 +55,11 @@ class InvoiceWhatsappShareTest extends TestCase
             ->assertSee('data-share-url="'.route('invoice.html', $this->order->public_token).'"', false)
             ->assertSee('https://wa.me/6281234567890?text=', false)
             ->assertSee('Halo Siti Rahma, berikut invoice NDTEST-WA001', false)
+            ->assertSee('BCA 2700398369 a/n Nabila Adriyana')
+            ->assertSee('SeaBank 901499244727 a/n Nabila Adriyana')
+            ->assertSee('BluBCA 001081568345 a/n Nabila Adriyana')
             ->assertSee('Pilih WhatsApp dan kontak pelanggan', false)
+            ->assertSee('data-share-spinner', false)
             ->assertDontSee('send-wa')
             ->assertDontSee('wa_gateway');
     }
