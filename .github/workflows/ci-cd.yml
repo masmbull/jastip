@@ -203,9 +203,15 @@ jobs:
             --exclude='storage/' \
             --exclude='public/storage' \
             --exclude='bootstrap/cache/' \
+            --exclude='node_modules/' \
             "$STAGE/" "$APP_DIR/"
 
           cd "$APP_DIR"
+
+          # Clear stale bootstrap cache before artisan runs.
+          # This prevents old cached service providers (e.g. laravel/boost)
+          # from crashing the app after a --no-dev composer install.
+          rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
 
           if [ -L public/storage ]; then
             test "$(readlink -f public/storage)" = "$(readlink -f storage/app/public)" || {
