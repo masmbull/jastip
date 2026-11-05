@@ -184,7 +184,7 @@ class InvoiceController extends Controller
                 $items = $order->items->map(fn ($i) => $i->product_name.' x'.$i->quantity.' @ '.format_price($i->product_price))->implode('; ');
                 fputcsv($out, [
                     '#'.$order->no,
-                    $order->created_at->format('Y-m-d H:i'),
+                    $order->created_at->timezone('Asia/Jakarta')->format('Y-m-d H:i'),
                     $order->customer_name,
                     $order->customer_whatsapp,
                     $order->customer_address,
@@ -325,8 +325,16 @@ class InvoiceController extends Controller
             $totals[] = ['label' => 'Pelunasan masuk', 'value' => '-'.format_price($extraPaid), 'muted' => true, 'green' => true];
         }
 
+        $paidAt = $order->paid_at
+            ? $order->paid_at->copy()->setTimezone('Asia/Jakarta')
+            : null;
+
+        $createdAt = $order->created_at
+            ? $order->created_at->copy()->setTimezone('Asia/Jakarta')
+            : null;
+
         $payment = $order->is_paid
-            ? 'Pembayaran diterima. Terima kasih'.($order->paid_at ? ', '.$order->paid_at->format('d M Y, H:i') : '').'.'
+            ? 'Pembayaran diterima. Terima kasih'.($paidAt ? ', '.$paidAt->format('d M Y, H:i') : '').'.'
             : 'Silakan transfer, lalu kirim bukti via WhatsApp'.($storeWa ? ' ('.$storeWa.')' : '').' dengan menyebut nomor invoice #'.$order->no.'.';
 
         return [
@@ -336,7 +344,7 @@ class InvoiceController extends Controller
             'store_wa' => $storeWa,
             'title' => $paid > 0 && ! $order->is_paid ? 'TAGIHAN' : 'INVOICE',
             'number' => $order->no,
-            'date' => $order->created_at->format('d M Y, H:i'),
+            'date' => $createdAt ? $createdAt->format('d M Y, H:i') : '',
             'status_text' => $order->is_paid ? 'LUNAS' : 'BELUM BAYAR',
             'status_color' => $order->is_paid ? '#15803D' : '#B45309',
             'customer' => [
@@ -368,7 +376,7 @@ class InvoiceController extends Controller
                 : null,
             'bank' => ['lines' => bank_account_lines(), 'accounts' => config('invoice.accounts', []), 'text' => bank_account_text()],
             'paid' => (bool) $order->is_paid,
-            'paid_at' => optional($order->paid_at)->format('d M Y, H:i'),
+            'paid_at' => $paidAt?->format('d M Y, H:i'),
             'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
         ];
     }
