@@ -163,7 +163,7 @@ class InvoiceTest extends TestCase
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
             ->assertSee('PEMBAYARAN QRIS', false)
-            ->assertSee('background:#FFFFFF')
+            ->assertSee('background: #FFFFFF')
             ->assertSee('/storage/settings/invoice-qris.png')
             ->assertSee('/storage/settings/invoice-logo.png');
     }

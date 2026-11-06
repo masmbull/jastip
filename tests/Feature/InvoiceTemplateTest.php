@@ -423,9 +423,10 @@ class InvoiceTemplateTest extends TestCase
         $order = $this->makeOrder(['total' => 100_000]);
 
         $res = $this->invoiceHtml($order)->assertOk();
-        $res->assertSee('width:85mm');
-        $res->assertSee('background:#FFFFFF');
-        $res->assertSee('background:#FFFFFF');
+        // Dual mode (QRIS + rekening): QRIS max 92mm, sesuai _template.
+        $res->assertSee('max-width: 92mm');
+        $res->assertSee('background: #FFFFFF');
+        $res->assertSee('background: #FFFFFF');
     }
 
     public function test_qris_hidden_when_total_exceeds_limit(): void
