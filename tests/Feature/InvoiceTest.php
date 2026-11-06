@@ -76,7 +76,7 @@ class InvoiceTest extends TestCase
             ->assertOk()
             ->assertSee('INVOICE')
             ->assertSee('Budi Santoso')
-            ->assertSee('081234567890')
+            ->assertSee('+62 812-3456-7890')
             ->assertSee('Jl. Merdeka No. 10, Bandung')
             ->assertSee('JNE Reguler')
             ->assertSee('Tas Kulit')
