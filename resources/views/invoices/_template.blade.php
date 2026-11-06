@@ -29,8 +29,8 @@
 // server's headless Chrome (font missing -> wider fallback metrics).
 // Embedded as data URIs so every renderer (Browsershot, DomPDF fallback,
 // html2canvas PNG share) shows the identical artwork.
-// Aspect ratios: bca.png 259×194 (1.34), seabank.png 1260×405 (3.11),
-// blubca.png 200×89 (2.25).
+// Aspect ratios: bca.png 239×80 (2.99, white margins trimmed + made
+// transparent), seabank.png 1260×405 (3.11), blubca.png 200×89 (2.25).
 $bankLogoData = [];
 foreach (['bca' => 'bca.png', 'sea' => 'seabank.png', 'blu' => 'blubca.png'] as $key => $file) {
     $path = public_path('img/invoice/banks/' . $file);
