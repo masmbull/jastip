@@ -1,0 +1,11 @@
+QRIS decode test (tools in storage/app/invoice-qa/qr-test/decode.mjs, jsQR)
+Source : storage/app/public/settings/qris.jpg (merchant artwork)
+Output : docs/invoice-qa/base.png (complete invoice page, 1588x2246, no crop)
+
+source qris.jpg : 00020101021126610014COM.GO-JEK.WWW01189360091438106334420210G8106334420303UMI514...
+invoice base.png (full page, no crop): 00020101021126610014COM.GO-JEK.WWW01189360091438106334420210G8106334420303UMI514...
+payloads match: true
+
+Full decoded payload saved in docs/invoice-qa/qr-payload-decoded.txt
+Merchant identity / NMID unchanged. Decoder success only; myBCA manual
+upload test was not performed in this environment.
