@@ -49,7 +49,7 @@ $bankLogoH = $qris ? 52 : 72;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
-     style="width: 100%; background: #FFFFFF; padding: 0;">
+     style="width: 100%; max-width: 100%; box-sizing: border-box; background: #FFFFFF; padding: 0;">
 
     {{-- ══════════════════════════════════════════════════════════════
          1. HEADER
@@ -63,7 +63,7 @@ $bankLogoH = $qris ? 52 : 72;
                 <img class="invoice-logo"
                      src="{{ $doc['logo'] }}"
                      alt="{{ $doc['brand'] }}"
-                     style="width: 72px; height: 72px; object-fit: contain; border-radius: 6px; display: block;">
+                     style="width: 60px; height: 60px; object-fit: contain; border-radius: 6px; display: block;">
             </div>
             @endif
             <div>
@@ -93,17 +93,17 @@ $bankLogoH = $qris ? 52 : 72;
     </div>
 
     {{-- Yellow divider --}}
-    <div style="height: 5px; background: #FFC800; border-radius: 2px; margin: 10px 0 16px;"></div>
+    <div style="height: 5px; background: #FFC800; border-radius: 2px; margin: 6px 0 10px;"></div>
 
 
     {{-- ══════════════════════════════════════════════════════════════
          2. CUSTOMER INFO + ORDER SUMMARY
     ══════════════════════════════════════════════════════════════ --}}
-    <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+    <div style="display: flex; gap: 12px; margin-bottom: 10px;">
 
         {{-- LEFT: Ditagihkan Kepada --}}
-        <div class="info-card" style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px;">
-            <div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <div class="info-card" style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 9px 12px;">
+            <div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
                 <span>👤</span> DITAGIHKAN KEPADA
             </div>
             <div style="font-size: 15px; font-weight: 800; color: #141414; margin-bottom: 4px;">{{ $doc['customer']['name'] }}</div>
@@ -116,8 +116,8 @@ $bankLogoH = $qris ? 52 : 72;
         </div>
 
         {{-- RIGHT: Ringkasan --}}
-        <div class="info-card" style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px;">
-            <div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <div class="info-card" style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 9px 12px;">
+            <div style="font-size: 10px; font-weight: 800; color: #64748B; letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
                 <span>📦</span> RINGKASAN
             </div>
             @foreach($doc['shipping'] as $row)
@@ -136,30 +136,30 @@ $bankLogoH = $qris ? 52 : 72;
     {{-- ══════════════════════════════════════════════════════════════
          3. PRODUCT TABLE
     ══════════════════════════════════════════════════════════════ --}}
-    <table class="invoice-items" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <table class="invoice-items" style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
         <thead>
             <tr>
-                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; background: #FFC800; text-align: left; padding: 9px 10px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Produk</th>
-                <th class="items-th" style="width: 10%; background: #FFC800; text-align: center; padding: 9px 6px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Satuan</th>
-                <th class="items-th" style="width: 8%; background: #FFC800; text-align: center; padding: 9px 6px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Qty</th>
-                <th class="items-th" style="width: {{ $hasFee ? '16%' : '20%' }}; background: #FFC800; text-align: right; padding: 9px 8px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Harga</th>
+                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; background: #FFC800; text-align: left; padding: 7px 10px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Produk</th>
+                <th class="items-th" style="width: 10%; background: #FFC800; text-align: center; padding: 7px 6px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Satuan</th>
+                <th class="items-th" style="width: 8%; background: #FFC800; text-align: center; padding: 7px 6px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Qty</th>
+                <th class="items-th" style="width: {{ $hasFee ? '16%' : '20%' }}; background: #FFC800; text-align: right; padding: 7px 8px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Harga</th>
                 @if($hasFee)
-                <th class="items-th" style="width: 13%; background: #FFC800; text-align: right; padding: 9px 7px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Fee item</th>
+                <th class="items-th" style="width: 13%; background: #FFC800; text-align: right; padding: 7px 7px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Fee item</th>
                 @endif
-                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; background: #FFC800; text-align: right; padding: 9px 10px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Subtotal</th>
+                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; background: #FFC800; text-align: right; padding: 7px 10px; border-bottom: 2px solid #141414; font-size: 12px; font-weight: 800;">Subtotal</th>
             </tr>
         </thead>
         <tbody>
             @foreach($doc['items'] as $item)
             <tr>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; word-break: break-word; font-size: 12.5px;">{{ $item['name'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 6px; text-align: center; color: #475569; font-size: 12.5px;">{{ $item['unit'] ?: '-' }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 6px; text-align: center; font-size: 12.5px;">{{ $item['qty'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px; text-align: right; white-space: nowrap; font-size: 12.5px;">{{ $item['price'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px 10px; vertical-align: top; word-break: break-word; font-size: 12.5px;">{{ $item['name'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px 6px; text-align: center; color: #475569; font-size: 12.5px;">{{ $item['unit'] ?: '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px 6px; text-align: center; font-size: 12.5px;">{{ $item['qty'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px; text-align: right; white-space: nowrap; font-size: 12.5px;">{{ $item['price'] }}</td>
                 @if($hasFee)
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 7px; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px;">{{ $item['fee'] ?? '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px 7px; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px;">{{ $item['fee'] ?? '-' }}</td>
                 @endif
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; text-align: right; font-weight: 700; white-space: nowrap; font-size: 12.5px;">{{ $item['subtotal'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 6px 10px; text-align: right; font-weight: 700; white-space: nowrap; font-size: 12.5px;">{{ $item['subtotal'] }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -169,22 +169,22 @@ $bankLogoH = $qris ? 52 : 72;
     {{-- ══════════════════════════════════════════════════════════════
          4. PAYMENT SUMMARY BOX (right-aligned 58%)
     ══════════════════════════════════════════════════════════════ --}}
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
         <div class="invoice-totals-box" style="width: 58%; border: 1.5px solid #CBD5E1; border-radius: 8px; overflow: hidden;">
             @foreach($doc['totals'] as $row)
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 7px 13px; border-bottom: 1px solid #F1F5F9; font-size: 12px; {{ !empty($row['green']) ? 'color:#166534;' : 'color:#475569;' }}">
+            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 5px 13px; border-bottom: 1px solid #F1F5F9; font-size: 12px; {{ !empty($row['green']) ? 'color:#166534;' : 'color:#475569;' }}">
                 <span>{{ $row['label'] }}</span>
                 <span style="{{ !empty($row['green']) ? 'font-weight:700;' : '' }} white-space: nowrap;">{{ $row['value'] }}</span>
             </div>
             @endforeach
             {{-- TOTAL BAYAR --}}
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 9px 13px; background: #FFC800; border-top: 2px solid #141414; font-size: 14px; font-weight: 900;">
+            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 7px 13px; background: #FFC800; border-top: 2px solid #141414; font-size: 14px; font-weight: 900;">
                 <span>{{ $doc['total']['label'] }}</span>
                 <span style="white-space: nowrap;">{{ $doc['total']['value'] }}</span>
             </div>
             {{-- Sisa Bayar --}}
             @if($doc['left'])
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 9px 13px; background: #FEF3C7; border-top: 1px solid #FDE68A; font-size: 15px; font-weight: 800;">
+            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 7px 13px; background: #FEF3C7; border-top: 1px solid #FDE68A; font-size: 15px; font-weight: 800;">
                 <span>{{ $doc['left']['label'] }}</span>
                 <span style="white-space: nowrap;">{{ $doc['left']['value'] }}</span>
             </div>
@@ -196,8 +196,8 @@ $bankLogoH = $qris ? 52 : 72;
     {{-- ══════════════════════════════════════════════════════════════
          5. CARA PEMBAYARAN
     ══════════════════════════════════════════════════════════════ --}}
-    <div style="border-top: 1.5px solid #E2E8F0; margin-bottom: 12px;"></div>
-    <div class="section-header" style="font-size: 12px; font-weight: 800; color: #141414; letter-spacing: 0.3px; margin-bottom: 10px; display: flex; align-items: center; gap: 7px;">
+    <div style="border-top: 1.5px solid #E2E8F0; margin-bottom: 8px;"></div>
+    <div class="section-header" style="font-size: 12px; font-weight: 800; color: #141414; letter-spacing: 0.3px; margin-bottom: 6px; display: flex; align-items: center; gap: 7px;">
         💳 CARA PEMBAYARAN
     </div>
 
@@ -207,40 +207,41 @@ $bankLogoH = $qris ? 52 : 72;
         </div>
 
     @elseif($qris || ($bank && !empty($bank['lines'])))
-        <div style="display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch;">
+        <div style="display: flex; gap: 12px; margin-bottom: 8px; align-items: stretch; page-break-inside: avoid;">
 
             {{-- ── LEFT: QRIS ──────────────────────────────────── --}}
             @if($qris)
-            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 1.25;' : 'width: 100%;' }} border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 1.25;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
                 {{-- yellow header --}}
-                <div style="background: #FFC800; padding: 9px 13px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                <div style="background: #FFC800; padding: 7px 13px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <span style="font-size: 16px;">▦</span>
                     <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">PEMBAYARAN QRIS</span>
                 </div>
                 {{-- QR area --}}
-                <div class="pay-card-body" style="padding: 8px 10px 12px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="pay-card-body" style="padding: 6px 10px 8px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     @if(!empty($qris['image']))
                     <img class="qris-invoice-image"
                          src="{{ $qris['image'] }}"
                          alt="QRIS JASTIP NITIPDIEND"
                          style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
-                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
-                    <div style="display: inline-block; margin-top: 4px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
+                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 4px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
+                    <div style="display: inline-block; margin-top: 2px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
                 </div>
             </div>
             @endif
 
             {{-- ── RIGHT: TRANSFER REKENING ───────────────────── --}}
             @if($bank && !empty($bank['lines']))
-            <div style="{{ $qris ? 'flex: 1;' : 'width: 100%;' }} border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="{{ $qris ? 'flex: 1;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
                 {{-- header --}}
-                <div style="background: #FFFFFF; padding: 9px 14px; border-bottom: 1.5px solid #E2E8F0; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                <div style="background: #FFFFFF; padding: 7px 14px; border-bottom: 1.5px solid #E2E8F0; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <span style="font-size: 16px;">🏦</span>
                     <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">TRANSFER REKENING</span>
                 </div>
-                {{-- bank list --}}
-                <div class="pay-card-body" style="padding: 12px 14px; background: #FFFFFF; flex: 1;">
+                {{-- bank list — centered vertically so the empty space is
+                     split evenly above/below instead of piling up at the bottom --}}
+                <div class="pay-card-body" style="padding: 10px 14px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     @if(!empty($bank['accounts']))
                         @foreach($bank['accounts'] as $idx => $account)
                         @php
@@ -277,8 +278,8 @@ $bankLogoH = $qris ? 52 : 72;
 
         </div>
 
-        {{-- Warning banner --}}
-        <div style="background: #FFF7ED; border: 1.5px solid #FDBA74; border-radius: 8px; padding: 9px 13px; margin-top: 4px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;">
+        {{-- Warning banner — centered horizontally & vertically --}}
+        <div style="background: #FFF7ED; border: 1.5px solid #FDBA74; border-radius: 8px; padding: 7px 13px; margin-top: 2px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; text-align: center; gap: 10px;">
             <span style="font-size: 18px; flex-shrink: 0;">⚠️</span>
             <span style="font-size: 11.5px; font-weight: 800; color: #C2410C; line-height: 1.5; letter-spacing: 0.1px;">
                 TRANSFER HANYA KE REKENING / QRIS DI ATAS. SELAIN ITU DI LUAR TANGGUNG JAWAB KAMI.
@@ -293,7 +294,7 @@ $bankLogoH = $qris ? 52 : 72;
     {{-- ══════════════════════════════════════════════════════════════
          6. FOOTER
     ══════════════════════════════════════════════════════════════ --}}
-    <div style="height: 1px; background: #E2E8F0; margin-top: 14px; margin-bottom: 10px;"></div>
+    <div style="height: 1px; background: #E2E8F0; margin-top: 8px; margin-bottom: 6px;"></div>
     <div style="display: flex; align-items: center; gap: 12px;">
         <div style="flex: 1; height: 1px; background: #CBD5E1;"></div>
         <div style="font-size: 11.5px; color: #64748B; white-space: nowrap;">{{ $doc['footer'] }}</div>
