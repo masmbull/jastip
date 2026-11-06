@@ -512,13 +512,14 @@ class InvoiceTemplateTest extends TestCase
             ->assertSee('Nabila Adriyana');
     }
 
-    public function test_bank_logos_are_embedded_as_svg_data_uris(): void
+    public function test_bank_logos_are_embedded_as_png_data_uris(): void
     {
         $order = $this->makeOrder();
         $html  = $this->invoiceHtml($order)->assertOk()->getContent();
 
-        // All three logos use inline SVG base64 data URIs.
-        $this->assertStringContainsString('data:image/svg+xml;base64,', $html);
+        // All three official logos use inline PNG base64 data URIs
+        // (PNG, not SVG: SVG text gets clipped on headless Chrome servers).
+        $this->assertStringContainsString('data:image/png;base64,', $html);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
