@@ -410,7 +410,7 @@ class InvoiceTemplateTest extends TestCase
 
         $res = $this->invoiceHtml($order)->assertOk();
         $res->assertSee('PEMBAYARAN QRIS', false);
-        $res->assertSee('JASTIP NITIPDIEND', false);
+        $res->assertSee('NITIP DI END', false);
         $res->assertSee('SCAN / UPLOAD QRIS', false);
     }
 
