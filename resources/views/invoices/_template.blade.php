@@ -82,6 +82,12 @@ $icons = [
     'bank'     => '<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/>',
     'alert'    => '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16v.01"/>',
     'phone'    => '<path d="M20 12a8 8 0 01-11.8 7L4 20l1.1-4A8 8 0 1120 12z"/><path d="M9.5 9c0 3 2.5 5.5 5.5 5.5l1-1.4-2-1-.9.8c-.8-.3-1.6-1.1-1.9-1.9l.8-.9-1-2z"/>',
+    'receipt'  => '<path d="M5 3h14v18l-2.3-1.6L14.4 21l-2.4-1.6-2.4 1.6L7.3 19.4 5 21z"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/>',
+    'wallet'   => '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 13.5h3"/>',
+    'cash'     => '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M5.5 9.5h.01M18.5 14.5h.01"/>',
+    'clock'    => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    'tag'      => '<path d="M3 3h8l10 10-8 8L3 11z"/><circle cx="8" cy="8" r="1.6"/>',
+    'heart'    => '<path d="M12 20.5S3.5 15 3.5 9.4C3.5 6.4 5.8 4 8.7 4c1.4 0 2.6.5 3.3 1.4C12.7 4.5 13.9 4 15.3 4c2.9 0 5.2 2.4 5.2 5.4 0 5.6-8.5 11.1-8.5 11.1z"/>',
 ];
 $icon = fn (string $name, int $size = 16, string $color = '#B45309') =>
     '<svg xmlns="http://www.w3.org/2000/svg" width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; display:block;">'.($icons[$name] ?? '').'</svg>';
@@ -180,14 +186,14 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
     <table class="invoice-items" style="width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 10px;">
         <thead>
             <tr>
-                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; border-radius: 10px 0 0 10px; {{ $th }}">Produk</th>
+                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; border-radius: 12px 0 0 12px; {{ $th }}">Produk</th>
                 <th class="items-th" style="width: 10%; text-align: center; {{ $th }}">Satuan</th>
                 <th class="items-th" style="width: 8%; text-align: center; {{ $th }}">Qty</th>
                 <th class="items-th" style="width: {{ $hasFee ? '16%' : '20%' }}; text-align: right; {{ $th }}">Harga</th>
                 @if($hasFee)
                 <th class="items-th" style="width: 13%; text-align: right; {{ $th }}">Fee item</th>
                 @endif
-                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; border-radius: 0 10px 10px 0; {{ $th }}">Subtotal</th>
+                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; border-radius: 0 12px 12px 0; {{ $th }}">Subtotal</th>
             </tr>
         </thead>
         <tbody>
@@ -209,26 +215,35 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
     {{-- ═══ 4. TOTALS ═══ --}}
     <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-        <div class="invoice-totals-box" style="width: 58%; border: 1.5px solid #475569; border-radius: 10px; overflow: hidden; background: #FFFFFF;">
+        <div class="invoice-totals-box" style="width: 58%; border: 1.5px solid #E2E8F0; border-radius: 12px; overflow: hidden; background: #FFFFFF;">
             @foreach($doc['totals'] as $row)
+            @php
+                $lbl = strtolower($row['label'] ?? '');
+                $rowIcon = match (true) {
+                    str_contains($lbl, 'ongkir') => 'truck',
+                    str_contains($lbl, 'fee') => 'card',
+                    str_contains($lbl, 'diskon') => 'tag',
+                    default => 'receipt',
+                };
+            @endphp
             <div class="totals-td" style="display: flex; justify-content: space-between; padding: 6px 14px; font-size: 12.5px; {{ !empty($row['green']) ? 'color:#166534;' : 'color:#334155;' }}">
-                <span>{{ $row['label'] }}</span>
+                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon($rowIcon, 14, !empty($row['green']) ? '#166534' : '#64748B') !!}<span>{{ $row['label'] }}</span></span>
                 <span style="{{ !empty($row['green']) ? 'font-weight:700;' : '' }} white-space: nowrap;">{{ $row['value'] }}</span>
             </div>
             @endforeach
             <div class="totals-td" style="display: flex; justify-content: space-between; padding: 8px 14px; background: #FFC800; font-size: 15px; font-weight: 900;">
-                <span>{{ $doc['total']['label'] }}</span>
+                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('cash', 15, '#141414') !!}<span>{{ $doc['total']['label'] }}</span></span>
                 <span style="white-space: nowrap;">{{ $doc['total']['value'] }}</span>
             </div>
             @foreach(($doc['paid_rows'] ?? []) as $row)
             <div class="totals-td" style="display: flex; justify-content: space-between; padding: 6px 14px; font-size: 12.5px; color: #166534; border-top: 1px solid #F1F5F9;">
-                <span>{{ $row['label'] }}</span>
+                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('wallet', 14, '#166534') !!}<span>{{ $row['label'] }}</span></span>
                 <span style="font-weight: 700; white-space: nowrap;">{{ $row['value'] }}</span>
             </div>
             @endforeach
             @if($doc['left'])
             <div class="totals-td" style="display: flex; justify-content: space-between; padding: 8px 14px; background: #FEF3C7; font-size: 15px; font-weight: 800;">
-                <span>{{ $doc['left']['label'] }}</span>
+                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('clock', 15, '#141414') !!}<span>{{ $doc['left']['label'] }}</span></span>
                 <span style="white-space: nowrap;">{{ $doc['left']['value'] }}</span>
             </div>
             @endif
@@ -241,7 +256,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
     <div class="section-header" style="font-size: 14px; font-weight: 900; color: #141414; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
         <span style="display: flex; align-items: center; gap: 9px;">{!! $icon('card', 20) !!} CARA PEMBAYARAN</span>
         @if(!$isPaid && !empty($doc['pay_amount']))
-        <span style="font-size: 12px; font-weight: 700; color: #475569;">Nominal transfer: <span style="font-weight: 900; color: #141414;">{{ $doc['pay_amount'] }}</span></span>
+        <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 6px;">{!! $icon('cash', 15, '#B45309') !!}<span>Nominal transfer: <span style="font-weight: 900; color: #141414;">{{ $doc['pay_amount'] }}</span></span></span>
         @endif
     </div>
 
@@ -344,7 +359,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
     <div class="invoice-footer">
         <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
             <div style="flex: 1; height: 1px; background: #CBD5E1;"></div>
-            <div style="font-size: 12px; color: #475569; white-space: nowrap;">{{ $doc['footer'] }}</div>
+            <div style="font-size: 12px; color: #475569; white-space: nowrap; display: flex; align-items: center; gap: 6px;">{!! $icon('heart', 14, '#E11D48') !!}<span>{{ $doc['footer'] }}</span></div>
             <div style="flex: 1; height: 1px; background: #CBD5E1;"></div>
         </div>
         <div style="height: 8px; background: #FFC800; border-radius: 6px 6px 0 0; margin-top: 12px;"></div>
