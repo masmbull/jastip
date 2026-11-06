@@ -52,21 +52,21 @@ $seaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="
     . '</svg>';
 $seaLogo = 'data:image/svg+xml;base64,' . base64_encode($seaSvg);
 
-// blu by BCA Digital — teal "blu" large + BCA shield badge + BCAdigital
-$bluSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 200" width="360" height="200">'
-    // Large teal "blu" wordmark
-    . '<text x="180" y="118" font-family="Arial Black,Arial,sans-serif" font-size="112" font-weight="900" fill="#00C8C8" text-anchor="middle">blu</text>'
-    // Small BCA shield (bottom left)
-    . '<path d="M18,132 L52,132 Q60,132 60,140 L60,172 Q60,182 44,187 L35,190 Q26,187 10,182 L10,140 Q10,132 18,132 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="2.5"/>'
-    . '<circle cx="35" cy="150" r="7" fill="#1A3A8F"/>'
-    . '<circle cx="26" cy="158" r="5.5" fill="#1A3A8F"/>'
-    . '<circle cx="44" cy="158" r="5.5" fill="#1A3A8F"/>'
-    . '<rect x="31" y="163" width="8" height="9" rx="1.5" fill="#1A3A8F"/>'
-    . '<rect x="22" y="170" width="26" height="4" rx="2" fill="#1A3A8F"/>'
-    . '<text x="35" y="183" font-family="Arial,sans-serif" font-size="5.5" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
-    // BCAdigital text
-    . '<text x="68" y="190" font-family="Arial Black,Arial,sans-serif" font-size="34" font-weight="900" fill="#1A3A8F">BCA</text>'
-    . '<text x="178" y="190" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700" fill="#00C8C8">digital</text>'
+// blu by BCA Digital — horizontal: teal "blu" + small BCA digital badge side by side
+$bluSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">'
+    // "blu" teal wordmark
+    . '<text x="4" y="62" font-family="Arial Black,Arial,sans-serif" font-size="64" font-weight="900" fill="#00C8C8">blu</text>'
+    // Small BCA shield
+    . '<path d="M148,14 L178,14 Q184,14 184,20 L184,52 Q184,60 168,64 L163,66 Q158,64 142,60 L142,20 Q142,14 148,14 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="2.5"/>'
+    . '<circle cx="163" cy="30" r="6" fill="#1A3A8F"/>'
+    . '<circle cx="156" cy="37" r="5" fill="#1A3A8F"/>'
+    . '<circle cx="170" cy="37" r="5" fill="#1A3A8F"/>'
+    . '<rect x="159" y="41" width="7" height="9" rx="1.5" fill="#1A3A8F"/>'
+    . '<rect x="152" y="48" width="22" height="4" rx="2" fill="#1A3A8F"/>'
+    . '<text x="163" y="60" font-family="Arial,sans-serif" font-size="5" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
+    // "BCA digital" text
+    . '<text x="192" y="40" font-family="Arial Black,Arial,sans-serif" font-size="22" font-weight="900" fill="#1A3A8F">BCA</text>'
+    . '<text x="192" y="62" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#00C8C8">digital</text>'
     . '</svg>';
 $bluLogo = 'data:image/svg+xml;base64,' . base64_encode($bluSvg);
 
@@ -247,12 +247,12 @@ $isPaid    = $doc['paid'] ?? false;
                     <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">PEMBAYARAN QRIS</span>
                 </div>
                 {{-- QR area --}}
-                <div class="pay-card-body" style="padding: 10px 14px 14px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="pay-card-body" style="padding: 8px 10px 12px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     @if(!empty($qris['image']))
                     <img class="qris-invoice-image"
                          src="{{ $qris['image'] }}"
                          alt="QRIS JASTIP NITIPDIEND"
-                         style="display: block; width:75mm; height:75mm; max-width:75mm; max-height:75mm; object-fit: contain; background:#FFFFFF;">
+                         style="display: block; width: 100%; max-width: 85mm; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
                     <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
                     <div style="display: inline-block; margin-top: 4px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
@@ -275,11 +275,11 @@ $isPaid    = $doc['paid'] ?? false;
                         @php
                             $bk = strtolower($account['bank'] ?? '');
                             if (str_contains($bk, 'blu')) {
-                                $logo = $bluLogo; $lw = '120px'; $lh = '67px';
+                                $logo = $bluLogo; $lw = '100px'; $lh = '25px';
                             } elseif (str_contains($bk, 'sea')) {
-                                $logo = $seaLogo; $lw = '120px'; $lh = '35px';
+                                $logo = $seaLogo; $lw = '100px'; $lh = '29px';
                             } else {
-                                $logo = $bcaLogo; $lw = '120px'; $lh = '35px';
+                                $logo = $bcaLogo; $lw = '100px'; $lh = '29px';
                             }
                         @endphp
                         <div style="{{ $idx > 0 ? 'border-top: 1px solid #F1F5F9; margin-top: 10px; padding-top: 10px;' : '' }} display: flex; align-items: center; gap: 12px;">

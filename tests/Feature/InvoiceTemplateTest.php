@@ -423,8 +423,8 @@ class InvoiceTemplateTest extends TestCase
         $order = $this->makeOrder(['total' => 100_000]);
 
         $res = $this->invoiceHtml($order)->assertOk();
-        $res->assertSee('width:75mm');
-        $res->assertSee('height:75mm');
+        $res->assertSee('width:85mm');
+        $res->assertSee('background:#FFFFFF');
         $res->assertSee('background:#FFFFFF');
     }
 

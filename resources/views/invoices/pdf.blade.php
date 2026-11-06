@@ -43,12 +43,12 @@
 
         /* ── QRIS image ──────────────────────────────────────── */
         .qris-invoice-image {
-            width: 75mm !important;
-            height: 75mm !important;
+            width: 100% !important;
+            max-width: 85mm !important;
+            height: auto !important;
             object-fit: contain;
             display: block;
             background: #FFFFFF;
-            image-rendering: -webkit-optimize-contrast;
         }
 
         /* ── Compact mode (13+ items): scale everything down ─── */
