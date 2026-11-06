@@ -51,14 +51,19 @@ $isPaid    = $doc['paid'] ?? false;
 // QR code can be wider; bank logos are height-based so all three official
 // logos share the same visual height despite different aspect ratios.
 $hasBank   = !empty($bank['lines']) || !empty($bank['accounts'] ?? null);
+// QRIS artwork fallback caps (portrait artwork must never push the card
+// and the footer off the A4 page).
 $qrisMaxW  = ($qris && $hasBank) ? '100mm' : '130mm';
-// Height cap so a portrait QRIS image can never push the payment card
-// (and the footer) off the A4 page. Square QRIS stays full width.
 $qrisMaxH  = ($qris && $hasBank) ? '100mm' : '105mm';
+// Clean QR generated from the merchant payload: ~50mm of actual QR modules.
+// The SVG includes a ~4-module quiet zone, so the displayed image is a bit
+// larger than the QR itself.
+$qrisQrImage = ($qris && function_exists('qris_qr_data_uri')) ? qris_qr_data_uri() : null;
+$qrisQrSize  = ($qris && $hasBank) ? '62mm' : '70mm';
 // Bank logos are max-box sized (never fixed width/height) so they always
 // fit their column without distortion or clipping.
-$bankLogoH = $qris ? 45 : 56;
-$bankLogoMaxW = $qris ? 120 : 170;
+$bankLogoH = $qris ? 40 : 48;
+$bankLogoMaxW = $qris ? 100 : 120;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
@@ -224,37 +229,44 @@ $bankLogoMaxW = $qris ? 120 : 170;
 
             {{-- ── LEFT: QRIS ──────────────────────────────────── --}}
             @if($qris)
-            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 1.25;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 52;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
                 {{-- yellow header --}}
                 <div style="background: #FFC800; padding: 7px 13px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <span style="font-size: 16px;">▦</span>
                     <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">PEMBAYARAN QRIS</span>
                 </div>
                 {{-- QR area --}}
-                <div class="pay-card-body" style="padding: 6px 10px 8px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    @if(!empty($qris['image']))
+                <div class="pay-card-body" style="padding: 10px 12px 12px; text-align: center; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    @if($qrisQrImage)
+                    {{-- Clean B/W QR generated from the merchant payload --}}
+                    <img class="qris-invoice-image qris-generated"
+                         src="{{ $qrisQrImage }}"
+                         alt="QRIS {{ $qris['merchant'] ?? 'JASTIP NITIPDIEND' }}"
+                         style="display: block; width: {{ $qrisQrSize }}; height: {{ $qrisQrSize }}; object-fit: contain; background: #FFFFFF;">
+                    @elseif(!empty($qris['image']))
+                    {{-- Fallback: original QRIS artwork --}}
                     <img class="qris-invoice-image"
                          src="{{ $qris['image'] }}"
-                         alt="QRIS JASTIP NITIPDIEND"
+                         alt="QRIS {{ $qris['merchant'] ?? 'JASTIP NITIPDIEND' }}"
                          style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; max-height: {{ $qrisMaxH }}; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
-                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 4px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
-                    <div style="display: inline-block; margin-top: 2px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
+                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 6px; letter-spacing: 0.3px;">{{ $qris['merchant'] ?? 'JASTIP NITIPDIEND' }}</div>
+                    <div style="display: inline-block; margin-top: 3px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
                 </div>
             </div>
             @endif
 
             {{-- ── RIGHT: TRANSFER REKENING ───────────────────── --}}
             @if($bank && !empty($bank['lines']))
-            <div style="{{ $qris ? 'flex: 1;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="{{ $qris ? 'flex: 48;' : 'width: 100%;' }} min-width: 0; border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
                 {{-- header --}}
                 <div style="background: #FFFFFF; padding: 7px 14px; border-bottom: 1.5px solid #E2E8F0; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <span style="font-size: 16px;">🏦</span>
                     <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">TRANSFER REKENING</span>
                 </div>
-                {{-- bank list — centered vertically so the empty space is
-                     split evenly above/below instead of piling up at the bottom --}}
-                <div class="pay-card-body" style="padding: 10px 14px; background: #FFFFFF; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                {{-- bank list — top-aligned: entries start immediately below
+                     the header (no vertical centering, no big empty top gap) --}}
+                <div class="pay-card-body" style="padding: 10px 14px 12px; background: #FFFFFF; flex: 1;">
                     @if(!empty($bank['accounts']))
                         @foreach($bank['accounts'] as $idx => $account)
                         @php

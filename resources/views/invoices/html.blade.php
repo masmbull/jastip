@@ -26,7 +26,7 @@
            Jangan pakai ukuran fixed di sini (dulu 60mm × 60mm) — itu yang
            bikin QRIS kekecilan di versi HTML/PNG. */
         .qris-invoice-image {
-            width: 100% !important;
+            /* Width comes from the inline style in _template. */
             height: auto !important;
             object-fit: contain;
             background: #FFFFFF;

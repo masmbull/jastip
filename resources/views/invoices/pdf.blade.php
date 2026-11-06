@@ -46,11 +46,18 @@
            dual / 130mm×105mm solo) — jangan di-cap di sini, cap
            !important di file ini yang dulu bikin QRIS kekecilan. */
         .qris-invoice-image {
-            width: 100% !important;
+            /* Width comes from the inline style in _template (62mm dual /
+               70mm solo for the generated QR, 100% capped by max-width for
+               the artwork fallback). Never override it here — a fixed
+               width:100% made the solo QRIS as wide as the full card. */
             height: auto !important;
             object-fit: contain;
             display: block;
             background: #FFFFFF;
+        }
+        .qris-generated {
+            /* Square QR: keep the inline square size unless compact. */
+            height: auto !important;
         }
 
         /* ── Compact mode (13+ items): scale everything down ─── */
@@ -86,6 +93,10 @@
             width: 72mm !important;
             max-width: 72mm !important;
             height: auto !important;
+        }
+        .invoice-doc[data-layout="compact"] .qris-generated {
+            width: 50mm !important;
+            height: 50mm !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
             max-height: 38px !important;
