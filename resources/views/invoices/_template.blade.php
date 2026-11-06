@@ -250,7 +250,7 @@ $bankLogoMaxW = $qris ? 100 : 120;
                          alt="QRIS {{ $qris['merchant'] ?? 'JASTIP NITIPDIEND' }}"
                          style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; max-height: {{ $qrisMaxH }}; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
-                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 6px; letter-spacing: 0.3px;">{{ $qris['merchant'] ?? 'JASTIP NITIPDIEND' }}</div>
+                    <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 6px; letter-spacing: 0.3px;">{{ !empty($qris['merchant']) ? $qris['merchant'] : 'JASTIP NITIPDIEND' }}</div>
                     <div style="display: inline-block; margin-top: 3px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
                 </div>
             </div>
