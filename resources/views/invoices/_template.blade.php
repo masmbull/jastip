@@ -17,18 +17,20 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ── Bank logos: official SVG files in public/img/invoice/banks ────────────────
-// Embedded as data URIs so every renderer (Browsershot, DomPDF fallback,
-// html2canvas PNG share) shows the exact same artwork without a network fetch.
-// Aspect ratios from each file's viewBox:
-//   bca.svg      520×200 (2.60) — shield mark + BCA wordmark
-//   seabank.svg  480×160 (3.00) — S mark + SeaBank + waves
-//   blubca.svg   400×300 (1.33) — stacked "blu" + BCA digital
+// ── Bank logos: official PNG renders of the SVG files in public/img/invoice/banks ──
+// PNG (not SVG): the SVGs use "Arial Black" text which is missing on the
+// Linux server's headless Chrome — fallback metrics made the wordmarks
+// overflow the viewBox and get clipped ("SeaBank" -> "SeaB"). PNG bakes
+// the correct shapes. Embedded as data URIs so every renderer
+// (Browsershot, DomPDF fallback, html2canvas PNG share) is identical.
+// Regenerate after editing an SVG: node tools/rasterize-bank-logos.mjs
+// Aspect ratios: bca.png 1560×600 (2.60), seabank.png 1440×480 (3.00),
+// blubca.png 1200×900 (1.33, stacked "blu" + BCA digital).
 $bankLogoData = [];
-foreach (['bca' => 'bca.svg', 'sea' => 'seabank.svg', 'blu' => 'blubca.svg'] as $key => $file) {
+foreach (['bca' => 'bca.png', 'sea' => 'seabank.png', 'blu' => 'blubca.png'] as $key => $file) {
     $path = public_path('img/invoice/banks/' . $file);
     if (is_file($path)) {
-        $bankLogoData[$key] = 'data:image/svg+xml;base64,' . base64_encode((string) file_get_contents($path));
+        $bankLogoData[$key] = 'data:image/png;base64,' . base64_encode((string) file_get_contents($path));
     }
 }
 
@@ -45,7 +47,13 @@ $isPaid    = $doc['paid'] ?? false;
 // logos share the same visual height despite different aspect ratios.
 $hasBank   = !empty($bank['lines']) || !empty($bank['accounts'] ?? null);
 $qrisMaxW  = ($qris && $hasBank) ? '100mm' : '140mm';
-$bankLogoH = $qris ? 52 : 72;
+// Height cap so a portrait QRIS image can never push the payment card
+// (and the footer) off the A4 page. Square QRIS stays full width.
+$qrisMaxH  = ($qris && $hasBank) ? '100mm' : '120mm';
+// Bank logos are max-box sized (never fixed width/height) so they always
+// fit their column without distortion or clipping.
+$bankLogoH = $qris ? 46 : 64;
+$bankLogoMaxW = $qris ? 135 : 190;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
@@ -223,7 +231,7 @@ $bankLogoH = $qris ? 52 : 72;
                     <img class="qris-invoice-image"
                          src="{{ $qris['image'] }}"
                          alt="QRIS JASTIP NITIPDIEND"
-                         style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; height: auto; object-fit: contain; background: #FFFFFF;">
+                         style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; max-height: {{ $qrisMaxH }}; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
                     <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 4px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
                     <div style="display: inline-block; margin-top: 2px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
@@ -259,9 +267,9 @@ $bankLogoH = $qris ? 52 : 72;
                             <img class="bank-logo"
                                  src="{{ $logo }}"
                                  alt="{{ $account['bank'] }}"
-                                 style="height: {{ $bankLogoH }}px; width: auto; flex-shrink: 0; display: block;">
+                                 style="max-width: {{ $bankLogoMaxW }}px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; flex-shrink: 0; display: block;">
                             @endif
-                            <div>
+                            <div style="min-width: 0;">
                                 <div style="font-size: 14px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
                                 <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 3px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
                             </div>

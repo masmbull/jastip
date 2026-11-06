@@ -42,9 +42,9 @@
         }
 
         /* ── QRIS image ────────────────────────────────────────
-           Ukuran final dikontrol inline dari _template (100mm dual /
-           140mm solo) — jangan di-cap di sini, cap !important di
-           file ini yang dulu bikin QRIS kekecilan. */
+           Ukuran final dikontrol inline dari _template (max 100mm×100mm
+           dual / 140mm×120mm solo) — jangan di-cap di sini, cap
+           !important di file ini yang dulu bikin QRIS kekecilan. */
         .qris-invoice-image {
             width: 100% !important;
             height: auto !important;
@@ -88,7 +88,9 @@
             height: auto !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
-            height: 40px !important;
+            max-height: 38px !important;
+            max-width: 110px !important;
+            height: auto !important;
             width: auto !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-logo {
