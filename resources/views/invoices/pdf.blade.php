@@ -41,10 +41,12 @@
             body { margin: 0; }
         }
 
-        /* ── QRIS image ──────────────────────────────────────── */
+        /* ── QRIS image ────────────────────────────────────────
+           Ukuran final dikontrol inline dari _template (92mm dual /
+           125mm solo) — jangan di-cap di sini, cap !important di
+           file ini yang dulu bikin QRIS kekecilan. */
         .qris-invoice-image {
             width: 100% !important;
-            max-width: 85mm !important;
             height: auto !important;
             object-fit: contain;
             display: block;
@@ -81,12 +83,13 @@
             padding: 6px 8px !important;
         }
         .invoice-doc[data-layout="compact"] .qris-invoice-image {
-            width: 40mm !important;
-            height: 40mm !important;
+            width: 72mm !important;
+            max-width: 72mm !important;
+            height: auto !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
-            width: 72px !important;
-            height: 28px !important;
+            width: 110px !important;
+            height: auto !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-logo {
             width: 48px !important;

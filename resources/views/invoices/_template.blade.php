@@ -75,6 +75,13 @@ $hasFee    = !empty($doc['item_has_fee']);
 $qris      = $doc['qris'] ?? null;
 $bank      = $doc['bank'] ?? null;
 $isPaid    = $doc['paid'] ?? false;
+// Payment section sizing: when only ONE method is shown it spans the full
+// width, so it can (and must) be rendered much larger than in side-by-side
+// mode — otherwise a 100px bank logo / 85mm QRIS looks lost in a full-width
+// card. Dual mode caps QRIS to its column width.
+$hasBank   = !empty($bank['lines']) || !empty($bank['accounts'] ?? null);
+$qrisMaxW  = ($qris && $hasBank) ? '92mm' : '125mm';
+$bankLogoW  = $hasBank ? ($qris ? 150 : 210) : 150;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
@@ -252,7 +259,7 @@ $isPaid    = $doc['paid'] ?? false;
                     <img class="qris-invoice-image"
                          src="{{ $qris['image'] }}"
                          alt="QRIS JASTIP NITIPDIEND"
-                         style="display: block; width: 100%; max-width: 85mm; height: auto; object-fit: contain; background: #FFFFFF;">
+                         style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; height: auto; object-fit: contain; background: #FFFFFF;">
                     @endif
                     <div style="font-size: 13px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.3px;">JASTIP NITIPDIEND</div>
                     <div style="display: inline-block; margin-top: 4px; padding: 3px 14px; background: #F1F5F9; border-radius: 20px; font-size: 10.5px; color: #64748B; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
@@ -274,12 +281,13 @@ $isPaid    = $doc['paid'] ?? false;
                         @foreach($bank['accounts'] as $idx => $account)
                         @php
                             $bk = strtolower($account['bank'] ?? '');
+                            $lw = $bankLogoW.'px';
                             if (str_contains($bk, 'blu')) {
-                                $logo = $bluLogo; $lw = '100px'; $lh = '25px';
+                                $logo = $bluLogo; $lh = round($bankLogoW * 80 / 320).'px';
                             } elseif (str_contains($bk, 'sea')) {
-                                $logo = $seaLogo; $lw = '100px'; $lh = '29px';
+                                $logo = $seaLogo; $lh = round($bankLogoW * 110 / 380).'px';
                             } else {
-                                $logo = $bcaLogo; $lw = '100px'; $lh = '29px';
+                                $logo = $bcaLogo; $lh = round($bankLogoW * 100 / 340).'px';
                             }
                         @endphp
                         <div style="{{ $idx > 0 ? 'border-top: 1px solid #F1F5F9; margin-top: 10px; padding-top: 10px;' : '' }} display: flex; align-items: center; gap: 12px;">
@@ -288,8 +296,8 @@ $isPaid    = $doc['paid'] ?? false;
                                  alt="{{ $account['bank'] }}"
                                  style="width: {{ $lw }}; height: {{ $lh }}; object-fit: contain; flex-shrink: 0; display: block;">
                             <div>
-                                <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
-                                <div style="font-size: 11.5px; color: #475569; margin-top: 2px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
+                                <div style="font-size: 14px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 3px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
                             </div>
                         </div>
                         @endforeach
