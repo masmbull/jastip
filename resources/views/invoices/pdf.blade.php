@@ -36,14 +36,14 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm 11mm 14mm;
+                margin: 8mm 10mm 8mm;
             }
             body { margin: 0; }
         }
 
         /* ── QRIS image ────────────────────────────────────────
-           Ukuran final dikontrol inline dari _template (92mm dual /
-           125mm solo) — jangan di-cap di sini, cap !important di
+           Ukuran final dikontrol inline dari _template (100mm dual /
+           140mm solo) — jangan di-cap di sini, cap !important di
            file ini yang dulu bikin QRIS kekecilan. */
         .qris-invoice-image {
             width: 100% !important;
@@ -88,8 +88,8 @@
             height: auto !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
-            width: 110px !important;
-            height: auto !important;
+            height: 40px !important;
+            width: auto !important;
         }
         .invoice-doc[data-layout="compact"] .invoice-logo {
             width: 48px !important;

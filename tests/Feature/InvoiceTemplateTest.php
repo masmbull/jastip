@@ -423,8 +423,8 @@ class InvoiceTemplateTest extends TestCase
         $order = $this->makeOrder(['total' => 100_000]);
 
         $res = $this->invoiceHtml($order)->assertOk();
-        // Dual mode (QRIS + rekening): QRIS max 92mm, sesuai _template.
-        $res->assertSee('max-width: 92mm');
+        // Dual mode (QRIS + rekening): QRIS max 100mm, sesuai _template.
+        $res->assertSee('max-width: 100mm');
         $res->assertSee('background: #FFFFFF');
         $res->assertSee('background: #FFFFFF');
     }

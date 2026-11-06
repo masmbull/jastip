@@ -259,7 +259,7 @@ class InvoiceController extends Controller
                 /** @var \Spatie\Browsershot\Browsershot $browsershot */
                 $browsershot = \Spatie\Browsershot\Browsershot::html($html)
                     ->format('A4')
-                    ->margins(10, 11, 14, 11)   // top, right, bottom, left (mm)
+                    ->margins(8, 10, 8, 10)   // top, right, bottom, left (mm) — must match @page in pdf.blade.php
                     ->scale(1)
                     ->printBackground()
                     ->waitUntilNetworkIdle()     // wait for Google Fonts & images
