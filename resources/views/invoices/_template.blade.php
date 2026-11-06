@@ -17,15 +17,20 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ── Bank logos: official PNG renders of the SVG files in public/img/invoice/banks ──
-// PNG (not SVG): the SVGs use "Arial Black" text which is missing on the
-// Linux server's headless Chrome — fallback metrics made the wordmarks
-// overflow the viewBox and get clipped ("SeaBank" -> "SeaB"). PNG bakes
-// the correct shapes. Embedded as data URIs so every renderer
-// (Browsershot, DomPDF fallback, html2canvas PNG share) is identical.
-// Regenerate after editing an SVG: node tools/rasterize-bank-logos.mjs
-// Aspect ratios: bca.png 1560×600 (2.60), seabank.png 1440×480 (3.00),
-// blubca.png 1200×900 (1.33, stacked "blu" + BCA digital).
+// ── Bank logos: official brand assets in public/img/invoice/banks ─────────────
+//  - bca.png     official BCA logo (GRUP BCA), from Wikimedia Commons
+//                (source: bca.co.id brand assets). White background.
+//  - seabank.png rasterized from seabank.svg — official SeaBank logo
+//                (paths only, source: seabank.co.id via Wikimedia Commons).
+//                Regenerate: node tools/rasterize-bank-logos.mjs
+//  - blubca.png  official blu logo, downloaded from blubybcadigital.id
+//                (_nuxt/logo-color). Transparent background.
+// PNG (not SVG): SVG text using "Arial Black" gets clipped on the Linux
+// server's headless Chrome (font missing -> wider fallback metrics).
+// Embedded as data URIs so every renderer (Browsershot, DomPDF fallback,
+// html2canvas PNG share) shows the identical artwork.
+// Aspect ratios: bca.png 259×194 (1.34), seabank.png 1260×405 (3.11),
+// blubca.png 200×89 (2.25).
 $bankLogoData = [];
 foreach (['bca' => 'bca.png', 'sea' => 'seabank.png', 'blu' => 'blubca.png'] as $key => $file) {
     $path = public_path('img/invoice/banks/' . $file);
