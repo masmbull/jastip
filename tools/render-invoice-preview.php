@@ -126,6 +126,15 @@ $variants['compact'] = $doc([
 // QRIS only (no bank lines).
 $variants['solo-qris'] = $doc(['bank' => ['lines' => [], 'accounts' => [], 'text' => '']]);
 
+// Dual mode with a very long account holder name (clipping stress test).
+$dualLongBank = $bank;
+$dualLongBank['accounts'] = [
+    ['bank' => 'BCA', 'number' => '2700398369', 'name' => 'Nabila Adriyana Putri Maharani Dewanti'],
+    ['bank' => 'SeaBank', 'number' => '901499244727', 'name' => 'Nabila Adriyana Putri Maharani Dewanti'],
+    ['bank' => 'BluBCA', 'number' => '001081568345', 'name' => 'Nabila Adriyana Putri Maharani Dewanti'],
+];
+$variants['long-holder'] = $doc(['bank' => $dualLongBank]);
+
 foreach ($variants as $name => $d) {
     $html = view('invoices.pdf', ['doc' => $d])->render();
     file_put_contents($outDir . DIRECTORY_SEPARATOR . $name . '.html', $html);
