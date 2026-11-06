@@ -43,7 +43,7 @@
 
         /* ── QRIS image ────────────────────────────────────────
            Ukuran final dikontrol inline dari _template (max 100mm×100mm
-           dual / 140mm×120mm solo) — jangan di-cap di sini, cap
+           dual / 130mm×105mm solo) — jangan di-cap di sini, cap
            !important di file ini yang dulu bikin QRIS kekecilan. */
         .qris-invoice-image {
             width: 100% !important;

@@ -22,7 +22,7 @@
         .invoice-doc, .invoice-doc * {
             font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
         }
-        /* Ukuran dikontrol inline dari _template (100mm dual / 140mm solo).
+        /* Ukuran dikontrol inline dari _template (100mm dual / 130mm solo).
            Jangan pakai ukuran fixed di sini (dulu 60mm × 60mm) — itu yang
            bikin QRIS kekecilan di versi HTML/PNG. */
         .qris-invoice-image {

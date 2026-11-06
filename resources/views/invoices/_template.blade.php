@@ -46,14 +46,14 @@ $isPaid    = $doc['paid'] ?? false;
 // QR code can be wider; bank logos are height-based so all three official
 // logos share the same visual height despite different aspect ratios.
 $hasBank   = !empty($bank['lines']) || !empty($bank['accounts'] ?? null);
-$qrisMaxW  = ($qris && $hasBank) ? '100mm' : '140mm';
+$qrisMaxW  = ($qris && $hasBank) ? '100mm' : '130mm';
 // Height cap so a portrait QRIS image can never push the payment card
 // (and the footer) off the A4 page. Square QRIS stays full width.
-$qrisMaxH  = ($qris && $hasBank) ? '100mm' : '120mm';
+$qrisMaxH  = ($qris && $hasBank) ? '100mm' : '105mm';
 // Bank logos are max-box sized (never fixed width/height) so they always
 // fit their column without distortion or clipping.
-$bankLogoH = $qris ? 46 : 64;
-$bankLogoMaxW = $qris ? 135 : 190;
+$bankLogoH = $qris ? 45 : 56;
+$bankLogoMaxW = $qris ? 120 : 170;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
@@ -271,7 +271,8 @@ $bankLogoMaxW = $qris ? 135 : 190;
                             @endif
                             <div style="min-width: 0;">
                                 <div style="font-size: 14px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
-                                <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 3px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
+                                <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 2px; line-height: 1.35; white-space: nowrap;">{{ $account['number'] }}</div>
+                                <div style="font-size: 12px; color: #475569; margin-top: 1px; line-height: 1.35;">a/n {{ $account['name'] }}</div>
                             </div>
                         </div>
                         @endforeach
