@@ -434,10 +434,17 @@ window.Alpine = Alpine;
                 throw new Error('Ukuran invoice tidak dapat dihitung');
             }
 
+            // Tunggu font invoice siap supaya teks tidak jatuh ke fallback
+            // saat di-render (host tidak memuat stylesheet invoice).
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+            }
+
             const { default: html2canvas } = await import('html2canvas');
             const captureOptions = {
                 backgroundColor: '#FFFFFF',
-                scale: 4,
+                // HD: minimal 3x (2382x3369px) supaya tajam di WhatsApp.
+                scale: Math.max(3, window.devicePixelRatio || 1),
                 windowWidth: 794,
                 windowHeight: 1123,
                 useCORS: true,

@@ -187,6 +187,16 @@
                                                 <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
                                             </svg>
                                         </button>
+                                        {{-- Kirim PDF asli sebagai file (tanpa kompres WhatsApp) --}}
+                                        <button type="button"
+                                                @click="jdShareInvoicePdf($el, { url: @js(route('invoice.public', $invoice->public_token)), filename: @js('invoice-'.$invoice->no.'.pdf'), text: @js($shareCaption), waUrl: @js(whatsapp_url($invoice->customer_whatsapp, $shareCaption)) })"
+                                                class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#B45309] disabled:opacity-60"
+                                                title="Kirim PDF invoice sebagai file. Pilih WhatsApp dan kontak di menu berbagi."
+                                                aria-label="Kirim invoice {{ $invoice->no }} sebagai PDF">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/>
+                                            </svg>
+                                        </button>
                                     @endif
                                     <a href="{{ route('admin.orders.edit', $invoice->id) }}"
                                        class="inline-flex items-center justify-center w-11 h-11 border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] rounded-[8px] text-[#B45309]"

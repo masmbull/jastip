@@ -111,8 +111,8 @@
             height: 50mm !important;
         }
         .invoice-doc[data-layout="compact"] .bank-logo {
-            max-height: 38px !important;
-            max-width: 110px !important;
+            max-height: 30px !important;
+            max-width: 90px !important;
             height: auto !important;
             width: auto !important;
         }

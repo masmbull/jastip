@@ -60,10 +60,11 @@ $qrisMaxH  = ($qris && $hasBank) ? '100mm' : '105mm';
 // larger than the QR itself.
 $qrisQrImage = ($qris && function_exists('qris_qr_data_uri')) ? qris_qr_data_uri() : null;
 $qrisQrSize  = ($qris && $hasBank) ? '62mm' : '70mm';
-// Bank logos are max-box sized (never fixed width/height) so they always
-// fit their column without distortion or clipping.
-$bankLogoH = $qris ? 30 : 40;
-$bankLogoMaxW = $qris ? 92 : 110;
+// Bank logos share one max box with object-fit: contain, so they render at
+// uniform height (BCA 1.34, SeaBank 3.11, blu 2.25 aspect) without ever
+// clipping or stretching. Heights are the visually uniform dimension.
+$bankLogoH = $qris ? 38 : 48;
+$bankLogoMaxW = $qris ? 110 : 150;
 @endphp
 
 @php
@@ -122,11 +123,12 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
             </div>
         </div>
 
-        <div style="text-align: right; flex-shrink: 0; padding-left: 20px;">
+        {{-- One right-aligned column: title, number, date and badge share the same right edge --}}
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; padding-left: 20px; text-align: right;">
             <div class="invoice-title" style="font-size: 42px; font-weight: 900; color: #141414; letter-spacing: 1px; line-height: 1;">{{ $doc['title'] }}</div>
-            <div style="font-size: 12px; color: #141414; margin-top: 8px; font-weight: 800;">Invoice #{{ $doc['number'] }}</div>
-            <div style="font-size: 11.5px; color: #475569; margin-top: 4px; display: flex; align-items: center; justify-content: flex-end; gap: 6px;">{!! $icon('calendar', 14, '#475569') !!}<span>{{ $doc['date'] }}</span></div>
-            <div style="margin-top: 8px;">
+            <div style="font-size: 12px; color: #141414; font-weight: 800; line-height: 1.2;">Invoice #{{ $doc['number'] }}</div>
+            <div style="font-size: 11.5px; color: #475569; display: flex; align-items: center; gap: 6px; line-height: 1.2;">{!! $icon('calendar', 14, '#475569') !!}<span>{{ $doc['date'] }}</span></div>
+            <div>
                 <span style="display: inline-block; padding: 4px 18px; border: 1.5px solid {{ $badgeColor }}; border-radius: 8px; color: {{ $badgeColor }}; font-weight: 800; font-size: 11.5px; letter-spacing: 0.5px; background: {{ $badgeBg }};">{{ $badgeText }}</span>
             </div>
         </div>
@@ -192,11 +194,11 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
             @foreach($doc['items'] as $item)
             <tr>
                 <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; word-break: break-word; font-size: 12.5px;">{{ $item['name'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 6px; vertical-align: top; text-align: center; color: #475569; font-size: 12.5px;">{{ $item['unit'] ?: '-' }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 6px; vertical-align: top; text-align: center; font-size: 12.5px;">{{ $item['qty'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 6px; vertical-align: top; text-align: right; white-space: nowrap; font-size: 12.5px;">{{ $item['price'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: center; color: #475569; font-size: 12.5px;">{{ $item['unit'] ?: '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: center; font-size: 12.5px;">{{ $item['qty'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; white-space: nowrap; font-size: 12.5px;">{{ $item['price'] }}</td>
                 @if($hasFee)
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 7px; vertical-align: top; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px;">{{ $item['fee'] ?? '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px;">{{ $item['fee'] ?? '-' }}</td>
                 @endif
                 <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; font-weight: 800; white-space: nowrap; font-size: 12.5px;">{{ $item['subtotal'] }}</td>
             </tr>
@@ -273,7 +275,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                         @endif
                     </div>
                     <div style="font-size: 14px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.3px;">{{ !empty($qris['merchant']) ? $qris['merchant'] : 'JASTIP NITIPDIEND' }}</div>
-                    <div style="display: inline-block; margin-top: 4px; padding: 3px 16px; background: #E5E7EB; border-radius: 20px; font-size: 10.5px; color: #475569; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
+                    <div style="display: inline-block; margin-top: 9px; padding: 3px 16px; background: #E5E7EB; border-radius: 20px; font-size: 10.5px; color: #475569; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
                 </div>
             </div>
             @endif
@@ -281,11 +283,13 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
             {{-- TRANSFER REKENING --}}
             @if($bank && !empty($bank['lines']))
             <div style="{{ $qris ? 'flex: 48;' : 'width: 100%;' }} min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
-                <div class="pay-card-body" style="padding: 12px 14px; flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 10px;">
+                <div class="pay-card-body" style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0;">
                         <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #FFE58A; border-radius: 9px;">{!! $icon('bank', 18, '#7C4A03') !!}</span>
                         <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">TRANSFER REKENING</span>
                     </div>
+                    {{-- Entries vertically centered in the space below the header --}}
+                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center;">
                     @if(!empty($bank['accounts']))
                         @foreach($bank['accounts'] as $idx => $account)
                         @php
@@ -302,7 +306,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                             <div style="width: {{ $bankLogoMaxW }}px; flex-shrink: 0; display: flex; align-items: center;">
                                 @if($logo)
                                 <img class="bank-logo" src="{{ $logo }}" alt="{{ $account['bank'] }}"
-                                     style="max-width: {{ $bankLogoMaxW }}px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; display: block;">
+                                     style="max-width: {{ $bankLogoMaxW }}px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; object-fit: contain; display: block;">
                                 @endif
                             </div>
                             <div style="min-width: 0;">
@@ -316,6 +320,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                         <div style="{{ !$loop->first ? 'border-top: 1px solid #E2E8F0; margin-top: 8px; padding-top: 8px;' : '' }} font-size: 12px; color: #475569; line-height: 1.45;">{{ $line }}</div>
                         @endforeach
                     @endif
+                    </div>
                 </div>
             </div>
             @endif
