@@ -17,58 +17,20 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-// ── Bank logos: SVG data URIs ─────────────────────────────────────────────────
-// BCA — official blue shield/flower mark + bold BCA
-$bcaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 100" width="340" height="100">'
-    // Shield outline (scaled to fit 90px height)
-    . '<path d="M5,5 L75,5 Q88,5 88,18 L88,68 Q88,88 58,96 L40,100 Q22,96 5,88 L5,18 Q5,5 18,5 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="4"/>'
-    // Flower center
-    . '<circle cx="46" cy="38" r="12" fill="#1A3A8F"/>'
-    // Side bulbs
-    . '<circle cx="29" cy="50" r="10" fill="#1A3A8F"/>'
-    . '<circle cx="63" cy="50" r="10" fill="#1A3A8F"/>'
-    // Trunk
-    . '<rect x="40" y="57" width="12" height="16" rx="2" fill="#1A3A8F"/>'
-    // Base
-    . '<rect x="24" y="71" width="44" height="6" rx="2" fill="#1A3A8F"/>'
-    // GRUP BCA tiny text
-    . '<text x="46" y="90" font-family="Arial,sans-serif" font-size="8" font-weight="600" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
-    // BCA bold wordmark
-    . '<text x="105" y="82" font-family="Arial Black,Arial,sans-serif" font-size="78" font-weight="900" fill="#1A3A8F">BCA</text>'
-    . '</svg>';
-$bcaLogo = 'data:image/svg+xml;base64,' . base64_encode($bcaSvg);
-
-// SeaBank — orange circle S + SeaBank text + blue wave
-$seaSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="380" height="110">'
-    // Orange circle
-    . '<circle cx="52" cy="52" r="48" fill="#FF6200"/>'
-    // White S
-    . '<text x="52" y="74" font-family="Arial Black,Arial,sans-serif" font-size="56" font-weight="900" fill="#FFFFFF" text-anchor="middle">S</text>'
-    // SeaBank orange text
-    . '<text x="115" y="68" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="800" fill="#FF6200">SeaBank</text>'
-    // Blue waves
-    . '<path d="M115,84 Q150,73 185,84 Q220,95 255,84 Q290,73 325,84 Q350,90 370,84" fill="none" stroke="#1A6EC8" stroke-width="5" stroke-linecap="round"/>'
-    . '<path d="M115,98 Q150,87 185,98 Q220,109 255,98 Q290,87 325,98" fill="none" stroke="#1A6EC8" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>'
-    . '</svg>';
-$seaLogo = 'data:image/svg+xml;base64,' . base64_encode($seaSvg);
-
-// blu by BCA Digital — horizontal: teal "blu" + small BCA digital badge side by side
-$bluSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">'
-    // "blu" teal wordmark
-    . '<text x="4" y="62" font-family="Arial Black,Arial,sans-serif" font-size="64" font-weight="900" fill="#00C8C8">blu</text>'
-    // Small BCA shield
-    . '<path d="M148,14 L178,14 Q184,14 184,20 L184,52 Q184,60 168,64 L163,66 Q158,64 142,60 L142,20 Q142,14 148,14 Z" fill="#FFFFFF" stroke="#1A3A8F" stroke-width="2.5"/>'
-    . '<circle cx="163" cy="30" r="6" fill="#1A3A8F"/>'
-    . '<circle cx="156" cy="37" r="5" fill="#1A3A8F"/>'
-    . '<circle cx="170" cy="37" r="5" fill="#1A3A8F"/>'
-    . '<rect x="159" y="41" width="7" height="9" rx="1.5" fill="#1A3A8F"/>'
-    . '<rect x="152" y="48" width="22" height="4" rx="2" fill="#1A3A8F"/>'
-    . '<text x="163" y="60" font-family="Arial,sans-serif" font-size="5" fill="#1A3A8F" text-anchor="middle">GRUP BCA</text>'
-    // "BCA digital" text
-    . '<text x="192" y="40" font-family="Arial Black,Arial,sans-serif" font-size="22" font-weight="900" fill="#1A3A8F">BCA</text>'
-    . '<text x="192" y="62" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#00C8C8">digital</text>'
-    . '</svg>';
-$bluLogo = 'data:image/svg+xml;base64,' . base64_encode($bluSvg);
+// ── Bank logos: official SVG files in public/img/invoice/banks ────────────────
+// Embedded as data URIs so every renderer (Browsershot, DomPDF fallback,
+// html2canvas PNG share) shows the exact same artwork without a network fetch.
+// Aspect ratios from each file's viewBox:
+//   bca.svg      520×200 (2.60) — shield mark + BCA wordmark
+//   seabank.svg  480×160 (3.00) — S mark + SeaBank + waves
+//   blubca.svg   400×300 (1.33) — stacked "blu" + BCA digital
+$bankLogoData = [];
+foreach (['bca' => 'bca.svg', 'sea' => 'seabank.svg', 'blu' => 'blubca.svg'] as $key => $file) {
+    $path = public_path('img/invoice/banks/' . $file);
+    if (is_file($path)) {
+        $bankLogoData[$key] = 'data:image/svg+xml;base64,' . base64_encode((string) file_get_contents($path));
+    }
+}
 
 $isCompact = count($doc['items'] ?? []) > 12;
 $hasFee    = !empty($doc['item_has_fee']);
@@ -77,11 +39,13 @@ $bank      = $doc['bank'] ?? null;
 $isPaid    = $doc['paid'] ?? false;
 // Payment section sizing: when only ONE method is shown it spans the full
 // width, so it can (and must) be rendered much larger than in side-by-side
-// mode — otherwise a 100px bank logo / 85mm QRIS looks lost in a full-width
-// card. Dual mode caps QRIS to its column width.
+// mode — otherwise the QRIS / bank logo looks lost in a full-width card.
+// In dual mode the QRIS card gets a bigger flex share (1.25 vs 1) so the
+// QR code can be wider; bank logos are height-based so all three official
+// logos share the same visual height despite different aspect ratios.
 $hasBank   = !empty($bank['lines']) || !empty($bank['accounts'] ?? null);
-$qrisMaxW  = ($qris && $hasBank) ? '92mm' : '125mm';
-$bankLogoW  = $hasBank ? ($qris ? 150 : 210) : 150;
+$qrisMaxW  = ($qris && $hasBank) ? '100mm' : '140mm';
+$bankLogoH = $qris ? 52 : 72;
 @endphp
 
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
@@ -247,7 +211,7 @@ $bankLogoW  = $hasBank ? ($qris ? 150 : 210) : 150;
 
             {{-- ── LEFT: QRIS ──────────────────────────────────── --}}
             @if($qris)
-            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 1;' : 'width: 100%;' }} border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 1.25;' : 'width: 100%;' }} border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
                 {{-- yellow header --}}
                 <div style="background: #FFC800; padding: 9px 13px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <span style="font-size: 16px;">▦</span>
@@ -281,20 +245,21 @@ $bankLogoW  = $hasBank ? ($qris ? 150 : 210) : 150;
                         @foreach($bank['accounts'] as $idx => $account)
                         @php
                             $bk = strtolower($account['bank'] ?? '');
-                            $lw = $bankLogoW.'px';
                             if (str_contains($bk, 'blu')) {
-                                $logo = $bluLogo; $lh = round($bankLogoW * 80 / 320).'px';
+                                $logo = $bankLogoData['blu'] ?? null;
                             } elseif (str_contains($bk, 'sea')) {
-                                $logo = $seaLogo; $lh = round($bankLogoW * 110 / 380).'px';
+                                $logo = $bankLogoData['sea'] ?? null;
                             } else {
-                                $logo = $bcaLogo; $lh = round($bankLogoW * 100 / 340).'px';
+                                $logo = $bankLogoData['bca'] ?? null;
                             }
                         @endphp
                         <div style="{{ $idx > 0 ? 'border-top: 1px solid #F1F5F9; margin-top: 10px; padding-top: 10px;' : '' }} display: flex; align-items: center; gap: 12px;">
+                            @if($logo)
                             <img class="bank-logo"
                                  src="{{ $logo }}"
                                  alt="{{ $account['bank'] }}"
-                                 style="width: {{ $lw }}; height: {{ $lh }}; object-fit: contain; flex-shrink: 0; display: block;">
+                                 style="height: {{ $bankLogoH }}px; width: auto; flex-shrink: 0; display: block;">
+                            @endif
                             <div>
                                 <div style="font-size: 14px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
                                 <div style="font-size: 13px; font-weight: 700; color: #334155; margin-top: 3px; line-height: 1.4;">{{ $account['number'] }} a/n {{ $account['name'] }}</div>
