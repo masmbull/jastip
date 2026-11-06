@@ -370,13 +370,21 @@ class InvoiceController extends Controller
             $totals[] = ['label' => 'Diskon', 'value' => '-'.format_price($order->discount), 'muted' => true];
         }
 
+        // Pembayaran yang sudah masuk dipisah dari $totals: urutannya harus
+        // TOTAL BAYAR (grand total) -> potongan deposit/pelunasan -> Sisa Bayar.
+        // Dulu deposit tampil DI ATAS total padahal total tidak ikut dikurangi,
+        // sehingga angka terlihat tidak nyambung.
+        $paidRows = [];
+
         if ($depositIn > 0) {
-            $totals[] = ['label' => 'Deposit masuk', 'value' => '-'.format_price($depositIn), 'muted' => true, 'green' => true];
+            $paidRows[] = ['label' => 'Deposit masuk', 'value' => '-'.format_price($depositIn), 'muted' => true, 'green' => true];
         }
 
         if ($extraPaid > 0) {
-            $totals[] = ['label' => 'Pelunasan masuk', 'value' => '-'.format_price($extraPaid), 'muted' => true, 'green' => true];
+            $paidRows[] = ['label' => 'Pelunasan masuk', 'value' => '-'.format_price($extraPaid), 'muted' => true, 'green' => true];
         }
+
+        $status = $order->is_paid ? 'paid' : ($paid > 0 ? 'dp' : 'unpaid');
 
         $paidAt = $order->paid_at
             ? $order->paid_at->copy()->setTimezone('Asia/Jakarta')
@@ -394,15 +402,16 @@ class InvoiceController extends Controller
             'brand' => setting('brand_name', 'NITIP DI END'),
             'logo' => media_url(setting('brand_logo')),
             'owner' => setting('brand_owner'),
-            'store_wa' => $storeWa,
+            'store_wa' => phone_display($storeWa),
             'title' => $paid > 0 && ! $order->is_paid ? 'TAGIHAN' : 'INVOICE',
             'number' => $order->no,
             'date' => $createdAt ? $createdAt->format('d M Y, H:i') : '',
-            'status_text' => $order->is_paid ? 'LUNAS' : 'BELUM BAYAR',
-            'status_color' => $order->is_paid ? '#15803D' : '#B45309',
+            'status' => $status,
+            'status_text' => ['paid' => 'LUNAS', 'dp' => 'DP DITERIMA', 'unpaid' => 'BELUM BAYAR'][$status],
+            'status_color' => ['paid' => '#15803D', 'dp' => '#1D4ED8', 'unpaid' => '#B45309'][$status],
             'customer' => [
                 'name' => $order->customer_name,
-                'wa' => $order->customer_whatsapp,
+                'wa' => phone_display($order->customer_whatsapp),
                 'address' => $order->customer_address,
             ],
             'shipping' => array_values(array_filter([
@@ -420,8 +429,11 @@ class InvoiceController extends Controller
                 'fee' => $order->show_fee && (int) $i->fee > 0 ? format_price($i->fee) : null,
             ])->all(),
             'totals' => $totals,
+            'paid_rows' => $paidRows,
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],
             'left' => $left > 0 ? ['label' => 'Sisa Bayar', 'value' => format_price($left)] : null,
+            // Nominal yang harus ditransfer sekarang (sisa bila sudah ada deposit).
+            'pay_amount' => format_price($left > 0 ? $left : (int) $order->total),
             'payment_text' => $payment,
             // QRIS hanya untuk nominal <= batas; di atasnya rekening saja.
             'qris' => qris_allowed_for((int) $order->total)

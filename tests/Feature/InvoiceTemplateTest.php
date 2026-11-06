@@ -162,7 +162,7 @@ class InvoiceTemplateTest extends TestCase
         $order = $this->makeOrder();
         $res = $this->invoiceHtml($order)->assertOk();
         $res->assertSee('Nabila Adriyana');
-        $res->assertSee('6282336534191');
+        $res->assertSee('+62 823-3653-4191');
     }
 
     public function test_tagihan_title_appears_when_deposit_was_made_but_not_fully_paid(): void
@@ -187,7 +187,7 @@ class InvoiceTemplateTest extends TestCase
 
         $res = $this->invoiceHtml($order)->assertOk();
         $res->assertSee('Siti Rahayu');
-        $res->assertSee('081298765432');
+        $res->assertSee('+62 812-9876-5432');
         $res->assertSee('Jl. Sudirman No. 5, Bandung');
         $res->assertSee('DITAGIHKAN KEPADA');
     }

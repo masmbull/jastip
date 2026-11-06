@@ -60,6 +60,18 @@
             height: auto !important;
         }
 
+        /* ── Footer menempel di dasar halaman ──────────────────
+           Tinggi konten A4 = 297mm - 8mm - 8mm margin = 281mm; dikurangi
+           sedikit supaya tak pernah memicu halaman kedua kosong. Body tetap
+           block biasa (margin collapse terjaga), hanya footer yang didorong. */
+        .invoice-doc {
+            display: flex;
+            flex-direction: column;
+            min-height: 277mm;
+        }
+        .invoice-doc .invoice-body { flex: 1 0 auto; }
+        .invoice-doc .invoice-footer { flex-shrink: 0; }
+
         /* ── Compact mode (13+ items): scale everything down ─── */
         .invoice-doc[data-layout="compact"] {
             font-size: 9px !important;

@@ -235,6 +235,30 @@ if (! function_exists('wa_phone')) {
     }
 }
 
+if (! function_exists('phone_display')) {
+    /**
+     * Format nomor Indonesia untuk TAMPILAN (bukan untuk link wa.me):
+     * "082336534191" / "6282336534191" -> "+62 823-3653-4191".
+     * Nomor yang bentuknya tak dikenali dikembalikan apa adanya.
+     */
+    function phone_display(?string $phone): string
+    {
+        $raw = trim((string) $phone);
+        $wa = wa_phone($raw);
+
+        if ($wa === '' || ! str_starts_with($wa, '62')) {
+            return $raw;
+        }
+
+        $national = substr($wa, 2);
+        if (strlen($national) < 9 || strlen($national) > 12) {
+            return $raw;
+        }
+
+        return '+62 '.substr($national, 0, 3).'-'.implode('-', str_split(substr($national, 3), 4));
+    }
+}
+
 if (! function_exists('whatsapp_url')) {
     /**
      * Generate a WhatsApp URL with optional pre-filled message.
