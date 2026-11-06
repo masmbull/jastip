@@ -168,7 +168,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
             <div class="info-card" style="padding: 7px 12px 8px;">
                 @foreach($doc['shipping'] as $row)
                 <div style="display: flex; align-items: center; font-size: 12px; color: #475569; padding: 3px 0;">
-                    <span style="display: flex; align-items: center; gap: 7px; width: 112px; flex-shrink: 0;">
+                    <span style="display: flex; align-items: center; gap: 7px; width: 96px; flex-shrink: 0;">
                         {!! $icon($loop->first ? 'truck' : 'list', 14, '#64748B') !!}
                         <span>{{ $row['label'] }}</span>
                     </span>
