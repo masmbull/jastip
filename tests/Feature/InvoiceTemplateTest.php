@@ -410,7 +410,7 @@ class InvoiceTemplateTest extends TestCase
 
         $res = $this->invoiceHtml($order)->assertOk();
         $res->assertSee('PEMBAYARAN QRIS', false);
-        $res->assertSee('JASTIP NITIPDIEND', false);
+        $res->assertSee('NITIP DI END', false);
         $res->assertSee('SCAN / UPLOAD QRIS', false);
     }
 
@@ -423,8 +423,8 @@ class InvoiceTemplateTest extends TestCase
         $order = $this->makeOrder(['total' => 100_000]);
 
         $res = $this->invoiceHtml($order)->assertOk();
-        // Dual mode (QRIS + rekening): QRIS max 100mm, sesuai _template.
-        $res->assertSee('max-width: 100mm');
+        // Dual mode (QRIS + rekening): clean QR from payload at 62mm.
+        $res->assertSee('width: 62mm');
         $res->assertSee('background: #FFFFFF');
         $res->assertSee('background: #FFFFFF');
     }
@@ -465,11 +465,15 @@ class InvoiceTemplateTest extends TestCase
         $this->assertStringNotContainsString('qris-placeholder', $html);
     }
 
-    public function test_real_qris_path_resolves_to_storage_url(): void
+    public function test_qris_falls_back_to_artwork_when_payload_empty(): void
     {
         Setting::set('qris_enabled', true, 'boolean', 'qris', true);
         Setting::set('qris_image', 'settings/invoice-qris.png', 'string', 'qris', true);
         Setting::set('qris_max_amount', 500_000, 'integer', 'qris', true);
+        // No payload (neither DB setting nor config default) -> the invoice
+        // must fall back to the original decorative QRIS artwork.
+        Setting::set('qris_payload', '', 'string', 'qris', true);
+        config(['invoice.qris_payload' => '']);
 
         $order = $this->makeOrder(['total' => 50_000]);
 

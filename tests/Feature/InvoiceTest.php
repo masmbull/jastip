@@ -164,7 +164,7 @@ class InvoiceTest extends TestCase
             ->assertOk()
             ->assertSee('PEMBAYARAN QRIS', false)
             ->assertSee('background: #FFFFFF')
-            ->assertSee('/storage/settings/invoice-qris.png')
+            ->assertSee('data:image/svg+xml;base64', false)
             ->assertSee('/storage/settings/invoice-logo.png');
     }
 

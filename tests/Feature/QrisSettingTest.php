@@ -53,7 +53,7 @@ class QrisSettingTest extends TestCase
             ->assertOk()
             ->assertSee('CARA PEMBAYARAN')
             ->assertSee('PEMBAYARAN QRIS')
-            ->assertSee('JASTIP NITIPDIEND')
+            ->assertSee('NITIP DI END')
             ->assertSee('SCAN / UPLOAD QRIS');
     }
 

@@ -139,6 +139,56 @@ if (! function_exists('qris_url')) {
     }
 }
 
+if (! function_exists('qris_payload')) {
+    /**
+     * EMV payload asli QRIS merchant (string yang ter-encode di dalam kode QR).
+     *
+     * Didapat dengan men-decode gambar QRIS yang di-upload admin di
+     * Pengaturan -> Pembayaran QRIS. Invoice me-render QR bersih dari
+     * payload ini (bukan dari artwork dekoratif) supaya QR-nya selalu
+     * scannabel, tidak terpotong, dan merchant/NMID-nya identik dengan
+     * QR asli. Kalau QRIS di-upload ulang, update nilai ini (atau isi
+     * setting `qris_payload` di database).
+     */
+    function qris_payload(): string
+    {
+        try {
+            $payload = setting('qris_payload');
+        } catch (\Throwable) {
+            $payload = null; // settings DB unreachable — use config default
+        }
+        if (! is_string($payload) || trim($payload) === '') {
+            $payload = (string) config('invoice.qris_payload', '');
+        }
+
+        return trim($payload);
+    }
+}
+
+if (! function_exists('qris_qr_data_uri')) {
+    /**
+     * QR hitam-putih bersih sebagai SVG data URI yang dibuat langsung dari
+     * payload merchant (quiet zone ~4 modul, tanpa logo/teks di dalam QR).
+     * Return null kalau payload kosong / library tidak tersedia, supaya
+     * caller bisa fallback ke artwork QRIS original.
+     */
+    function qris_qr_data_uri(?string $payload = null): ?string
+    {
+        $payload = trim((string) ($payload ?? qris_payload()));
+        if ($payload === '' || ! class_exists(\Endroid\QrCode\QrCode::class)) {
+            return null;
+        }
+
+        try {
+            $qr = new \Endroid\QrCode\QrCode(data: $payload, size: 1000, margin: 100);
+
+            return (new \Endroid\QrCode\Writer\SvgWriter())->write($qr)->getDataUri();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+}
+
 if (! function_exists('format_price')) {
     /**
      * Format a price as Indonesian Rupiah.
