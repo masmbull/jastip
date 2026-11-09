@@ -72,8 +72,8 @@ class CheckoutFlowTest extends TestCase
         $this->get(route('checkout.confirmation'))
             ->assertOk()
             ->assertSee($order->order_number, false)
-            ->assertSee('wa.me/6285123456789', false)
-            ->assertDontSee('wa.me/628123456789', false);
+            ->assertSee('wa.me/'.wa_phone((string) Setting::where('key', 'whatsapp')->value('value')), false)
+            ->assertDontSee('wa.me/'.wa_phone('08123456789'), false);
 
         // Admin area is guarded (log out the customer first — a logged-in
         // non-admin now hits 403, not the login redirect).
@@ -82,7 +82,7 @@ class CheckoutFlowTest extends TestCase
 
         $this->post(route('admin.login.post'), [
             'username' => 'admin',
-            'password' => 'admin123',
+            'password' => config('seeding.test_bootstrap_password'),
         ])->assertRedirect(route('admin.dashboard'));
 
         $this->get(route('admin.orders.index'))->assertOk()->assertSee($order->order_number, false);

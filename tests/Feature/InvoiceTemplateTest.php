@@ -141,7 +141,7 @@ class InvoiceTemplateTest extends TestCase
 
         $this->invoiceHtml($order)
             ->assertOk()
-            ->assertSee('05 Nov 2026, 07:30');
+            ->assertSee('05 Nov 2026, 07:30 WIB');
     }
 
     public function test_header_shows_brand_name_from_settings(): void

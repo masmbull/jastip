@@ -6,11 +6,16 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new RuntimeException('Demo product data cannot be seeded in production.');
+        }
+
         $categories = Category::pluck('id', 'name')->toArray();
         $products = $this->catalog();
 

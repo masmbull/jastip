@@ -434,8 +434,13 @@ window.Alpine = Alpine;
                 throw new Error('Ukuran invoice tidak dapat dihitung');
             }
 
-            // Tunggu font invoice siap supaya teks tidak jatuh ke fallback
-            // saat di-render (host tidak memuat stylesheet invoice).
+            // Font invoice (Plus Jakarta Sans) tidak otomatis ada di halaman
+            // host — injeksikan stylesheet-nya lalu tunggu font siap supaya
+            // PNG tidak jatuh ke font fallback.
+            const fontLink = document.createElement('link');
+            fontLink.rel = 'stylesheet';
+            fontLink.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap';
+            document.head.appendChild(fontLink);
             if (document.fonts && document.fonts.ready) {
                 await document.fonts.ready;
             }

@@ -1,0 +1,38 @@
+title = "Project gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Non-secret project paths"
+paths = [
+  '''gitleaks\.toml''',
+  '''\.env\.example''',
+  '''deploy/\.env\.production\.example''',
+]
+
+[[rules]]
+id = "private-key"
+
+  [[rules.allowlists]]
+  description = "The PEM label is source code that serializes an EC key; it is not key material."
+  condition = "AND"
+  regexTarget = "match"
+  commits = ["3e9fbbcbf9023f6fabeb1226f3307d0ddb390c41"]
+  paths = ['''^app/Services/WebPushService\.php$''']
+  regexes = ['''-----BEGIN EC PRIVATE KEY-----''']
+
+[[rules]]
+id = "generic-api-key"
+
+  [[rules.allowlists]]
+  description = "Public RFC 8291 Appendix A test-vector values in the Web Push crypto test."
+  condition = "AND"
+  regexTarget = "secret"
+  commits = ["3e9fbbcbf9023f6fabeb1226f3307d0ddb390c41"]
+  paths = ['''^tests/Feature/WebPushTest\.php$''']
+  regexes = [
+    '''yfWPiYE-n46HLnH0KqZOF1fJJU3MYrct3AELtAQ-oRw''',
+    '''BTBZMqHH6r4Tts7J_aSIgg''',
+    '''Snr3JMxaHVDXHWJn5wdC52WjpCtd2EIEGBykDcZW32k''',
+  ]

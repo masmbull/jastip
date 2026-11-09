@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,9 +17,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
         ]);
 
-        // Data contoh (produk & order dummy) HANYA untuk lokal/testing, supaya
-        // katalog produksi bersih dan diisi sendiri oleh admin. Test butuh
-        // produk untuk crawl/meta, jadi seedernya tetap dipakai di testing.
+        // Demo catalog and orders are only for local development and tests.
         if (app()->environment('local', 'testing')) {
             $this->call([
                 ProductSeeder::class,
@@ -27,24 +26,35 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Password di-hash dengan Hash::make() sebelum disimpan
+        if (! app()->environment('local', 'testing')) {
+            return;
+        }
+
+        $password = app()->environment('testing')
+            ? config('seeding.test_bootstrap_password')
+            : config('seeding.bootstrap_password');
+
+        if (! is_string($password) || strlen($password) < 12) {
+            throw new RuntimeException('Set SEED_BOOTSTRAP_PASSWORD to at least 12 characters before local seeding.');
+        }
+
         User::updateOrCreate(
-            ['email' => 'admin@nitipdiend.com'],
+            ['email' => 'admin@example.test'],
             [
-                'name' => 'Admin Nabila',
+                'name' => 'Sample Admin',
                 'username' => 'admin',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make($password),
                 'email_verified_at' => now(),
                 'role' => 'admin',
             ]
         );
 
         User::updateOrCreate(
-            ['email' => 'budi@nitipdiend.com'],
+            ['email' => 'customer@example.test'],
             [
-                'name' => 'Budi Santoso',
-                'username' => 'budi',
-                'password' => Hash::make('customer123'),
+                'name' => 'Sample Customer One',
+                'username' => 'sample-customer',
+                'password' => Hash::make($password),
                 'email_verified_at' => now(),
                 'role' => 'customer',
             ]

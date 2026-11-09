@@ -387,15 +387,15 @@ class InvoiceController extends Controller
         $status = $order->is_paid ? 'paid' : ($paid > 0 ? 'dp' : 'unpaid');
 
         $paidAt = $order->paid_at
-            ? $order->paid_at->copy()->setTimezone('Asia/Jakarta')
+            ? $order->paid_at->copy()->setTimezone(config('app.timezone'))
             : null;
 
         $createdAt = $order->created_at
-            ? $order->created_at->copy()->setTimezone('Asia/Jakarta')
+            ? $order->created_at->copy()->setTimezone(config('app.timezone'))
             : null;
 
         $payment = $order->is_paid
-            ? 'Pembayaran diterima. Terima kasih'.($paidAt ? ', '.$paidAt->format('d M Y, H:i') : '').'.'
+            ? 'Pembayaran diterima. Terima kasih'.($paidAt ? ', '.$paidAt->format('d M Y, H:i').' WIB' : '').'.'
             : 'Silakan transfer, lalu kirim bukti via WhatsApp'.($storeWa ? ' ('.$storeWa.')' : '').' dengan menyebut nomor invoice #'.$order->no.'.';
 
         return [
@@ -405,7 +405,7 @@ class InvoiceController extends Controller
             'store_wa' => phone_display($storeWa),
             'title' => $paid > 0 && ! $order->is_paid ? 'TAGIHAN' : 'INVOICE',
             'number' => $order->no,
-            'date' => $createdAt ? $createdAt->format('d M Y, H:i') : '',
+            'date' => $createdAt ? $createdAt->format('d M Y, H:i').' WIB' : '',
             'status' => $status,
             'status_text' => ['paid' => 'LUNAS', 'dp' => 'DP DITERIMA', 'unpaid' => 'BELUM BAYAR'][$status],
             'status_color' => ['paid' => '#15803D', 'dp' => '#1D4ED8', 'unpaid' => '#B45309'][$status],
@@ -441,7 +441,7 @@ class InvoiceController extends Controller
                 : null,
             'bank' => ['lines' => bank_account_lines(), 'accounts' => config('invoice.accounts', []), 'text' => bank_account_text()],
             'paid' => (bool) $order->is_paid,
-            'paid_at' => $paidAt?->format('d M Y, H:i'),
+            'paid_at' => $paidAt ? $paidAt->format('d M Y, H:i').' WIB' : null,
             'footer' => 'Terima kasih telah menitip di '.setting('brand_name', 'NITIP DI END').'.',
         ];
     }
@@ -485,7 +485,7 @@ class InvoiceController extends Controller
             'store_wa' => setting('whatsapp'),
             'title' => 'INVOICE',
             'number' => 'INV-SAMPLE-2026',
-            'date' => '28-09-2026 00:00',
+            'date' => '28 Sep 2026, 00:00 WIB',
             'status_text' => 'BELUM BAYAR',
             'status_color' => '#B45309',
             'customer' => [

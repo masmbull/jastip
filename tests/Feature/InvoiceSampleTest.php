@@ -26,7 +26,7 @@ class InvoiceSampleTest extends TestCase
         // Header dokumen (pratinjau memakai template yang sama dengan PDF).
         $res->assertSee('INVOICE');
         $res->assertSee('INV-SAMPLE-2026');
-        $res->assertSee('28-09-2026 00:00');
+        $res->assertSee('28 Sep 2026, 00:00 WIB');
         $res->assertSee('BELUM BAYAR');
         $this->assertSame(1, substr_count($res->getContent(), 'class="invoice-totals-box"'));
 
