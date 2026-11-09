@@ -87,6 +87,7 @@ $icons = [
     'cash'     => '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.8"/><path d="M5.5 9.5h.01M18.5 14.5h.01"/>',
     'clock'    => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
     'tag'      => '<path d="M3 3h8l10 10-8 8L3 11z"/><circle cx="8" cy="8" r="1.6"/>',
+    'check'    => '<path d="m5 12 4 4L19 6"/>',
     'heart'    => '<path d="M12 20.5S3.5 15 3.5 9.4C3.5 6.4 5.8 4 8.7 4c1.4 0 2.6.5 3.3 1.4C12.7 4.5 13.9 4 15.3 4c2.9 0 5.2 2.4 5.2 5.4 0 5.6-8.5 11.1-8.5 11.1z"/>',
 ];
 $icon = fn (string $name, int $size = 16, string $color = '#B45309') =>
@@ -100,6 +101,80 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 };
 @endphp
 
+<style>
+    @media screen and (max-width: 640px) {
+        .invoice-header {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+        .invoice-header .invoice-meta {
+            align-items: flex-start !important;
+            padding-left: 0 !important;
+            text-align: left !important;
+        }
+        .invoice-header .invoice-title {
+            font-size: 30px !important;
+        }
+        .invoice-header .invoice-meta > div:last-child {
+            justify-content: flex-start !important;
+        }
+        .invoice-parties,
+        .invoice-payments {
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        .invoice-items {
+            table-layout: fixed;
+        }
+        .invoice-items th,
+        .invoice-items td {
+            padding: 5px 3px !important;
+            font-size: 9px !important;
+            line-height: 1.35 !important;
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+        }
+        .invoice-totals-box {
+            width: 100% !important;
+        }
+        .invoice-payments > div {
+            width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+        .invoice-payments .bank-logo-wrap {
+            width: 84px !important;
+        }
+        .invoice-payments .bank-logo {
+            max-width: 84px !important;
+        }
+        .invoice-payments .bank-account-details {
+            flex: 1;
+            overflow-wrap: anywhere;
+        }
+        .invoice-payments .bank-account-number {
+            white-space: normal !important;
+            overflow-wrap: anywhere;
+        }
+    }
+    @media screen and (min-width: 641px) and (max-width: 820px) {
+        .invoice-parties,
+        .invoice-payments {
+            gap: 8px !important;
+        }
+        .invoice-payments .bank-logo-wrap {
+            width: 90px !important;
+        }
+        .invoice-payments .bank-logo {
+            max-width: 90px !important;
+            max-height: 34px !important;
+        }
+        .invoice-payments .qris-generated {
+            width: 54mm !important;
+            height: 54mm !important;
+        }
+    }
+</style>
+
 <div class="invoice-doc" data-layout="{{ $isCompact ? 'compact' : 'normal' }}"
      style="width: 100%; max-width: 100%; box-sizing: border-box; background: #FFFFFF; padding: 0;">
 
@@ -109,33 +184,33 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
     <div style="height: 8px; background: #FFC800; border-radius: 0 0 6px 6px; margin-bottom: 12px;"></div>
 
     {{-- ═══ 1. HEADER ═══ --}}
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+    <div class="invoice-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
 
-        <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
             @if(!empty($doc['logo']))
-            <div style="border-right: 2px solid #FFC800; padding-right: 14px; flex-shrink: 0;">
+            <div style="border-right: 2px solid #FFC800; padding-right: 12px; flex-shrink: 0;">
                 <img class="invoice-logo" src="{{ $doc['logo'] }}" alt="{{ $doc['brand'] }}"
-                     style="width: 62px; height: 62px; object-fit: contain; border-radius: 6px; display: block;">
+                     style="width: 56px; height: 56px; object-fit: contain; border-radius: 6px; display: block;">
             </div>
             @endif
-            <div>
+            <div style="min-width: 0;">
                 <div class="brand-name" style="font-size: 23px; font-weight: 900; color: #141414; line-height: 1.15; letter-spacing: -0.5px;">{{ $doc['brand'] }}</div>
                 @if(!empty($doc['owner']))
-                <div style="font-size: 12px; color: #64748B; margin-top: 3px;">{{ $doc['owner'] }}</div>
+                <div style="font-size: 12px; color: #64748B; margin-top: 2px; line-height: 1.35;">{{ $doc['owner'] }}</div>
                 @endif
                 @if(!empty($doc['store_wa']))
-                <div style="font-size: 12px; color: #475569; margin-top: 4px; display: flex; align-items: center; gap: 6px;">{!! $icon('phone', 15, '#16A34A') !!}<span>WhatsApp: {{ $doc['store_wa'] }}</span></div>
+                <div style="font-size: 12px; color: #475569; margin-top: 3px; display: flex; align-items: center; gap: 6px; line-height: 1.35;">{!! $icon('phone', 15, '#16A34A') !!}<span>{{ 'WhatsApp: '.$doc['store_wa'] }}</span></div>
                 @endif
             </div>
         </div>
 
         {{-- One right-aligned column: title, number, date and badge share the same right edge --}}
-        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; padding-left: 20px; text-align: right;">
-            <div class="invoice-title" style="font-size: 42px; font-weight: 900; color: #141414; letter-spacing: 1px; line-height: 1;">{{ $doc['title'] }}</div>
+        <div class="invoice-meta" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; padding-left: 12px; text-align: right;">
+            <div class="invoice-title" style="font-size: 36px; font-weight: 900; color: #141414; letter-spacing: 0.5px; line-height: 1;">{{ $doc['title'] }}</div>
             <div style="font-size: 12px; color: #141414; font-weight: 800; line-height: 1.2;">Invoice #{{ $doc['number'] }}</div>
-            <div style="font-size: 11.5px; color: #475569; display: flex; align-items: center; gap: 6px; line-height: 1.2;">{!! $icon('calendar', 14, '#475569') !!}<span>{{ $doc['date'] }}</span></div>
-            <div>
-                <span style="display: inline-block; padding: 4px 18px; border: 1.5px solid {{ $badgeColor }}; border-radius: 8px; color: {{ $badgeColor }}; font-weight: 800; font-size: 11.5px; letter-spacing: 0.5px; background: {{ $badgeBg }};">{{ $badgeText }}</span>
+            <div style="font-size: 11.5px; color: #475569; display: flex; align-items: center; justify-content: flex-end; gap: 6px; line-height: 1.3;">{!! $icon('calendar', 14, '#475569') !!}<span>{{ $doc['date'] }}</span></div>
+            <div style="display: flex; justify-content: flex-end;">
+                <span style="display: inline-flex; align-items: center; justify-content: center; min-height: 23px; box-sizing: border-box; padding: 3px 14px; border: 1.5px solid {{ $badgeColor }}; border-radius: 8px; color: {{ $badgeColor }}; font-weight: 800; font-size: 11.5px; line-height: 1.2; letter-spacing: 0.4px; text-align: center; white-space: nowrap; background: {{ $badgeBg }};">{{ $badgeText }}</span>
             </div>
         </div>
     </div>
@@ -144,36 +219,36 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
 
     {{-- ═══ 2. CUSTOMER + SUMMARY ═══ --}}
-    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+    <div class="invoice-parties" style="display: flex; gap: 12px; margin-bottom: 12px;">
 
         <div style="flex: 1; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-            <div style="background: #F1F5F9; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #334155; letter-spacing: 0.4px;">
+            <div style="background: #F1F5F9; min-height: 34px; box-sizing: border-box; padding: 7px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.25; font-weight: 800; color: #334155; letter-spacing: 0.3px;">
                 {!! $icon('user', 16) !!} <span>DITAGIHKAN KEPADA</span>
             </div>
-            <div class="info-card" style="padding: 9px 12px 10px;">
-                <div style="font-size: 15px; font-weight: 800; color: #141414; margin-bottom: 3px;">{{ $doc['customer']['name'] }}</div>
+            <div class="info-card" style="padding: 9px 12px 10px; line-height: 1.4;">
+                <div style="font-size: 15px; font-weight: 800; color: #141414; line-height: 1.3; margin-bottom: 3px;">{{ $doc['customer']['name'] }}</div>
                 @if(!empty($doc['customer']['wa']))
-                <div style="font-size: 12px; color: #475569; margin-top: 4px; display: flex; align-items: center; gap: 6px;">{!! $icon('phone', 14, '#16A34A') !!}<span>WhatsApp: {{ $doc['customer']['wa'] }}</span></div>
+                <div style="font-size: 12px; color: #475569; margin-top: 4px; display: flex; align-items: center; gap: 6px; line-height: 1.35;">{!! $icon('phone', 14, '#16A34A') !!}<span>{{ 'WhatsApp: '.$doc['customer']['wa'] }}</span></div>
                 @endif
                 @if(!empty($doc['customer']['address']))
-                <div style="font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.5; display: flex; align-items: flex-start; gap: 6px;">{!! $icon('pin', 14, '#64748B') !!}<span>{{ $doc['customer']['address'] }}</span></div>
+                <div style="font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px;">{!! $icon('pin', 14, '#64748B') !!}<span>{{ $doc['customer']['address'] }}</span></div>
                 @endif
             </div>
         </div>
 
         <div style="flex: 1; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
-            <div style="background: #F1F5F9; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #334155; letter-spacing: 0.4px;">
+            <div style="background: #F1F5F9; min-height: 34px; box-sizing: border-box; padding: 7px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.25; font-weight: 800; color: #334155; letter-spacing: 0.3px;">
                 {!! $icon('box', 16) !!} <span>RINGKASAN</span>
             </div>
-            <div class="info-card" style="padding: 7px 12px 8px;">
+            <div class="info-card" style="padding: 7px 12px 8px; line-height: 1.4;">
                 @foreach($doc['shipping'] as $row)
-                <div style="display: flex; align-items: center; font-size: 12px; color: #475569; padding: 3px 0;">
+                <div style="display: flex; align-items: center; font-size: 12px; color: #475569; padding: 3px 0; line-height: 1.35;">
                     <span style="display: flex; align-items: center; gap: 7px; width: 96px; flex-shrink: 0;">
                         {!! $icon($loop->first ? 'truck' : 'list', 14, '#64748B') !!}
                         <span>{{ $row['label'] }}</span>
                     </span>
                     <span style="width: 14px; text-align: center; flex-shrink: 0;">:</span>
-                    <span style="font-weight: 700; color: #141414;">{{ $row['value'] }}</span>
+                    <span style="font-weight: 700; color: #141414; min-width: 0;">{{ $row['value'] }}</span>
                 </div>
                 @endforeach
             </div>
@@ -199,14 +274,14 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
         <tbody>
             @foreach($doc['items'] as $item)
             <tr>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; word-break: break-word; font-size: 12.5px;">{{ $item['name'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: center; color: #475569; font-size: 12.5px;">{{ $item['unit'] ?: '-' }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: center; font-size: 12.5px;">{{ $item['qty'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; white-space: nowrap; font-size: 12.5px;">{{ $item['price'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; word-break: break-word; font-size: 12.5px; line-height: 1.4;">{{ $item['name'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: center; color: #475569; font-size: 12.5px; line-height: 1.4;">{{ $item['unit'] ?: '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: center; font-size: 12.5px; line-height: 1.4;">{{ $item['qty'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['price'] }}</td>
                 @if($hasFee)
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px;">{{ $item['fee'] ?? '-' }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['fee'] ?? '-' }}</td>
                 @endif
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 8px 10px; vertical-align: top; text-align: right; font-weight: 800; white-space: nowrap; font-size: 12.5px;">{{ $item['subtotal'] }}</td>
+                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; font-weight: 800; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['subtotal'] }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -226,25 +301,25 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                     default => 'receipt',
                 };
             @endphp
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 6px 14px; font-size: 12.5px; {{ !empty($row['green']) ? 'color:#166534;' : 'color:#334155;' }}">
-                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon($rowIcon, 14, !empty($row['green']) ? '#166534' : '#64748B') !!}<span>{{ $row['label'] }}</span></span>
-                <span style="{{ !empty($row['green']) ? 'font-weight:700;' : '' }} white-space: nowrap;">{{ $row['value'] }}</span>
+            <div class="totals-td" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 14px; font-size: 12.5px; line-height: 1.35; {{ !empty($row['green']) ? 'color:#166534;' : 'color:#334155;' }}">
+                <span style="display: flex; align-items: center; gap: 7px; min-width: 0;">{!! $icon($rowIcon, 14, !empty($row['green']) ? '#166534' : '#64748B') !!}<span>{{ $row['label'] }}</span></span>
+                <span style="{{ !empty($row['green']) ? 'font-weight:700;' : '' }} white-space: nowrap; flex-shrink: 0;">{{ $row['value'] }}</span>
             </div>
             @endforeach
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 8px 14px; background: #FFC800; font-size: 15px; font-weight: 900;">
-                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('cash', 15, '#141414') !!}<span>{{ $doc['total']['label'] }}</span></span>
-                <span style="white-space: nowrap;">{{ $doc['total']['value'] }}</span>
+            <div class="totals-td" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; box-sizing: border-box; padding: 7px 14px; background: #FFC800; font-size: 15px; line-height: 1.25; font-weight: 900;">
+                <span style="display: flex; align-items: center; gap: 7px; min-width: 0;">{!! $icon('cash', 15, '#141414') !!}<span>{{ $doc['total']['label'] }}</span></span>
+                <span style="white-space: nowrap; flex-shrink: 0;">{{ $doc['total']['value'] }}</span>
             </div>
             @foreach(($doc['paid_rows'] ?? []) as $row)
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 6px 14px; font-size: 12.5px; color: #166534; border-top: 1px solid #F1F5F9;">
-                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('wallet', 14, '#166534') !!}<span>{{ $row['label'] }}</span></span>
-                <span style="font-weight: 700; white-space: nowrap;">{{ $row['value'] }}</span>
+            <div class="totals-td" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 14px; font-size: 12.5px; line-height: 1.35; color: #166534; border-top: 1px solid #F1F5F9;">
+                <span style="display: flex; align-items: center; gap: 7px; min-width: 0;">{!! $icon('wallet', 14, '#166534') !!}<span>{{ $row['label'] }}</span></span>
+                <span style="font-weight: 700; white-space: nowrap; flex-shrink: 0;">{{ $row['value'] }}</span>
             </div>
             @endforeach
             @if($doc['left'])
-            <div class="totals-td" style="display: flex; justify-content: space-between; padding: 8px 14px; background: #FEF3C7; font-size: 15px; font-weight: 800;">
-                <span style="display: flex; align-items: center; gap: 7px;">{!! $icon('clock', 15, '#141414') !!}<span>{{ $doc['left']['label'] }}</span></span>
-                <span style="white-space: nowrap;">{{ $doc['left']['value'] }}</span>
+            <div class="totals-td" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; box-sizing: border-box; padding: 7px 14px; background: #FEF3C7; font-size: 15px; line-height: 1.25; font-weight: 800;">
+                <span style="display: flex; align-items: center; gap: 7px; min-width: 0;">{!! $icon('clock', 15, '#141414') !!}<span>{{ $doc['left']['label'] }}</span></span>
+                <span style="white-space: nowrap; flex-shrink: 0;">{{ $doc['left']['value'] }}</span>
             </div>
             @endif
         </div>
@@ -253,30 +328,31 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
     {{-- ═══ 5. CARA PEMBAYARAN ═══ --}}
     <div style="border-top: 1.5px solid #FFE08A; margin-bottom: 10px;"></div>
-    <div class="section-header" style="font-size: 14px; font-weight: 900; color: #141414; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-        <span style="display: flex; align-items: center; gap: 9px;">{!! $icon('card', 20) !!} CARA PEMBAYARAN</span>
+    <div class="section-header" style="font-size: 14px; font-weight: 900; color: #141414; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.3;">
+        <span style="display: flex; align-items: center; gap: 9px; white-space: nowrap;">{!! $icon('card', 20) !!}<span>CARA PEMBAYARAN</span></span>
         @if(!$isPaid && !empty($doc['pay_amount']))
-        <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 6px;">{!! $icon('cash', 15, '#B45309') !!}<span>Nominal transfer: <span style="font-weight: 900; color: #141414;">{{ $doc['pay_amount'] }}</span></span></span>
+        <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 6px; line-height: 1.3;">{!! $icon('cash', 15, '#B45309') !!}<span>Nominal transfer: <span style="font-weight: 900; color: #141414;">{{ $doc['pay_amount'] }}</span></span></span>
         @endif
     </div>
 
     @if($isPaid)
-        <div style="font-size: 13px; color: #15803D; font-weight: 700; padding: 10px 0;">
-            ✅ Pembayaran sudah diterima{{ !empty($doc['paid_at']) ? ' pada ' . $doc['paid_at'] : '' }}. Terima kasih.
+        <div style="font-size: 13px; color: #15803D; font-weight: 700; padding: 10px 0; display: flex; align-items: center; gap: 7px; line-height: 1.4;">
+            {!! $icon('check', 16, '#15803D') !!}
+            <span>Pembayaran sudah diterima{{ !empty($doc['paid_at']) ? ' pada ' . $doc['paid_at'] : '' }}. Terima kasih.</span>
         </div>
 
     @elseif($qris || ($bank && !empty($bank['lines'])))
-        <div style="display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch; page-break-inside: avoid;">
+        <div class="invoice-payments" style="display: flex; gap: 12px; margin-bottom: 10px; align-items: stretch; page-break-inside: avoid;">
 
             {{-- QRIS --}}
             @if($qris)
             <div style="{{ ($bank && !empty($bank['lines'])) ? 'flex: 52;' : 'width: 100%;' }} min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
                 <div class="pay-card-body" style="padding: 10px 12px 12px; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <div style="display: inline-flex; align-items: center; gap: 8px; background: #FFC800; border-radius: 10px; padding: 6px 14px; margin-bottom: 10px;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 32px; box-sizing: border-box; background: #FFC800; border-radius: 9px; padding: 5px 13px; margin-bottom: 10px; line-height: 1.2;">
                         {!! $icon('qr', 18, '#141414') !!}
-                        <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">PEMBAYARAN QRIS</span>
+                        <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.2px; text-align: center;">PEMBAYARAN QRIS</span>
                     </div>
-                    <div style="border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 6px; background: #FFFFFF; display: inline-block; line-height: 0;">
+                    <div style="border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 6px; background: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; line-height: 0;">
                         @if($qrisQrImage)
                         <img class="qris-invoice-image qris-generated"
                              src="{{ $qrisQrImage }}"
@@ -289,8 +365,8 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                              style="display: block; width: 100%; max-width: {{ $qrisMaxW }}; max-height: {{ $qrisMaxH }}; height: auto; object-fit: contain; background: #FFFFFF;">
                         @endif
                     </div>
-                    <div style="font-size: 14px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.3px;">{{ !empty($qris['merchant']) ? $qris['merchant'] : 'JASTIP NITIPDIEND' }}</div>
-                    <div style="display: inline-block; margin-top: 9px; padding: 3px 16px; background: #E5E7EB; border-radius: 20px; font-size: 10.5px; color: #475569; font-weight: 600; letter-spacing: 0.5px;">SCAN / UPLOAD QRIS</div>
+                    <div style="font-size: 14px; font-weight: 900; color: #141414; margin-top: 8px; letter-spacing: 0.2px; line-height: 1.3;">{{ !empty($qris['merchant']) ? $qris['merchant'] : 'JASTIP NITIPDIEND' }}</div>
+                    <div style="display: inline-flex; align-items: center; justify-content: center; min-height: 21px; box-sizing: border-box; margin-top: 8px; padding: 3px 14px; background: #E5E7EB; border-radius: 12px; font-size: 10.5px; color: #475569; font-weight: 600; letter-spacing: 0.4px; line-height: 1.2; text-align: center;">SCAN / UPLOAD QRIS</div>
                 </div>
             </div>
             @endif
@@ -299,9 +375,9 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
             @if($bank && !empty($bank['lines']))
             <div style="{{ $qris ? 'flex: 48;' : 'width: 100%;' }} min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
                 <div class="pay-card-body" style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column;">
-                    <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0; line-height: 1.3;">
                         <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #FFE58A; border-radius: 9px;">{!! $icon('bank', 18, '#7C4A03') !!}</span>
-                        <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.3px;">TRANSFER REKENING</span>
+                        <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.2px;">TRANSFER REKENING</span>
                     </div>
                     {{-- Entries vertically centered in the space below the header --}}
                     <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center;">
@@ -317,16 +393,16 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                                 $logo = $bankLogoData['bca'] ?? null;
                             }
                         @endphp
-                        <div style="{{ $idx > 0 ? 'border-top: 1px solid #E2E8F0; margin-top: 9px; padding-top: 9px;' : '' }} display: flex; align-items: center; gap: 10px;">
-                            <div style="width: {{ $bankLogoMaxW }}px; flex-shrink: 0; display: flex; align-items: center;">
+                        <div class="bank-account-row" style="{{ $idx > 0 ? 'border-top: 1px solid #E2E8F0; margin-top: 9px; padding-top: 9px;' : '' }} display: flex; align-items: center; gap: 10px;">
+                            <div class="bank-logo-wrap" style="width: {{ $bankLogoMaxW }}px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
                                 @if($logo)
                                 <img class="bank-logo" src="{{ $logo }}" alt="{{ $account['bank'] }}"
                                      style="max-width: {{ $bankLogoMaxW }}px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; object-fit: contain; display: block;">
                                 @endif
                             </div>
-                            <div style="min-width: 0;">
+                            <div class="bank-account-details" style="min-width: 0;">
                                 <div style="font-size: 13.5px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
-                                <div style="font-size: 12px; color: #334155; margin-top: 2px; line-height: 1.4;"><span style="font-weight: 700; white-space: nowrap;">{{ $account['number'] }}</span> <span style="white-space: nowrap;">a/n {{ $account['name'] }}</span></div>
+                                <div style="font-size: 12px; color: #334155; margin-top: 2px; line-height: 1.35;"><span class="bank-account-number" style="font-weight: 700; white-space: nowrap;">{{ $account['number'] }}</span> <span style="overflow-wrap: anywhere;">a/n {{ $account['name'] }}</span></div>
                             </div>
                         </div>
                         @endforeach

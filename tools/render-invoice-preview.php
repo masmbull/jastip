@@ -31,7 +31,7 @@ $doc = function (array $o) use ($logo, $qrisImg, $bank) {
         'store_wa' => '6282336534191',
         'title' => 'TAGIHAN',
         'number' => 'ND20261106-DE30962A',
-        'date' => '06 Nov 2026, 03:03',
+        'date' => '06 Nov 2026, 03:03 WIB',
         'customer' => ['name' => 'Nabila Adriyana', 'wa' => '082336534191', 'address' => 'Jakardah'],
         'shipping' => [
             ['label' => 'Ekspedisi', 'value' => '-'],

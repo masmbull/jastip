@@ -26,6 +26,12 @@ class InvoiceTest extends TestCase
         $this->assertSame('Asia/Jakarta', now()->timezoneName);
     }
 
+    public function test_mysql_connections_use_wib_timezone(): void
+    {
+        $this->assertSame('+07:00', config('database.connections.mysql.timezone'));
+        $this->assertSame('+07:00', config('database.connections.mariadb.timezone'));
+    }
+
     public function test_paid_invoice_displays_payment_time_in_asia_jakarta(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
@@ -44,7 +50,7 @@ class InvoiceTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
-            ->assertSee('Pembayaran sudah diterima pada 05 Nov 2026, 08:30');
+            ->assertSee('Pembayaran sudah diterima pada 05 Nov 2026, 08:30 WIB');
     }
 
     public function test_invoice_shows_order_fields_and_payment_instructions(): void
