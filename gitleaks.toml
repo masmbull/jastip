@@ -34,4 +34,5 @@ id = "generic-api-key"
   regexes = [
     '''yfWPiYE-n46HLnH0KqZOF1fJJU3MYrct3AELtAQ-oRw''',
     '''BTBZMqHH6r4Tts7J_aSIgg''',
+    '''Snr3JMxaHVDXHWJn5wdC52WjpCtd2EIEGBykDcZW32k''',
   ]
