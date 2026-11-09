@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * Katalog "Produk Viral" â€” produk yang sedang tren di Indonesia (2024â€“2025)
@@ -19,6 +20,10 @@ class ViralProductSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new RuntimeException('Demo product data cannot be seeded in production.');
+        }
+
         $categories = Category::pluck('id', 'slug')->toArray();
 
         $seededSkus = [];
@@ -294,4 +299,3 @@ class ViralProductSeeder extends Seeder
         ];
     }
 }
-

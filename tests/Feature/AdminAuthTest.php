@@ -14,15 +14,15 @@ class AdminAuthTest extends TestCase
     public function test_admin_can_login_and_reach_dashboard(): void
     {
         User::factory()->create([
-            'username' => 'admin',
-            'email' => 'admin@nitipdiend.com',
-            'password' => Hash::make('admin123'),
+            'username' => 'sample-admin',
+            'email' => 'admin@example.test',
+            'password' => Hash::make('test-only-admin-password'),
             'role' => 'admin',
         ]);
 
         $this->post(route('admin.login.post'), [
-            'username' => 'admin',
-            'password' => 'admin123',
+            'username' => 'sample-admin',
+            'password' => 'test-only-admin-password',
         ])->assertRedirect(route('admin.dashboard'));
 
         $this->assertAuthenticated();
@@ -31,15 +31,15 @@ class AdminAuthTest extends TestCase
     public function test_non_admin_cannot_login_via_admin_form(): void
     {
         User::factory()->create([
-            'username' => 'budi',
-            'email' => 'budi@nitipdiend.com',
-            'password' => Hash::make('customer123'),
+            'username' => 'sample-customer',
+            'email' => 'customer@example.test',
+            'password' => Hash::make('test-only-customer-password'),
             'role' => 'customer',
         ]);
 
         $this->post(route('admin.login.post'), [
-            'username' => 'budi',
-            'password' => 'customer123',
+            'username' => 'sample-customer',
+            'password' => 'test-only-customer-password',
         ])->assertSessionHasErrors('username');
 
         $this->assertGuest();
@@ -48,15 +48,15 @@ class AdminAuthTest extends TestCase
     public function test_wrong_password_is_rejected(): void
     {
         User::factory()->create([
-            'username' => 'admin',
-            'email' => 'admin@nitipdiend.com',
-            'password' => Hash::make('admin123'),
+            'username' => 'sample-admin',
+            'email' => 'admin@example.test',
+            'password' => Hash::make('test-only-admin-password'),
             'role' => 'admin',
         ]);
 
         $this->post(route('admin.login.post'), [
-            'username' => 'admin',
-            'password' => 'salah',
+            'username' => 'sample-admin',
+            'password' => 'wrong-test-password',
         ])->assertSessionHasErrors('username');
 
         $this->assertGuest();

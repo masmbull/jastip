@@ -82,7 +82,7 @@ class CheckoutFlowTest extends TestCase
 
         $this->post(route('admin.login.post'), [
             'username' => 'admin',
-            'password' => 'admin123',
+            'password' => config('seeding.test_bootstrap_password'),
         ])->assertRedirect(route('admin.dashboard'));
 
         $this->get(route('admin.orders.index'))->assertOk()->assertSee($order->order_number, false);

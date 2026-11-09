@@ -6,11 +6,16 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class OrderSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->isProduction()) {
+            throw new RuntimeException('Demo order data cannot be seeded in production.');
+        }
+
         $products = Product::all();
         if ($products->isEmpty()) {
             return;
@@ -25,14 +30,14 @@ class OrderSeeder extends Seeder
         ];
 
         $samples = [
-            ['name' => 'Budi Santoso', 'wa' => '081234567001', 'addr' => 'Jl. Mawar No. 12, Bandung', 'notes' => 'Bungkus rapi kak, makasih', 'status' => Order::STATUS_PENDING, 'courier' => 'pickup', 'idx' => [0, 2]],
-            ['name' => 'Sari Dewi', 'wa' => '081234567002', 'addr' => 'Jl. Melati No. 5, Jakarta Selatan', 'notes' => '', 'status' => Order::STATUS_PENDING, 'courier' => 'jne', 'idx' => [1]],
-            ['name' => 'Andi Pratama', 'wa' => '081234567003', 'addr' => 'Jl. Anggrek No. 30, Surabaya', 'notes' => 'Kirim cepat ya', 'status' => Order::STATUS_CONFIRMED, 'courier' => 'jnt', 'idx' => [3, 4]],
-            ['name' => 'Rina Marlina', 'wa' => '081234567004', 'addr' => 'Jl. Flamboyan No. 8, Yogyakarta', 'notes' => 'Pakai gift wrap', 'status' => Order::STATUS_PROCESSING, 'courier' => 'sicepat', 'idx' => [5, 6]],
-            ['name' => 'Dedi Kurniawan', 'wa' => '081234567005', 'addr' => 'Jl. Kenanga No. 18, Semarang', 'notes' => '', 'status' => Order::STATUS_READY, 'courier' => 'pickup', 'idx' => [7]],
-            ['name' => 'Nita Anggraini', 'wa' => '081234567006', 'addr' => 'Jl. Cendana No. 22, Medan', 'notes' => 'Tolong kasih kartu ucapan', 'status' => Order::STATUS_SHIPPED, 'courier' => 'grab', 'idx' => [0, 1, 8]],
-            ['name' => 'Fajar Wibowo', 'wa' => '081234567007', 'addr' => 'Jl. Dahlia No. 3, Denpasar', 'notes' => '', 'status' => Order::STATUS_COMPLETED, 'courier' => 'jne', 'idx' => [2, 4]],
-            ['name' => 'Maya Sintia', 'wa' => '081234567008', 'addr' => 'Jl. Teratai No. 9, Makassar', 'notes' => 'Batal pesanan, salah pilih', 'status' => Order::STATUS_CANCELLED, 'courier' => 'pickup', 'idx' => [5]],
+            ['name' => 'Sample Customer 01', 'wa' => '00000000001', 'addr' => 'Alamat Contoh 1, Kota Contoh', 'notes' => 'Contoh catatan pesanan', 'status' => Order::STATUS_PENDING, 'courier' => 'pickup', 'idx' => [0, 2]],
+            ['name' => 'Sample Customer 02', 'wa' => '00000000002', 'addr' => 'Alamat Contoh 2, Kota Contoh', 'notes' => '', 'status' => Order::STATUS_PENDING, 'courier' => 'jne', 'idx' => [1]],
+            ['name' => 'Sample Customer 03', 'wa' => '00000000003', 'addr' => 'Alamat Contoh 3, Kota Contoh', 'notes' => 'Contoh catatan pesanan', 'status' => Order::STATUS_CONFIRMED, 'courier' => 'jnt', 'idx' => [3, 4]],
+            ['name' => 'Sample Customer 04', 'wa' => '00000000004', 'addr' => 'Alamat Contoh 4, Kota Contoh', 'notes' => 'Contoh catatan pesanan', 'status' => Order::STATUS_PROCESSING, 'courier' => 'sicepat', 'idx' => [5, 6]],
+            ['name' => 'Sample Customer 05', 'wa' => '00000000005', 'addr' => 'Alamat Contoh 5, Kota Contoh', 'notes' => '', 'status' => Order::STATUS_READY, 'courier' => 'pickup', 'idx' => [7]],
+            ['name' => 'Sample Customer 06', 'wa' => '00000000006', 'addr' => 'Alamat Contoh 6, Kota Contoh', 'notes' => 'Contoh catatan pesanan', 'status' => Order::STATUS_SHIPPED, 'courier' => 'grab', 'idx' => [0, 1, 8]],
+            ['name' => 'Sample Customer 07', 'wa' => '00000000007', 'addr' => 'Alamat Contoh 7, Kota Contoh', 'notes' => '', 'status' => Order::STATUS_COMPLETED, 'courier' => 'jne', 'idx' => [2, 4]],
+            ['name' => 'Sample Customer 08', 'wa' => '00000000008', 'addr' => 'Alamat Contoh 8, Kota Contoh', 'notes' => 'Contoh catatan pesanan', 'status' => Order::STATUS_CANCELLED, 'courier' => 'pickup', 'idx' => [5]],
         ];
 
         $n = 1;

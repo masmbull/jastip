@@ -1,0 +1,12 @@
+title = "Project gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Non-secret project paths"
+paths = [
+  '''gitleaks\.toml''',
+  '''\.env\.example''',
+  '''deploy/\.env\.production\.example''',
+]
