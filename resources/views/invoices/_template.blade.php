@@ -64,7 +64,7 @@ $qrisQrSize  = ($qris && $hasBank) ? '62mm' : '70mm';
 // three official logos share one visual height even though their aspect
 // ratios differ (BCA 1.34, SeaBank 3.11, blu 2.25).
 $bankLogoH   = 34;   // side-by-side with QRIS (vertical list)
-$bankLogoGridH = 44; // bank-only layout: grid of accounts side by side
+$bankLogoGridH = 32; // bank-only layout: grid of accounts side by side
 $bankLogoMaxW = $qris ? 110 : 150;
 @endphp
 
@@ -96,9 +96,9 @@ $icon = fn (string $name, int $size = 16, string $color = '#B45309') =>
 
 $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 [$badgeText, $badgeColor, $badgeBg] = match ($statusKey) {
-    'paid' => ['LUNAS', '#15803D', '#F0FDF4'],
-    'dp'   => ['DP DITERIMA', '#1D4ED8', '#EFF6FF'],
-    default => ['BELUM BAYAR', '#C2410C', '#FFF4E8'],
+    'paid' => ['LUNAS', '#14532D', '#DCFCE7'],
+    'dp'   => ['DP DITERIMA', '#1E3A8A', '#DBEAFE'],
+    default => ['BELUM BAYAR', '#7C2D12', '#FFEDD5'],
 };
 @endphp
 
@@ -260,17 +260,17 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
     {{-- ═══ 3. PRODUCT TABLE ═══ --}}
     @php $th = 'background: #FFC800; padding: 8px 10px; font-size: 12.5px; font-weight: 800; color: #141414;'; @endphp
-    <table class="invoice-items" style="width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 10px;">
+    <table class="invoice-items" style="width: 100%; border-collapse: collapse; border-spacing: 0; border: 1.5px solid #E2E8F0; border-radius: 12px; overflow: hidden; margin-bottom: 10px;">
         <thead>
             <tr>
-                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; border-radius: 12px 0 0 12px; {{ $th }}">Produk</th>
+                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; {{ $th }}">Produk</th>
                 <th class="items-th" style="width: 10%; text-align: center; {{ $th }}">Satuan</th>
                 <th class="items-th" style="width: 8%; text-align: center; {{ $th }}">Qty</th>
                 <th class="items-th" style="width: {{ $hasFee ? '16%' : '20%' }}; text-align: right; {{ $th }}">Harga</th>
                 @if($hasFee)
                 <th class="items-th" style="width: 13%; text-align: right; {{ $th }}">Fee item</th>
                 @endif
-                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; border-radius: 0 12px 12px 0; {{ $th }}">Subtotal</th>
+                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; {{ $th }}">Subtotal</th>
             </tr>
         </thead>
         <tbody>
@@ -406,7 +406,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                                      style="max-width: 130px; max-height: {{ $bankLogoGridH }}px; width: auto; height: auto; object-fit: contain; display: block; margin-bottom: 4px;">
                                 @endif
                                 <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.25;">{{ $account['bank'] }}</div>
-                                <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.3; font-variant-numeric: tabular-nums; letter-spacing: 0.2px; overflow-wrap: anywhere;">{{ $account['number'] }}</div>
+                                <div style="font-size: 13.5px; font-weight: 800; color: #141414; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; line-height: 1.35; letter-spacing: 0.4px; overflow-wrap: anywhere;">{{ $account['number'] }}</div>
                                 <div style="font-size: 11px; color: #64748B; line-height: 1.25;">a/n {{ $account['name'] }}</div>
                             </div>
                             @endforeach
@@ -442,7 +442,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                                 </div>
                                 <div class="bank-account-details" style="min-width: 0;">
                                     <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
-                                    <div style="font-size: 12px; color: #334155; margin-top: 2px; line-height: 1.35;"><span class="bank-account-number" style="font-weight: 700; white-space: nowrap;">{{ $account['number'] }}</span></div>
+                                    <div style="font-size: 12.5px; color: #334155; margin-top: 2px; line-height: 1.4;"><span class="bank-account-number" style="font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; letter-spacing: 0.4px;">{{ $account['number'] }}</span></div>
                                     <div style="font-size: 11px; color: #64748B; line-height: 1.3;">a/n {{ $account['name'] }}</div>
                                 </div>
                             </div>

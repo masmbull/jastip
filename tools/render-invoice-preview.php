@@ -114,6 +114,34 @@ $variants['hesty'] = $doc([
     'bank' => $bank,
 ]);
 
+// Lunas: lunas tanpa DP, invoice tidak menampilkan Sisa Bayar
+$variants['lunas'] = $doc([
+    'title' => 'INVOICE',
+    'number' => 'ND20261105-ABCD1234',
+    'date' => '05 Nov 2026, 10:00 WIB',
+    'status' => 'paid',
+    'paid' => true,
+    'customer' => ['name' => 'Bu Vonny', 'wa' => '082494024883', 'address' => 'Jakarta'],
+    'shipping' => [
+        ['label' => 'Ekspedisi', 'value' => '-'],
+        ['label' => 'Jumlah item', 'value' => '1 pcs'],
+    ],
+    'items' => [[
+        'name' => 'Dettol Plester Antiseptik',
+        'unit' => 'pcs', 'qty' => 1,
+        'price' => format_price(35000),
+        'subtotal' => format_price(35000),
+    ]],
+    'totals' => [
+        ['label' => 'Subtotal', 'value' => format_price(35000)],
+        ['label' => 'Ongkir', 'value' => format_price(0)],
+    ],
+    'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price(35000)],
+    'left' => null,
+    'qris' => ['image' => $qrisImg, 'merchant' => 'JASTIP NITIPDIEND'],
+    'paid_at' => '05 Nov 2026, 11:00 WIB',
+]);
+
 // Long names + jastip fee column + shipping + deposit + long customer/holder.
 $longBank = $bank;
 $longBank['accounts'] = [
