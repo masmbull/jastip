@@ -7,11 +7,11 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPayment;
 use App\Models\User;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use App\Services\InvoicePdfRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -242,9 +242,14 @@ class InvoiceController extends Controller
      * Route PUBLIK tanpa login, diakses lewat token acak pendek (link /i/{token}).
      * Token tak bisa ditebak, jadi data pelanggan tetap aman.
      *
-     * Menggunakan Browsershot (Puppeteer/Chrome headless) untuk rendering
+     * Menggunakan Chrome headless (Browsershot) untuk rendering
      * pixel-perfect — font, emoji, gambar, dan layout semua dirender oleh
      * Chrome nyata, sama persis dengan tampilan browser.
+     *
+     * Rendering dipegang InvoicePdfRenderer: Chrome adalah renderer utama
+     * karena hanya itu yang uphold layout flexbox invoice. DomPDF hanya
+     * jaring pengaman terakhir dan hasilnya rusak, jadi renderer yang dipakai
+     * selalu dikembalikan (header X-Invoice-Renderer) dan dicatat ke log.
      */
     public function invoicePdf(string $token)
     {
@@ -252,72 +257,20 @@ class InvoiceController extends Controller
 
         $html = view('invoices.pdf', ['doc' => $this->docFromOrder($order)])->render();
 
-        // Use Browsershot (Chrome) when available, fall back to DomPDF otherwise.
-        // This allows the app to run in CI / before `composer install` on EC2.
-        if (class_exists(\Spatie\Browsershot\Browsershot::class)) {
-            try {
-                /** @var \Spatie\Browsershot\Browsershot $browsershot */
-                $browsershot = \Spatie\Browsershot\Browsershot::html($html)
-                    ->format('A4')
-                    ->margins(8, 10, 8, 10)   // top, right, bottom, left (mm) — must match @page in pdf.blade.php
-                    ->scale(1)
-                    ->printBackground()
-                    ->waitUntilNetworkIdle()     // wait for Google Fonts & images
-                    ->timeout(30);
+        $result = app(InvoicePdfRenderer::class)->render($html);
 
-                // Windows: PHP exec() may not inherit the interactive PATH,
-                // so binary locations are configured explicitly via .env.
-                if ($nodePath = config('browsershot.node_binary')) {
-                    $browsershot->setNodeBinary($nodePath);
-                }
-                if ($npmPath = config('browsershot.npm_binary')) {
-                    $browsershot->setNpmBinary($npmPath);
-                }
-                if ($chromePath = config('browsershot.chrome_path')) {
-                    $browsershot->setChromePath($chromePath);
-                }
-
-                $extraArgs = config('browsershot.chromium_args', []);
-                if (!empty($extraArgs)) {
-                    $browsershot->addChromiumArguments($extraArgs);
-                }
-
-                // Required in production containers / EC2 running as root.
-                if (config('app.env') !== 'local') {
-                    $browsershot->addChromiumArguments([
-                        'no-sandbox',
-                        'disable-setuid-sandbox',
-                    ]);
-                }
-
-                $pdf = $browsershot->pdf();
-
-            } catch (\Exception $e) {
-                // Log and fall through to DomPDF fallback.
-                report($e);
-                $pdf = null;
-            }
+        if ($result['degraded']) {
+            Log::warning('Invoice PDF dirender dengan DomPDF (fallback). Layout kemungkinan rusak karena DomPDF tidak mendukung flexbox. Periksa instalasi Node + Chrome di server dan variabel BROWSERSHOT_* di .env.', [
+                'order_no' => $order->no,
+            ]);
         }
 
-        // DomPDF fallback — used when Browsershot is not yet installed or failed.
-        if (empty($pdf)) {
-            $options = new Options;
-            $options->set('isRemoteEnabled', true);
-            $options->set('defaultFont', 'DejaVu Sans');
-            $dompdf = new Dompdf($options);
-            $clean  = preg_replace('/^\xEF\xBB\xBF/', '', $html);
-            $dompdf->loadHtml($clean);
-            $dompdf->setPaper('a4');
-            $dompdf->render();
-            $pdf = $dompdf->output();
-        }
-
-        // Strip any leading BOM that would corrupt the PDF header.
-        $pdf = ltrim($pdf, "\xEF\xBB\xBF");
-
-        return response($pdf, 200, [
+        return response($result['pdf'], 200, [
             'Content-Type'        => 'application/pdf',
             'Content-Disposition' => 'inline; filename="invoice-' . $order->no . '.pdf"',
+            // Renderer yang dipakai, supaya bisa dicek tanpa membuka PDF:
+            // 'chromium' = layout benar, 'dompdf' = layout fallback (rusak).
+            'X-Invoice-Renderer'  => $result['renderer'],
         ]);
     }
 

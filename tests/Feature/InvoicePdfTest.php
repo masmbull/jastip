@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Services\InvoicePdfRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -108,5 +109,38 @@ class InvoicePdfTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.orders.invoice', $order))
             ->assertOk();
+    }
+
+    public function test_pdf_response_reports_which_renderer_was_used(): void
+    {
+        // Header ini penting: tanpa itu, invoice yang diam-diam dirender
+        // DomPDF (layout rusak) tidak akan pernah ketahuan.
+        $order = $this->makeOrder();
+
+        $res = $this->get($order->public_pdf_url);
+
+        $res->assertOk();
+        $res->assertHeader('X-Invoice-Renderer');
+        $this->assertContains(
+            $res->headers->get('X-Invoice-Renderer'),
+            [InvoicePdfRenderer::RENDERER_CHROMIUM, InvoicePdfRenderer::RENDERER_DOMPDF],
+        );
+    }
+
+    public function test_renderer_marks_dompdf_output_as_degraded(): void
+    {
+        // Fallback DomPDF menghasilkan layout rusak (tidak ada dukungan
+        // flexbox), jadi harus ditandai 'degraded' supaya bisa diwaspadai.
+        $renderer = app(InvoicePdfRenderer::class);
+
+        $result = $renderer->render('<html><body><div style="display:flex">x</div></body></html>');
+
+        $this->assertArrayHasKey('renderer', $result);
+        $this->assertArrayHasKey('degraded', $result);
+        $this->assertSame(
+            $result['renderer'] === InvoicePdfRenderer::RENDERER_DOMPDF,
+            $result['degraded'],
+        );
+        $this->assertStringStartsWith('%PDF', $result['pdf']);
     }
 }

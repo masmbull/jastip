@@ -32,6 +32,11 @@ sudo apt install -y mysql-client
 
 Browsershot requires Node 22 LTS or higher.
 
+> `deploy/bootstrap.sh` sudah melakukan langkah 2 sampai 5 sekaligus (Node,
+> Chrome, symlink stabil, AppArmor, dan variabel `BROWSERSHOT_*`). Kalau
+> server sudah di-bootstrap dengan script itu, **lewati bagian 2 sampai 6**
+> dan jalankan `php artisan invoice:check-renderer` untuk memastikan.
+
 ```bash
 # Install Node.js 22 via NodeSource
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -46,12 +51,15 @@ npm --version
 
 ## 3. Puppeteer + Chrome
 
-```bash
-# Install Puppeteer globally (downloads bundled Chromium)
-sudo npm install -g puppeteer
+Puppeteer **harus global** (`npm install -g`), bukan di `node_modules`
+project: `node_modules` tidak ikut ter-deploy ke server, sedangkan
+Browsershot mencari modul `puppeteer` lewat `NODE_PATH=$(npm root -g)`.
 
-# Let Puppeteer download and install its Chrome binary
-sudo npx puppeteer browsers install chrome
+```bash
+# Install Puppeteer globally + its bundled Chrome into a shared, version-stable path
+sudo env PUPPETEER_CACHE_DIR=/opt/puppeteer npm install -g puppeteer
+sudo env PUPPETEER_CACHE_DIR=/opt/puppeteer npx puppeteer browsers install chrome
+sudo chmod -R a+rX /opt/puppeteer
 
 # Chrome runtime dependencies (Ubuntu 24.04)
 sudo apt install -y \
@@ -64,8 +72,10 @@ sudo apt install -y \
 
 # Ubuntu 22.04: replace libasound2t64 with libasound2
 
-# Find the Chrome executable path (you'll need this for .env):
-node -e "const {executablePath} = require('puppeteer'); console.log(executablePath())"
+# Path Chrome versi-spesifik rapuh kalau ditulis manual di .env, jadi
+# dipakai symlink dengan path stabil:
+sudo ln -sfn "$(dirname "$(dirname "$(find /opt/puppeteer/chrome -type f -name chrome -path '*chrome-linux64*' | head -n1)")")" /opt/chrome-stable
+ls -l /opt/chrome-stable/chrome-linux64/chrome
 ```
 
 ---
@@ -116,16 +126,43 @@ Add these to `/var/www/nitipdiend/.env` (production):
 APP_ENV=production
 APP_DEBUG=false
 
-# Browsershot — set these after running the node command in step 3
-BROWSERSHOT_NODE_PATH=/usr/local/bin/node
-BROWSERSHOT_NPM_PATH=/usr/local/bin/npm
-BROWSERSHOT_CHROME_PATH=/root/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome
+# Browsershot — path ke symlink stabil dari langkah 3.
+# Jangan pakai wildcard (mis. chrome/linux-*/chrome-linux64/chrome):
+# PHP tidak meng-expand wildcard, jadi path itu tidak akan ketemu.
+BROWSERSHOT_NODE_PATH=/usr/bin/node
+BROWSERSHOT_NPM_PATH=/usr/bin/npm
+BROWSERSHOT_CHROME_PATH=/opt/chrome-stable/chrome-linux64/chrome
+# Puppeteer global: node_modules project tidak ikut ter-deploy ke server,
+# jadi Browsershot butuh path global node_modules untuk require('puppeteer').
+# Path global BERBEDA antar sumber paket:
+#   - paket distro Ubuntu : /usr/lib/node_modules
+#   - NodeSource / manual : /usr/local/lib/node_modules
+# Kalau dikosongkan, path-nya dideteksi otomatis (cari yang berisi puppeteer).
+# Cek path sebenarnya di server: npm root -g
+BROWSERSHOT_NODE_MODULE_PATH=
 # Chrome args for EC2 (running as root or without sandbox):
 BROWSERSHOT_CHROME_ARGS=no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage
 ```
 
 > **Note:** `disable-dev-shm-usage` is important on EC2 — the default `/dev/shm`
 > is only 64MB which causes Chrome to crash on heavy pages.
+
+Setelah mengubah `.env`, wajib clear cache config karena nilainya di-bake:
+
+```bash
+cd /var/www/nitipdiend
+php artisan config:clear
+php artisan config:cache
+php artisan invoice:check-renderer
+```
+
+`invoice:check-renderer` mencetak renderer yang benar-benar dipakai:
+
+- `chromium` → invoice PDF dirender dengan layout penuh. Ini yang diharapkan.
+- `dompdf` → Node/Chrome belum siap. Invoice PDF **tetap keluar**, tapi
+  layout-nya rusak: kolom kanan header keluar dari kertas dan kartu payment
+  bersusun vertikal, karena DomPDF tidak mendukung flexbox. Fix prasyarat
+  Node + Chrome lalu jalankan ulang command ini.
 
 ---
 
@@ -170,11 +207,24 @@ sudo chmod -R 775 /var/www/nitipdiend/bootstrap/cache
 ## 9. Verify Browsershot Works
 
 ```bash
-# Quick test — should output a PDF binary
 cd /var/www/nitipdiend
+
+# Cara resmi — cek renderer invoice yang benar-benar dipakai:
+php artisan invoice:check-renderer
+# Harus keluar: "Renderer invoice PDF : chromium"
+
+# Kalau perlu tes manual:
 php artisan tinker
 >>> \Spatie\Browsershot\Browsershot::html('<h1>Test</h1>')->addChromiumArguments(['no-sandbox','disable-setuid-sandbox','disable-dev-shm-usage'])->pdf();
 # Should return a binary string starting with %PDF
+```
+
+Router juga bisa dicek dari luar lewat header respons:
+
+```bash
+curl -sI "https://nitipdiend.web.id/i/<TOKEN>" | grep -i x-invoice-renderer
+# x-invoice-renderer: chromium   → layout benar
+# x-invoice-renderer: dompdf     → layout fallback, rusak
 ```
 
 ---
@@ -184,11 +234,12 @@ php artisan tinker
 - [ ] PHP 8.5 + all extensions
 - [ ] Composer installed
 - [ ] Node.js 22+
-- [ ] `npm install -g puppeteer` + `npx puppeteer browsers install chrome`
+- [ ] `npm install -g puppeteer` + `npx puppeteer browsers install chrome` (global, cache di `/opt/puppeteer`)
+- [ ] Symlink `/opt/chrome-stable` → folder Chrome-linux64
 - [ ] Chrome runtime apt packages installed
 - [ ] AppArmor sysctl applied (Ubuntu 24.04)
 - [ ] `composer install --no-dev` run after deploy
-- [ ] `npm ci` run after deploy
-- [ ] `.env` has `BROWSERSHOT_*` variables set
+- [ ] `.env` has `BROWSERSHOT_*` variables set, lalu `php artisan config:cache`
+- [ ] `php artisan invoice:check-renderer` keluar `chromium`
 - [ ] Nginx timeout increased to 60s
 - [ ] Storage symlink created (`php artisan storage:link`)

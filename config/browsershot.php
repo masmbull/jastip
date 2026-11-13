@@ -57,6 +57,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Global node_modules path
+    |--------------------------------------------------------------------------
+    | Browsershot menjalankan `node vendor/.../browser.cjs` dan file itu
+    | melakukan `require('puppeteer')`. Node mencari modul relatif ke lokasi
+    | file, jadi `node_modules` project harus ada. Tapi node_modules TIDAK
+    | ikut ter-deploy ke server, jadi Puppeteer dipasang global dan path-nya
+    | ditunjuk lewat variabel ini.
+    |
+    | Kosongkan kalau Puppeteer ada di node_modules project (lokal).
+    |
+    | Contoh: /usr/local/lib/node_modules (NodeSource) atau
+    |          /usr/lib/node_modules (paket Debian).
+    */
+    'node_module_path' => env('BROWSERSHOT_NODE_MODULE_PATH', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Additional Chromium arguments
     |--------------------------------------------------------------------------
     | 'no-sandbox' is required in Docker/CI environments running as root.

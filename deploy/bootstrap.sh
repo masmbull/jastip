@@ -34,6 +34,69 @@ apt-get install -y --no-install-recommends nginx git unzip curl ca-certificates 
   "php${PHP_VER}-xml" "php${PHP_VER}-curl" "php${PHP_VER}-zip" "php${PHP_VER}-gd" \
   "php${PHP_VER}-bcmath"
 
+# --- Node.js + Chrome (WAJIB untuk render invoice PDF) ---------------------
+# Template invoice pakai flexbox, jadi hanya Chrome headless yang bisa
+# merendernya dengan benar. Tanpa Node + Chrome di sini, invoice PDF diam-
+# diam jatuh ke DomPDF yang layout-nya rusak (kolom kanan keluar kertas).
+if ! command -v node >/dev/null 2>&1; then
+  curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null
+  apt-get install -y --no-install-recommends nodejs
+fi
+
+# Chrome runtime dependencies (Ubuntu 24.04).
+apt-get install -y --no-install-recommends \
+  libasound2t64 libatk1.0-0 libatk-bridge2.0-0 libcairo2 libcups2 libdbus-1-3 \
+  libexpat1 libfontconfig1 libgbm1 libglib2.0-0 libgtk-3-0 libnspr4 \
+  libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 \
+  libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 \
+  libxrandr2 libxrender1 libxss1 libxtst6 fonts-liberation xdg-utils wget
+
+# Puppeteer HARUS terpasang global (npm install -g), bukan di node_modules
+# project: node_modules tidak ikut ter-deploy ke server, sedangkan
+# Browsershot mencari modul 'puppeteer' lewat NODE_PATH=$(npm root -g).
+export PUPPETEER_CACHE_DIR=/opt/puppeteer
+mkdir -p "$PUPPETEER_CACHE_DIR"
+npm install -g puppeteer >/dev/null
+npx --yes puppeteer browsers install chrome >/dev/null
+chmod -R a+rX "$PUPPETEER_CACHE_DIR"
+
+# Path Chrome versi-spesifik (chrome/linux-<versi>/...) rapuh kalau ditulis
+# manual di .env. Jadi dibuat symlink dengan path stabil.
+CHROME_REAL="$(find "$PUPPETEER_CACHE_DIR/chrome" -type f -name chrome -path '*chrome-linux64*' 2>/dev/null | head -n1)"
+if [ -z "$CHROME_REAL" ]; then
+  echo "ERROR: binary Chrome tidak ditemukan di $PUPPETEER_CACHE_DIR." >&2
+  exit 1
+fi
+CHROME_DIR="$(dirname "$(dirname "$CHROME_REAL")")"
+ln -sfn "$CHROME_DIR" /opt/chrome-stable
+chmod -R a+rX /opt/chrome-stable 2>/dev/null || true
+echo "Chrome siap: /opt/chrome-stable/chrome-linux64/chrome"
+
+# Path global node_modules, dipakai Browsershot untuk require('puppeteer')
+# karena node_modules project tidak ikut ter-deploy ke server.
+# Lokasi global install berbeda antara paket distro (/usr/lib/node_modules)
+# dan NodeSource (/usr/local/lib/node_modules), jadi yang dipakai adalah
+# folder yang benar-benar berisi puppeteer.
+GLOBAL_MODULES="$(npm root -g)"
+if [ -d "${GLOBAL_MODULES}/puppeteer" ]; then
+  echo "BROWSERSHOT_NODE_MODULE_PATH=${GLOBAL_MODULES}"
+else
+  echo "WARNING: puppeteer tidak ada di ${GLOBAL_MODULES}." >&2
+  echo "         Node mungkin terpasang dari sumber paket lain; cek manual:" >&2
+  for candidate in /usr/local/lib/node_modules /usr/lib/node_modules; do
+    [ -d "${candidate}/puppeteer" ] && echo "         ditemukan: ${candidate}" >&2
+  done
+fi
+
+# Chrome sandbox butuh unprivileged user namespaces (Ubuntu 24.04 mengunci
+# ini secara default). Tanpa ini Chrome gagal start sebagai user non-root.
+if ! sysctl -n kernel.apparmor_restrict_unprivileged_userns 2>/dev/null | grep -q '^0$'; then
+  cat > /etc/sysctl.d/99-jastip-browsershot.conf <<'SYSCTL'
+kernel.apparmor_restrict_unprivileged_userns = 0
+SYSCTL
+  sysctl --system >/dev/null 2>&1 || true
+fi
+
 # Minimum PHP patch level per minor branch. Keep in sync with the newest
 # security release for each branch (https://www.php.net/security/).
 INSTALLED="$(php${PHP_VER} -r 'echo PHP_VERSION;')"
