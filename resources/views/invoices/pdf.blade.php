@@ -69,8 +69,22 @@
             flex-direction: column;
             min-height: 277mm;
         }
+
         .invoice-doc .invoice-body { flex: 1 0 auto; }
         .invoice-doc .invoice-footer { flex-shrink: 0; }
+
+        /* ── Blok yang tidak boleh terpotong lintas halaman ──────
+           Chrome memutus halaman pada batas elemen, dan kalau sebuah
+           blok hanya kurang dikit dari halaman, elemen terakhirnya
+           lompat ke halaman 2 sendirian (mis. bilah kuning 8px footer).
+           Maka footer, ringkasan totals, dan kartu pembayaran harus
+           dipertahankan utuh di halaman yang sama. */
+        .invoice-footer,
+        .invoice-totals-box,
+        .invoice-payments {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
 
         /* ── Compact mode (13+ items): scale everything down ─── */
         .invoice-doc[data-layout="compact"] {
