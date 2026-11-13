@@ -258,6 +258,15 @@ jobs:
           php artisan config:cache
           php artisan view:cache
 
+          # Invoice PDF hanya rapi kalau dirender Chrome headless. Kalau
+          # Node/Chrome belum ada, invoice diam-diam jatuh ke DomPDF yang
+          # tidak mendukung flexbox, jadi kolom kanan keluar dari kertas.
+          # Fail di sini supaya tidak lolos ke produksi tanpa terdeteksi.
+          #
+          # Dicek sebagai user PHP-FPM (www-data), karena itu user yang
+          # benar-benar merender PDF saat request masuk.
+          sudo -u www-data php artisan invoice:check-renderer
+
           echo "Deployment completed for commit ${RELEASE_SHA}"
           REMOTE
 
