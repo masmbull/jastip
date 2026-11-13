@@ -232,7 +232,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
                 <div style="font-size: 12px; color: #475569; margin-top: 4px; display: flex; align-items: center; gap: 6px; line-height: 1.35;">{!! $icon('phone', 14, '#16A34A') !!}<span>{{ 'WhatsApp: '.$doc['customer']['wa'] }}</span></div>
                 @endif
                 @if(!empty($doc['customer']['address']))
-                <div style="font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px;">{!! $icon('pin', 14, '#64748B') !!}<span>{{ $doc['customer']['address'] }}</span></div>
+                <div style="font-size: 12px; color: #475569; margin-top: 4px; line-height: 1.4; display: flex; align-items: center; gap: 6px;">{!! $icon('pin', 14, '#64748B') !!}<span>{{ $doc['customer']['address'] }}</span></div>
                 @endif
             </div>
         </div>
