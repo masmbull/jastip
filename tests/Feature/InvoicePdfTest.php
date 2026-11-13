@@ -127,6 +127,20 @@ class InvoicePdfTest extends TestCase
         );
     }
 
+    public function test_renderer_provides_a_writable_home_for_chrome(): void
+    {
+        // Chrome menyimpan crashpad database di HOME. Kalau HOME tidak bisa
+        // ditulis user PHP-FPM, Chrome gagal start dengan
+        // "chrome_crashpad_handler: --database is required".
+        $renderer = app(InvoicePdfRenderer::class);
+
+        $home = $renderer->writableHomeForChrome();
+
+        $this->assertNotNull($home, 'Chrome butuh folder HOME yang bisa ditulis.');
+        $this->assertDirectoryExists($home);
+        $this->assertTrue(is_writable($home), "Folder HOME '$home' harus bisa ditulis.");
+    }
+
     public function test_renderer_marks_dompdf_output_as_degraded(): void
     {
         // Fallback DomPDF menghasilkan layout rusak (tidak ada dukungan

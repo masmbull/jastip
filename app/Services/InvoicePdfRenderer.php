@@ -112,10 +112,65 @@ class InvoicePdfRenderer
                 'no-sandbox',
                 'disable-setuid-sandbox',
                 'disable-dev-shm-usage',   // /dev/shm only 64MB on EC2, Chrome crashes without this
+                // Crashpad butuh direktori database yang bisa ditulis. Tanpa
+                // ini Chrome gagal start dengan "chrome_crashpad_handler:
+                // --database is required".
+                'disable-crash-reporter',
             ]);
         }
 
+        // Chrome butuh HOME yang bisa ditulis untuk crashpad dan cache.
+        // Saat PHP-FPM (user www-data) menjalankan render, HOME bisa menunjuk
+        // ke direktori milik user lain, sehingga Chrome gagal start dengan
+        // "chrome_crashpad_handler: --database is required".
+        //
+        // setNodeEnv() dipakai, bukan setEnvironmentOptions(): env di
+        // browser.cjs di-spread SEBELUM process.env, jadi process.env yang
+        // menang. setNodeEnv() men-set env di level proses node, di luar
+        // jangkauan spread itu, jadi benar-benar overriding.
+        $home = $this->writableHomeForChrome();
+        if ($home !== null) {
+            $browsershot->setNodeEnv(['HOME' => $home]);
+            $browsershot->setUserDataDir($home.'/chrome-profile');
+        }
+
         return $browsershot->pdf();
+    }
+
+    /**
+     * Folder HOME yang bisa ditulis oleh user PHP-FPM.
+     *
+     * Chrome menyimpan crashpad database dan cache di HOME. Kalau HOME
+     * menunjuk ke folder milik user lain (mis. /home/ubuntu saat render
+     * dijalankan lewat sudo -u www-data), Chrome gagal start.
+     *
+     * @return string|null Path HOME yang aman, null kalau tak ada yang cocok.
+     */
+    public function writableHomeForChrome(): ?string
+    {
+        $candidates = [];
+
+        $home = getenv('HOME');
+        if (is_string($home) && $home !== '') {
+            $candidates[] = $home;
+        }
+
+        // Folder khusus yang pasti bisa ditulis user web.
+        $candidates[] = storage_path('app/chrome');
+        $candidates[] = sys_get_temp_dir().'/jastip-chrome';
+
+        foreach ($candidates as $path) {
+            if (! is_dir($path)) {
+                // Several requests can render at once, so a "folder already
+                // exists" race must not be treated as a failure.
+                @mkdir($path, 0775, true);
+            }
+            if (is_dir($path) && is_writable($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -220,6 +275,14 @@ class InvoicePdfRenderer
             return 'Binary Chrome tidak ditemukan. Jalankan: npx puppeteer browsers install chrome, '
                 .'lalu set BROWSERSHOT_CHROME_PATH ke path Chrome (tanpa wildcard). '
                 .'Detail: '.$message;
+        }
+
+        if (str_contains($message, 'crashpad_handler') || str_contains($message, 'Failed to launch the browser process')) {
+            return 'Chrome gagal start. Penyebab yang paling sering: HOME tidak bisa ditulis '
+                .'oleh user PHP-FPM, sehingga crashpad tidak bisa membuat database-nya '
+                .'("chrome_crashpad_handler: --database is required"). '
+                .'Pastikan folder HOME untuk Chrome bisa ditulis, atau jalankan render sebagai user '
+                .'yang punya akses. Detail: '.$message;
         }
 
         if (str_contains($message, 'spawn') || str_contains($message, 'not found')) {

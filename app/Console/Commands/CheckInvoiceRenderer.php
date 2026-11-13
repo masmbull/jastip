@@ -17,12 +17,14 @@ class CheckInvoiceRenderer extends Command
         $chrome = config('browsershot.chrome_path');
         $configured = config('browsershot.node_module_path');
         $detected = $renderer->resolveNodeModulePath();
+        $chromeHome = $renderer->writableHomeForChrome();
 
         $this->line('User                 : '.get_current_user().' (APP_ENV: '.config('app.env').')');
         $this->line('Node                 : '.($node ?: 'node (dari PATH)'));
         $this->line('Chrome path          : '.($chrome ?: '(kosong — Puppeteer menebak sendiri)'));
         $this->line('node_modules di .env : '.($configured ?: '(kosong — dideteksi otomatis)'));
         $this->line('Puppeteer ditemukan : '.($detected ?: 'TIDAK ADA'));
+        $this->line('HOME untuk Chrome    : '.($chromeHome ?: 'TIDAK ADA — Chrome akan gagal start (crashpad)'));
         $this->newLine();
 
         if ($node && ! is_executable($node)) {
