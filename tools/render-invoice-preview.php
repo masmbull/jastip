@@ -62,6 +62,86 @@ $variants = [];
 
 $variants['base'] = $doc([]);
 
+// Case of image 1 (Bu Vonny): single item 35.000, QRIS tersedia.
+$variants['vonny'] = $doc([
+    'customer' => ['name' => 'Bu Vonny', 'wa' => '082494024883', 'address' => 'Jakarta'],
+    'shipping' => [
+        ['label' => 'Ekspedisi', 'value' => '-'],
+        ['label' => 'Jumlah item', 'value' => '1 pcs'],
+    ],
+    'items' => [[
+        'name' => 'Dettol Plester Antiseptik',
+        'unit' => 'pcs', 'qty' => 1,
+        'price' => format_price(35000),
+        'subtotal' => format_price(35000),
+    ]],
+    'totals' => [
+        ['label' => 'Subtotal', 'value' => format_price(35000)],
+        ['label' => 'Ongkir', 'value' => format_price(0)],
+    ],
+    'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price(35000)],
+    'left' => null,
+    'qris' => ['image' => $qrisImg, 'merchant' => 'JASTIP NITIPDIEND'],
+]);
+
+// Case of image 2 (Bu Hesty): multiple items, total > QRIS limit (500rb),
+// down payment diterima 200rb, sisa 320rb, payment = bank only.
+$hestyItems = [
+    ['name' => 'Hampers SOG - Sarong Songket', 'unit' => 'pcs', 'qty' => 3, 'price' => format_price(103000), 'subtotal' => format_price(309000)],
+];
+foreach (['Blue Sky / Standar', 'Mauve / Standar', 'Matcha / Standar', 'Navy / Standar', 'Pale Cream / Standar'] as $v) {
+    $hestyItems[] = ['name' => 'Hampers SOG Hijab / Royal Garden / ' . $v, 'unit' => 'pcs', 'qty' => 1, 'price' => format_price(65000), 'subtotal' => format_price(65000)];
+}
+$variants['hesty'] = $doc([
+    'title' => 'TAGIHAN',
+    'number' => 'ND20261104-2A814FDA',
+    'date' => '04 Nov 2026, 16:47 WIB',
+    'status' => 'dp',
+    'customer' => ['name' => 'Bu Hesty', 'wa' => '085771216563', 'address' => 'Jakarta'],
+    'shipping' => [
+        ['label' => 'Ekspedisi', 'value' => '-'],
+        ['label' => 'Jumlah item', 'value' => '8 pcs'],
+    ],
+    'items' => $hestyItems,
+    'totals' => [
+        ['label' => 'Subtotal', 'value' => format_price(520000)],
+        ['label' => 'Ongkir', 'value' => format_price(0)],
+    ],
+    'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price(520000)],
+    'left' => ['label' => 'Sisa Bayar', 'value' => format_price(320000)],
+    'paid_rows' => [['label' => 'Deposit masuk', 'value' => '-' . format_price(200000), 'green' => true]],
+    'qris' => null,
+    'bank' => $bank,
+]);
+
+// Lunas: lunas tanpa DP, invoice tidak menampilkan Sisa Bayar
+$variants['lunas'] = $doc([
+    'title' => 'INVOICE',
+    'number' => 'ND20261105-ABCD1234',
+    'date' => '05 Nov 2026, 10:00 WIB',
+    'status' => 'paid',
+    'paid' => true,
+    'customer' => ['name' => 'Bu Vonny', 'wa' => '082494024883', 'address' => 'Jakarta'],
+    'shipping' => [
+        ['label' => 'Ekspedisi', 'value' => '-'],
+        ['label' => 'Jumlah item', 'value' => '1 pcs'],
+    ],
+    'items' => [[
+        'name' => 'Dettol Plester Antiseptik',
+        'unit' => 'pcs', 'qty' => 1,
+        'price' => format_price(35000),
+        'subtotal' => format_price(35000),
+    ]],
+    'totals' => [
+        ['label' => 'Subtotal', 'value' => format_price(35000)],
+        ['label' => 'Ongkir', 'value' => format_price(0)],
+    ],
+    'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price(35000)],
+    'left' => null,
+    'qris' => ['image' => $qrisImg, 'merchant' => 'JASTIP NITIPDIEND'],
+    'paid_at' => '05 Nov 2026, 11:00 WIB',
+]);
+
 // Long names + jastip fee column + shipping + deposit + long customer/holder.
 $longBank = $bank;
 $longBank['accounts'] = [

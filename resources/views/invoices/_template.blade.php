@@ -60,10 +60,11 @@ $qrisMaxH  = ($qris && $hasBank) ? '100mm' : '105mm';
 // larger than the QR itself.
 $qrisQrImage = ($qris && function_exists('qris_qr_data_uri')) ? qris_qr_data_uri() : null;
 $qrisQrSize  = ($qris && $hasBank) ? '62mm' : '70mm';
-// Bank logos share one max box with object-fit: contain, so they render at
-// uniform height (BCA 1.34, SeaBank 3.11, blu 2.25 aspect) without ever
-// clipping or stretching. Heights are the visually uniform dimension.
-$bankLogoH = $qris ? 38 : 48;
+// Bank logos are height-based with width:auto + object-fit:contain, so the
+// three official logos share one visual height even though their aspect
+// ratios differ (BCA 1.34, SeaBank 3.11, blu 2.25).
+$bankLogoH   = 34;   // side-by-side with QRIS (vertical list)
+$bankLogoGridH = 32; // bank-only layout: grid of accounts side by side
 $bankLogoMaxW = $qris ? 110 : 150;
 @endphp
 
@@ -95,9 +96,9 @@ $icon = fn (string $name, int $size = 16, string $color = '#B45309') =>
 
 $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 [$badgeText, $badgeColor, $badgeBg] = match ($statusKey) {
-    'paid' => ['LUNAS', '#15803D', '#F0FDF4'],
-    'dp'   => ['DP DITERIMA', '#1D4ED8', '#EFF6FF'],
-    default => ['BELUM BAYAR', '#C2410C', '#FFF4E8'],
+    'paid' => ['LUNAS', '#14532D', '#DCFCE7'],
+    'dp'   => ['DP DITERIMA', '#1E3A8A', '#DBEAFE'],
+    default => ['BELUM BAYAR', '#7C2D12', '#FFEDD5'],
 };
 @endphp
 
@@ -259,30 +260,31 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
     {{-- ═══ 3. PRODUCT TABLE ═══ --}}
     @php $th = 'background: #FFC800; padding: 8px 10px; font-size: 12.5px; font-weight: 800; color: #141414;'; @endphp
-    <table class="invoice-items" style="width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 10px;">
+    <table class="invoice-items" style="width: 100%; border-collapse: collapse; border-spacing: 0; border: 1.5px solid #E2E8F0; border-radius: 12px; overflow: hidden; margin-bottom: 10px;">
         <thead>
             <tr>
-                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; border-radius: 12px 0 0 12px; {{ $th }}">Produk</th>
+                <th class="items-th" style="width: {{ $hasFee ? '35%' : '40%' }}; text-align: left; {{ $th }}">Produk</th>
                 <th class="items-th" style="width: 10%; text-align: center; {{ $th }}">Satuan</th>
                 <th class="items-th" style="width: 8%; text-align: center; {{ $th }}">Qty</th>
                 <th class="items-th" style="width: {{ $hasFee ? '16%' : '20%' }}; text-align: right; {{ $th }}">Harga</th>
                 @if($hasFee)
                 <th class="items-th" style="width: 13%; text-align: right; {{ $th }}">Fee item</th>
                 @endif
-                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; border-radius: 0 12px 12px 0; {{ $th }}">Subtotal</th>
+                <th class="items-th" style="width: {{ $hasFee ? '18%' : '22%' }}; text-align: right; {{ $th }}">Subtotal</th>
             </tr>
         </thead>
         <tbody>
             @foreach($doc['items'] as $item)
+            @php $isLastItem = $loop->last; @endphp
             <tr>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; word-break: break-word; font-size: 12.5px; line-height: 1.4;">{{ $item['name'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: center; color: #475569; font-size: 12.5px; line-height: 1.4;">{{ $item['unit'] ?: '-' }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: center; font-size: 12.5px; line-height: 1.4;">{{ $item['qty'] }}</td>
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['price'] }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; word-break: break-word; font-size: 12.5px; line-height: 1.4;">{{ $item['name'] }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; text-align: center; color: #475569; font-size: 12.5px; line-height: 1.4;">{{ $item['unit'] ?: '-' }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; text-align: center; font-size: 12.5px; line-height: 1.4;">{{ $item['qty'] }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; text-align: right; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['price'] }}</td>
                 @if($hasFee)
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['fee'] ?? '-' }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; text-align: right; color: #92400E; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['fee'] ?? '-' }}</td>
                 @endif
-                <td class="items-td" style="border-bottom: 1px solid #E2E8F0; padding: 7px 10px; vertical-align: middle; text-align: right; font-weight: 800; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['subtotal'] }}</td>
+                <td class="items-td" style="{{ $isLastItem ? '' : 'border-bottom: 1px solid #E2E8F0;' }} padding: 7px 10px; vertical-align: middle; text-align: right; font-weight: 800; white-space: nowrap; font-size: 12.5px; line-height: 1.4;">{{ $item['subtotal'] }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -371,47 +373,89 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
             {{-- TRANSFER REKENING --}}
             @if($bank && !empty($bank['lines']))
-            <div style="{{ $qris ? 'flex: 48;' : 'width: 100%;' }} min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
-                <div class="pay-card-body" style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column;">
-                    <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0; line-height: 1.3;">
-                        <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #FFE58A; border-radius: 9px;">{!! $icon('bank', 18, '#7C4A03') !!}</span>
-                        <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.2px;">TRANSFER REKENING</span>
-                    </div>
-                    {{-- Entries vertically centered in the space below the header --}}
-                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center;">
-                    @if(!empty($bank['accounts']))
-                        @foreach($bank['accounts'] as $idx => $account)
-                        @php
-                            $bk = strtolower($account['bank'] ?? '');
-                            if (str_contains($bk, 'blu')) {
-                                $logo = $bankLogoData['blu'] ?? null;
-                            } elseif (str_contains($bk, 'sea')) {
-                                $logo = $bankLogoData['sea'] ?? null;
-                            } else {
-                                $logo = $bankLogoData['bca'] ?? null;
-                            }
-                        @endphp
-                        <div class="bank-account-row" style="{{ $idx > 0 ? 'border-top: 1px solid #E2E8F0; margin-top: 9px; padding-top: 9px;' : '' }} display: flex; align-items: center; gap: 10px;">
-                            <div class="bank-logo-wrap" style="width: {{ $bankLogoMaxW }}px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                @php
+                    $accounts = $bank['accounts'] ?? [];
+                    // Bank-only card spans the full width; using a one-per-
+                    // account grid makes the extra horizontal space useful and
+                    // keeps the card compact instead of tall-and-empty.
+                    $useGrid = $qris === null && count($accounts) > 1;
+                    $gridCols = count($accounts);
+                @endphp
+                @if($useGrid)
+                <div style="width: 100%; min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
+                    <div class="pay-card-body" style="padding: 12px 16px 16px; flex: 1; display: flex; flex-direction: column;">
+                        <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0; line-height: 1.3; margin-bottom: 12px;">
+                            <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #FFE58A; border-radius: 9px;">{!! $icon('bank', 18, '#7C4A03') !!}</span>
+                            <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.2px;">TRANSFER REKENING</span>
+                        </div>
+                        <div class="bank-grid" style="display: grid; grid-template-columns: repeat({{ $gridCols }}, 1fr); gap: 8px; flex: 1;">
+                            @foreach($accounts as $account)
+                            @php
+                                $bk = strtolower($account['bank'] ?? '');
+                                if (str_contains($bk, 'blu')) {
+                                    $logo = $bankLogoData['blu'] ?? null;
+                                } elseif (str_contains($bk, 'sea')) {
+                                    $logo = $bankLogoData['sea'] ?? null;
+                                } else {
+                                    $logo = $bankLogoData['bca'] ?? null;
+                                }
+                            @endphp
+                            <div class="bank-account-col" style="min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; gap: 2px;">
                                 @if($logo)
                                 <img class="bank-logo" src="{{ $logo }}" alt="{{ $account['bank'] }}"
-                                     style="max-width: {{ $bankLogoMaxW }}px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; object-fit: contain; display: block;">
+                                     style="max-width: 130px; max-height: {{ $bankLogoGridH }}px; width: auto; height: auto; object-fit: contain; display: block; margin-bottom: 4px;">
                                 @endif
+                                <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.25;">{{ $account['bank'] }}</div>
+                                <div style="font-size: 13.5px; font-weight: 800; color: #141414; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; line-height: 1.35; letter-spacing: 0.4px; overflow-wrap: anywhere;">{{ $account['number'] }}</div>
+                                <div style="font-size: 11px; color: #64748B; line-height: 1.25;">a/n {{ $account['name'] }}</div>
                             </div>
-                            <div class="bank-account-details" style="min-width: 0;">
-                                <div style="font-size: 13.5px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
-                                <div style="font-size: 12px; color: #334155; margin-top: 2px; line-height: 1.35;"><span class="bank-account-number" style="font-weight: 700; white-space: nowrap;">{{ $account['number'] }}</span> <span style="overflow-wrap: anywhere;">a/n {{ $account['name'] }}</span></div>
-                            </div>
+                            @endforeach
                         </div>
-                        @endforeach
-                    @else
-                        @foreach($bank['lines'] as $line)
-                        <div style="{{ !$loop->first ? 'border-top: 1px solid #E2E8F0; margin-top: 8px; padding-top: 8px;' : '' }} font-size: 12px; color: #475569; line-height: 1.45;">{{ $line }}</div>
-                        @endforeach
-                    @endif
                     </div>
                 </div>
-            </div>
+                @else
+                <div style="{{ $qris ? 'flex: 48;' : 'width: 100%;' }} min-width: 0; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; display: flex; flex-direction: column;">
+                    <div class="pay-card-body" style="padding: 12px 14px; flex: 1; display: flex; flex-direction: column;">
+                        <div style="display: flex; align-items: center; gap: 9px; flex-shrink: 0; line-height: 1.3;">
+                            <span style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: #FFE58A; border-radius: 9px;">{!! $icon('bank', 18, '#7C4A03') !!}</span>
+                            <span style="font-size: 13px; font-weight: 900; color: #141414; letter-spacing: 0.2px;">TRANSFER REKENING</span>
+                        </div>
+                        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center;">
+                        @if(!empty($accounts))
+                            @foreach($accounts as $idx => $account)
+                            @php
+                                $bk = strtolower($account['bank'] ?? '');
+                                if (str_contains($bk, 'blu')) {
+                                    $logo = $bankLogoData['blu'] ?? null;
+                                } elseif (str_contains($bk, 'sea')) {
+                                    $logo = $bankLogoData['sea'] ?? null;
+                                } else {
+                                    $logo = $bankLogoData['bca'] ?? null;
+                                }
+                            @endphp
+                            <div class="bank-account-row" style="{{ $idx > 0 ? 'border-top: 1px solid #E2E8F0; margin-top: 9px; padding-top: 9px;' : '' }} display: flex; align-items: center; gap: 10px; padding: 6px 0;">
+                                <div class="bank-logo-wrap" style="width: 96px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                                    @if($logo)
+                                    <img class="bank-logo" src="{{ $logo }}" alt="{{ $account['bank'] }}"
+                                         style="max-width: 96px; max-height: {{ $bankLogoH }}px; width: auto; height: auto; object-fit: contain; display: block;">
+                                    @endif
+                                </div>
+                                <div class="bank-account-details" style="min-width: 0;">
+                                    <div style="font-size: 13px; font-weight: 800; color: #141414; line-height: 1.3;">{{ $account['bank'] }}</div>
+                                    <div style="font-size: 12.5px; color: #334155; margin-top: 2px; line-height: 1.4;"><span class="bank-account-number" style="font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; letter-spacing: 0.4px;">{{ $account['number'] }}</span></div>
+                                    <div style="font-size: 11px; color: #64748B; line-height: 1.3;">a/n {{ $account['name'] }}</div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                            @foreach($bank['lines'] as $line)
+                            <div style="{{ !$loop->first ? 'border-top: 1px solid #E2E8F0; margin-top: 8px; padding-top: 8px;' : '' }} font-size: 12px; color: #475569; line-height: 1.45;">{{ $line }}</div>
+                            @endforeach
+                        @endif
+                        </div>
+                    </div>
+                </div>
+                @endif
             @endif
 
         </div>
