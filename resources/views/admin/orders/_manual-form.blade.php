@@ -269,7 +269,7 @@
                         <div class="col-span-1 text-center">Qty</div>
                         <div class="col-span-2 text-right">Harga</div>
                         <div class="col-span-2 text-right">DP/unit</div>
-                        <div class="col-span-1 text-right">Fee</div>
+                        <div class="col-span-1 text-right">Fee/unit</div>
                         <div class="col-span-1 text-right">Subtotal</div>
                         <div class="col-span-1"></div>
                     </div>
@@ -333,11 +333,17 @@
                                          class="mt-0.5 text-[10px] font-bold text-[#166534] text-right num"
                                              x-text="formatRp(item.deposit) + ' × ' + item.qty + ' = ' + formatRp(item.deposit * item.qty) + ' total DP'"></div>
                                 </div>
+                                {{-- Fee per unit — dikalikan qty otomatis. Di bawah kolom
+                                     fee/unit, supaya tidak membingungkan bahwa input adalah
+                                     total per barang, bukan per baris. --}}
                                 <div class="col-span-6 sm:col-span-2 lg:col-span-1">
-                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Fee item</span>
+                                    <span class="lg:hidden text-[11px] font-black uppercase text-[#475569]">Fee/unit</span>
                                     <input type="number" min="0" :name="`items[${idx}][fee]`" x-model.number="item.fee"
-                                           placeholder="0" title="Fee untuk baris item ini"
+                                           placeholder="0" title="Fee per unit — dikalikan qty otomatis"
                                            class="nb-input w-full px-2 py-2 text-sm text-right num">
+                                    <div x-show="item.fee > 0"
+                                         class="mt-0.5 text-[10px] font-bold text-[#92400E] text-right num"
+                                         x-text="formatRp(item.fee) + ' × ' + item.qty + ' = ' + formatRp(item.fee * item.qty)"></div>
                                 </div>
                                 <div class="col-span-4 sm:col-span-2 lg:col-span-1 text-sm font-black text-right py-2.5 num" x-text="formatRp(lineTotal(item))"></div>
                                 <div class="col-span-2 sm:col-span-1 lg:col-span-1 text-right">

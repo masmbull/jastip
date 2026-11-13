@@ -308,10 +308,18 @@ class InvoiceController extends Controller
         $left = max(0, (int) $order->total - $paid);
         $storeWa = setting('whatsapp');
 
-        $itemHasFee = $order->show_fee && $order->items->contains(fn ($i) => (int) $i->fee > 0);
+        $showFee = (bool) $order->show_fee;
+        $itemHasFee = $showFee && $order->items->contains(fn ($i) => (int) $i->fee > 0);
+
+        // Subtotal yang dipajang di invoice: kalau fee disembunyikan, fee
+        // sudah ditambahkan ke harga dan subtotal per baris/qty, supaya
+        // tidak ada lompatan mendadak antara subtotal dan total.
+        $subtotalDisplay = $showFee
+            ? (int) $order->subtotal
+            : (int) $order->subtotal + (int) $order->fee;
 
         $totals = [
-            ['label' => 'Subtotal', 'value' => format_price($order->subtotal)],
+            ['label' => 'Subtotal', 'value' => format_price($subtotalDisplay)],
             ['label' => 'Ongkir', 'value' => format_price($order->shipping_cost)],
         ];
 
@@ -373,20 +381,32 @@ class InvoiceController extends Controller
                 ['label' => 'Jumlah item', 'value' => $order->items->sum('quantity').' pcs'],
             ])),
             'item_has_fee' => $itemHasFee,
-            'items' => $order->items->map(fn ($i) => [
-                'name' => $i->product_name,
-                'unit' => $i->unit,
-                'qty' => $i->quantity,
-                'price' => format_price($i->product_price),
-                'subtotal' => format_price($i->subtotal),
-                'fee' => $order->show_fee && (int) $i->fee > 0 ? format_price($i->fee) : null,
-            ])->all(),
+            'items' => $order->items->map(function ($i) use ($showFee) {
+                $qty = (int) $i->quantity;
+                $unitFee = (int) $i->fee;
+
+                // Kalau fee disembunyikan (show_fee=false), fee per unit sudah
+                // ditambahkan ke harga dan subtotal per baris supaya angka di
+                // invoice tidak jomplang antara subtotal dan total.
+                $priceDisplay = (int) $i->product_price + ($showFee ? 0 : $unitFee);
+
+                return [
+                    'name' => $i->product_name,
+                    'unit' => $i->unit,
+                    'qty' => $i->quantity,
+                    'price' => format_price($priceDisplay),
+                    'subtotal' => format_price($showFee ? (int) $i->subtotal : $qty * $priceDisplay),
+                    // Fee per baris = fee/unit x qty (mirip DP/unit x qty).
+                    'fee' => $showFee && $unitFee > 0 ? format_price($unitFee * $qty) : null,
+                ];
+            })->all(),
             'totals' => $totals,
             'paid_rows' => $paidRows,
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($order->total)],
-            'left' => $left > 0 ? ['label' => 'Sisa Bayar', 'value' => format_price($left)] : null,
-            // Nominal yang harus ditransfer sekarang (sisa bila sudah ada deposit).
-            'pay_amount' => format_price($left > 0 ? $left : (int) $order->total),
+            // Sisa Bayar hanya bila ada setoran sebelumnya (deposit /
+            // pelunasan sebagian). Tanpa itu, Sisa Bayar = Total dan
+            // tidak perlu dicetak.
+            'left' => $paid > 0 && $left > 0 ? ['label' => 'Sisa Bayar', 'value' => format_price($left)] : null,
             'payment_text' => $payment,
             // QRIS hanya untuk nominal <= batas; di atasnya rekening saja.
             'qris' => qris_allowed_for((int) $order->total)

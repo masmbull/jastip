@@ -331,9 +331,6 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
     <div style="border-top: 1.5px solid #FFE08A; margin-bottom: 10px;"></div>
     <div class="section-header" style="font-size: 14px; font-weight: 900; color: #141414; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.3;">
         <span style="display: flex; align-items: center; gap: 9px; white-space: nowrap;">{!! $icon('card', 20) !!}<span>CARA PEMBAYARAN</span></span>
-        @if(!$isPaid && !empty($doc['pay_amount']))
-        <span style="font-size: 12px; font-weight: 700; color: #475569; display: inline-flex; align-items: center; gap: 6px; line-height: 1.3;">{!! $icon('cash', 15, '#B45309') !!}<span>Nominal transfer: <span style="font-weight: 900; color: #141414;">{{ $doc['pay_amount'] }}</span></span></span>
-        @endif
     </div>
 
     @if($isPaid)
