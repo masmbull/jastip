@@ -180,8 +180,9 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
 <div class="invoice-body">
 
-    {{-- Top accent bar --}}
-    <div style="height: 8px; background: #FFC800; border-radius: 0 0 6px 6px; margin-bottom: 12px;"></div>
+    {{-- Bilah atas: 6px + margin bawah 8px supaya masih muat satu halaman
+         pada invoice padat (isi yang kelebihan ~13px). */}}
+    <div style="height: 6px; background: #FFC800; border-radius: 0 0 6px 6px; margin-bottom: 8px;"></div>
 
     {{-- ═══ 1. HEADER ═══ --}}
     <div class="invoice-header" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
@@ -215,7 +216,7 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
         </div>
     </div>
 
-    <div style="height: 4px; background: #FFC800; border-radius: 2px; margin: 8px 0 12px;"></div>
+    <div style="height: 4px; background: #FFC800; border-radius: 2px; margin: 6px 0 12px;"></div>
 
 
     {{-- ═══ 2. CUSTOMER + SUMMARY ═══ --}}
@@ -433,12 +434,12 @@ $statusKey = $doc['status'] ?? ($isPaid ? 'paid' : 'unpaid');
 
     {{-- ═══ 6. FOOTER ═══ --}}
     <div class="invoice-footer">
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
             <div style="flex: 1; height: 1px; background: #CBD5E1;"></div>
             <div style="font-size: 12px; color: #475569; white-space: nowrap; display: flex; align-items: center; gap: 6px;">{!! $icon('heart', 14, '#E11D48') !!}<span>{{ $doc['footer'] }}</span></div>
             <div style="flex: 1; height: 1px; background: #CBD5E1;"></div>
         </div>
-        <div style="height: 8px; background: #FFC800; border-radius: 6px 6px 0 0; margin-top: 12px;"></div>
+        <div style="height: 6px; background: #FFC800; border-radius: 6px 6px 0 0; margin-top: 4px;"></div>
     </div>
 
 </div>
