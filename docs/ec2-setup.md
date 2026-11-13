@@ -141,11 +141,35 @@ BROWSERSHOT_CHROME_PATH=/opt/chrome-stable/chrome-linux64/chrome
 # Cek path sebenarnya di server: npm root -g
 BROWSERSHOT_NODE_MODULE_PATH=
 # Chrome args for EC2 (running as root or without sandbox):
-BROWSERSHOT_CHROME_ARGS=no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage
+# disable-crash-reporter: crashpad butuh database yang bisa ditulis; kalau
+# HOME user PHP-FPM tidak writable, Chrome gagal start dengan
+# "chrome_crashpad_handler: --database is required".
+BROWSERSHOT_CHROME_ARGS=no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-crash-reporter
 ```
 
 > **Note:** `disable-dev-shm-usage` is important on EC2 — the default `/dev/shm`
 > is only 64MB which causes Chrome to crash on heavy pages.
+
+### HOME untuk Chrome
+
+Chrome menyimpan crashpad database dan cache di `HOME`. Saat PHP-FPM
+(user `www-data`) yang merender, `HOME` bisa menunjuk ke folder milik user
+lain, sehingga Chrome gagal start:
+
+```
+chrome_crashpad_handler: --database is required
+Error: Failed to launch the browser process
+```
+
+Aplikasi sudah menanganinya: folder `storage/app/chrome` dipakai sebagai HOME
+kalau bisa ditulis, dan `storage/app` sudah di-set group `www-data` +
+permission `2775` oleh pipeline deploy. Kalau masih bermasalah, cek:
+
+```bash
+cd /var/www/jastip
+sudo -u www-data php artisan invoice:check-renderer
+# baris "HOME untuk Chrome" harus menunjukkan folder yang bisa ditulis
+```
 
 Setelah mengubah `.env`, wajib clear cache config karena nilainya di-bake:
 
