@@ -70,8 +70,9 @@ class ManualOrderStoreRequest extends FormRequest
 
     public function feeTotal(): int
     {
+        // Fee dimasukkan per unit dan dikalikan qty, sama seperti DP.
         $itemFee = (int) collect($this->input('items', []))
-            ->sum(fn ($item) => (int) ($item['fee'] ?? 0));
+            ->sum(fn ($item) => (int) ($item['fee'] ?? 0) * (int) ($item['quantity'] ?? 0));
         $order = $this->route('order');
 
         if ($this->exists('legacy_fee')) {
@@ -79,7 +80,9 @@ class ManualOrderStoreRequest extends FormRequest
         } elseif ($order instanceof Order && $this->exists('fee')) {
             $legacyFee = (int) $this->input('fee', 0);
         } elseif ($order instanceof Order) {
-            $legacyFee = max(0, (int) $order->fee - (int) $order->items()->sum('fee'));
+            // Fee item dihitung per unit x qty, jadi legacy fee dicari
+            // sebagai selisih total fee historis dengan jumlah fee item x qty.
+            $legacyFee = max(0, (int) $order->fee - (int) $order->items()->get()->sum(fn ($item) => (int) $item->fee * (int) $item->quantity));
         } else {
             $legacyFee = $itemFee === 0 ? (int) $this->input('fee', 0) : 0;
         }

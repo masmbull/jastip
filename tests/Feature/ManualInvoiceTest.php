@@ -195,8 +195,9 @@ class ManualInvoiceTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $order = Order::where('customer_whatsapp', '081200009992')->firstOrFail();
-        $this->assertSame(24000, $order->fee);
-        $this->assertSame(319000, $order->total);
+        // Fee per unit x qty: (19000 x 3) + (5000 x 2) = 67000.
+        $this->assertSame(67000, $order->fee);
+        $this->assertSame(362000, $order->total);
         $this->assertSame(
             [19000, 5000],
             $order->items->sortBy('id')->map(fn ($item) => (int) $item->fee)->values()->all()
@@ -206,8 +207,8 @@ class ManualInvoiceTest extends TestCase
             ->get(route('admin.orders.invoice', $order))
             ->assertOk()
             ->assertSee('Fee item')
-            ->assertSee('Rp 19.000')
-            ->assertSee('Rp 5.000')
+            ->assertSee('Rp 57.000')
+            ->assertSee('Rp 10.000')
             ->assertSee('Total Fee Jastip');
 
         $this->actingAs($admin)->put(route('admin.orders.update', $order), [
@@ -223,8 +224,8 @@ class ManualInvoiceTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $order->refresh();
-        $this->assertSame(24000, $order->fee);
-        $this->assertSame(319000, $order->total);
+        $this->assertSame(67000, $order->fee);
+        $this->assertSame(362000, $order->total);
         $this->assertTrue($order->isPaymentValid());
 
         $this->actingAs($admin)

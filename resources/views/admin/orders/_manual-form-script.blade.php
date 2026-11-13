@@ -7,12 +7,13 @@
             shipMethod: {{ Js::from(old('shipping_method', '')) }},
             mode: {{ Js::from(collect(['deposit', 'lunas'])->contains(old('mode', request('mode', 'deposit'))) ? old('mode', request('mode', 'deposit')) : 'deposit') }},
             showFeeToCustomer: {{ old('show_fee', true) ? 'true' : 'false' }},
-            legacyFee: {{ (int) old('legacy_fee', isset($order) ? max(0, (int) $order->fee - (int) $order->items->sum('fee')) : 0) }},
+            legacyFee: {{ (int) old('legacy_fee', isset($order) ? max(0, (int) $order->fee - (int) $order->items->sum(fn ($i) => (int) $i->fee * (int) $i->quantity)) : 0) }},
             manualDp: {{ (int) old('down_payment', 0) }},
             // Deposit input is per unit; the order total multiplies by quantity.
             get dpAmt() { return this.itemDeposit() > 0 ? this.itemDeposit() : this.manualDp; },
             itemDeposit() { return this.items.reduce((s, i) => s + (Number(i.deposit) || 0) * (Number(i.qty) || 0), 0); },
-            itemFee() { return this.items.reduce((s, i) => s + (Number(i.fee) || 0), 0); },
+            // Fee per unit; multiplied by quantity, same as deposit.
+            itemFee() { return this.items.reduce((s, i) => s + (Number(i.fee) || 0) * (Number(i.qty) || 1), 0); },
             feeTotal() { return this.itemFee() + (Number(this.legacyFee) || 0); },
             paidNow: false,
             city: {{ Js::from(old('shipping_city', '')) }},
