@@ -41,6 +41,17 @@
         </div>
     </nav>
 
+    <a href="{{ route('admin.admins.index') }}"
+       class="flex items-center justify-between gap-3 rounded-[8px] border-2 border-[#141414] bg-white px-4 py-3 text-sm font-bold text-[#141414] shadow-[3px_3px_0_#141414] transition-colors hover:bg-[#FFC800] focus:outline-none focus:ring-2 focus:ring-[#141414] dark:border-[#FAF6EF] dark:bg-[#1E1E1E] dark:text-[#FAF6EF] dark:shadow-[3px_3px_0_#FAF6EF] dark:hover:bg-[#262626] dark:focus:ring-[#FFC800] animate-fade-up"
+       style="animation-delay: 100ms">
+        <span class="flex items-center gap-2">
+            <x-icon name="shield-check" class="w-5 h-5 shrink-0" />
+            Kelola Admin &amp; kata sandi
+            <span class="hidden sm:inline font-medium text-[#475569] dark:text-[#CBD5E1]">— akun yang bisa masuk panel ini</span>
+        </span>
+        <x-icon name="arrow-right" class="w-5 h-5 shrink-0" />
+    </a>
+
     <form id="settings-form" data-settings-form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
