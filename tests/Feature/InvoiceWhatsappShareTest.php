@@ -52,7 +52,7 @@ class InvoiceWhatsappShareTest extends TestCase
             ->get(route('admin.invoices.index'))
             ->assertOk()
             ->assertSee('data-invoice-share', false)
-            ->assertSee('data-share-url="'.route('invoice.html', $this->order->public_token).'"', false)
+            ->assertSee('data-share-url="'.route('invoice.image', $this->order->public_token).'"', false)
             ->assertSee('https://wa.me/6281234567890?text=', false)
             ->assertSee('Halo Siti Rahma, berikut invoice NDTEST-WA001', false)
             ->assertSee('BCA 2700398369 a/n Nabila Adriyana')
@@ -71,6 +71,20 @@ class InvoiceWhatsappShareTest extends TestCase
             ->assertSee('class="invoice-doc"', false)
             ->assertSee('Siti Rahma')
             ->assertSee('NDTEST-WA001');
+    }
+
+    public function test_public_invoice_image_returns_png_for_sharing_to_whatsapp(): void
+    {
+        // Route ini yang dipakai tombol share ke WhatsApp: harus berupa
+        // PNG yang dirender Chrome headless, identik dengan versi PDF.
+        $res = $this->get(route('invoice.image', $this->order->public_token));
+
+        $res->assertOk();
+        $res->assertHeader('Content-Type', 'image/png');
+        $body = $res->getContent();
+        $this->assertStringStartsWith("\x89PNG\r\n\x1a\n", $body, 'Response harus PNG.');
+        // PNG 1x1 adalah 67 byte; invoice sebenarnya jauh lebih besar.
+        $this->assertGreaterThan(10_000, strlen($body), 'PNG invoice terlalu kecil.');
     }
 
     public function test_settings_no_longer_expose_gateway_configuration(): void

@@ -275,6 +275,33 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Gambar invoice (PNG) untuk dibagikan ke WhatsApp.
+     *
+     * Route PUBLIK tanpa login, diakses lewat token acak pendek
+     * (link /i/{token}/gambar). Memakai renderer yang SAMA dengan PDF
+     * (Chrome headless via Browsershot), jadi hasilnya pixel-perfect:
+     * alignment, ikon, font, dan ukuran identik dengan pratinjau.
+     *
+     * Ini SENGAJA menggantikan tangkapan layar di browser (html2canvas),
+     * yang tidak mendukung penuh flexbox/grid/font, sehingga pesan WhatsApp
+     * sering berisi tulisan yang tidak sejajar dan ikon yang terpotong.
+     */
+    public function invoiceImage(string $token)
+    {
+        $order = Order::where('public_token', $token)->firstOrFail();
+
+        $html = view('invoices.share', ['doc' => $this->docFromOrder($order)])->render();
+
+        $png = app(InvoicePdfRenderer::class)->screenshotPng($html);
+
+        return response($png, 200, [
+            'Content-Type'        => 'image/png',
+            'Content-Disposition' => 'inline; filename="invoice-' . $order->no . '.png"',
+            'Cache-Control'       => 'private, max-age=60',
+        ]);
+    }
+
+    /**
      * Pratinjau cetak (modal "Pratinjau Cetak Sampel Invoice").
      *
      * Memakai TEMPLATE YANG SAMA dengan PDF (invoices/_template). Bedanya hanya

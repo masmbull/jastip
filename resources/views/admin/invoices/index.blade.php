@@ -172,7 +172,7 @@
                                     @if(str_starts_with($waPhone, '62') && strlen($waPhone) >= 10)
                                         <button type="button"
                                             data-invoice-share
-                                            data-share-url="{{ route('invoice.html', $invoice->public_token) }}"
+                                            data-share-url="{{ route('invoice.image', $invoice->public_token) }}"
                                             data-share-filename="invoice-{{ $invoice->no }}.png"
                                             data-share-text="{{ $shareCaption }}"
                                             data-share-wa-url="{{ whatsapp_url($invoice->customer_whatsapp, $shareCaption) }}"

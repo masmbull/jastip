@@ -71,11 +71,42 @@ class InvoicePdfRenderer
      */
     private function renderWithChrome(string $html): string
     {
-        $browsershot = Browsershot::html($html)
+        return $this->createBrowsershot($html)
             ->format('A4')
             ->margins(8, 10, 8, 10)   // top, right, bottom, left (mm) — must match @page in pdf.blade.php
             ->scale(1)
             ->printBackground()
+            ->pdf();
+    }
+
+    /**
+     * Render HTML invoice menjadi PNG pixel-perfect (Chrome headless).
+     *
+     * Dipakai untuk gambar yang dibagikan ke WhatsApp, supaya hasilnya
+     * identik dengan pratinjau/PDF: font, ikon, jarak, dan alignment semua
+     * dirender oleh Chrome asli. `fullPage()` memastikan satu gambar penuh
+     * tanpa cropping, dan `deviceScaleFactor(2)` menghasilkan resolusi HD.
+     */
+    public function screenshotPng(string $html): string
+    {
+        return $this->createBrowsershot($html)
+            ->windowSize(794, 100)
+            ->fullPage()
+            ->deviceScaleFactor(2)
+            ->showBackground()
+            ->screenshot();
+    }
+
+    /**
+     * Konstruksi Browsershot bersama untuk PDF & PNG.
+     *
+     * Menangani resolusi binary (node/npm/chrome), path global node_modules,
+     * argumen Chromium, dan HOME yang bisa ditulis — supaya kedua output
+     * selalu tampil identik.
+     */
+    private function createBrowsershot(string $html): Browsershot
+    {
+        $browsershot = Browsershot::html($html)
             ->waitUntilNetworkIdle()     // wait for Google Fonts & images
             ->timeout(30);
 
@@ -112,17 +143,13 @@ class InvoicePdfRenderer
                 'no-sandbox',
                 'disable-setuid-sandbox',
                 'disable-dev-shm-usage',   // /dev/shm only 64MB on EC2, Chrome crashes without this
-                // Crashpad butuh direktori database yang bisa ditulis. Tanpa
-                // ini Chrome gagal start dengan "chrome_crashpad_handler:
-                // --database is required".
                 'disable-crash-reporter',
             ]);
         }
 
         // Chrome butuh HOME yang bisa ditulis untuk crashpad dan cache.
         // Saat PHP-FPM (user www-data) menjalankan render, HOME bisa menunjuk
-        // ke direktori milik user lain, sehingga Chrome gagal start dengan
-        // "chrome_crashpad_handler: --database is required".
+        // ke folder milik user lain sehingga tidak bisa ditulis.
         //
         // setNodeEnv() dipakai, bukan setEnvironmentOptions(): env di
         // browser.cjs di-spread SEBELUM process.env, jadi process.env yang
@@ -134,7 +161,7 @@ class InvoicePdfRenderer
             $browsershot->setUserDataDir($home.'/chrome-profile');
         }
 
-        return $browsershot->pdf();
+        return $browsershot;
     }
 
     /**

@@ -335,6 +335,14 @@ window.Alpine = Alpine;
         }
     };
 
+    /* ---- Bagikan gambar invoice ke WhatsApp ----
+       Gambar dibuat di SERVER dengan Chrome headless, bukan di browser
+       admin via html2canvas. Kenapa: hasil server-side identik dengan
+       PDF (alignment, ikon, font, ukuran semua benar), sedangkan
+       html2canvas tidak mendukung penuh flexbox/grid/font sehingga
+       pesan WhatsApp sering berisi tulisan yang tidak sejajar.
+       Alur tetap sama: klik tombol -> fetch gambar -> Web Share API ->
+       sheet share -> pilih WhatsApp -> kirim. */
     window.jdShareInvoiceImage = async function (btn) {
         if (!btn || btn.dataset.busy === '1') return;
 
@@ -342,7 +350,6 @@ window.Alpine = Alpine;
         const shareIcon = btn.querySelector('[data-share-icon]');
         const shareSpinner = btn.querySelector('[data-share-spinner]');
         const originalLabel = btn.getAttribute('aria-label');
-        let host = null;
         const setBusy = (busy) => {
             btn.dataset.busy = busy ? '1' : '';
             btn.disabled = busy;
@@ -358,138 +365,12 @@ window.Alpine = Alpine;
         };
         setBusy(true);
 
-        const downloadAndOpenChat = (blob) => {
-            const objectUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = objectUrl;
-            link.download = shareFilename || 'invoice.png';
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
-            if (shareWaUrl) window.open(shareWaUrl, '_blank', 'noopener');
-            if (typeof window.toast === 'function') {
-                window.toast('Gambar invoice diunduh. Di WhatsApp, lampirkan gambar lalu periksa dan kirim caption.', 'info');
-            }
-        };
-
         try {
-            const response = await fetch(shareUrl, {
-                credentials: 'same-origin',
-                headers: { Accept: 'text/html' },
-            });
+            const response = await fetch(shareUrl, { credentials: 'same-origin' });
             if (!response.ok) throw new Error('HTTP ' + response.status);
 
-            const documentHtml = new DOMParser().parseFromString(await response.text(), 'text/html');
-            const invoice = documentHtml.querySelector('.invoice-doc');
-            if (!invoice) throw new Error('Template invoice tidak ditemukan');
-
-            host = document.createElement('div');
-            host.setAttribute('aria-hidden', 'true');
-            host.inert = true;
-            host.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;height:1123px;z-index:-1;';
-
-            const page = document.createElement('div');
-            page.style.cssText = 'position:relative;box-sizing:border-box;width:794px;height:1123px;padding:40px 42px;background:#fff;overflow:hidden;';
-
-            const accent = document.createElement('div');
-            accent.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:12px;background:#FFC800;';
-
-            const contentArea = document.createElement('div');
-            contentArea.style.cssText = 'box-sizing:border-box;width:100%;height:1043px;overflow:hidden;';
-
-            const invoiceCopy = invoice.cloneNode(true);
-            invoiceCopy.style.cssText += 'box-sizing:border-box;width:100%;margin:0;font-size:14px;line-height:1.35;';
-            invoiceCopy.querySelectorAll('table').forEach((table) => {
-                table.style.borderCollapse = 'collapse';
-                table.style.borderSpacing = '0';
-                table.style.maxWidth = '100%';
-            });
-            invoiceCopy.querySelectorAll('td, div, span').forEach((element) => {
-                element.style.boxSizing = 'border-box';
-            });
-            invoiceCopy.querySelectorAll('td').forEach((cell) => {
-                cell.style.overflowWrap = 'anywhere';
-            });
-            contentArea.append(invoiceCopy);
-            page.append(accent, contentArea);
-            host.append(page);
-            document.body.append(host);
-
-            await Promise.all(Array.from(host.querySelectorAll('img')).map((image) => {
-                if (image.complete) {
-                    return image.naturalWidth > 0 ? Promise.resolve() : Promise.reject(new Error('Gambar invoice gagal dimuat'));
-                }
-
-                return new Promise((resolve, reject) => {
-                    image.addEventListener('load', resolve, { once: true });
-                    image.addEventListener('error', () => reject(new Error('Gambar invoice gagal dimuat')), { once: true });
-                });
-            }));
-
-            const availableHeight = contentArea.clientHeight;
-            const availableWidth = contentArea.clientWidth;
-            const contentHeight = invoiceCopy.scrollHeight;
-            if (!availableHeight || !availableWidth || !contentHeight) {
-                throw new Error('Ukuran invoice tidak dapat dihitung');
-            }
-
-            // Font invoice (Plus Jakarta Sans) tidak otomatis ada di halaman
-            // host — injeksikan stylesheet-nya lalu tunggu font siap supaya
-            // PNG tidak jatuh ke font fallback.
-            const fontLink = document.createElement('link');
-            fontLink.rel = 'stylesheet';
-            fontLink.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap';
-            document.head.appendChild(fontLink);
-            if (document.fonts && document.fonts.ready) {
-                await document.fonts.ready;
-            }
-
-            const { default: html2canvas } = await import('html2canvas');
-            const captureOptions = {
-                backgroundColor: '#FFFFFF',
-                // HD: minimal 3x (2382x3369px) supaya tajam di WhatsApp.
-                scale: Math.max(3, window.devicePixelRatio || 1),
-                windowWidth: 794,
-                windowHeight: 1123,
-                useCORS: true,
-                logging: false,
-            };
-            let canvas;
-
-            if (contentHeight <= availableHeight) {
-                canvas = await html2canvas(page, captureOptions);
-            } else {
-                const overflowHost = document.createElement('div');
-                overflowHost.style.cssText = `position:absolute;top:0;left:0;width:${availableWidth}px;`;
-                overflowHost.append(invoiceCopy);
-                host.append(overflowHost);
-
-                const contentCanvas = await html2canvas(invoiceCopy, {
-                    ...captureOptions,
-                    height: contentHeight,
-                });
-                canvas = document.createElement('canvas');
-                canvas.width = 794 * captureOptions.scale;
-                canvas.height = 1123 * captureOptions.scale;
-
-                const context = canvas.getContext('2d');
-                if (!context) throw new Error('Canvas invoice tidak dapat dibuat');
-
-                context.fillStyle = '#FFFFFF';
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                const fitScale = Math.min(
-                    (availableWidth * captureOptions.scale) / contentCanvas.width,
-                    (availableHeight * captureOptions.scale) / contentCanvas.height
-                );
-                const drawWidth = contentCanvas.width * fitScale;
-                const drawHeight = contentCanvas.height * fitScale;
-                const offsetX = 42 * captureOptions.scale + ((availableWidth * captureOptions.scale) - drawWidth) / 2;
-                const offsetY = 40 * captureOptions.scale;
-                context.drawImage(contentCanvas, offsetX, offsetY, drawWidth, drawHeight);
-            }
-            const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
-            if (!blob) throw new Error('Gambar invoice gagal dibuat');
+            const blob = await response.blob();
+            if (!blob.size) throw new Error('Gambar invoice kosong');
 
             const file = new File([blob], shareFilename || 'invoice.png', { type: 'image/png' });
             if (navigator.canShare?.({ files: [file] })) {
@@ -511,8 +392,22 @@ window.Alpine = Alpine;
                 window.toast('Gagal menyiapkan gambar invoice. Coba lagi.', 'error');
             }
         } finally {
-            host?.remove();
             setBusy(false);
+        }
+
+        function downloadAndOpenChat(blob) {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = shareFilename || 'invoice.png';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 4000);
+            if (shareWaUrl) window.open(shareWaUrl, '_blank', 'noopener');
+            if (typeof window.toast === 'function') {
+                window.toast('Gambar invoice diunduh. Di WhatsApp, lampirkan gambar lalu periksa dan kirim caption.', 'info');
+            }
         }
     };
 

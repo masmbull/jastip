@@ -170,8 +170,12 @@ Route::get('/i/{token}', [InvoiceController::class, 'invoicePdf'])
     ->where('token', '[A-Za-z0-9]{16,32}')
     ->name('invoice.public');
 
+Route::get('/i/{token}/gambar', [InvoiceController::class, 'invoiceImage'])
+    ->where('token', '[A-Za-z0-9]{16,32}')
+    ->name('invoice.image');
+
 // Versi HTML-nya: jadi sumber gambar untuk menu berbagi invoice.
-Route::get('/i/{token}/gambar', [InvoiceController::class, 'invoiceHtml'])
+Route::get('/i/{token}/gambar-html', [InvoiceController::class, 'invoiceHtml'])
     ->where('token', '[A-Za-z0-9]{16,32}')
     ->name('invoice.html');
 
