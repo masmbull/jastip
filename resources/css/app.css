@@ -516,8 +516,28 @@ html.dark .nb-marker::after { border-color: #000; }
 *:focus-visible { outline: 3px solid #141414 !important; outline-offset: 2px !important; }
 html.dark *:focus-visible { outline-color: #FFC800 !important; }
 
+/* iOS/PWA: font input < 16px memperbesar tampilan saat fokus. Samakan jadi 16px di layar kecil. */
+@media (max-width: 640px) {
+    .nb-input { font-size: 16px !important; }
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.55; }
+}
+.settings-dirty-dot {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    background: #F97316;
+    animation: breathe 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .nb-btn, .nb-btn:hover, .nb-btn:active { transform: none !important; transition: none !important; }
+    .animate-fade-up, .animate-fade-in, .animate-scale-in { animation: none !important; }
+    .settings-dirty-dot { animation: none !important; }
 }
 
 @media print {
