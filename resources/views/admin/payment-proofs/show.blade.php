@@ -98,7 +98,7 @@
 
                     <form action="{{ route('admin.payment-proofs.verify', $paymentProof) }}"
                           method="POST"
-                          data-confirm="Verifikasi bukti pembayaran ini dan konfirmasi pesanan?"
+                          data-confirm="Verifikasi bukti ini dan tandai pesanan LUNAS?"
                           class="space-y-3">
                         @csrf
                         <label for="verify-notes" class="sr-only">Catatan verifikasi</label>
@@ -106,7 +106,7 @@
                                   placeholder="Catatan verifikasi (opsional)"
                                   class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] rounded-lg text-sm text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-orange-500"
                                   rows="3"></textarea>
-                        <x-btn type="submit" variant="brand" icon="check-circle" class="w-full">Verifikasi &amp; Terima Pembayaran</x-btn>
+                        <x-btn type="submit" variant="brand" icon="check-circle" class="w-full">Verifikasi &amp; Lunasi Pesanan</x-btn>
                     </form>
 
                     <form action="{{ route('admin.payment-proofs.reject', $paymentProof) }}"

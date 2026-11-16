@@ -259,6 +259,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Payment Proofs (QRIS payment verification)
         Route::get('/bukti-pembayaran', [PaymentProofController::class, 'index'])->name('payment-proofs.index');
+        // Upload bukti oleh admin (bukti yang masuk lewat WhatsApp, bukan checkout).
+        // Setelah upload, pesanan langsung ditandai LUNAS.
+        Route::post('/bukti-pembayaran/upload', [PaymentProofController::class, 'adminUpload'])->name('payment-proofs.upload');
         Route::get('/bukti-pembayaran/{paymentProof}', [PaymentProofController::class, 'show'])->name('payment-proofs.show');
         Route::post('/bukti-pembayaran/{paymentProof}/verify', [PaymentProofController::class, 'verify'])->name('payment-proofs.verify');
         Route::post('/bukti-pembayaran/{paymentProof}/reject', [PaymentProofController::class, 'reject'])->name('payment-proofs.reject');
