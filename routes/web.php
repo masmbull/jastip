@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CouponController;
@@ -293,6 +294,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/user/{user}', [UserController::class, 'show'])->name('users.show');
         Route::put('/user/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // Admin Users Management (akun admin, terpisah dari pelanggan)
+        Route::get('/admins', [AdminUserController::class, 'index'])->name('admins.index');
+        Route::post('/admins', [AdminUserController::class, 'store'])->name('admins.store');
+        Route::get('/admins/{user}/edit', [AdminUserController::class, 'edit'])->name('admins.edit');
+        Route::put('/admins/{user}', [AdminUserController::class, 'update'])->name('admins.update');
+        Route::put('/admins/{user}/password', [AdminUserController::class, 'password'])->name('admins.password');
+        Route::delete('/admins/{user}', [AdminUserController::class, 'destroy'])->name('admins.destroy');
 
         // Bulk Import
         Route::get('/import', [ImportController::class, 'importForm'])->name('import.form');
