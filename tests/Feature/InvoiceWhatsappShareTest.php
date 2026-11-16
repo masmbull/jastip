@@ -65,6 +65,31 @@ class InvoiceWhatsappShareTest extends TestCase
             ->assertDontSee('wa_gateway');
     }
 
+    public function test_share_caption_shows_sisa_only_for_deposit_orders(): void
+    {
+        // Belum ada setoran: Sisa = Total, jadi baris Sisa tidak dicetak.
+        $this->actingAs($this->admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertDontSee('Sisa: ', false);
+
+        // Deposit sebagian: caption memuat Sudah dibayar + Sisa.
+        $this->order->update(['down_payment' => 50000]);
+        $this->actingAs($this->admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertSee('Sudah dibayar: ', false)
+            ->assertSee('Sisa: ', false);
+
+        // Lunas: baris Sisa diganti Status: LUNAS.
+        $this->order->update(['down_payment' => 215000, 'paid_at' => now(), 'status' => Order::STATUS_CONFIRMED]);
+        $this->actingAs($this->admin)
+            ->get(route('admin.invoices.index'))
+            ->assertOk()
+            ->assertSee('Status: LUNAS', false)
+            ->assertDontSee('Sisa: ', false);
+    }
+
     public function test_public_invoice_image_source_renders_for_browser_sharing(): void
     {
         $this->get(route('invoice.html', $this->order->public_token))

@@ -504,7 +504,9 @@ class InvoiceController extends Controller
                 ['label' => 'Biaya layanan', 'value' => format_price($fee)],
             ],
             'total' => ['label' => 'TOTAL BAYAR', 'value' => format_price($subtotal + $ongkir + $fee)],
-            'left' => ['label' => 'Sisa', 'value' => format_price($subtotal + $ongkir + $fee)],
+            // Sampel berstatus BELUM BAYAR: Sisa = Total, sehingga tidak
+            // perlu dicetak (sejalan dengan docFromOrder).
+            'left' => null,
             'payment_text' => 'Silakan transfer, lalu kirim bukti via WhatsApp dengan menyebut nomor invoice #INV-SAMPLE-2026.',
             'qris' => qris_allowed_for($subtotal + $ongkir + $fee)
                 ? ['image' => qris_url(), 'merchant' => setting('qris_merchant_name')]

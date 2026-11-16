@@ -129,7 +129,16 @@
                             if ($paid > 0) {
                                 $captionLines[] = 'Sudah dibayar: '.format_price($paid);
                             }
-                            $captionLines[] = $left > 0 ? 'Sisa: '.format_price($left) : 'Status: LUNAS';
+                            // Sisa hanya ditampilkan untuk invoice deposit
+                            // (ada setoran, belum lunas). Untuk pembayaran
+                            // penuh (belum ada setoran), Sisa = Total dan
+                            // tidak perlu ditulis ulang; untuk Lunas, ganti
+                            // dengan Status: LUNAS.
+                            if ($left <= 0) {
+                                $captionLines[] = 'Status: LUNAS';
+                            } elseif ($paid > 0) {
+                                $captionLines[] = 'Sisa: '.format_price($left);
+                            }
                             $bankAccounts = bank_account_lines();
                             if ($left > 0 && $bankAccounts !== []) {
                                 $captionLines[] = '';
