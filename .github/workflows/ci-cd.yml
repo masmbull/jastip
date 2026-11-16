@@ -79,6 +79,12 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Download Chrome headless-shell untuk render invoice
+        # Puppeteer akan mencari cache-nya di $HOME/.cache/puppeteer.
+        # Kalau dipasang dengan sudo, cache jatuh ke /root/.cache/puppeteer
+        # yang tidak bisa dibaca user 'runner'. Jadi jangan pakai sudo.
+        run: npx --yes puppeteer browsers install chrome-headless-shell
+
       - name: Build frontend assets
         run: npm run build
 
