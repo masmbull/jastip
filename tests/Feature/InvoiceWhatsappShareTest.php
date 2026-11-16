@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Services\InvoicePdfRenderer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -77,6 +78,12 @@ class InvoiceWhatsappShareTest extends TestCase
     {
         // Route ini yang dipakai tombol share ke WhatsApp: harus berupa
         // PNG yang dirender Chrome headless, identik dengan versi PDF.
+        if (! app(InvoicePdfRenderer::class)->selfTest()['ok']) {
+            $this->markTestSkipped(
+                'Chrome headless tidak tersedia di environment ini, sehingga gambar invoice tidak bisa dirender.',
+            );
+        }
+
         $res = $this->get(route('invoice.image', $this->order->public_token));
 
         $res->assertOk();

@@ -79,6 +79,15 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Install global Puppeteer + Chrome (browser untuk render invoice)
+        # Browsershot menjalankan `node vendor/.../browser.cjs` dan ia mencari
+        # modul 'puppeteer' lewat NODE_PATH=$(npm root -g). Karena node_modules
+        # project tidak ikut ter-deploy ke server/produksi, Puppeteer dipasang
+        # global agar bisa ditemukan baik di CI maupun di EC2.
+        run: |
+          sudo npm install -g puppeteer
+          sudo npx --yes puppeteer browsers install chrome-headless-shell
+
       - name: Build frontend assets
         run: npm run build
 
