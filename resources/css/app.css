@@ -408,11 +408,14 @@ html.dark {
     transition: transform 160ms ease-out, box-shadow 160ms ease-out;
 }
 html.dark .nb-card { border-color: #FAF6EF; }
+.grid > .nb-card {
+    height: 100%;
+}
 .nb-card-lift:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--nb-ink);
+    box-shadow: inset 0 6px 0 0 var(--nb-accent-bar, transparent), 6px 6px 0 var(--nb-ink);
 }
-html.dark .nb-card-lift:hover { box-shadow: 6px 6px 0 #000; }
+html.dark .nb-card-lift:hover { box-shadow: inset 0 6px 0 0 var(--nb-accent-bar, transparent), 6px 6px 0 #000; }
 
 .font-display {
     font-family: var(--font-display);
@@ -427,13 +430,13 @@ html.dark .nb-card-lift:hover { box-shadow: 6px 6px 0 #000; }
       netral, jadi tetap berwarna tapi tenang.
    2. Manual: `nb-tint-<warna>` untuk blok yang memang ingin berwarna penuh
       (mis. badge harga). Tone manual menang atas siklus otomatis. */
-.nb-rainbow > :where(*:nth-child(7n+1)) { box-shadow: inset 0 6px 0 0 var(--nb-sun); }
-.nb-rainbow > :where(*:nth-child(7n+2)) { box-shadow: inset 0 6px 0 0 var(--nb-sand); }
-.nb-rainbow > :where(*:nth-child(7n+3)) { box-shadow: inset 0 6px 0 0 var(--nb-coral); }
-.nb-rainbow > :where(*:nth-child(7n+4)) { box-shadow: inset 0 6px 0 0 var(--nb-bubble); }
-.nb-rainbow > :where(*:nth-child(7n+5)) { box-shadow: inset 0 6px 0 0 var(--nb-grape); }
-.nb-rainbow > :where(*:nth-child(7n+6)) { box-shadow: inset 0 6px 0 0 var(--nb-sky); }
-.nb-rainbow > :where(*:nth-child(7n))   { box-shadow: inset 0 6px 0 0 var(--nb-mint); }
+.nb-rainbow > :where(*:nth-child(7n+1)) { --nb-accent-bar: var(--nb-sun); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n+2)) { --nb-accent-bar: var(--nb-sand); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n+3)) { --nb-accent-bar: var(--nb-coral); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n+4)) { --nb-accent-bar: var(--nb-bubble); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n+5)) { --nb-accent-bar: var(--nb-grape); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n+6)) { --nb-accent-bar: var(--nb-sky); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
+.nb-rainbow > :where(*:nth-child(7n))   { --nb-accent-bar: var(--nb-mint); box-shadow: inset 0 6px 0 0 var(--nb-accent-bar), var(--nb-shadow); }
 
 .nb-tint-sun    { background: var(--nb-sun); }
 .nb-tint-sand   { background: var(--nb-sand); }

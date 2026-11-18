@@ -4,7 +4,7 @@
     $product = $product ?? $attributes->get('product');
 @endphp
 
-<article class="nb-card nb-card-lift p-0! overflow-hidden group flex flex-col">
+<article class="nb-card nb-card-lift p-0! overflow-hidden group flex h-full flex-col">
     <div class="relative aspect-[4/3] overflow-hidden bg-[#FAF6EF] dark:bg-[#262626] border-b-2 border-[#141414] dark:border-[#FAF6EF]">
         @if($product)
             <img src="{{ $product->image_url }}"
@@ -57,7 +57,7 @@
                     <span class="text-[11px] font-bold text-[#334155] dark:text-[#A8A29E] num shrink-0">{{ $product->sold_text }}</span>
                 @endif
             </div>
-            <h3 class="font-display font-extrabold text-[15px] leading-snug mb-1 line-clamp-2 text-[#141414] dark:text-[#FAF6EF]">{{ $product->name }}</h3>
+            <h3 class="font-display font-extrabold text-[15px] leading-snug mb-1 line-clamp-2 min-h-[2.6em] text-[#141414] dark:text-[#FAF6EF]">{{ $product->name }}</h3>
 
             @if($product->brand)
                 <p class="text-xs font-medium text-[#334155] dark:text-[#A8A29E] mb-1">oleh {{ $product->brand }}</p>
@@ -71,12 +71,11 @@
                 </p>
             @endif
 
+            <div class="mt-auto pt-3">
             <p class="text-[#141414] dark:text-[#FAF6EF] font-black text-lg mb-1 num">
                 {{ $product->price_max ? $product->formatted_price_range : $product->formatted_price }}
             </p>
-            @if($product->price_max)
-                <p class="text-xs font-medium text-[#334155] dark:text-[#A8A29E] mb-2">harga pasaran</p>
-            @endif
+            <p class="mb-2 min-h-4 text-xs font-medium text-[#334155] dark:text-[#A8A29E]">{{ $product->price_max ? 'harga pasaran' : '' }}</p>
 
             <div class="mb-3">
                 @php($badge = $product->availability_badge)
@@ -85,7 +84,6 @@
                 </x-badge>
             </div>
 
-            <div class="mt-auto">
                 @if($product->isInStock())
                     <x-btn as="a" :href="route('products.show', $product->slug)" variant="brand" class="w-full">
                         Lihat Detail

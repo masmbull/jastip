@@ -10,7 +10,7 @@
 @php($tones = ['sun', 'sand', 'coral', 'bubble', 'grape', 'sky', 'mint'])
 
 <div {{ $attributes->merge([
-        'class' => 'nb-card transition-colors'
+        'class' => 'nb-card h-full transition-colors'
             . ($padded ? ' p-5 sm:p-6' : '')
             . (in_array($tone, $tones, true) ? ' nb-tint-' . $tone : ''),
     ]) }}>

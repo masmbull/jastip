@@ -16,7 +16,7 @@ class ShippingTest extends TestCase
 
     public function test_ongkir_page_renders(): void
     {
-        $this->get(route('shipping.index'))->assertOk()->assertSee('Cek Ongkir');
+        $this->get(route('shipping.index'))->assertOk()->assertSee('Cek Ongkir')->assertSee('Shopee Express');
         $this->get(route('shipping.index', ['city' => 'Bandung', 'weight' => 2]))->assertOk();
         // Unknown city falls back to the default instead of 500.
         $this->get(route('shipping.index', ['city' => 'Atlantis']))->assertOk();
@@ -90,6 +90,7 @@ class ShippingTest extends TestCase
         $this->assertSame('jne', $svc->detectCourier('JNE1234567890'));
         $this->assertSame('jnt', $svc->detectCourier('JT1234567890'));
         $this->assertSame('sicepat', $svc->detectCourier('001234567890'));
+        $this->assertSame('spx', $svc->detectCourier('SPXID123456789'));
         $this->assertNull($svc->detectCourier(''));
         $this->assertNull($svc->detectCourier('ZZZ999999'));
 
@@ -120,7 +121,11 @@ class ShippingTest extends TestCase
         $this->assertTrue($result['success']);
         $this->assertSame('local', $result['provider']);
         $this->assertArrayHasKey('jne', $result['prices']);
+        $this->assertArrayHasKey('spx', $result['prices']);
         $this->assertGreaterThan(0, $result['prices']['jne']);
+        $this->assertNotEmpty($result['changes']);
+        $spx = collect($result['changes'])->firstWhere('code', 'spx');
+        $this->assertSame('Shopee Express', $spx['name']);
     }
 
     public function test_live_prices_cache_overrides_estimator_base_rate(): void

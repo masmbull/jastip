@@ -34,6 +34,64 @@
         </div>
     @endif
 
+    @php($sync = session('shipping_sync'))
+    @if (is_array($sync))
+        @php
+            $changes = $sync['changes'] ?? [];
+            $updated = array_values(array_filter($changes, fn ($row) => ($row['status'] ?? '') === 'updated'));
+            $manual = array_values(array_filter($changes, fn ($row) => ($row['status'] ?? '') === 'manual'));
+            $unchanged = count(array_filter($changes, fn ($row) => ($row['status'] ?? '') === 'unchanged'));
+            $missing = count(array_filter($changes, fn ($row) => ($row['status'] ?? '') === 'missing'));
+            $rupiah = fn ($amount) => 'Rp '.number_format((int) $amount, 0, ',', '.');
+        @endphp
+        <div id="syncModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle">
+            <div class="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-[10px] border-2 border-[#141414] bg-[#FAF6EF] p-6 shadow-[6px_6px_0_#141414] dark:border-[#FAF6EF] dark:bg-[#1E1E1E]">
+                <h3 id="syncModalTitle" class="font-display text-lg font-extrabold text-[#141414] dark:text-[#FAF6EF]">Hasil sinkron ongkir</h3>
+                <p class="mt-2 text-sm font-medium text-[#475569]">{{ $sync['message'] ?? '' }}</p>
+                @if(!empty($sync['sample']))
+                    <p class="mt-1 text-xs font-bold text-[#334155]">{{ $sync['sample'] }}</p>
+                @endif
+
+                <div class="mt-4 space-y-3 text-sm">
+                    @if($updated === [])
+                        <p class="font-bold text-[#141414] dark:text-[#FAF6EF]">Tidak ada tarif yang berubah.</p>
+                    @else
+                        <p class="font-black text-[#141414] dark:text-[#FAF6EF]">{{ count($updated) }} tarif berubah</p>
+                        <ul class="space-y-2">
+                            @foreach($updated as $row)
+                                <li class="flex items-start justify-between gap-3 rounded-[8px] border-2 border-[#141414] bg-white px-3 py-2 dark:bg-[#121212]">
+                                    <span class="font-extrabold text-[#141414] dark:text-[#FAF6EF]">{{ $row['name'] }}</span>
+                                    <span class="num shrink-0 text-right font-bold text-[#141414] dark:text-[#FFC800]">{{ $rupiah($row['before']) }} → {{ $rupiah($row['after']) }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if($manual !== [])
+                        <p class="font-black text-[#141414] dark:text-[#FAF6EF]">Tetap pakai tarif manual</p>
+                        <ul class="space-y-2">
+                            @foreach($manual as $row)
+                                <li class="rounded-[8px] border-2 border-[#141414] bg-[#FFF7D6] px-3 py-2">
+                                    <span class="font-extrabold">{{ $row['name'] }}</span>
+                                    <span class="mt-0.5 block text-xs font-medium text-[#475569]">Admin {{ $rupiah($row['before']) }} tetap dipakai. Live {{ $rupiah($row['after']) }}.</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    <p class="text-xs font-medium text-[#64748B]">
+                        {{ $unchanged }} kurir tidak berubah{{ $missing > 0 ? ', '.$missing.' tidak ada di respons API' : '' }}.
+                    </p>
+                </div>
+
+                <button type="button" onclick="document.getElementById('syncModal').remove()"
+                        class="nb-btn mt-5 w-full bg-[#FFC800] px-4 py-2 text-sm font-black text-[#141414]">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    @endif
+
     @if (session('error'))
         <div role="alert" class="flex items-center gap-2 rounded-[8px] border-2 border-[#991B1B] bg-[#FEE2E2] px-4 py-3 text-sm font-bold text-[#7F1D1D]">
             <x-icon name="x" class="h-5 w-5 shrink-0" /> {{ session('error') }}

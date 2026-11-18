@@ -215,6 +215,7 @@ class ShippingService
             };
 
             if ($result['success'] ?? false) {
+                $result['changes'] = $this->describePriceChanges($result['prices'] ?? []);
                 Cache::put(self::CACHE_KEY_PRICES, $result['prices'], self::CACHE_TTL);
                 Cache::forget(self::CACHE_KEY_COURIERS);
                 Setting::set('shipping_api_last_update', now()->toDateTimeString(), 'string', 'shipping', true);
@@ -265,6 +266,7 @@ class ShippingService
             'prices' => $prices,
             'provider' => 'local',
             'message' => 'Tarif disinkronkan dari estimator lokal (gratis, tanpa API key). Zona × berat tetap dipakai di kalkulator.',
+            'sample' => 'Sumber: tarif referensi di config/ekspedisi.php',
         ];
     }
 
@@ -323,6 +325,7 @@ class ShippingService
             'prices' => $prices,
             'provider' => 'api.co.id',
             'message' => 'Tarif live dari api.co.id ('.count($prices).' kurir). Override manual admin tetap diutamakan.',
+            'sample' => 'Sampel kecamatan '.$origin.' → '.$destination.', berat '.$weight.' kg',
         ];
     }
 
@@ -386,6 +389,7 @@ class ShippingService
             'prices' => $prices,
             'provider' => 'rajaongkir',
             'message' => 'Tarif live dari RajaOngkir Starter ('.implode(', ', array_keys($prices)).').',
+            'sample' => 'Sampel kota '.$origin.' → '.$destination.', berat '.$weightGram.' g',
         ];
     }
 
@@ -408,6 +412,7 @@ class ShippingService
             $code = match ($code) {
                 'j&t', 'jnt', 'jet' => 'jnt',
                 'pos indonesia', 'pos' => 'pos',
+                'spx', 'shopee', 'shopeeexpress', 'shopee-express', 'spxexpress' => 'spx',
                 default => $code,
             };
 
@@ -550,6 +555,66 @@ class ShippingService
         }
 
         return $min;
+    }
+
+    /**
+     * Bandingkan tarif baru dengan cache sebelumnya, sebelum cache ditimpa.
+     *
+     * @param  array<string, int>  $newPrices
+     * @return array<int, array{code: string, name: string, before: int, after: int|null, status: string}>
+     */
+    private function describePriceChanges(array $newPrices): array
+    {
+        $old = Cache::get(self::CACHE_KEY_PRICES, []);
+        $old = is_array($old) ? $old : [];
+        $rows = [];
+
+        foreach ($this->estimator->couriers() as $courier) {
+            $code = (string) ($courier['code'] ?? '');
+            if ($code === '') {
+                continue;
+            }
+
+            $default = (int) ($courier['per_kg'] ?? 0);
+            $before = array_key_exists($code, $old) ? (int) $old[$code] : $default;
+            $manual = Setting::get('courier_per_kg_'.$code);
+            $name = (string) ($courier['name'] ?? $code);
+
+            if (! array_key_exists($code, $newPrices)) {
+                $rows[] = [
+                    'code' => $code,
+                    'name' => $name,
+                    'before' => $before,
+                    'after' => null,
+                    'status' => 'missing',
+                ];
+
+                continue;
+            }
+
+            $after = (int) $newPrices[$code];
+            if ($manual !== null && $manual !== '') {
+                $rows[] = [
+                    'code' => $code,
+                    'name' => $name,
+                    'before' => (int) $manual,
+                    'after' => $after,
+                    'status' => 'manual',
+                ];
+
+                continue;
+            }
+
+            $rows[] = [
+                'code' => $code,
+                'name' => $name,
+                'before' => $before,
+                'after' => $after,
+                'status' => $before === $after ? 'unchanged' : 'updated',
+            ];
+        }
+
+        return $rows;
     }
 
     /**

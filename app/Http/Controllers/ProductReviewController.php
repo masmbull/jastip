@@ -70,7 +70,7 @@ class ProductReviewController extends Controller
         $averageRating = $product->getAverageRating();
         $reviewCount = $product->getReviewCount();
 
-        return view('frontend.product.reviews', compact(
+        return view('frontend.products.reviews', compact(
             'product',
             'reviews',
             'ratingDistribution',

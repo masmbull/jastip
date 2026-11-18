@@ -28,10 +28,7 @@ Thumbs.db
 # Tooling
 /.phpunit.cache
 /.phpunit.result.cache
-phpunit.xml
 auth.json
-composer.lock
-package-lock.json
 yarn.lock
 skills-lock.json
 
