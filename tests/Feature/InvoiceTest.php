@@ -20,6 +20,18 @@ class InvoiceTest extends TestCase
         $this->seed();
     }
 
+    private function plantPublicMedia(string $relative): void
+    {
+        $full = public_path('storage/'.ltrim($relative, '/'));
+        if (! is_dir(dirname($full))) {
+            mkdir(dirname($full), 0777, true);
+        }
+
+        file_put_contents($full, base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+        ));
+    }
+
     public function test_application_timezone_is_asia_jakarta(): void
     {
         $this->assertSame('Asia/Jakarta', config('app.timezone'));
@@ -152,6 +164,7 @@ class InvoiceTest extends TestCase
         Setting::set('qris_max_amount', 500000, 'integer', 'qris', true);
         Setting::set('qris_image', 'settings/invoice-qris.png', 'string', 'qris', true);
         Setting::set('brand_logo', 'settings/invoice-logo.png', 'string', 'branding', true);
+        $this->plantPublicMedia('settings/invoice-logo.png');
 
         $admin = User::where('role', 'admin')->firstOrFail();
         $order = Order::create([

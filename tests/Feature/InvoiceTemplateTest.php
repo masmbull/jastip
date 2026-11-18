@@ -77,6 +77,18 @@ class InvoiceTemplateTest extends TestCase
         ], $override));
     }
 
+    private function plantPublicMedia(string $relative): void
+    {
+        $full = public_path('storage/'.ltrim($relative, '/'));
+        if (! is_dir(dirname($full))) {
+            mkdir(dirname($full), 0777, true);
+        }
+
+        file_put_contents($full, base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+        ));
+    }
+
     private function invoiceHtml(Order $order): \Illuminate\Testing\TestResponse
     {
         return $this->actingAs($this->admin())
@@ -474,6 +486,7 @@ class InvoiceTemplateTest extends TestCase
         // must fall back to the original decorative QRIS artwork.
         Setting::set('qris_payload', '', 'string', 'qris', true);
         config(['invoice.qris_payload' => '']);
+        $this->plantPublicMedia('settings/invoice-qris.png');
 
         $order = $this->makeOrder(['total' => 50_000]);
 
