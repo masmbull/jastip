@@ -71,6 +71,7 @@ class SeoTest extends TestCase
 
         $this->assertStringContainsString('Sitemap:', $robots);
         $this->assertStringContainsString('Disallow: /admin', $robots);
+        $this->assertStringContainsString('Disallow: /titipan', $robots);
     }
 
     public function test_product_page_exposes_product_json_ld(): void

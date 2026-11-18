@@ -18,7 +18,7 @@
                          class="w-16 h-16 object-cover rounded-lg" loading="lazy" decoding="async">
                     <div class="min-w-0">
                         <h3 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]">{{ $review->product->name }}</h3>
-                        <p class="text-sm text-orange-600 dark:text-orange-400 font-medium mt-1 num">{{ $review->product->formatted_price }}</p>
+                        <p class="text-sm text-[#141414] dark:text-[#FFC800] font-medium mt-1 num">{{ $review->product->formatted_price }}</p>
                     </div>
                 </div>
             </div>

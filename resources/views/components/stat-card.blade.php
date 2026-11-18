@@ -20,6 +20,6 @@
             <a href="{{ $href }}" class="text-xs font-black text-[#334155] underline underline-offset-2 hover:text-[#141414]">Detail</a>
         @endif
     </div>
-    <p class="text-3xl font-black text-[#141414] num">{{ $value }}</p>
-    <p class="text-sm font-bold text-[#334155]">{{ $label }}</p>
+    <p class="font-display text-3xl font-extrabold text-[#141414] dark:text-[#FAF6EF] num">{{ $value }}</p>
+    <p class="text-sm font-bold text-[#334155] dark:text-[#D6D3D1]">{{ $label }}</p>
 </div>

@@ -108,12 +108,19 @@ class ShippingTest extends TestCase
             ->assertSee('CekResi', false);
     }
 
-    public function test_refresh_without_api_config_reports_not_configured(): void
+    public function test_refresh_defaults_to_local_estimator_without_api_key(): void
     {
+        Cache::flush();
+        config(['shipping.provider' => 'local', 'shipping.api_key' => null]);
+        Setting::set('shipping_api_provider', 'local', 'string', 'shipping', true);
+        Setting::set('shipping_api_key', '', 'string', 'shipping', false);
+
         $result = app(ShippingService::class)->updateLivePrices();
 
-        $this->assertFalse($result['success']);
-        $this->assertSame('API not configured', $result['message']);
+        $this->assertTrue($result['success']);
+        $this->assertSame('local', $result['provider']);
+        $this->assertArrayHasKey('jne', $result['prices']);
+        $this->assertGreaterThan(0, $result['prices']['jne']);
     }
 
     public function test_live_prices_cache_overrides_estimator_base_rate(): void
@@ -148,10 +155,13 @@ class ShippingTest extends TestCase
         Cache::flush();
 
         Http::fake([
-            'api.co.id/*' => Http::response([
-                'results' => [
-                    ['code' => 'jne', 'price' => 12345],
-                    ['code' => 'jnt', 'price' => 11000],
+            'use.api.co.id/*' => Http::response([
+                'is_success' => true,
+                'data' => [
+                    'rates' => [
+                        ['courier_code' => 'jne', 'total_price' => 12345],
+                        ['courier_code' => 'jnt', 'total_price' => 11000],
+                    ],
                 ],
             ], 200),
         ]);
@@ -163,7 +173,6 @@ class ShippingTest extends TestCase
 
         $this->assertTrue($result['success']);
         $this->assertSame(['jne' => 12345, 'jnt' => 11000], $result['prices']);
-        // Kurir cache dilepas supaya tarif baru langsung dipakai.
         $this->assertNull(Cache::get('shipping_couriers_enabled'));
     }
 

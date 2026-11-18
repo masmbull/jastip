@@ -10,6 +10,9 @@
     <link rel="icon" href="{{ $authFav }}">
     <link rel="apple-touch-icon" href="{{ media_url(setting('brand_favicon')) ?? asset('images/icons/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')
 </head>
@@ -30,7 +33,7 @@
         </a>
 
         <div class="max-w-md">
-            <h1 class="text-4xl xl:text-5xl font-black leading-[1.05] tracking-tight">
+            <h1 class="font-display text-4xl xl:text-5xl font-extrabold leading-[1.05] tracking-tight">
                 @yield('panel-title', 'Titip apa pun, kami urus sampai rumah.')
             </h1>
             <p class="mt-4 text-[#D6D3D1] leading-relaxed">

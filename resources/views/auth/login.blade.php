@@ -13,7 +13,7 @@
         <span class="font-black text-lg tracking-tight">{{ setting('brand_name', 'NITIP DI END') }}</span>
     </div>
 
-    <h1 class="text-2xl font-black tracking-tight">Masuk ke Akun</h1>
+    <h1 class="font-display text-2xl font-extrabold tracking-tight">Masuk ke Akun</h1>
     <p class="text-sm font-medium text-[#475569] mt-1 mb-6">Masuk untuk pesan dan lacak titipanmu.</p>
 
     @if (session('success'))

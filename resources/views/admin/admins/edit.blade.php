@@ -21,9 +21,7 @@
     @endif
 
     <x-card class="animate-fade-up" style="animation-delay: 80ms">
-        <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-4 flex items-center gap-2">
-            <x-icon name="user-circle" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Data Admin
-        </h2>
+        <x-admin-section-title icon="user" title="Data Admin" />
         <form method="POST" action="{{ route('admin.admins.update', $user) }}" class="space-y-4">
             @csrf
             @method('PUT')
@@ -54,9 +52,7 @@
     </x-card>
 
     <x-card class="animate-fade-up" style="animation-delay: 140ms">
-        <h2 class="text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9] mb-1 flex items-center gap-2">
-            <x-icon name="lock" class="w-5 h-5 text-orange-500 dark:text-orange-400" /> Ganti Kata Sandi
-        </h2>
+        <x-admin-section-title icon="lock" title="Ganti Kata Sandi" class="mb-1" />
         <p class="text-xs text-[#64748B] dark:text-[#cbd5e1] mb-4">
             {{ auth()->id() === $user->id
                 ? 'Mengganti milik Anda sendiri: wajib memasukkan kata sandi lama.'

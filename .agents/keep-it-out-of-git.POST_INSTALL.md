@@ -1,6 +1,9 @@
 # Keep It Out of Git — post-install setup (for coding agents)
 
-**Status: bootstrap only — not fully configured until you finish this checklist.**
+**Status: configured for this Laravel repo** (private path, CI path+gitleaks,
+path script, skills). Re-check after major CI/seeder changes.
+
+Upstream pack: https://github.com/Sultonisky/keep-it-out-of-git
 
 The installer may have skipped files because this project already had AGENTS.md,
 CI, gitleaks, or scripts. Do **not** assume every guard is active.

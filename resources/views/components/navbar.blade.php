@@ -9,19 +9,19 @@
 <nav class="bg-white dark:bg-[#1E1E1E] sticky top-0 z-50 border-b-2 border-[#141414] dark:border-[#FAF6EF] transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16 gap-2">
-            <div class="flex-shrink-0 flex items-center space-x-3 min-w-0">
+            <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-3 min-w-0 group" aria-label="Beranda {{ $brandName }}">
                 @if($brandLogo)
-                    <img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="h-10 w-10 object-contain" loading="lazy" decoding="async">
+                    <img src="{{ $brandLogo }}" alt="" class="h-10 w-10 object-contain" loading="lazy" decoding="async">
                 @else
-                    <div class="h-10 w-10 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shrink-0">
-                        <span class="text-[#141414] font-black text-lg">N</span>
+                    <div class="h-10 w-10 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shrink-0 transition-transform group-hover:-translate-y-0.5">
+                        <span class="text-[#141414] font-black text-lg">{{ strtoupper(substr($brandName, 0, 1)) }}</span>
                     </div>
                 @endif
                 <div class="min-w-0">
-                    <span class="font-black text-lg leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ $brandName }}</span>
-                    <span class="block text-[11px] font-extrabold uppercase tracking-widest text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] truncate">{{ setting('brand_tagline', 'EH, NITIP DONG!') }}</span>
+                    <span class="font-display font-extrabold text-lg leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ $brandName }}</span>
+                    <span class="block text-[11px] font-extrabold uppercase tracking-wide text-[#475569] dark:text-[#D6D3D1] truncate">{{ setting('brand_tagline', 'EH, NITIP DONG!') }}</span>
                 </div>
-            </div>
+            </a>
 
             <div class="hidden lg:flex lg:items-center lg:gap-1">
                 @php

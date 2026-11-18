@@ -11,14 +11,11 @@
 @source '../../resources/views/**/*.blade.php';
 
 @theme {
-    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-
-    /* Palet Tailwind dipakai apa adanya — tiap nama warna benar-benar
-       berwarna seperti namanya. Dulu keluarga rose/orange/amber/blue semua
-       dipaksa jadi ramp biru laut yang sama, akibatnya tombol WhatsApp
-       (green-500) dan kotak error (red-500) sama-sama tampil biru.
-       Brand tetap cyan #0891B2 lewat hex literal di view. */
+    /* Display + body dari DESIGN.md: Bricolage = karakter neo-brutal,
+       DM Sans = keterbacaan katalog/form. Fallback system hanya cadangan. */
+    --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display: 'Bricolage Grotesque', 'DM Sans', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ===== Custom UI ===== */
@@ -275,12 +272,11 @@ html.dark [class*="bg-[#444444]"] { background-color: var(--dt-surface); }
 
 /* ===== Neo-brutalism system =====
    Reason per decision (R-31):
-   - 2px ink borders + 4px hard shadow: single identity motif, scans as
-     "ops tool yang tegas", separates hierarchy without glow/gradient.
-   - Paper #FAF6EF: warm flat base, less glare for long admin sessions.
-   - Accent #FFC800 dipakai hanya di momen uang (grand total / total bayar).
-   - Radius kecil konsisten (10-12px kartu, 8px tombol): hierarchy tool, bukan pil di semua elemen.
-   - Motion MOTION 1: hanya hover/active translate, tanpa entrance loop. */
+   - 2px ink borders + 4px hard shadow: identity motif, hierarchy without glow.
+   - Paper #FAF6EF: warm flat base for long browse sessions.
+   - Accent #FFC800 only on CTAs / money moments.
+   - Radius 10-12px cards, 8px buttons: hierarchy, not pill-everything.
+   - Motion MOTION 2: hover lift, scroll-reveal, one-shot badge pulse. */
 :root {
     /* Dipetakan dari Pengaturan lewat partials/theme-colors.blade.php. */
     --nb-brand-ink: #141414;
@@ -409,8 +405,19 @@ html.dark {
     border: 2px solid var(--nb-ink);
     border-radius: var(--nb-radius);
     box-shadow: var(--nb-shadow);
+    transition: transform 160ms ease-out, box-shadow 160ms ease-out;
 }
 html.dark .nb-card { border-color: #FAF6EF; }
+.nb-card-lift:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--nb-ink);
+}
+html.dark .nb-card-lift:hover { box-shadow: 6px 6px 0 #000; }
+
+.font-display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+}
 
 /* WARNA AKSEN PER KARTU — dua cara pakai:
    1. Otomatis: class `nb-rainbow` di wadah grid. Tiap anaknya dapat GARIS
@@ -516,8 +523,108 @@ html.dark .nb-marker::after { border-color: #000; }
 *:focus-visible { outline: 3px solid #141414 !important; outline-offset: 2px !important; }
 html.dark *:focus-visible { outline-color: #FFC800 !important; }
 
+/* iOS/PWA: font input < 16px memperbesar tampilan saat fokus. Samakan jadi 16px di layar kecil. */
+@media (max-width: 640px) {
+    .nb-input { font-size: 16px !important; }
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.6); opacity: 0.55; }
+}
+@keyframes badge-pop {
+    0% { transform: scale(0.6); }
+    70% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+}
+@keyframes img-kenburns {
+    from { transform: scale(1); }
+    to { transform: scale(1.04); }
+}
+
+.settings-dirty-dot:not(.hidden) {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 9999px;
+    background: #FFC800;
+    box-shadow: 0 0 0 2px #141414;
+    animation: breathe 1.4s ease-in-out infinite;
+}
+
+/* Cart badge: one-shot pop when count changes (JS toggles .is-pop). */
+#cart-count.is-pop { animation: badge-pop 320ms ease-out; }
+
+/* Product image: subtle zoom on card hover, guides eye to the item. */
+.nb-card .nb-product-img {
+    transition: transform 280ms ease-out;
+}
+.nb-card:hover .nb-product-img,
+.nb-card:focus-within .nb-product-img {
+    transform: scale(1.05);
+}
+
+/* Toast neo-brutal: hard border + offset shadow, not soft SaaS pills. */
+.nb-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    border: 2px solid #141414;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0 #141414;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #141414;
+}
+.nb-toast-success { background: #DCFCE7; }
+.nb-toast-error { background: #FEE2E2; }
+.nb-toast-info { background: #FEF3C7; }
+html.dark .nb-toast {
+    border-color: #FAF6EF;
+    box-shadow: 4px 4px 0 #000;
+    color: #FAF6EF;
+}
+html.dark .nb-toast-success { background: #14532D; }
+html.dark .nb-toast-error { background: #7F1D1D; }
+html.dark .nb-toast-info { background: #78350F; }
+
+/* WhatsApp FAB: keep green as platform signal, dress it neo-brutal. */
+.nb-wa-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #22C55E;
+    color: #fff;
+    border: 2px solid #141414;
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 #141414;
+    transition: transform 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out;
+}
+.nb-wa-fab:hover {
+    background: #16A34A;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #141414;
+}
+.nb-wa-fab:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 #141414;
+}
+html.dark .nb-wa-fab {
+    border-color: #FAF6EF;
+    box-shadow: 4px 4px 0 #000;
+}
+html.dark .nb-wa-fab:hover { box-shadow: 6px 6px 0 #000; }
+
 @media (prefers-reduced-motion: reduce) {
-    .nb-btn, .nb-btn:hover, .nb-btn:active { transform: none !important; transition: none !important; }
+    .nb-btn, .nb-btn:hover, .nb-btn:active,
+    .nb-card-lift:hover,
+    .nb-wa-fab, .nb-wa-fab:hover, .nb-wa-fab:active { transform: none !important; transition: none !important; }
+    .animate-fade-up, .animate-fade-in, .animate-scale-in,
+    #cart-count.is-pop, .nb-card .nb-product-img { animation: none !important; transform: none !important; }
+    .settings-dirty-dot { animation: none !important; }
 }
 
 @media print {

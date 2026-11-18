@@ -15,7 +15,7 @@
             <div class="shrink-0 px-4 sm:px-5 py-3.5 border-b border-[#E2E8F0] dark:border-[#404854] flex items-center justify-between gap-3">
                 <h3 id="sample-modal-title" class="text-base sm:text-lg font-semibold text-[#1E293B] dark:text-[#f1f5f9]">Pratinjau Cetak Sampel Invoice</h3>
                 <button type="button" @click="sampleOpen = false" aria-label="Tutup pratinjau" title="Tutup"
-                        class="shrink-0 text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="shrink-0 text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9] p-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                     <x-icon name="x" class="w-5 h-5" />
                 </button>
             </div>
@@ -25,13 +25,13 @@
                 <span class="text-xs sm:text-sm text-[#64748B] dark:text-[#cbd5e1]">Preset Aktif: <span class="font-semibold text-[#1E293B] dark:text-[#f1f5f9]">COMPACT</span></span>
                 <div class="flex items-center gap-2">
                     <button type="button" @click="sampleOpen = false"
-                            class="px-3 sm:px-4 py-2 text-sm bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg font-medium hover:bg-[#F1F5F9] dark:hover:bg-[#404854] transition-colors focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            class="px-3 sm:px-4 py-2 text-sm bg-white dark:bg-[#23252b] border border-[#E2E8F0] dark:border-[#404854] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg font-medium hover:bg-[#F1F5F9] dark:hover:bg-[#404854] transition-colors focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                         Tutup
                     </button>
                     <button type="button"
                             :disabled="!sampleLoaded || sampleError"
                             @click="$refs.sampleFrame?.contentWindow?.focus(); $refs.sampleFrame?.contentWindow?.print()"
-                            class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm bg-[#0F172A] hover:bg-black text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            class="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm bg-[#0F172A] hover:bg-black text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                         <x-icon name="printer" class="w-4 h-4" /> Cetak PDF
                     </button>
                 </div>
@@ -47,7 +47,7 @@
                     <x-icon name="warning" class="w-8 h-8 text-red-500" />
                     <p class="text-sm text-[#64748B] dark:text-[#cbd5e1]">Gagal memuat pratinjau invoice.</p>
                     <button type="button" @click="sampleError = false; sampleLoaded = false; $refs.sampleFrame.src = 'about:blank'; $nextTick(() => $refs.sampleFrame.src = '{{ route('admin.invoices.sample') }}')"
-                            class="text-sm text-orange-600 dark:text-orange-400 font-medium hover:underline">Coba lagi</button>
+                            class="text-sm text-[#141414] dark:text-[#FFC800] font-medium hover:underline">Coba lagi</button>
                 </div>
                 <iframe x-ref="sampleFrame"
                         :src="sampleOpen && !sampleError ? '{{ route('admin.invoices.sample') }}' : 'about:blank'"

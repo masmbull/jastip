@@ -82,7 +82,7 @@
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm">
                             <a href="{{ route('admin.reviews.show', $review) }}"
-                               class="inline-flex items-center gap-1.5 text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] font-medium hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                               class="inline-flex items-center gap-1.5 text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] font-medium hover:underline rounded focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                                 <x-icon name="eye" class="w-4 h-4" /> Lihat
                             </a>
                         </td>

@@ -251,9 +251,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Shipping / Ongkir
         Route::get('/ongkir', [App\Http\Controllers\Admin\ShippingController::class, 'index'])->name('shipping.index');
+        Route::post('/ongkir/refresh', [App\Http\Controllers\Admin\ShippingController::class, 'refreshPrices'])->name('shipping.refresh');
+        Route::post('/ongkir/api', [App\Http\Controllers\Admin\ShippingController::class, 'saveApiSettings'])->name('shipping.api');
         Route::post('/ongkir/{courier}/toggle', [App\Http\Controllers\Admin\ShippingController::class, 'toggle'])->name('shipping.toggle');
         Route::post('/ongkir/{courier}/pricing', [App\Http\Controllers\Admin\ShippingController::class, 'updatePricing'])->name('shipping.update-pricing');
-        Route::post('/ongkir/refresh', [App\Http\Controllers\Admin\ShippingController::class, 'refreshPrices'])->name('shipping.refresh');
 
         // System Status
         Route::get('/system/status', [SystemStatusController::class, 'index'])->name('system.status');

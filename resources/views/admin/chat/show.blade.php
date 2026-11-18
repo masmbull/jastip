@@ -16,10 +16,10 @@
                     <div class="flex {{ $message->isFromAdmin() ? 'justify-end' : 'justify-start' }}">
                         <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm
                             {{ $message->isFromAdmin()
-                                ? 'bg-orange-500 text-white rounded-tr-sm'
+                                ? 'bg-[#FFC800] text-[#141414] rounded-tr-sm'
                                 : 'bg-[#F1F5F9] dark:bg-[#2e323b] text-[#1E293B] dark:text-[#e2e8f0] rounded-tl-sm' }}">
                             <p class="whitespace-pre-line">{{ $message->body }}</p>
-                            <p class="mt-1 text-[11px] {{ $message->isFromAdmin() ? 'text-orange-100' : 'text-[#64748B] dark:text-[#9ca3af]' }}">
+                            <p class="mt-1 text-[11px] {{ $message->isFromAdmin() ? 'text-[#141414]/70' : 'text-[#64748B] dark:text-[#9ca3af]' }}">
                                 {{ $message->isFromAdmin() ? 'Admin' : $user->name }} &middot; {{ $message->created_at->diffForHumans() }}
                             </p>
                         </div>
@@ -36,7 +36,7 @@
                     <label for="chat-body" class="sr-only">Balasan untuk {{ $user->name }}</label>
                     <textarea id="chat-body" name="body" rows="2" required maxlength="2000"
                               placeholder="Tulis balasan..."
-                              class="w-full rounded-xl border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:border-orange-500 focus:ring-orange-500">{{ old('body') }}</textarea>
+                              class="w-full rounded-xl border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#1a1a1a] text-[#1E293B] dark:text-[#f1f5f9] text-sm focus:border-[#141414] focus:ring-[#FFC800]">{{ old('body') }}</textarea>
                     @error('body')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror

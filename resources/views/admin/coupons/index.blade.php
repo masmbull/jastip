@@ -8,24 +8,24 @@
         <x-btn as="a" :href="route('admin.coupons.create')" icon="plus">Tambah Kupon</x-btn>
     </x-page-header>
 
-    <x-card padded="false" class="animate-fade-up" style="animation-delay: 120ms">
+    <div class="nb-table-shell animate-fade-up" style="animation-delay: 120ms">
         <div class="overflow-x-auto">
             <table class="w-full min-w-[760px]">
                 <thead>
-                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
-                        <th class="px-4 py-3">Kode</th>
-                        <th class="px-4 py-3">Diskon</th>
-                        <th class="px-4 py-3">Periode</th>
-                        <th class="px-4 py-3">Kuota</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Aksi</th>
+                    <tr class="nb-table-head text-left text-xs uppercase">
+                        <th scope="col" class="px-4 py-3 font-black">Kode</th>
+                        <th scope="col" class="px-4 py-3 font-black">Diskon</th>
+                        <th scope="col" class="px-4 py-3 font-black">Periode</th>
+                        <th scope="col" class="px-4 py-3 font-black">Kuota</th>
+                        <th scope="col" class="px-4 py-3 font-black">Status</th>
+                        <th scope="col" class="px-4 py-3 font-black">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#E2E8F0] dark:divide-[#404854]">
+                <tbody class="divide-y divide-[#141414]/15 dark:divide-[#FAF6EF]/15">
                     @forelse($coupons as $coupon)
-                        <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
+                        <tr class="bg-white transition-colors hover:bg-[#FFFDF0] dark:bg-[#1E1E1E] dark:hover:bg-[#262626]">
                             <td class="px-4 py-3">
-                                <p class="font-mono font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $coupon->code }}</p>
+                                <p class="font-mono font-extrabold text-[#141414] dark:text-[#FAF6EF]">{{ $coupon->code }}</p>
                                 @if($coupon->description)
                                     <p class="text-xs text-[#94A3B8] dark:text-[#64748B]">{{ $coupon->description }}</p>
                                 @endif
@@ -49,7 +49,7 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-1">
                                     <a href="{{ route('admin.coupons.edit', $coupon) }}"
-                                       class="text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" title="Ubah" aria-label="Ubah">
+                                       class="text-[#64748B] dark:text-[#cbd5e1] hover:text-[#141414] dark:hover:text-[#FFC800] p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" title="Ubah" aria-label="Ubah">
                                         <x-icon name="pencil" class="w-4 h-4" />
                                     </a>
                                     <form method="POST" action="{{ route('admin.coupons.destroy', $coupon) }}"
@@ -68,7 +68,7 @@
                         <tr>
                             <td colspan="6">
                                 <x-empty-state icon="ticket" title="Belum ada kupon.">
-                                    <a href="{{ route('admin.coupons.create') }}" class="text-orange-600 dark:text-orange-400 font-medium hover:underline">Tambah kupon pertama</a>
+                                    <a href="{{ route('admin.coupons.create') }}" class="text-[#141414] dark:text-[#FFC800] font-medium hover:underline">Tambah kupon pertama</a>
                                 </x-empty-state>
                             </td>
                         </tr>
@@ -76,7 +76,7 @@
                 </tbody>
             </table>
         </div>
-    </x-card>
+    </div>
 
     @if($coupons->hasPages())
         <div>{{ $coupons->links() }}</div>

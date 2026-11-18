@@ -367,7 +367,7 @@
                                 <input type="hidden" name="show_fee" value="0">
                                 <label class="flex items-start gap-2 cursor-pointer min-h-[44px]" for="mi-show-fee">
                                     <input id="mi-show-fee" type="checkbox" name="show_fee" value="1"
-                                           x-model="showFeeToCustomer" class="mt-1 w-4 h-4 accent-[#EAB308]">
+                                           x-model="showFeeToCustomer" class="mt-1 w-4 h-4 accent-[#FFC800]">
                                     <span class="text-xs font-bold text-[#475569] dark:text-[#D6D3D1]">Tampilkan fee di invoice pelanggan</span>
                                 </label>
                             </div>
@@ -415,7 +415,7 @@
 
         <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
             <label class="flex items-center gap-2 cursor-pointer min-h-[44px]" @if($isEdit) hidden @endif>
-                <input type="checkbox" name="mark_paid" value="1" x-model="paidNow" class="w-5 h-5 accent-[#EAB308]">
+                <input type="checkbox" name="mark_paid" value="1" x-model="paidNow" class="w-5 h-5 accent-[#FFC800]">
                 <span class="text-sm font-bold">Tandai sudah lunas</span>
             </label>
             <div class="flex items-center justify-end gap-2">

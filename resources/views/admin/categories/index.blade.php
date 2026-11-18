@@ -12,7 +12,7 @@
         <div class="overflow-x-auto">
             <table class="w-full min-w-[560px]">
                 <thead>
-                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
+                    <tr class="nb-table-head text-left text-xs uppercase">
                         <th class="px-4 py-3">Kategori</th>
                         <th class="px-4 py-3">Produk</th>
                         <th class="px-4 py-3">Status</th>
@@ -24,8 +24,8 @@
                         <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-orange-100 dark:bg-orange-500/20 rounded-full flex items-center justify-center text-lg">
-                                        {{ $category->icon ?: '🗂️' }}
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-[8px] border-2 border-[#141414] bg-[#FFC800] text-lg dark:border-[#FAF6EF]">
+                                        {{ $category->icon ?: '•' }}
                                     </div>
                                     <div>
                                         <p class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $category->name }}</p>
@@ -42,7 +42,7 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-1">
                                     <a href="{{ route('admin.categories.edit', $category) }}"
-                                       class="text-[#64748B] dark:text-[#cbd5e1] hover:text-orange-600 dark:hover:text-orange-400 p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" title="Ubah" aria-label="Ubah">
+                                       class="text-[#64748B] dark:text-[#cbd5e1] hover:text-[#141414] dark:hover:text-[#FFC800] p-1.5 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#2e323b] transition-colors" title="Ubah" aria-label="Ubah">
                                         <x-icon name="pencil" class="w-4 h-4" />
                                     </a>
                                     <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
@@ -61,7 +61,7 @@
                         <tr>
                             <td colspan="4">
                                 <x-empty-state icon="tag" title="Belum ada kategori.">
-                                    <a href="{{ route('admin.categories.create') }}" class="text-orange-600 dark:text-orange-400 font-medium hover:underline">Tambah kategori pertama</a>
+                                    <a href="{{ route('admin.categories.create') }}" class="text-[#141414] dark:text-[#FFC800] font-medium hover:underline">Tambah kategori pertama</a>
                                 </x-empty-state>
                             </td>
                         </tr>

@@ -14,7 +14,7 @@
             <div>
                 <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">File CSV *</label>
                 <input type="file" name="file" accept=".csv,.txt" required
-                       class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('file') border-red-500 @enderror">
+                       class="nb-input w-full @error('file') border-red-500 @enderror">
                 @error('file') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
             </div>
 

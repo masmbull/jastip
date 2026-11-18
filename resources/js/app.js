@@ -22,7 +22,7 @@ window.Alpine = Alpine;
         if (!b) {
             b = document.createElement('div');
             b.id = 'jd-progress';
-            b.className = 'fixed inset-x-0 top-0 h-0.5 bg-rose-500 scale-x-0 origin-left transition-transform duration-[250ms] ease-out z-[200]';
+            b.className = 'fixed inset-x-0 top-0 h-1 bg-[#FFC800] scale-x-0 origin-left transition-transform duration-[250ms] ease-out z-[200]';
             document.body.prepend(b);
         }
         return b;
@@ -41,7 +41,7 @@ window.Alpine = Alpine;
         if (!h) {
             h = document.createElement('div');
             h.id = 'jd-toasts';
-                        h.className = 'fixed bottom-6 left-6 z-[200] flex flex-col gap-2 w-full max-w-sm';
+            h.className = 'fixed bottom-6 left-4 sm:left-6 z-[200] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm';
             document.body.prepend(h);
         }
         return h;
@@ -49,19 +49,18 @@ window.Alpine = Alpine;
     function toast(message, type = 'success', duration = 3800) {
         const host = toastHost();
         const el = document.createElement('div');
-        const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600' };
-        el.className = (`flex items-start gap-2.5 px-4 py-3 rounded-xl shadow-lg text-white text-sm ` +
-            (colors[type] || colors.success) + ' opacity-0 translate-x-4 transition-all duration-300');
+        const tone = ({ success: 'nb-toast-success', error: 'nb-toast-error', info: 'nb-toast-info' })[type] || 'nb-toast-success';
+        el.className = `nb-toast ${tone} opacity-0 translate-y-2 transition-all duration-300`;
         el.innerHTML = '<span class="flex-1 break-words"></span>';
         el.firstElementChild.textContent = message;
         host.prepend(el);
         requestAnimationFrame(() => {
             el.classList.replace('opacity-0', 'opacity-100');
-            el.classList.replace('translate-x-4', 'translate-x-0');
+            el.classList.replace('translate-y-2', 'translate-y-0');
         });
         setTimeout(() => {
             el.classList.replace('opacity-100', 'opacity-0');
-            el.classList.replace('translate-x-0', 'translate-x-4');
+            el.classList.replace('translate-y-0', 'translate-y-2');
             el.addEventListener('transitionend', () => el.remove());
         }, duration);
     }
@@ -82,6 +81,10 @@ window.Alpine = Alpine;
         if (!el) return;
         el.textContent = count;
         el.classList.toggle('hidden', !count || count === 0);
+        el.classList.remove('is-pop');
+        // Retrigger one-shot pop so the eye lands on the new count.
+        void el.offsetWidth;
+        el.classList.add('is-pop');
     }
     
     /* ---- submit button spinner ---- */

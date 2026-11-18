@@ -26,23 +26,32 @@ class SitemapController extends Controller
             ['loc' => route('privacy'), 'changefreq' => 'yearly', 'priority' => '0.2'],
         ];
 
-        Product::query()->select('slug', 'updated_at')->get()->each(function ($p) use (&$urls) {
-            $urls[] = [
-                'loc' => route('products.show', $p->slug),
-                'lastmod' => optional($p->updated_at)->toAtomString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.8',
-            ];
-        });
+        Product::query()
+            ->active()
+            ->select('slug', 'updated_at')
+            ->orderByDesc('updated_at')
+            ->get()
+            ->each(function ($p) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('products.show', $p->slug),
+                    'lastmod' => optional($p->updated_at)->toAtomString(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.8',
+                ];
+            });
 
-        Category::query()->select('slug', 'updated_at')->get()->each(function ($c) use (&$urls) {
-            $urls[] = [
-                'loc' => route('categories.show', $c->slug),
-                'lastmod' => optional($c->updated_at)->toAtomString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.6',
-            ];
-        });
+        Category::query()
+            ->active()
+            ->select('slug', 'updated_at')
+            ->get()
+            ->each(function ($c) use (&$urls) {
+                $urls[] = [
+                    'loc' => route('categories.show', $c->slug),
+                    'lastmod' => optional($c->updated_at)->toAtomString(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+            });
 
         return response()
             ->view('sitemap', ['urls' => $urls])

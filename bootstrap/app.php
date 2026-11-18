@@ -6,6 +6,10 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
+    // Listeners are registered explicitly in AppServiceProvider.
+    // Auto-discovery uses Finder SplFileInfo type hints that break under
+    // PHP 8.5 ZTS on Windows HTTP SAPI (CLI is fine). Keep discovery off.
+    ->withEvents(discover: false)
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',

@@ -6,7 +6,7 @@
 @endphp
 
 <a href="{{ route('categories.show', $category->slug) }}"
-   class="nb-card block p-4 text-center hover:-translate-y-0.5 transition-transform group">
+   class="nb-card nb-card-lift block p-4 text-center group">
 
     @if($categoryImage)
         <img src="{{ $categoryImage }}"
@@ -23,6 +23,6 @@
         </div>
     @endif
 
-    <h3 class="font-black text-base sm:text-lg leading-snug line-clamp-2">{{ $category->name }}</h3>
+    <h3 class="font-display font-extrabold text-base sm:text-lg leading-snug line-clamp-2">{{ $category->name }}</h3>
     <p class="text-sm font-bold text-[#334155] dark:text-[#D6D3D1] mt-0.5"><span class="num">{{ $category->products_count }}</span> produk</p>
 </a>

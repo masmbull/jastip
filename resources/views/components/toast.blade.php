@@ -8,7 +8,7 @@
 @endphp
 
 @if(! empty($flashes))
-<div id="jd-toasts" class="fixed bottom-6 left-6 z-[200] flex flex-col gap-2 w-full max-w-xs">
+<div id="jd-toasts" class="fixed bottom-6 left-4 sm:left-6 z-[200] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm">
     @foreach($flashes as $index => $flash)
         @php($delay = $index * 250)
         <div x-data="{ show: true }"
@@ -20,10 +20,11 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-end="opacity-0"
              x-cloak
-             class="flex items-start gap-2.5 px-4 py-3 rounded-xl shadow-lg text-white text-sm
-                    {{ ['success'=>'bg-green-700','error'=>'bg-red-600','info'=>'bg-blue-600'][$flash['type']] ?? 'bg-gray-700' }}">
+             class="nb-toast nb-toast-{{ $flash['type'] }}">
             <span class="flex-1 break-words">{{ $flash['message'] }}</span>
-            <button type="button" @click="show=false" class="flex-shrink-0 text-white/80 hover:text-white text-xl leading-none">×</button>
+            <button type="button" @click="show=false"
+                    class="shrink-0 min-w-[28px] min-h-[28px] font-black leading-none opacity-70 hover:opacity-100"
+                    aria-label="Tutup notifikasi">×</button>
         </div>
     @endforeach
 </div>
