@@ -5,7 +5,7 @@
 --}}
 @props(['label' => null, 'variant' => 'current'])
 
-@php($tone = ['current' => '', 'brand' => 'text-orange-500 dark:text-orange-400'][$variant] ?? '')
+@php($tone = ['current' => '', 'brand' => 'text-[#141414] dark:text-[#FFC800]'][$variant] ?? '')
 
 <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-2']) }}>
     <svg class="animate-spin h-4 w-4 {{ $tone }}" viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -8,6 +8,16 @@
     $metaDescription = \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 155)
         ?: ($product->name . ' - ' . format_price($product->price) . ' di ' . setting('brand_name', 'NITIP DI END') . '.');
     $ogImage = $product->image_url ?: null;
+    $metaImage = $ogImage;
+    $ogType = 'product';
+    $metaKeywords = implode(', ', array_filter([
+        $product->name,
+        $product->brand,
+        $product->category->name ?? null,
+        setting('meta_keywords'),
+        'jastip',
+        'nitip',
+    ]));
 @endphp
 
 @push('seo')

@@ -11,7 +11,7 @@
         <div class="overflow-x-auto">
             <table class="w-full min-w-[720px]">
                 <thead>
-                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
+                    <tr class="nb-table-head text-left text-xs uppercase">
                         <th class="px-4 py-3">Nama</th>
                         <th class="px-4 py-3">Email</th>
                         <th class="px-4 py-3">Telepon</th>
@@ -28,7 +28,7 @@
                             <td class="px-4 py-3 text-right text-[#1E293B] dark:text-[#f1f5f9] num">{{ $user->orders_count }}</td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('admin.users.show', $user) }}"
-                                   class="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                   class="inline-flex items-center gap-1.5 text-sm font-medium text-[#141414] dark:text-[#FFC800] hover:underline rounded focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                                     <x-icon name="eye" class="w-4 h-4" /> Lihat
                                 </a>
                             </td>

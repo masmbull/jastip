@@ -27,6 +27,10 @@
     <link rel="manifest" href="{{ asset('manifest-admin.webmanifest') }}">
     <link rel="apple-touch-icon" href="{{ $appleUrl }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..700&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')
 </head>
@@ -68,23 +72,21 @@
            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
            class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-[#FAF6EF] border-r-2 border-[#141414] -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0">
 
-        {{-- Logo --}}
+        {{-- Brand --}}
         <div class="flex items-center justify-between p-5 border-b-2 border-[#141414] dark:border-[#FAF6EF]">
-            <div class="flex items-center space-x-3">
-                <div class="h-10 w-10 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center" style="box-shadow: 3px 3px 0 #141414">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 min-w-0 group" aria-label="Dashboard admin">
+                <div class="h-10 w-10 shrink-0 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shadow-[3px_3px_0_#141414] transition-transform group-hover:-translate-y-0.5">
                     <span class="text-[#141414] font-black text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
                 </div>
-                <div>
-                    <span class="font-black text-[17px] leading-tight text-[#141414] dark:text-[#FAF6EF]">{{ setting('brand_name', 'NITIP DI END') }}</span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#141414] dark:text-[#FAF6EF] dark:text-[#22D3EE] block">Admin Panel</span>
+                <div class="min-w-0">
+                    <span class="font-display font-extrabold text-[17px] leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ setting('brand_name', 'NITIP DI END') }}</span>
+                    <span class="text-[11px] font-extrabold uppercase tracking-wide text-[#475569] dark:text-[#A8A29E] block">Panel Admin</span>
                 </div>
-            </div>
+            </a>
             <button type="button" @click="sidebarOpen = false"
-                    class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-[#FFF7D6] dark:hover:bg-[#262626]"
                     aria-label="Tutup menu">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
+                <x-icon name="x" class="w-5 h-5" stroke="2" />
             </button>
         </div>
 
@@ -113,20 +115,31 @@
     {{-- Main Content Area --}}
     <div class="flex-1 flex flex-col overflow-hidden">
         {{-- Top Bar --}}
-        <header class="bg-white dark:bg-[#1E1E1E] border-b-2 border-[#141414] dark:border-[#FAF6EF] px-4 sm:px-6 py-3 flex items-center justify-between transition-colors">
-            <div class="flex items-center space-x-4">
+        <header class="bg-white dark:bg-[#1E1E1E] border-b-2 border-[#141414] dark:border-[#FAF6EF] px-4 sm:px-6 py-3 flex items-center justify-between gap-3 transition-colors">
+            <div class="flex items-center gap-3 min-w-0">
                 <button type="button" @click="sidebarOpen = !sidebarOpen"
-                        class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 -ml-1 rounded-[8px] min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"
-                        aria-label="Buka menu">
-                    <x-icon name="menu" class="w-5 h-5" />
+                        class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 -ml-1 rounded-[8px] min-w-[44px] min-h-[44px] flex items-center justify-center border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] hover:bg-[#FFF7D6] dark:hover:bg-[#262626] transition-colors"
+                        aria-label="Buka menu" :aria-expanded="sidebarOpen">
+                    <x-icon name="menu" class="w-5 h-5" stroke="2" />
                 </button>
-                <div class="hidden sm:flex items-center gap-2 text-sm font-bold text-[#141414] dark:text-[#FAF6EF]">
-                    <x-icon name="envelope" class="w-4 h-4" />
-                    <span>{{ setting('whatsapp', '08123456789') }}</span>
+                <div class="hidden sm:flex items-center gap-2 text-sm font-bold text-[#475569] dark:text-[#D6D3D1] min-w-0">
+                    <x-icon name="phone" class="w-4 h-4 shrink-0 text-[#141414] dark:text-[#FFC800]" stroke="2" />
+                    <span class="truncate">WA {{ setting('whatsapp', '08123456789') }}</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2 sm:gap-3">
-                <span class="hidden sm:inline text-sm font-bold text-[#141414] dark:text-[#FAF6EF]">Halo, Admin</span>
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="{{ route('home') }}" target="_blank" rel="noopener"
+                   class="hidden md:inline-flex nb-btn px-3 py-1.5 text-sm bg-white dark:bg-[#1E1E1E] text-[#141414] dark:text-[#FAF6EF]"
+                   title="Buka toko">
+                    <x-icon name="external-link" class="w-4 h-4" stroke="2" />
+                    Lihat Toko
+                </a>
+                <div class="hidden sm:flex items-center gap-2">
+                    <span class="h-8 w-8 rounded-[8px] bg-[#141414] dark:bg-[#FFC800] text-[#FAF6EF] dark:text-[#141414] border-2 border-[#141414] dark:border-[#FAF6EF] text-sm font-black flex items-center justify-center">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                    </span>
+                    <span class="text-sm font-bold text-[#141414] dark:text-[#FAF6EF] max-w-[10rem] truncate">{{ auth()->user()->name ?? 'Admin' }}</span>
+                </div>
 
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
@@ -205,7 +218,7 @@
 </div>
 
 {{-- Pasang sebagai aplikasi (PWA): tombol install Chromium + petunjuk iOS. --}}
-<x-pwa-install />
+<x-pwa-install context="admin" />
 
 {{-- Quick-view modal: dispatches on `quickview` event, fetches a Blade partial via fetch() --}}
 <div x-data="jdQuickview()"
@@ -214,7 +227,7 @@
      x-cloak>
     <template x-if="show">
         <div class="fixed inset-0 z-[400] flex items-center justify-center">
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="show = false"></div>
+            <div class="absolute inset-0 bg-black/50" @click="show = false"></div>
             <div class="relative bg-white dark:bg-[#1E1E1E] rounded-[12px] border-2 border-[#141414] dark:border-[#FAF6EF] w-full max-w-3xl mx-4 my-8 overflow-hidden flex flex-col max-h-[85vh] transition-colors"
                  @click.stop>
                 <div class="p-4 border-b-2 border-[#141414] dark:border-[#FAF6EF] flex items-center justify-between bg-white dark:bg-[#1E1E1E]">

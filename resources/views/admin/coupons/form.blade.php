@@ -21,14 +21,14 @@
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Kode Kupon *</label>
                     <input type="text" name="code" value="{{ old('code', $coupon->code ?? '') }}" required
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('code') border-red-500 @enderror">
+                           class="nb-input w-full @error('code') border-red-500 @enderror">
                     @error('code') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Tipe *</label>
                     <select name="type" required
-                            class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('type') border-red-500 @enderror">
+                            class="nb-input w-full @error('type') border-red-500 @enderror">
                         <option value="percentage" @selected(old('type', $coupon->type ?? '') === 'percentage')>Persentase (%)</option>
                         <option value="fixed" @selected(old('type', $coupon->type ?? '') === 'fixed')>Nominal (Rp)</option>
                     </select>
@@ -38,39 +38,39 @@
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Nilai Diskon *</label>
                     <input type="number" step="0.01" min="0" name="value" value="{{ old('value', $coupon->value ?? '') }}" required
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('value') border-red-500 @enderror">
+                           class="nb-input w-full @error('value') border-red-500 @enderror">
                     @error('value') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Minimal Belanja</label>
                     <input type="number" step="0.01" min="0" name="minimum_purchase" value="{{ old('minimum_purchase', $coupon->minimum_purchase ?? '') }}"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Maks. Diskon</label>
                     <input type="number" step="0.01" min="0" name="maximum_discount" value="{{ old('maximum_discount', $coupon->maximum_discount ?? '') }}"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Batas Pemakaian</label>
                     <input type="number" min="1" name="usage_limit" value="{{ old('usage_limit', $coupon->usage_limit ?? '') }}"
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Berlaku Dari *</label>
                     <input type="date" name="valid_from" value="{{ old('valid_from', isset($coupon) ? $coupon->valid_from?->format('Y-m-d') : '') }}" required
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('valid_from') border-red-500 @enderror">
+                           class="nb-input w-full @error('valid_from') border-red-500 @enderror">
                     @error('valid_from') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Berlaku Sampai *</label>
                     <input type="date" name="valid_to" value="{{ old('valid_to', isset($coupon) ? $coupon->valid_to?->format('Y-m-d') : '') }}" required
-                           class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300 @error('valid_to') border-red-500 @enderror">
+                           class="nb-input w-full @error('valid_to') border-red-500 @enderror">
                     @error('valid_to') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
             </div>
@@ -78,13 +78,13 @@
             <div>
                 <label class="block text-sm font-medium text-[#1E293B] dark:text-[#f1f5f9] mb-1">Deskripsi</label>
                 <textarea name="description" rows="2"
-                          class="w-full px-4 py-3 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">{{ old('description', $coupon->description ?? '') }}</textarea>
+                          class="nb-input w-full">{{ old('description', $coupon->description ?? '') }}</textarea>
             </div>
 
             @isset($coupon)
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $coupon->is_active))
-                           class="w-4 h-4 text-orange-600 border-[#E2E8F0] dark:border-[#404854] rounded">
+                           class="w-4 h-4 text-[#141414] border-[#E2E8F0] dark:border-[#404854] rounded">
                     <span class="text-sm text-[#1E293B] dark:text-[#f1f5f9]">Kupon aktif</span>
                 </label>
             @endisset

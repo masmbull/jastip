@@ -11,7 +11,7 @@
         <div class="overflow-x-auto">
             <table class="w-full min-w-[560px]">
                 <thead>
-                    <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
+                    <tr class="nb-table-head text-left text-xs uppercase">
                         <th class="px-4 py-3">Produk</th>
                         <th class="px-4 py-3 text-right">Harga</th>
                         <th class="px-4 py-3 text-right">Stok</th>

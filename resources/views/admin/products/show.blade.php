@@ -41,7 +41,7 @@
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-[#64748B] dark:text-[#cbd5e1]">Harga:</span>
-                <span class="font-bold text-orange-600 dark:text-orange-400 num">{{ $product->formatted_price }}</span>
+                <span class="font-bold text-[#141414] dark:text-[#FFC800] num">{{ $product->formatted_price }}</span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-[#64748B] dark:text-[#cbd5e1]">Stok:</span>
@@ -66,7 +66,7 @@
 
     <x-card class="animate-fade-up" style="animation-delay: 160ms">
         <h2 class="text-sm font-semibold text-[#64748B] dark:text-[#cbd5e1] uppercase tracking-wide mb-4">Deskripsi</h2>
-        <div class="prose porange-sm max-w-none text-[#64748B] dark:text-[#cbd5e1]">
+        <div class="prose prose-sm max-w-none text-[#64748B] dark:text-[#cbd5e1]">
             {!! Str::markdown($product->description) !!}
         </div>
     </x-card>

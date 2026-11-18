@@ -26,10 +26,16 @@ if (! function_exists('media_url')) {
             return null;
         }
 
-        $url = asset('storage/'.ltrim($path, '/'));
-        $full = public_path('storage/'.ltrim($path, '/'));
+        $relative = 'storage/'.ltrim($path, '/');
+        $full = public_path($relative);
 
-        return is_file($full) ? $url.'?v='.filemtime($full) : $url;
+        // Missing files must return null so views fall back to the letter mark
+        // instead of rendering a broken <img>.
+        if (! is_file($full)) {
+            return null;
+        }
+
+        return asset($relative).'?v='.filemtime($full);
     }
 }
 

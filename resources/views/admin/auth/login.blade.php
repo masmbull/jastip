@@ -48,7 +48,7 @@
                        class="nb-input w-full px-4 py-2.5 pr-14 bg-white"/>
                 <button type="button" onclick="togglePassword()" aria-label="Tampilkan atau sembunyikan password"
                         title="Tampilkan password"
-                        class="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#475569] hover:text-[#141414] rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                        class="absolute right-1 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#475569] hover:text-[#141414] rounded focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                     <x-icon id="eyeIcon" name="eye" class="w-5 h-5" />
                 </button>
             </div>

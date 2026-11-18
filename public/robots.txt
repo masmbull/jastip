@@ -1,9 +1,15 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Disallow: /keranjang
+Disallow: /admin/
+Disallow: /titipan
 Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Disallow: /profile
 Disallow: /profil
 Disallow: /i/
+Disallow: /payment/
 
+# Prefer the dynamic sitemap route
 Sitemap: /sitemap.xml

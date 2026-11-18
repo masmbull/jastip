@@ -4,7 +4,8 @@
   every page renders the same stroke style. Add icons by appending their `d`
   path(s) to $paths below (array of paths when an icon has >1 path).
 --}}
-@props(['name' => null, 'stroke' => 1.5])
+{{-- Stroke 2: thicker marks match neo-brutal borders; still Heroicons paths (relevance over library look). --}}
+@props(['name' => null, 'stroke' => 2])
 
 @php
     $paths = [

@@ -68,13 +68,13 @@
                         <span class="text-[#64748B] dark:text-[#cbd5e1]">WhatsApp</span>
                         <a href="{{ whatsapp_url($paymentProof->order->customer_whatsapp) }}"
                            target="_blank" rel="noopener"
-                           class="font-medium text-orange-600 dark:text-orange-400 hover:underline num">
+                           class="font-medium text-[#141414] dark:text-[#FFC800] hover:underline num">
                             {{ $paymentProof->order->customer_whatsapp }}
                         </a>
                     </div>
                     <div class="flex justify-between gap-4 border-t border-[#E2E8F0] dark:border-[#404854] pt-3">
                         <span class="text-[#64748B] dark:text-[#cbd5e1]">Total</span>
-                        <span class="font-bold text-orange-600 dark:text-orange-400 text-lg num">
+                        <span class="font-bold text-[#141414] dark:text-[#FFC800] text-lg num">
                             {{ format_price($paymentProof->order->total) }}
                         </span>
                     </div>
@@ -104,7 +104,7 @@
                         <label for="verify-notes" class="sr-only">Catatan verifikasi</label>
                         <textarea id="verify-notes" name="notes"
                                   placeholder="Catatan verifikasi (opsional)"
-                                  class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] rounded-lg text-sm text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  class="w-full px-3 py-2 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] rounded-lg text-sm text-[#1E293B] dark:text-[#f1f5f9] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#FFC800]"
                                   rows="3"></textarea>
                         <x-btn type="submit" variant="brand" icon="check-circle" class="w-full">Verifikasi &amp; Lunasi Pesanan</x-btn>
                     </form>

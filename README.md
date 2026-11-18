@@ -1,125 +1,158 @@
-# JASTIP — NITIP DI END
+<p align="center">
+  <img src="docs/banner.svg" alt="NITIP DI END — jastip lokal" width="920" />
+</p>
 
-Minimal Jastip (indonesian "titip beli") storefront: a curated-product catalog with a
-cookie-based cart, checkout → order flow, and a minimal admin panel for products,
-categories, orders, and settings.
+<div align="center">
 
-- **Frontend:** Laravel Blade + Tailwind CSS + Alpine.js (no React/Vue).
-- **Data:** single `admin`/`customer` role column on `User` (no second auth table).
-- **State:** session cart (guests allowed), no payments (status workflow in admin).
-- **Notifications:** WhatsApp link-gen + email (order confirmation/shipped) + in-app feed.
-- **Stack:** Laravel 13 · PHP 8.5+ · MySQL/SQLite · Vite + TailwindCSS v4.
+# NITIP DI END
 
-## Requirements
+**Jastip storefront + admin panel** for curated titipan: catalog, cart, checkout, WhatsApp invoice, ongkir estimator, and a neo-brutal ops dashboard — installable as a PWA.
 
-- PHP **8.5+** (`php -v`)
-- Composer ≥ 2
-- Node.js ≥ 20 / npm
-- MySQL 8+ (or SQLite for local dev)
+[![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.5+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net)
+[![Tailwind](https://img.shields.io/badge/Tailwind-v4-38BDF8?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![PWA](https://img.shields.io/badge/PWA-ready-FFC800?style=for-the-badge&logo=pwa&logoColor=141414)](#pwa)
+[![License](https://img.shields.io/badge/License-Proprietary-141414?style=for-the-badge)](#)
 
-## Install (local)
+</div>
+
+---
+
+## Highlights
+
+| | |
+|---|---|
+| 🛍️ **Storefront** | Neo-brutal cream/ink/yellow UI, catalog, viral picks, cart (`/titipan`) |
+| 🧾 **Admin ops** | Orders, invoices, payment proofs, settings, ongkir sync |
+| 🚚 **Ongkir** | Local zone estimator (free) + optional **api.co.id** / RajaOngkir live sync |
+| 📱 **PWA** | Installable store + admin manifests, offline page, shortcuts |
+| 🔐 **Keep secrets out of git** | Path guard + gitleaks in CI — [keep-it-out-of-git](https://github.com/Sultonisky/keep-it-out-of-git) |
+
+```mermaid
+flowchart LR
+  A[Pembeli] --> B[Katalog / Titipan]
+  B --> C[Checkout]
+  C --> D[Invoice + WA]
+  D --> E[Admin: bukti / status]
+  E --> F[Ongkir sync]
+```
+
+---
+
+## Stack
+
+- **Backend:** Laravel 13 · PHP 8.5+
+- **Frontend:** Blade · Tailwind CSS v4 · Alpine.js · Vite
+- **Data:** MySQL / SQLite · session cart
+- **Extras:** Web Push (VAPID) · sitemap.xml · JSON-LD SEO
+
+---
+
+## Quick start
 
 ```bash
-git clone <repo> nitipdiend
-cd nitipdiend
+git clone https://github.com/masmbull/jastip.git
+cd jastip
 composer install
 npm install
 cp .env.example .env
 php artisan key:generate
-# edit .env: DB_*, APP_URL, WA_* (WhatsApp number), MAIL_*
-php artisan migrate:fresh --seed
-php artisan serve
-# -> http://127.0.0.1:8000
 ```
 
-Seeded default admin: `admin@nitipdiend.com` / `admin123`, product `fashion-item`.
+Edit `.env` (at least `APP_URL`, DB, and optionally shipping):
 
-## Commands (reference, from `composer.json` `scripts`)
+```env
+SEED_BOOTSTRAP_PASSWORD=your-private-12plus-chars
+SHIPPING_API_PROVIDER=local
+# SHIPPING_API_PROVIDER=api.co.id
+# SHIPPING_API_KEY=        # never commit real keys
+```
+
+```bash
+php artisan migrate:fresh --seed
+php artisan storage:link
+npm run build
+php artisan serve
+# http://127.0.0.1:8000
+```
+
+Windows tip: enable `pdo_sqlite` / `sqlite3` in `php.ini`, or use `.\serve.ps1`.
+
+Demo admin after seed (local/testing only): username `admin` · password from `SEED_BOOTSTRAP_PASSWORD`.
+
+---
+
+## Scripts
 
 | Command | Purpose |
 |---|---|
-| `composer install` | install PHP deps |
-| `npm install` | install frontend deps |
-| `npm run dev` | `vite` (HMR) |
-| `npm run build` | `vite build` + `config/route/view` cache |
-| `php artisan test` | `vendor/bin/phpunit` (in-memory SQLite) |
+| `npm run dev` | Vite HMR |
+| `npm run build` | Production assets |
+| `php artisan test` | PHPUnit (in-memory SQLite) |
+| `bash scripts/check-sensitive-paths.sh` | Block secret/PII paths in git |
+| `gitleaks detect --source . --config gitleaks.toml --redact --exit-code 1` | Secret content scan |
 
-## Production deploy
+---
+
+## Shipping / ongkir
+
+Default provider is **local** (zone × weight from `config/ekspedisi.php`) — no API key.
+
+Optional live sync from admin `/admin/ongkir`:
+
+1. Set `SHIPPING_API_PROVIDER=api.co.id` and `SHIPPING_API_KEY` in **`.env`** (gitignored)
+2. Open **Ongkos Kirim** → **Sinkronkan Tarif**
+
+On Windows PHP without system CA roots, place `cacert.pem` under `storage/app/private/` (already gitignored).
+
+---
+
+## PWA
+
+| Manifest | Start |
+|---|---|
+| `public/manifest.webmanifest` | Store `/` |
+| `public/manifest-admin.webmanifest` | Admin `/admin` |
+
+Service worker: `public/sw.js` · Offline: `public/offline.html`  
+Install prompt: `<x-pwa-install />` (store) / `context="admin"` (panel).
+
+---
+
+## SEO
+
+- Canonical + Open Graph + Twitter Card (`layouts/partials/seo`)
+- Organization / WebSite JSON-LD + Product + BreadcrumbList on product pages
+- Dynamic `GET /sitemap.xml` (active products & categories)
+- `public/robots.txt` disallows admin, cart, checkout, auth
+
+---
+
+## Keep It Out of Git
+
+This repo follows [Sultonisky/keep-it-out-of-git](https://github.com/Sultonisky/keep-it-out-of-git):
+
+- Private storage: `storage/app/private/`
+- CI: path blocklist + gitleaks in `.github/workflows/ci-cd.yml`
+- Skills under `.agents/skills/`
+- Never commit `.env`, dumps, or live API keys
+
+---
+
+## Production sketch
 
 ```bash
-git clone
 composer install --optimize-autoloader --no-dev
 npm ci && npm run build
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
 php artisan migrate --force
 php artisan storage:link
-php artisan up
+php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
-## Tests
+---
 
-```bash
-php artisan test
-# Feature smoke + checkout-flow suites (in-memory SQLite)
-```
+<div align="center">
 
-`tests/Feature/CheckoutFlowTest.php` exercises the full RBAC chain:
-unauthenticated `/admin/*` → redirect `admin.login` → login as seed admin →
-`admin.orders.index` → `PUT admin.orders.status` updates order status
-(checkout creates `awaiting_payment`, then admin moves it to `processing`).
+**NITIP DI END** · built for real jastip ops · cream · ink · yellow
 
-## RBAC
-
-- Guard: `web` (session) on the `users` provider (`App\Models\User`).
-- One table, `role` column ∈ { `customer`, `admin` }.
-- Middleware alias `admin` → `App\Http\Middleware\AdminMiddleware`:
-  - `auth()->check()` is false → redirect to `admin.login`.
-  - `auth()->user()->isAdmin()` is false → `abort(403)`.
-- Admin login enforced in `LoginController::login` (`AdminLoginRequest`).
-- Frontend (catalog/cart/checkout/confirmation) is public;
-  `admin.*` (except `login`/`login.post`) is guarded by `middleware('admin')`.
-
-## Routes
-
-| Area | Routes |
-|---|---|
-| Home | `GET /` (`home`) |
-| Products | `GET /produk` (`products.index`), `GET /produk/{product:slug}` (`products.show`) |
-| Categories | `GET /kategori`, `GET /kategori/{category:slug}` |
-| Cart | `GET /titipan`, `POST .../tambah`, `POST .../update`, `DELETE .../hapus`, `DELETE /titipan/clear` |
-| Checkout | `GET /checkout`, `POST /checkout` (optional `coupon_code`, `email`), `GET /checkout/confirmation` |
-| Order status | `GET /order/{orderNumber}`, `GET /order/{orderNumber}/status` (public, keyed by order number) |
-| Shipping | `GET /ongkir`, `GET /ongkir/check` (JSON, read-only) |
-| Reviews | `GET /produk/{product}/ulasan`, `POST /produk/{product}/ulasan` (auth), `POST /ulasan/{review}/helpful` (auth, approved reviews only) |
-| Wishlist | `POST /wishlist/{product:id}/toggle` (auth, JSON) |
-| Static | `GET /tentang`, `GET /cara-nitip`, `GET /kontak` |
-| Auth | `GET /login` (`login`), `POST /login` (`login.post`, throttled 5/min), `POST /logout` |
-| Profile (guarded) | `GET /profile`, `/profile/edit`, `PUT /profile`, `/profile/settings`, `PUT /profile/password`, `PUT /profile/notifications-prefs`, `/profile/loyalty`, `/profile/orders[.{order}]`, `/profile/reviews`, `/profile/wishlist`, `/profile/notifications` (+ `POST .../read-all`, `POST /profile/notifications/{notification}/read`), `/profile/chat` (+ `POST /profile/chat`), `GET /push/key`, `POST /push/subscribe`, `POST /push/unsubscribe`, `/profile/addresses/*` (index/create/store/edit/update/destroy/default) |
-| Payment | `GET /payment/{order}/waiting` (`payment.waiting`), `POST /payment/{order}/upload-proof`, `GET /payment/{order}/download-qris`, `GET /payment/{order}/status` (all owner-guarded) |
-| Admin auth | `GET /admin/login` (`admin.login`), `POST /admin/login` (`admin.login.post`), `POST /admin/logout` (`admin.logout`) |
-| Admin (guarded) | `admin.dashboard`, `admin.products.*`, `admin.categories.*`, `admin.orders.{index,show,status,destroy}`, `admin.reviews.*`, `admin.payment-proofs.*`, `admin.chat.{index,show,store}`, `admin.users.*`, `admin.settings.{index,update}` |
-
-## Security
-
-- Escaping: all data via `{{ }}`; the only unescaped path is
-  `Product::$description_html`, which is `strip_tags`-whitelisted to
-  `p br strong em ul ol li hr` — dropping `<a>`, `<img>`, `<script>` so no
-  `onerror`/`javascript:` vectors remain.
-- External links: every `target="_blank"` carries `rel="noopener noreferrer"`.
-- WhatsApp: numbers reduced to digits via `preg_replace('/[^0-9]/', '', $whatsapp)`.
-- Nav links guarded with `Route::has(...)`; CSRF + `@method` on all mutations.
-
-## White-label / handoff
-
-1. `git clone` — `vendor/`, `node_modules/`, `.env` are git-ignored.
-2. `composer install && npm install && npm run build`.
-3. Copy `.env.example → .env`, set `APP_KEY`, `APP_URL`, DB, WhatsApp number, mail.
-4. `php artisan migrate:fresh --seed` (default admin + product) or import a client `.sql`.
-5. Brand rename: change `setting('brand_name', 'NITIP DI END')` and seeded brand/hero rows.
-6. Deliver: the repo + the client's `.env` + (optionally) a `.sql` dump.
-
-## License
-
-Custom / closed-source by default — update this section for the client.
+</div>

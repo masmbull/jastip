@@ -5,10 +5,14 @@ namespace App\Services;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 /**
- * ShippingService: manages courier pricing, enable/disable, and auto-updates from external APIs.
- * Extends ShippingEstimator with database persistence and live pricing updates.
+ * ShippingService: manages courier pricing, enable/disable, and price sync.
+ *
+ * Default provider = "local" (gratis): sinkron dari estimator zona di
+ * config/ekspedisi.php — tanpa API key. Opsional: api.co.id / rajaongkir
+ * kalau admin isi key di /admin/ongkir.
  */
 class ShippingService
 {
@@ -34,33 +38,17 @@ class ShippingService
 
         $couriers = $this->estimator->couriers();
         $enabled = [];
-
-        // Harga dari API (bila pernah disinkronkan) => per_kg per kode kurir.
         $livePrices = Cache::get(self::CACHE_KEY_PRICES, []);
 
         foreach ($couriers as $courier) {
             $code = $courier['code'];
-            $isEnabled = Setting::get('courier_enabled_'.$code, true) === true ||
-                         Setting::get('courier_enabled_'.$code) === 'true';
-
-            if ($isEnabled) {
-                // Urutan prioritas: API live < pengaturan manual admin.
-                if (isset($livePrices[$code])) {
-                    $courier['per_kg'] = (int) $livePrices[$code];
-                }
-
-                $customPrice = Setting::get('courier_per_kg_'.$code);
-                $customMinCharge = Setting::get('courier_min_charge_'.$code);
-
-                if ($customPrice !== null) {
-                    $courier['per_kg'] = (int) $customPrice;
-                }
-                if ($customMinCharge !== null) {
-                    $courier['min_charge'] = (int) $customMinCharge;
-                }
-
-                $enabled[] = $courier;
+            if (! $this->isCourierEnabled($code)) {
+                continue;
             }
+
+            $courier['per_kg'] = $this->effectivePerKg($code, $courier, $livePrices);
+            $courier['min_charge'] = $this->effectiveMinCharge($code, $courier);
+            $enabled[] = $courier;
         }
 
         Cache::put(self::CACHE_KEY_COURIERS, $enabled, self::CACHE_TTL);
@@ -68,19 +56,11 @@ class ShippingService
         return $enabled;
     }
 
-    /**
-     * Kota tujuan valid (delegasi ShippingEstimator) — agar konsumen cukup
-     * tahu ShippingService.
-     */
     public function cities(): array
     {
         return $this->estimator->cities();
     }
 
-    /**
-     * Kurir efektif (enabled + harga manual/API) dikelompokkan per tipe,
-     * untuk dropdown customer. Kurir nonaktif otomatis hilang.
-     */
     public function enabledCouriersByType(): array
     {
         $grouped = [];
@@ -92,10 +72,6 @@ class ShippingService
         return $grouped;
     }
 
-    /**
-     * Estimasi satu ekspedisi memakai harga EFEKTIFNYA (manual admin / API live),
-     * bukan tarif config mentah. Kurir nonaktif atau tak dikenal => ok = false.
-     */
     public function estimate(string $courierCode, string $city, float $weightKg): array
     {
         $courier = collect($this->enabledCouriers())->firstWhere('code', $courierCode);
@@ -109,43 +85,37 @@ class ShippingService
     }
 
     /**
-     * Get all couriers with their enable/disable status
+     * Get all couriers with enable/disable + effective pricing for admin table.
      */
     public function courierSettings(): array
     {
-        $couriers = $this->estimator->couriers();
+        $livePrices = Cache::get(self::CACHE_KEY_PRICES, []);
         $settings = [];
 
-        foreach ($couriers as $courier) {
+        foreach ($this->estimator->couriers() as $courier) {
             $code = $courier['code'];
             $settings[] = [
                 'code' => $code,
                 'name' => $courier['name'],
                 'type' => $courier['type'],
-                'enabled' => Setting::get('courier_enabled_'.$code, true) === true ||
-                            Setting::get('courier_enabled_'.$code) === 'true',
-                'per_kg' => (int) Setting::get('courier_per_kg_'.$code, $courier['per_kg'] ?? 0),
-                'min_charge' => (int) Setting::get('courier_min_charge_'.$code, $courier['min_charge'] ?? 0),
+                'enabled' => $this->isCourierEnabled($code),
+                'per_kg' => $this->effectivePerKg($code, $courier, $livePrices),
+                'min_charge' => $this->effectiveMinCharge($code, $courier),
                 'default_per_kg' => (int) ($courier['per_kg'] ?? 0),
                 'default_min_charge' => (int) ($courier['min_charge'] ?? 0),
+                'source' => $this->priceSource($code, $livePrices),
             ];
         }
 
         return $settings;
     }
 
-    /**
-     * Enable/disable a courier
-     */
     public function toggleCourier(string $code, bool $enabled): void
     {
         Setting::set('courier_enabled_'.$code, $enabled ? 'true' : 'false', 'string', 'shipping', true);
         Cache::forget(self::CACHE_KEY_COURIERS);
     }
 
-    /**
-     * Update courier pricing
-     */
     public function updateCourierPricing(string $code, int $perKg, int $minCharge): void
     {
         Setting::set('courier_per_kg_'.$code, (string) $perKg, 'integer', 'shipping', true);
@@ -153,15 +123,11 @@ class ShippingService
         Cache::forget(self::CACHE_KEY_COURIERS);
     }
 
-    /**
-     * Estimate with only enabled couriers
-     */
     public function estimateAllEnabled(string $city, float $weightKg): array
     {
         $results = [];
 
         foreach ($this->enabledCouriers() as $courier) {
-            // Create a temporary estimator result
             $result = $this->estimateWithCourier($courier, $city, $weightKg);
             if ($result) {
                 $results[] = $result;
@@ -179,9 +145,6 @@ class ShippingService
         return $results;
     }
 
-    /**
-     * Estimate for a specific courier
-     */
     private function estimateWithCourier(array $courier, string $city, float $weightKg): ?array
     {
         $cities = $this->estimator->cities();
@@ -235,95 +198,373 @@ class ShippingService
     }
 
     /**
-     * Fetch live prices from external API and cache them so estimasi memakai
-     * tarif terbaru. Provider didaftarkan lewat Setting shipping_api_provider.
-     * Harga manual admin (courier_per_kg_*) selalu menang atas hasil API.
+     * Sinkron harga. Default provider "local" = estimator zona gratis.
+     * Provider/key: Setting admin, fallback config/env.
      */
     public function updateLivePrices(): array
     {
-        $apiProvider = Setting::get('shipping_api_provider');
-        $apiKey = Setting::get('shipping_api_key');
-
-        if (! $apiProvider || ! $apiKey) {
-            return ['success' => false, 'message' => 'API not configured'];
-        }
+        $apiProvider = $this->resolveProvider();
+        $apiKey = $this->resolveApiKey();
 
         try {
             $result = match ($apiProvider) {
+                'local', '', 'estimator' => $this->refreshFromLocalEstimator(),
                 'api.co.id' => $this->fetchFromApiCoId($apiKey),
-                default => ['success' => false, 'message' => 'Unknown API provider'],
+                'rajaongkir' => $this->fetchFromRajaOngkir($apiKey),
+                default => ['success' => false, 'message' => 'Provider API tidak dikenal: '.$apiProvider],
             };
 
-            if ($result['success']) {
+            if ($result['success'] ?? false) {
                 Cache::put(self::CACHE_KEY_PRICES, $result['prices'], self::CACHE_TTL);
-                Cache::forget(self::CACHE_KEY_COURIERS); // biar tarif baru dipakai estimasi
+                Cache::forget(self::CACHE_KEY_COURIERS);
+                Setting::set('shipping_api_last_update', now()->toDateTimeString(), 'string', 'shipping', true);
+                Setting::set('shipping_api_provider', $apiProvider === '' ? 'local' : $apiProvider, 'string', 'shipping', true);
             }
 
             return $result;
-        } catch (\Exception $e) {
-            \Log::error('Shipping price update failed: '.$e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Shipping price update failed: '.$e->getMessage());
 
-            return ['success' => false, 'message' => 'API request failed: '.$e->getMessage()];
+            return ['success' => false, 'message' => 'Gagal sinkron: '.$e->getMessage()];
         }
     }
 
+    public function resolveProvider(): string
+    {
+        $fromSetting = Setting::get('shipping_api_provider');
+        if (is_string($fromSetting) && $fromSetting !== '') {
+            return $fromSetting;
+        }
+
+        return (string) config('shipping.provider', 'local');
+    }
+
+    public function resolveApiKey(): string
+    {
+        $fromSetting = Setting::get('shipping_api_key');
+        if (is_string($fromSetting) && $fromSetting !== '') {
+            return $fromSetting;
+        }
+
+        return (string) config('shipping.api_key', '');
+    }
+
     /**
-     * Fetch prices from api.co.id
+     * Estimator lokal gratis: ambil tarif/kg dari config/ekspedisi.php.
+     */
+    private function refreshFromLocalEstimator(): array
+    {
+        $prices = [];
+
+        foreach ($this->estimator->couriers() as $courier) {
+            $prices[$courier['code']] = (int) ($courier['per_kg'] ?? 0);
+        }
+
+        return [
+            'success' => true,
+            'prices' => $prices,
+            'provider' => 'local',
+            'message' => 'Tarif disinkronkan dari estimator lokal (gratis, tanpa API key). Zona × berat tetap dipakai di kalkulator.',
+        ];
+    }
+
+    /**
+     * api.co.id Cek Ongkir v2 — butuh key (tier gratis 1.000 req/bulan).
      */
     private function fetchFromApiCoId(string $apiKey): array
     {
-        $response = Http::timeout(10)->get('https://api.co.id/ongkir/check', [
-            'api_key' => $apiKey,
-            'origin' => '1',
-            'destination' => '2',
-            'weight' => '1000',
-        ]);
-
-        if (! $response->successful()) {
-            return ['success' => false, 'message' => 'API returned error: '.$response->status()];
-        }
-
-        $prices = [];
-        foreach ($response->json('results', []) as $result) {
-            $prices[$result['code']] = $result['price'];
-        }
-
-        return ['success' => true, 'prices' => $prices];
-    }
-
-    /**
-     * Get API service status
-     */
-    public function getApiStatus(): array
-    {
-        $apiProvider = Setting::get('shipping_api_provider');
-        $apiKey = Setting::get('shipping_api_key');
-
-        if (! $apiProvider || ! $apiKey) {
+        if ($apiKey === '') {
             return [
-                'provider' => $apiProvider ?? 'none',
-                'status' => 'not_configured',
-                'message' => 'API not configured',
-                'last_update' => null,
+                'success' => false,
+                'message' => 'Isi API key api.co.id dulu (gratis 1.000 request/bulan), atau pilih provider Lokal.',
             ];
         }
 
-        $lastUpdate = Setting::get('shipping_api_last_update');
+        $origin = (string) (Setting::get('shipping_origin_district')
+            ?: config('shipping.api_co_id.origin_district', '317405'));
+        $destination = (string) (Setting::get('shipping_sample_district')
+            ?: config('shipping.api_co_id.sample_district', '327301'));
+        $weight = (float) (Setting::get('shipping_sample_weight_kg')
+            ?: config('shipping.api_co_id.sample_weight_kg', 1));
+        $base = rtrim((string) config('shipping.api_co_id.base', 'https://use.api.co.id'), '/');
 
-        try {
-            $response = Http::timeout(5)->head('https://api.co.id/ongkir/check');
-            $status = $response->successful() ? 'online' : 'offline';
-            $message = $response->successful() ? 'API is reachable' : 'API returned error: '.$response->status();
-        } catch (\Exception $e) {
-            $status = 'offline';
-            $message = 'Connection error: '.$e->getMessage();
+        $response = $this->httpClient()
+            ->withHeaders(['x-api-co-id' => $apiKey])
+            ->get($base.'/courier/v2/rates', [
+                'origin_district_code' => $origin,
+                'destination_district_code' => $destination,
+                'weight' => max(0.1, $weight),
+            ]);
+
+        if (! $response->successful()) {
+            return [
+                'success' => false,
+                'message' => 'api.co.id error HTTP '.$response->status().'. Cek key / kuota.',
+            ];
+        }
+
+        $rates = $response->json('data.rates')
+            ?? $response->json('rates')
+            ?? $response->json('results')
+            ?? [];
+
+        if (! is_array($rates) || $rates === []) {
+            return ['success' => false, 'message' => 'api.co.id tidak mengembalikan tarif.'];
+        }
+
+        $prices = $this->collapseRatesToPerKg($rates, max(0.1, $weight));
+
+        if ($prices === []) {
+            return ['success' => false, 'message' => 'Tidak ada kurir yang bisa dipetakan ke daftar ekspedisi toko.'];
+        }
+
+        return [
+            'success' => true,
+            'prices' => $prices,
+            'provider' => 'api.co.id',
+            'message' => 'Tarif live dari api.co.id ('.count($prices).' kurir). Override manual admin tetap diutamakan.',
+        ];
+    }
+
+    /**
+     * RajaOngkir Starter — gratis terbatas (jne/pos/tiki), butuh key.
+     */
+    private function fetchFromRajaOngkir(string $apiKey): array
+    {
+        if ($apiKey === '') {
+            return [
+                'success' => false,
+                'message' => 'Isi API key RajaOngkir dulu, atau pilih provider Lokal.',
+            ];
+        }
+
+        $origin = (string) (Setting::get('shipping_rajaongkir_origin')
+            ?: config('shipping.rajaongkir.origin', '152'));
+        $destination = (string) (Setting::get('shipping_rajaongkir_destination')
+            ?: config('shipping.rajaongkir.destination', '23'));
+        $weightGram = (int) max(100, (float) (Setting::get('shipping_sample_weight_kg')
+            ?: config('shipping.api_co_id.sample_weight_kg', 1)) * 1000);
+        $prices = [];
+
+        foreach (['jne', 'pos', 'tiki'] as $courier) {
+            $response = $this->httpClient()
+                ->withHeaders(['key' => $apiKey])
+                ->asForm()
+                ->post('https://api.rajaongkir.com/starter/cost', [
+                    'origin' => $origin,
+                    'destination' => $destination,
+                    'weight' => $weightGram,
+                    'courier' => $courier,
+                ]);
+
+            if (! $response->successful()) {
+                continue;
+            }
+
+            $results = $response->json('rajaongkir.results.0.costs') ?? [];
+            $cheapest = null;
+            foreach ($results as $service) {
+                $value = (int) ($service['cost'][0]['value'] ?? 0);
+                if ($value <= 0) {
+                    continue;
+                }
+                $cheapest = $cheapest === null ? $value : min($cheapest, $value);
+            }
+
+            if ($cheapest !== null) {
+                $kg = max(0.1, $weightGram / 1000);
+                $prices[$courier] = (int) max(1000, round($cheapest / $kg));
+            }
+        }
+
+        if ($prices === []) {
+            return ['success' => false, 'message' => 'RajaOngkir tidak mengembalikan tarif. Cek key / kuota Starter.'];
+        }
+
+        return [
+            'success' => true,
+            'prices' => $prices,
+            'provider' => 'rajaongkir',
+            'message' => 'Tarif live dari RajaOngkir Starter ('.implode(', ', array_keys($prices)).').',
+        ];
+    }
+
+    /**
+     * Ambil harga termurah per courier_code, normalisasi ke Rp/kg.
+     *
+     * @param  array<int, array<string, mixed>>  $rates
+     * @return array<string, int>
+     */
+    private function collapseRatesToPerKg(array $rates, float $weightKg): array
+    {
+        $best = [];
+
+        foreach ($rates as $rate) {
+            if (! is_array($rate)) {
+                continue;
+            }
+
+            $code = strtolower((string) ($rate['courier_code'] ?? $rate['code'] ?? ''));
+            $code = match ($code) {
+                'j&t', 'jnt', 'jet' => 'jnt',
+                'pos indonesia', 'pos' => 'pos',
+                default => $code,
+            };
+
+            if ($code === '' || ! $this->estimator->courier($code)) {
+                continue;
+            }
+
+            $price = (int) ($rate['total_price'] ?? $rate['price'] ?? $rate['cost'] ?? 0);
+            if ($price <= 0) {
+                continue;
+            }
+
+            $best[$code] = isset($best[$code]) ? min($best[$code], $price) : $price;
+        }
+
+        $perKg = [];
+        foreach ($best as $code => $price) {
+            $perKg[$code] = (int) max(1000, round($price / max(0.1, $weightKg)));
+        }
+
+        return $perKg;
+    }
+
+    public function saveApiSettings(?string $provider, ?string $apiKey): void
+    {
+        $provider = $provider ?: 'local';
+        Setting::set('shipping_api_provider', $provider, 'string', 'shipping', true);
+
+        // Key kosong = jangan hapus; biarkan fallback .env / key lama.
+        // Ganti ke lokal: clear Setting key (env tetap dipakai kalau provider diganti lagi).
+        if ($provider === 'local') {
+            Setting::set('shipping_api_key', '', 'string', 'shipping', false);
+
+            return;
+        }
+
+        if (is_string($apiKey) && trim($apiKey) !== '') {
+            Setting::set('shipping_api_key', trim($apiKey), 'string', 'shipping', false);
+        }
+    }
+
+    public function getApiStatus(): array
+    {
+        $apiProvider = $this->resolveProvider();
+        $apiKey = $this->resolveApiKey();
+        $lastUpdate = Setting::get('shipping_api_last_update');
+        $cached = Cache::get(self::CACHE_KEY_PRICES);
+        $keySource = Setting::get('shipping_api_key') ? 'database' : (config('shipping.api_key') ? 'env' : 'none');
+
+        if ($apiProvider === 'local' || $apiProvider === 'estimator') {
+            return [
+                'provider' => 'local',
+                'label' => 'Estimator lokal (gratis)',
+                'status' => 'online',
+                'message' => 'Tanpa API key. Tarif dari config/ekspedisi.php × faktor zona.',
+                'last_update' => $lastUpdate,
+                'has_key' => false,
+                'key_source' => $keySource,
+                'cached_couriers' => is_array($cached) ? count($cached) : 0,
+            ];
+        }
+
+        if ($apiKey === '') {
+            return [
+                'provider' => $apiProvider,
+                'label' => $apiProvider,
+                'status' => 'not_configured',
+                'message' => 'Provider dipilih tapi API key masih kosong (.env atau form).',
+                'last_update' => $lastUpdate,
+                'has_key' => false,
+                'key_source' => $keySource,
+                'cached_couriers' => is_array($cached) ? count($cached) : 0,
+            ];
         }
 
         return [
             'provider' => $apiProvider,
-            'status' => $status,
-            'message' => $message,
+            'label' => $apiProvider,
+            'status' => 'configured',
+            'message' => 'API key siap ('.$keySource.'). Tekan Sinkronkan untuk tarik tarif live.',
             'last_update' => $lastUpdate,
+            'has_key' => true,
+            'key_source' => $keySource,
+            'cached_couriers' => is_array($cached) ? count($cached) : 0,
         ];
+    }
+
+    /**
+     * HTTP client with CA bundle when PHP/OpenSSL on Windows lacks system roots.
+     */
+    private function httpClient(): \Illuminate\Http\Client\PendingRequest
+    {
+        $client = Http::timeout(20);
+        $verify = config('shipping.verify_ssl', true);
+        $ca = (string) config('shipping.ca_bundle', '');
+
+        if ($verify === false || $verify === 'false' || $verify === '0') {
+            return $client->withOptions(['verify' => false]);
+        }
+
+        if ($ca !== '' && is_file($ca)) {
+            return $client->withOptions(['verify' => $ca]);
+        }
+
+        return $client;
+    }
+
+    private function isCourierEnabled(string $code): bool
+    {
+        $value = Setting::get('courier_enabled_'.$code, true);
+
+        return $value === true || $value === 'true' || $value === 1 || $value === '1';
+    }
+
+    /**
+     * @param  array<string, int>  $livePrices
+     */
+    private function effectivePerKg(string $code, array $courier, array $livePrices): int
+    {
+        $perKg = (int) ($courier['per_kg'] ?? 0);
+
+        if (isset($livePrices[$code])) {
+            $perKg = (int) $livePrices[$code];
+        }
+
+        $custom = Setting::get('courier_per_kg_'.$code);
+        if ($custom !== null && $custom !== '') {
+            $perKg = (int) $custom;
+        }
+
+        return $perKg;
+    }
+
+    private function effectiveMinCharge(string $code, array $courier): int
+    {
+        $min = (int) ($courier['min_charge'] ?? 0);
+        $custom = Setting::get('courier_min_charge_'.$code);
+        if ($custom !== null && $custom !== '') {
+            $min = (int) $custom;
+        }
+
+        return $min;
+    }
+
+    /**
+     * @param  array<string, int>  $livePrices
+     */
+    private function priceSource(string $code, array $livePrices): string
+    {
+        $custom = Setting::get('courier_per_kg_'.$code);
+        if ($custom !== null && $custom !== '') {
+            return 'manual';
+        }
+        if (isset($livePrices[$code])) {
+            return 'sync';
+        }
+
+        return 'default';
     }
 }

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="NITIP DI END">
+    <meta name="apple-mobile-web-app-title" content="{{ setting('brand_name', 'NITIP DI END') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
         $brandName = setting('brand_name', 'NITIP DI END');
@@ -16,6 +16,10 @@
         $sectionTitle = html_entity_decode((string) app('view')->getSection('title'), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $fullTitle = $sectionTitle !== '' ? ($sectionTitle . ' | ' . $brandName) : ($brandName . ': Titipan Spesial');
         $pageDescription = $metaDescription ?? setting('meta_description', 'Temukan berbagai produk impian harga terbaik, gratis ongkir di atas Rp150.000, COD, dan garansi autentik 100%.');
+        // Halaman produk/viral sering set $ogImage; partial SEO baca $metaImage.
+        $metaImage = $metaImage ?? $ogImage ?? null;
+        $metaKeywords = $metaKeywords ?? setting('meta_keywords');
+        $appleTitle = $brandName;
     @endphp
 
     @include('layouts.partials.seo')
@@ -31,13 +35,15 @@
     <link rel="manifest" href="{{ asset('manifest.webmanifest') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/apple-touch-icon.png') }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..700&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-colors')
     @include('components.seo-structured-data')
-    {{-- Service worker is registered once from resources/js/app.js (/sw.js).
-         Do NOT register a second one here: two SWs at scope "/" fight over
-         the cache and a cache-first one serves stale HTML pointing at old
-         build hashes (breaks styles + Alpine site-wide). --}}
+    @stack('seo')
+    {{-- Service worker is registered once from resources/js/app.js (/sw.js). --}}
 
 </head>
 <body class="bg-[#FAF6EF] text-[#141414] font-sans antialiased min-h-screen flex flex-col"
@@ -55,7 +61,6 @@
         {{-- MAIN CONTENT --}}
         <main id="main-content" class="flex-1 pb-20 lg:pb-0">
             @yield('content')
-            @stack('seo')
         </main>
 
         {{-- FOOTER --}}

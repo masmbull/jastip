@@ -47,4 +47,6 @@ must complete project-specific setup:
 - Bootstrap passwords from env/config — never hardcode live secrets
 
 Skill details: `.agents/skills/*/SKILL.md` and `templates.md`.
+
+Pack upstream: https://github.com/Sultonisky/keep-it-out-of-git
 <!-- keep-it-out-of-git:end -->

@@ -13,7 +13,7 @@
         <span class="font-black text-lg tracking-tight">{{ setting('brand_name', 'NITIP DI END') }}</span>
     </div>
 
-    <h1 class="text-2xl font-black tracking-tight">Buat Akun Baru</h1>
+    <h1 class="font-display text-2xl font-extrabold tracking-tight">Buat Akun Baru</h1>
     <p class="text-sm font-medium text-[#475569] mt-1 mb-6">Isi data di bawah, langsung bisa nitip.</p>
 
     <form method="POST" action="{{ route('register.post') }}" class="space-y-4">

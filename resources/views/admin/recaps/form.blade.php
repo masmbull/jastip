@@ -104,7 +104,7 @@
                                     </select>
                                     <label class="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#475569] dark:text-[#D6D3D1] cursor-pointer min-h-[36px]" title="Ikut grand total">
                                         <input type="checkbox" value="1" :name="`columns[${ci}][total]`" x-model="col.total"
-                                               class="w-4 h-4 accent-[#EAB308]">
+                                               class="w-4 h-4 accent-[#FFC800]">
                                         Total
                                     </label>
                                     <button type="button" @click="removeColumn(ci)" x-show="columns.length > 1"

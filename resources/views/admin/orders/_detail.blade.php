@@ -7,7 +7,7 @@
         <div class="space-y-2 text-sm">
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Nama:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->customer_name }}</span></div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">WA:</span>
-                <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-orange-600 dark:text-orange-400 hover:underline">{{ $order->customer_whatsapp }}</a>
+                <a href="{{ whatsapp_url($order->customer_whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-[#141414] dark:text-[#FFC800] hover:underline">{{ $order->customer_whatsapp }}</a>
             </div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Tgl:</span> <span class="text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->created_at->format('d M Y, H:i') }}</span></div>
             <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Metode:</span> <span class="text-[#1E293B] dark:text-[#f1f5f9]">{{ $order->shipping_method ?? '-' }}</span></div>
@@ -27,7 +27,7 @@
                 <div><span class="text-[#64748B] dark:text-[#cbd5e1]">Fee Jastip{{ $order->show_fee ? '' : ' (internal)' }}:</span> <span class="font-medium text-[#1E293B] dark:text-[#f1f5f9] num">{{ format_price($order->fee) }}</span></div>
             @endif
             <div class="border-t border-[#E2E8F0] dark:border-[#404854] pt-2 mt-2 flex justify-between font-bold">
-                <span class="text-[#1E293B] dark:text-[#f1f5f9]">Total</span><span class="text-orange-600 dark:text-orange-400 num">{{ format_price($order->total) }}</span>
+                <span class="text-[#1E293B] dark:text-[#f1f5f9]">Total</span><span class="text-[#141414] dark:text-[#FFC800] num">{{ format_price($order->total) }}</span>
             </div>
             <div class="mt-2 flex items-center gap-2"><span class="text-[#64748B] dark:text-[#cbd5e1]">Status:</span>
                 <x-badge :tone="$order->is_paid ? 'success' : 'warning'">{{ $order->status_label }}</x-badge>
@@ -70,7 +70,7 @@
     <div class="overflow-x-auto">
         <table class="w-full min-w-[640px]">
             <thead>
-                <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
+                <tr class="nb-table-head text-left text-xs uppercase">
                     <th class="px-4 py-2">Produk</th>
                     <th class="px-4 py-2 text-center">Jumlah</th>
                     <th class="px-4 py-2 text-right">Fee item</th>

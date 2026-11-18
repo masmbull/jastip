@@ -33,7 +33,7 @@
                 <label for="role" class="block text-xs font-medium text-[#64748B] dark:text-[#cbd5e1]">Role</label>
                 <div class="flex gap-2">
                     <select id="role" name="role"
-                            class="flex-1 px-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] rounded-lg bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-orange-300">
+                            class="flex-1 px-3 py-2 text-sm border border-[#E2E8F0] dark:border-[#404854] rounded-lg bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                         @foreach(['customer' => 'Pelanggan', 'admin' => 'Admin'] as $value => $label)
                             <option value="{{ $value }}" @selected($user->role === $value)>{{ $label }}</option>
                         @endforeach
@@ -48,7 +48,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full min-w-[520px] text-sm">
                     <thead>
-                        <tr class="bg-[#F1F5F9] dark:bg-[#2e323b] text-left text-xs text-[#64748B] dark:text-[#cbd5e1] uppercase">
+                        <tr class="nb-table-head text-left text-xs uppercase">
                             <th class="px-3 py-2">No.</th>
                             <th class="px-3 py-2">Tanggal</th>
                             <th class="px-3 py-2 text-right">Total</th>

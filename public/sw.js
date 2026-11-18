@@ -1,10 +1,12 @@
 ﻿/* Nitip Di End — PWA service worker (Vanilla, no deps) */
 (function () {
-    var CACHE = 'jastip-pwa-v5';
+    var CACHE = 'jastip-pwa-v6';
     var OFFLINE = '/offline.html';
     var PRECACHE = [
         '/',
+        '/offline.html',
         '/manifest.webmanifest',
+        '/manifest-admin.webmanifest',
         '/favicon.ico',
         '/images/icons/icon-192.png',
         '/images/icons/icon-512.png',

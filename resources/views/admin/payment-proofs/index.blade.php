@@ -6,7 +6,7 @@
 
     <x-page-header title="Bukti Pembayaran" subtitle="Kelola verifikasi bukti pembayaran pelanggan" class="animate-fade-up">
         <div class="text-right">
-            <p class="text-2xl font-bold text-orange-600 dark:text-orange-400 num">{{ $counts['pending'] }}</p>
+            <p class="text-2xl font-bold text-[#141414] dark:text-[#FFC800] num">{{ $counts['pending'] }}</p>
             <p class="text-xs text-[#64748B] dark:text-[#cbd5e1]">Menunggu verifikasi</p>
         </div>
     </x-page-header>
@@ -16,7 +16,7 @@
         <details class="group" @if($q !== '') open @endif>
             <summary class="flex items-center justify-between gap-3 cursor-pointer list-none select-none">
                 <span class="flex items-center gap-2.5">
-                    <span class="inline-flex items-center justify-center w-9 h-9 rounded-[8px] bg-[#F97316] text-white">
+                    <span class="inline-flex items-center justify-center w-9 h-9 rounded-[8px] border-2 border-[#141414] bg-[#FFC800] text-[#141414]">
                         <x-icon name="upload" class="w-4 h-4" />
                     </span>
                     <span>
@@ -32,7 +32,7 @@
                     <label for="bukti-q" class="sr-only">Cari pesanan</label>
                     <input id="bukti-q" type="text" name="q" value="{{ $q }}" autocomplete="off"
                            placeholder="Cari no. pesanan / nama / WA pelanggan…"
-                           class="w-full px-4 py-2.5 border border-[#E2E8F0] dark:border-[#404854] bg-white dark:bg-[#2e323b] text-[#1E293B] dark:text-[#f1f5f9] text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-300">
+                           class="nb-input w-full px-4 py-2.5 text-sm">
                     <x-btn type="submit" variant="outline" icon="search" class="sm:w-auto">Cari</x-btn>
                 </form>
 
@@ -45,7 +45,7 @@
                                 <li class="py-3 flex flex-col lg:flex-row lg:items-center gap-3">
                                     <div class="min-w-0 flex-1">
                                         <a href="{{ route('admin.orders.show', $candidate) }}"
-                                           class="font-mono text-sm font-bold text-orange-600 dark:text-orange-400 hover:underline">{{ $candidate->order_number }}</a>
+                                           class="font-mono text-sm font-bold text-[#141414] dark:text-[#FFC800] hover:underline">{{ $candidate->order_number }}</a>
                                         <span class="ml-2 text-sm text-[#1E293B] dark:text-[#f1f5f9]">{{ $candidate->customer_name }}</span>
                                         <span class="block text-xs text-[#64748B] dark:text-[#cbd5e1] mt-0.5 num">
                                             Sisa {{ format_price($candidate->remaining) }} dari {{ format_price($candidate->total) }}
@@ -73,22 +73,22 @@
 
     <div class="flex gap-1 sm:gap-2 overflow-x-auto border-b border-[#E2E8F0] dark:border-[#404854] animate-fade-up" style="animation-delay: 80ms">
         <a href="{{ route('admin.payment-proofs.index', ['status' => 'all']) }}"
-           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
+           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'all' ? 'border-[#141414] dark:border-[#FFC800] text-[#141414] dark:text-[#FFC800]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
            @if($status === 'all') aria-current="page" @endif>
             Semua ({{ $counts['all'] }})
         </a>
         <a href="{{ route('admin.payment-proofs.index', ['status' => 'pending']) }}"
-           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'pending' ? 'border-orange-500 text-orange-600 dark:text-orange-400' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
+           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'pending' ? 'border-[#141414] dark:border-[#FFC800] text-[#141414] dark:text-[#FFC800]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
            @if($status === 'pending') aria-current="page" @endif>
             Menunggu ({{ $counts['pending'] }})
         </a>
         <a href="{{ route('admin.payment-proofs.index', ['status' => 'verified']) }}"
-           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'verified' ? 'border-orange-500 text-orange-600 dark:text-orange-400' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
+           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'verified' ? 'border-[#141414] dark:border-[#FFC800] text-[#141414] dark:text-[#FFC800]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
            @if($status === 'verified') aria-current="page" @endif>
             Terverifikasi ({{ $counts['verified'] }})
         </a>
         <a href="{{ route('admin.payment-proofs.index', ['status' => 'rejected']) }}"
-           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'rejected' ? 'border-orange-500 text-orange-600 dark:text-orange-400' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
+           class="px-3 sm:px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors {{ $status === 'rejected' ? 'border-[#141414] dark:border-[#FFC800] text-[#141414] dark:text-[#FFC800]' : 'border-transparent text-[#64748B] dark:text-[#cbd5e1] hover:text-[#1E293B] dark:hover:text-[#f1f5f9]' }}"
            @if($status === 'rejected') aria-current="page" @endif>
             Ditolak ({{ $counts['rejected'] }})
         </a>
@@ -112,7 +112,7 @@
                         <tr class="hover:bg-[#f8fafc] dark:hover:bg-[#2e323b] transition-colors">
                             <td class="px-4 py-3 text-sm font-medium">
                                 <a href="{{ route('admin.orders.show', $proof->order) }}"
-                                   class="font-mono text-orange-600 dark:text-orange-400 hover:underline">
+                                   class="font-mono text-[#141414] dark:text-[#FFC800] hover:underline">
                                     {{ $proof->order->order_number }}
                                 </a>
                             </td>
@@ -138,7 +138,7 @@
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <a href="{{ route('admin.payment-proofs.show', $proof) }}"
-                                   class="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 dark:text-orange-400 hover:underline rounded focus:outline-none focus:ring-2 focus:ring-orange-300">
+                                   class="inline-flex items-center gap-1.5 text-sm font-medium text-[#141414] dark:text-[#FFC800] hover:underline rounded focus:outline-none focus:ring-2 focus:ring-[#FFC800]">
                                     <x-icon name="eye" class="w-4 h-4" /> Lihat
                                 </a>
                             </td>

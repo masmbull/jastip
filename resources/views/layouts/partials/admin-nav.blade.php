@@ -38,7 +38,7 @@
     // Label kelompok memakai satu gaya netral; item aktif memakai SATU aksen
     // (tinta + kuning). Sebelumnya tiap kelompok punya warnanya sendiri
     // (merah/kuning/hijau/biru) sehingga sidebar terasa "nabrak".
-    $groupLabelClass = 'inline-block px-3 mx-3 mt-4 mb-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#475569] dark:text-[#D6D3D1]';
+    $groupLabelClass = 'inline-block px-3 mx-3 mt-5 mb-1.5 text-[11px] font-extrabold uppercase tracking-wide text-[#475569] dark:text-[#A8A29E]';
 @endphp
 
 <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
