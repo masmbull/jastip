@@ -73,7 +73,7 @@
            class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-[#FAF6EF] border-r-2 border-[#141414] -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0">
 
         {{-- Brand --}}
-        <div class="flex items-center justify-between p-5 border-b-2 border-[#141414] dark:border-[#FAF6EF]">
+        <div class="flex items-center justify-between h-14 px-5">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 min-w-0 group" aria-label="Dashboard admin">
                 <div class="h-10 w-10 shrink-0 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shadow-[3px_3px_0_#141414] transition-transform group-hover:-translate-y-0.5">
                     <span class="text-[#141414] font-black text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
@@ -115,7 +115,7 @@
     {{-- Main Content Area --}}
     <div class="flex-1 flex flex-col overflow-hidden">
         {{-- Top Bar --}}
-        <header class="bg-white dark:bg-[#1E1E1E] border-b-2 border-[#141414] dark:border-[#FAF6EF] px-4 sm:px-6 py-3 flex items-center justify-between gap-3 transition-colors">
+        <header class="bg-white dark:bg-[#1E1E1E] border-b-2 border-[#141414] dark:border-[#FAF6EF] px-4 sm:px-6 h-16 flex items-center justify-between gap-3 transition-colors">
             <div class="flex items-center gap-3 min-w-0">
                 <button type="button" @click="sidebarOpen = !sidebarOpen"
                         class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 -ml-1 rounded-[8px] min-w-[44px] min-h-[44px] flex items-center justify-center border-2 border-transparent hover:border-[#141414] dark:hover:border-[#FAF6EF] hover:bg-[#FFF7D6] dark:hover:bg-[#262626] transition-colors"
