@@ -34,8 +34,7 @@
         </div>
     @endif
 
-    @php($sync = session('shipping_sync'))
-    @if (is_array($sync))
+    @if (is_array($sync = session('shipping_sync')))
         @php
             $changes = $sync['changes'] ?? [];
             $updated = array_values(array_filter($changes, fn ($row) => ($row['status'] ?? '') === 'updated'));
