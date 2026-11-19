@@ -109,6 +109,7 @@ return [
         'jne' => ['JNE', 'CGK'],
         'jnt' => ['JT'],
         'sicepat' => ['00'],
+        'spx' => ['SPX'],
         'ninja' => ['NINJA'],
         'anteraja' => ['1000'],
         'idexpress' => ['ID'],
@@ -145,6 +146,14 @@ return [
             'tracking' => true, 'tracking_page' => 'https://www.sicepat.com/checkAwb',
             'tracking_query' => null,
             'notes' => 'Tarif dihitung per kecamatan, jadi bisa beda walau sekota.',
+        ],
+        [
+            'code' => 'spx', 'name' => 'Shopee Express', 'type' => 'reguler',
+            'services' => 'Standard · Hemat', 'per_kg' => 8000, 'min_charge' => 8000,
+            'etd' => '2–4 hari', 'coverage' => 'Nasional',
+            'tracking' => true, 'tracking_page' => 'https://spx.co.id/id/track',
+            'tracking_query' => null,
+            'notes' => 'Tarif referensi. Angka live mengikuti sync API kalau provider mengirim kode SPX.',
         ],
         [
             'code' => 'ninja', 'name' => 'Ninja Xpress', 'type' => 'reguler',

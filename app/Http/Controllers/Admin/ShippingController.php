@@ -63,8 +63,18 @@ class ShippingController extends Controller
     {
         $result = $this->shippingService->updateLivePrices();
 
+        if ($result['success'] ?? false) {
+            return redirect()->route('admin.shipping.index')
+                ->with('shipping_sync', [
+                    'provider' => $result['provider'] ?? '',
+                    'message' => $result['message'] ?? '',
+                    'sample' => $result['sample'] ?? null,
+                    'changes' => $result['changes'] ?? [],
+                ]);
+        }
+
         return redirect()->route('admin.shipping.index')
-            ->with($result['success'] ? 'success' : 'error', $result['message']);
+            ->with('error', $result['message']);
     }
 
     public function saveApiSettings(Request $request)

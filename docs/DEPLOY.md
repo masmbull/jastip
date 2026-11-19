@@ -312,6 +312,6 @@ Tinggal tambahkan deploy step kalau perlu auto-deploy.
 
 ## Support
 
-- Docs: `docs/` folder
-- WhatsApp Gateway: `docs/WHATSAPP-GATEWAY.md`
-- TODO: `docs/TODO.md`
+- Deploy: `docs/DEPLOY.md`, `docs/ec2-setup.md`
+- Payment: `docs/PAYMENT_FLOW.md`
+- Sharing: `docs/WHATSAPP-SHARING.md`

@@ -46,6 +46,22 @@ flowchart LR
 - **Data:** MySQL / SQLite · session cart
 - **Extras:** Web Push (VAPID) · sitemap.xml · JSON-LD SEO
 
+## Layout
+
+```text
+app/            domain, HTTP, services
+resources/      Blade, CSS, JS
+public/         web root, PWA, built assets
+database/       migrations, seeders, wilayah
+tests/          PHPUnit
+config/         app, invoice, shipping, settings
+docs/           deploy, payment, design notes, banner
+deploy/         server bootstrap
+scripts/        sensitive-path guard
+tools/          one-off generators
+.github/        CI
+```
+
 ---
 
 ## Quick start
