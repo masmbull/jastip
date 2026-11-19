@@ -177,6 +177,27 @@ class RecapTest extends TestCase
         $this->assertSame('Rp 0', $doc['total']);
     }
 
+    public function test_admin_can_generate_recap_automatically_from_all_invoices(): void
+    {
+        $admin = User::where('role', 'admin')->firstOrFail();
+
+        $this->assertGreaterThan(0, \App\Models\OrderItem::count(), 'Seeder harus menyediakan invoice untuk diuji.');
+
+        $response = $this->actingAs($admin)
+            ->get(route('admin.recaps.create', ['from' => 'all']))
+            ->assertOk()
+            ->assertSee('Rekap otomatis dari semua invoice');
+
+        /** @var \App\Models\Recap $recap */
+        $recap = $response->viewData('recap');
+
+        $this->assertInstanceOf(\App\Models\Recap::class, $recap);
+        // Satu baris per item invoice yang ada, jadi semua invoice tercakup.
+        $this->assertCount(\App\Models\OrderItem::count(), $recap->rows);
+        $this->assertCount(6, $recap->columns);
+        $this->assertSame(['pelanggan', 'produk', 'qty', 'po_hari', 'harga', 'dp'], array_column($recap->columns, 'key'));
+    }
+
     public function test_admin_can_delete_recap(): void
     {
         $admin = User::where('role', 'admin')->firstOrFail();
@@ -195,6 +216,7 @@ class RecapTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer']);
 
         $this->actingAs($customer)->get(route('admin.recaps.index'))->assertForbidden();
+        $this->actingAs($customer)->get(route('admin.recaps.create', ['from' => 'all']))->assertForbidden();
         $this->actingAs($customer)->post(route('admin.recaps.store'), [])->assertForbidden();
     }
 }

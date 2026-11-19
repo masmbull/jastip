@@ -21,12 +21,19 @@ class RecapController extends Controller
     }
 
     /**
-     * Lembar rekapan baru: kolom & baris default dari request (?from=invoice
-     * atau ?customer=), supaya admin bisa rekap pesanan dengan sekali klik.
+     * Lembar rekapan baru: kolom & baris default dari request (?order=invoice
+     * atau ?from=all), supaya admin bisa rekap pesanan dengan sekali klik.
+     * Mode ?from=all membuat baris otomatis dari SEMUA invoice yang ada.
      */
     public function create(Request $request)
     {
         Gate::authorize('create', Order::class);
+
+        // Mode otomatis: generate baris rekap dari SEMUA invoice (pesanan)
+        // yang sudah ada, tanpa input manual.
+        if ($request->filled('from') && $request->input('from') === 'all') {
+            return view('admin.recaps.form', $this->autoFromInvoices());
+        }
 
         $columns = [
             ['key' => 'pelanggan', 'label' => 'Pelanggan', 'type' => 'text', 'total' => false],
@@ -149,5 +156,54 @@ class RecapController extends Controller
         $rows = Recap::normalizeRows($columns, (array) $request->input('rows', []));
 
         return [['name' => $validated['name'], 'columns' => $columns, 'rows' => $rows], null];
+    }
+
+    /**
+     * Mode otomatis: generate lembar rekap dari SEMUA invoice (pesanan)
+     * yang ada di database, satu baris per item invoice. Dipakai tombol
+     * "Rekap Otomatis dari Semua Invoice" di /admin/recaps.
+     *
+     * @return array<string, mixed>
+     */
+    private function autoFromInvoices(): array
+    {
+        $columns = [
+            ['key' => 'pelanggan', 'label' => 'Pelanggan', 'type' => 'text', 'total' => false],
+            ['key' => 'produk', 'label' => 'Produk', 'type' => 'text', 'total' => false],
+            ['key' => 'qty', 'label' => 'Qty', 'type' => 'number', 'total' => true],
+            ['key' => 'po_hari', 'label' => 'PO (hari)', 'type' => 'text', 'total' => false],
+            ['key' => 'harga', 'label' => 'Harga', 'type' => 'number', 'total' => true],
+            ['key' => 'dp', 'label' => 'DP', 'type' => 'currency', 'total' => false],
+        ];
+
+        $rows = [];
+        $index = 0;
+
+        foreach (Order::with('items')->orderBy('created_at', 'desc')->get() as $order) {
+            foreach ($order->items as $item) {
+                $index++;
+                $rows[] = [
+                    'key' => 'r'.$index,
+                    'cells' => [
+                        'pelanggan' => $order->customer_name,
+                        'produk' => $item->product_name,
+                        'qty' => (string) $item->quantity,
+                        'po_hari' => $order->created_at?->format('Y-m-d') ?? '',
+                        'harga' => (string) (int) $item->product_price,
+                        'dp' => (string) (int) ($item->deposit > 0 ? $item->deposit * $item->quantity : $order->down_payment),
+                    ],
+                ];
+            }
+        }
+
+        return [
+            'recap' => new Recap([
+                'name' => 'Rekapan '.now()->format('d M Y'),
+                'columns' => $columns,
+                'rows' => $rows,
+            ]),
+            'editing' => false,
+            'autoFromInvoices' => true,
+        ];
     }
 }

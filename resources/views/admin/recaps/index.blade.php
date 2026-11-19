@@ -4,7 +4,10 @@
 @section('content')
 <div class="space-y-6">
     <x-page-header title="Rekapan" subtitle="Lembar rekap manual. Kolom dan baris bebas, grand total dihitung otomatis dari kolom bertanda Total.">
-        <x-btn as="a" :href="route('admin.recaps.create')" icon="plus">Buat Rekapan</x-btn>
+        <div class="flex flex-wrap items-center gap-2">
+            <x-btn as="a" :href="route('admin.recaps.create')" icon="plus">Buat Rekapan</x-btn>
+            <x-btn as="a" :href="route('admin.recaps.create', ['from' => 'all'])" icon="receipt-percent">Rekap Otomatis dari Semua Invoice</x-btn>
+        </div>
     </x-page-header>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

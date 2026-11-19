@@ -23,6 +23,13 @@
         </div>
     </div>
 
+    @if($autoFromInvoices ?? false)
+        <div class="rounded-[10px] border-2 border-[#141414] dark:border-[#FAF6EF] bg-[#FFF7D6] px-4 py-3 text-sm font-medium text-[#141414] dark:text-[#FAF6EF]" role="status">
+            <span class="font-black">Rekap otomatis dari semua invoice.</span>
+            Lembar ini dibuat otomatis dari pesanan yang sudah ada ({{ count($recap->rows ?? []) }} baris). Sesuaikan kolom &amp; baris kalau perlu, lalu simpan.
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="bg-[#FEE2E2] border-2 border-[#141414] rounded-[10px] text-[#991B1B] text-sm p-4" role="alert">
             <p class="font-black mb-1">Periksa kembali isian berikut:</p>
