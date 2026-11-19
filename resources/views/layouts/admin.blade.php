@@ -73,25 +73,27 @@
            class="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-[#FAF6EF] border-r-2 border-[#141414] -translate-x-full transition-transform duration-200 ease-in-out lg:static lg:h-screen lg:shrink-0 lg:translate-x-0">
 
         {{-- Brand --}}
-        <div class="flex items-center justify-between h-14 px-5">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 min-w-0 group" aria-label="Dashboard admin">
-                <div class="h-10 w-10 shrink-0 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shadow-[3px_3px_0_#141414] transition-transform group-hover:-translate-y-0.5">
-                    <span class="text-[#141414] font-black text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
-                </div>
-                <div class="min-w-0">
-                    <span class="font-display font-extrabold text-[17px] leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ setting('brand_name', 'NITIP DI END') }}</span>
-                    <span class="text-[11px] font-extrabold uppercase tracking-wide text-[#475569] dark:text-[#A8A29E] block">Panel Admin</span>
-                </div>
-            </a>
-            <button type="button" @click="sidebarOpen = false"
-                    class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-[#FFF7D6] dark:hover:bg-[#262626]"
-                    aria-label="Tutup menu">
-                <x-icon name="x" class="w-5 h-5" stroke="2" />
-            </button>
-        </div>
+        <div class="relative h-16 shrink-0">
+            <div class="flex items-center justify-between h-full px-5">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 min-w-0 group" aria-label="Dashboard admin">
+                    <div class="h-10 w-10 shrink-0 bg-[#FFC800] border-2 border-[#141414] dark:border-[#FAF6EF] rounded-[10px] flex items-center justify-center shadow-[3px_3px_0_#141414] transition-transform group-hover:-translate-y-0.5">
+                        <span class="text-[#141414] font-black text-xl">{{ strtoupper(substr(setting('brand_name', 'NITIP DI END'), 0, 1)) }}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="font-display font-extrabold text-[17px] leading-tight text-[#141414] dark:text-[#FAF6EF] truncate block">{{ setting('brand_name', 'NITIP DI END') }}</span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wide text-[#475569] dark:text-[#A8A29E] block">Panel Admin</span>
+                    </div>
+                </a>
+                <button type="button" @click="sidebarOpen = false"
+                        class="lg:hidden text-[#141414] dark:text-[#FAF6EF] p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-[8px] hover:bg-[#FFF7D6] dark:hover:bg-[#262626]"
+                        aria-label="Tutup menu">
+                    <x-icon name="x" class="w-5 h-5" stroke="2" />
+                </button>
+            </div>
 
-        {{-- Garis aksen tunggal (dulu strip pelangi 7 warna: terlalu ramai). --}}
-        <div class="h-1.5 shrink-0 bg-[#FFC800] border-b-2 border-[#141414]" aria-hidden="true"></div>
+            {{-- Garis aksen tunggal (dulu strip pelangi 7 warna: terlalu ramai). --}}
+            <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-[#FFC800] border-b-2 border-[#141414]" aria-hidden="true"></div>
+        </div>
 
         @include('layouts.partials.admin-nav')
 
