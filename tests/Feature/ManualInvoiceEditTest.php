@@ -99,6 +99,33 @@ class ManualInvoiceEditTest extends TestCase
         $this->assertSame(Order::STATUS_AWAITING_PAYMENT, $order->status);
     }
 
+    public function test_edit_does_not_inflate_fee_allocated_to_items(): void
+    {
+        $order = $this->makeOrder();
+        $order->items()->first()->update(['fee' => 1_000]);
+        $order->update(['fee' => 2_000, 'total' => 67_000]);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.orders.edit', $order))
+            ->assertOk()
+            ->assertSessionHasInput('legacy_fee', 0);
+
+        // Form edit mengirim kembali fee item yang sama; total fee tidak boleh
+        // bertambah karena legacy_fee dihitung ulang dari fee yang sudah ada.
+        $this->put(route('admin.orders.update', $order), $this->payload([
+            'legacy_fee' => 0,
+            'show_fee' => '0',
+            'items' => [
+                ['product_name' => 'Barang Lama', 'quantity' => 2, 'product_price' => 30_000, 'fee' => 1_000],
+            ],
+        ]))->assertRedirect(route('admin.orders.show', $order));
+
+        $order->refresh();
+        $this->assertSame(2_000, $order->fee);
+        $this->assertSame(62_000, $order->total);
+        $this->assertFalse($order->show_fee);
+    }
+
     public function test_update_preserves_legacy_fee_from_edit_form(): void
     {
         $order = $this->makeOrder();
