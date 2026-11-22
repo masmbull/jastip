@@ -220,7 +220,7 @@ class OrderController extends Controller
             'shipping_method' => $order->shipping_method,
             'shipping_cost' => $order->shipping_cost,
             'fee' => $order->fee,
-            'legacy_fee' => max(0, (int) $order->fee - (int) $order->items->sum('fee')),
+            'legacy_fee' => max(0, (int) $order->fee - (int) $order->items->sum(fn ($item) => (int) $item->fee * (int) $item->quantity)),
             'show_fee' => $order->show_fee,
             'down_payment' => $order->down_payment,
             'items' => $order->items->map(fn ($item) => [
